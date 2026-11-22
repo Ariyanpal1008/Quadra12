@@ -41,8 +41,10 @@ import {
   signInWithGoogle,
   signOutUser,
 } from '../firebase';
+import {APPLE_SPRING} from './FluidPrimitives';
+import {InteractiveTourTab} from './InteractiveTourTab';
 
-export type HelpDeskTab = 'guide' | 'about' | 'suggest' | 'inbox';
+export type HelpDeskTab = 'guide' | 'tour' | 'about' | 'suggest' | 'inbox';
 export type NavSection = 'overview' | 'subjects' | 'exam' | 'hackers';
 
 interface HelpDeskModalProps {
@@ -366,7 +368,11 @@ export function HelpDeskModal({
         text: 'Suggestion saved! AriYan Pal (Keśava Dāsa) can now review your addition or change request in the Creator Inbox.',
       });
     } catch (error) {
-      handleFirestoreError(error, OperationType.CREATE, 'changeRequests');
+      setSubmitMessage({
+        type: 'error',
+        text: 'Could not save to cloud inbox right now. Please check your connection or use Email Creator Directly below.',
+      });
+      console.error('Failed to save change request:', error);
     } finally {
       setSubmitting(false);
     }
@@ -426,10 +432,10 @@ export function HelpDeskModal({
           aria-labelledby="helpdesk-modal-title"
         >
           <motion.div
-            initial={{opacity: 0, y: 14, scale: 0.98}}
+            initial={{opacity: 0, y: 20, scale: 0.965}}
             animate={{opacity: 1, y: 0, scale: 1}}
-            exit={{opacity: 0, y: 10, scale: 0.98}}
-            transition={{duration: 0.2, ease: [0.16, 1, 0.3, 1]}}
+            exit={{opacity: 0, y: 12, scale: 0.975}}
+            transition={APPLE_SPRING}
             className="relative w-full max-w-5xl max-h-[92vh] flex flex-col bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
@@ -449,15 +455,15 @@ export function HelpDeskModal({
 
               <div className="flex items-center gap-2.5">
                 {user ? (
-                  <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#F5F2EB] dark:bg-[#24201C] border border-[#DDD6C7] dark:border-[#332E28] text-xs text-[#575048] dark:text-[#CBC3B6]">
-                    <span className="max-w-[140px] truncate font-medium text-[#1E1B18] dark:text-[#F5F2EB]">
+                  <div className="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-[#F5F2EB] dark:bg-[#24201C] border border-[#DDD6C7] dark:border-[#332E28] text-xs text-[#575048] dark:text-[#CBC3B6]">
+                    <span className="max-w-[96px] sm:max-w-[140px] truncate font-medium text-[#1E1B18] dark:text-[#F5F2EB]">
                       {user.displayName || 'Signed In'}
                     </span>
                     <button
                       type="button"
                       onClick={() => void signOutUser()}
                       title="Sign out"
-                      className="text-[#A64B33] dark:text-[#D4785E] hover:underline inline-flex items-center gap-1"
+                      className="text-[#A64B33] dark:text-[#D4785E] hover:underline inline-flex items-center gap-1 whitespace-nowrap"
                     >
                       <LogOut className="w-3.5 h-3.5" aria-hidden="true" />
                       <span>Sign out</span>
@@ -476,59 +482,107 @@ export function HelpDeskModal({
               </div>
             </div>
 
-            {/* Sub-Navigation Tabs */}
+            {/* Sub-Navigation Tabs with Gliding Spring Pill */}
             <div className="px-5 sm:px-7 py-2.5 border-b border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#161412]/70 flex flex-wrap items-center gap-2 shrink-0">
               <button
                 type="button"
                 onClick={() => setActiveTab('guide')}
-                className={`inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg border transition-colors ${
+                className={`relative inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg border transition-colors ${
                   activeTab === 'guide'
-                    ? 'bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] border-[#1E1B18] dark:border-[#F5F2EB]'
+                    ? 'text-[#F5F2EB] dark:text-[#1E1B18] border-transparent'
                     : 'bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#575048] dark:text-[#CBC3B6] border-[#DDD6C7] dark:border-[#332E28] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB]'
                 }`}
               >
-                <HelpCircle className="w-3.5 h-3.5" aria-hidden="true" />
-                <span>Help Desk</span>
+                {activeTab === 'guide' && (
+                  <motion.span
+                    layoutId="helpdesk-active-tab"
+                    transition={APPLE_SPRING}
+                    className="absolute inset-0 rounded-lg bg-[#1E1B18] dark:bg-[#F5F2EB]"
+                  />
+                )}
+                <HelpCircle className="relative z-10 w-3.5 h-3.5" aria-hidden="true" />
+                <span className="relative z-10">Help Desk</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('tour')}
+                className={`relative inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg border transition-colors whitespace-nowrap shrink-0 ${
+                  activeTab === 'tour'
+                    ? 'text-[#F5F2EB] dark:text-[#1E1B18] border-transparent'
+                    : 'bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#575048] dark:text-[#CBC3B6] border-[#DDD6C7] dark:border-[#332E28] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB]'
+                }`}
+              >
+                {activeTab === 'tour' && (
+                  <motion.span
+                    layoutId="helpdesk-active-tab"
+                    transition={APPLE_SPRING}
+                    className="absolute inset-0 rounded-lg bg-[#1E1B18] dark:bg-[#F5F2EB]"
+                  />
+                )}
+                <Compass className="relative z-10 w-3.5 h-3.5" aria-hidden="true" />
+                <span className="relative z-10">Interactive Tour</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveTab('about')}
-                className={`inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg border transition-colors ${
+                className={`relative inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg border transition-colors ${
                   activeTab === 'about'
-                    ? 'bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] border-[#1E1B18] dark:border-[#F5F2EB]'
+                    ? 'text-[#F5F2EB] dark:text-[#1E1B18] border-transparent'
                     : 'bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#575048] dark:text-[#CBC3B6] border-[#DDD6C7] dark:border-[#332E28] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB]'
                 }`}
               >
-                <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" />
-                <span>Creator &amp; Disclaimers</span>
+                {activeTab === 'about' && (
+                  <motion.span
+                    layoutId="helpdesk-active-tab"
+                    transition={APPLE_SPRING}
+                    className="absolute inset-0 rounded-lg bg-[#1E1B18] dark:bg-[#F5F2EB]"
+                  />
+                )}
+                <ShieldCheck className="relative z-10 w-3.5 h-3.5" aria-hidden="true" />
+                <span className="relative z-10">Creator &amp; Disclaimers</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setActiveTab('suggest')}
-                className={`inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg border transition-colors ${
+                className={`relative inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg border transition-colors ${
                   activeTab === 'suggest'
-                    ? 'bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] border-[#1E1B18] dark:border-[#F5F2EB]'
+                    ? 'text-[#F5F2EB] dark:text-[#1E1B18] border-transparent'
                     : 'bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#575048] dark:text-[#CBC3B6] border-[#DDD6C7] dark:border-[#332E28] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB]'
                 }`}
               >
-                <MessageSquarePlus className="w-3.5 h-3.5" aria-hidden="true" />
-                <span>Suggest Addition / Change</span>
+                {activeTab === 'suggest' && (
+                  <motion.span
+                    layoutId="helpdesk-active-tab"
+                    transition={APPLE_SPRING}
+                    className="absolute inset-0 rounded-lg bg-[#1E1B18] dark:bg-[#F5F2EB]"
+                  />
+                )}
+                <MessageSquarePlus className="relative z-10 w-3.5 h-3.5" aria-hidden="true" />
+                <span className="relative z-10">Suggest Addition / Change</span>
               </button>
 
               {isCreatorAdmin && (
                 <button
                   type="button"
                   onClick={() => setActiveTab('inbox')}
-                  className={`inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg border transition-colors ${
+                  className={`relative inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg border transition-colors ${
                     activeTab === 'inbox'
-                      ? 'bg-[#A64B33] text-[#F5F2EB] border-[#A64B33]'
+                      ? 'text-[#F5F2EB] border-transparent'
                       : 'bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#A64B33] dark:text-[#D4785E] border-[#DDD6C7] dark:border-[#332E28]'
                   }`}
                 >
-                  <Inbox className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>
+                  {activeTab === 'inbox' && (
+                    <motion.span
+                      layoutId="helpdesk-active-tab"
+                      transition={APPLE_SPRING}
+                      className="absolute inset-0 rounded-lg bg-[#A64B33]"
+                    />
+                  )}
+                  <Inbox className="relative z-10 w-3.5 h-3.5" aria-hidden="true" />
+                  <span className="relative z-10">
                     Creator Inbox ({newInboxCount} new · {allRequests.length} total)
                   </span>
                 </button>
@@ -548,14 +602,24 @@ export function HelpDeskModal({
                         Every tab in the top navigation covers one part of your Class 12 CBSE PCMB preparation. All study checkboxes, exam best scores, and theme settings save automatically in your browser.
                       </p>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setActiveTab('suggest')}
-                      className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium rounded-lg bg-[#A64B33] hover:bg-[#8E3E29] text-[#F5F2EB] whitespace-nowrap shrink-0"
-                    >
-                      <MessageSquarePlus className="w-3.5 h-3.5" aria-hidden="true" />
-                      <span>Suggest a Change</span>
-                    </button>
+                    <div className="flex flex-wrap items-center gap-2 shrink-0">
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('tour')}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] whitespace-nowrap shrink-0"
+                      >
+                        <Compass className="w-3.5 h-3.5 text-[#A64B33] dark:text-[#D4785E]" aria-hidden="true" />
+                        <span>Interactive Tour</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActiveTab('suggest')}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium rounded-lg bg-[#A64B33] hover:bg-[#8E3E29] text-[#F5F2EB] whitespace-nowrap shrink-0"
+                      >
+                        <MessageSquarePlus className="w-3.5 h-3.5" aria-hidden="true" />
+                        <span>Suggest a Change</span>
+                      </button>
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -617,6 +681,15 @@ export function HelpDeskModal({
                     })}
                   </div>
                 </div>
+              )}
+
+              {activeTab === 'tour' && (
+                <InteractiveTourTab
+                  onJumpToSection={(section) => {
+                    onNavigateSection(section);
+                    onClose();
+                  }}
+                />
               )}
 
               {activeTab === 'suggest' && (
@@ -1047,16 +1120,60 @@ export function HelpDeskModal({
                       <li className="flex items-start gap-2.5">
                         <span className="text-[#A64B33] dark:text-[#D4785E] font-semibold" aria-hidden="true">–</span>
                         <span>
-                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Development Assistance Note:</strong> Conceived, structured, and curated by AriYan Pal (Keśava Dāsa), with select coding, layout, and technical setup assistance supported by modern AI development tools.
+                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Development Assistance Note:</strong> Conceived and structured for Class 12 PCMB students, with select coding, layout, and technical setup assistance supported by modern development tools.
                         </span>
                       </li>
                       <li className="flex items-start gap-2.5">
                         <span className="text-[#A64B33] dark:text-[#D4785E] font-semibold" aria-hidden="true">–</span>
                         <span>
-                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Local &amp; Cloud Data:</strong> Your chapter checkboxes, exam best scores, and theme choices save locally in your browser storage; clearing browser data resets local progress. Only suggestions you submit via Google Sign-In are stored in the cloud inbox.
+                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Local &amp; Cloud Data:</strong> Your chapter checkboxes, exam best scores, countdown date overrides, and achievements save locally in your browser storage; clearing browser data resets local progress. Only suggestions you submit via Google Sign-In are stored in the cloud inbox.
                         </span>
                       </li>
                     </ul>
+                  </div>
+
+                  {/* Terms & Conditions & Copyright Claims Policy */}
+                  <div
+                    id="terms-and-conditions-section"
+                    className="p-5 sm:p-6 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#24201C]/70 space-y-4"
+                  >
+                    <div className="flex items-center justify-between gap-3 pb-3 border-b border-[#DDD6C7] dark:border-[#332E28]">
+                      <div className="flex items-center gap-2.5">
+                        <ShieldCheck
+                          className="w-4 h-4 text-[#A64B33] dark:text-[#D4785E] shrink-0"
+                          aria-hidden="true"
+                        />
+                        <h3 className="text-base font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+                          Terms &amp; Conditions (Copyright &amp; Fair Use)
+                        </h3>
+                      </div>
+                    </div>
+
+                    <ol className="space-y-3 text-xs sm:text-sm text-[#575048] dark:text-[#CBC3B6] leading-relaxed list-decimal pl-5">
+                      <li>
+                        <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Acceptance &amp; Non-Commercial Use:</strong> Quadra 12 is a free, non-commercial educational study workspace for Class 12 CBSE students. By browsing or using this website, you agree to use all resources strictly for personal academic preparation and not for resale, scraping, or unauthorized commercial redistribution.
+                      </li>
+                      <li>
+                        <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Intellectual Property &amp; Copyright Ownership:</strong> Original Quadra 12 interface design, bespoke SVG study diagrams, syllabus tracker logic, countdown clock, and achievement seals belong to Quadra 12. All third-party resources—including official CBSE Sample Question Paper PDFs (© Central Board of Secondary Education) and embedded 12th Hackers YouTube playlists (© respective educators and channels)—remain the sole copyright and property of their respective owners.
+                      </li>
+                      <li>
+                        <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">No Official Affiliation:</strong> Quadra 12 is an independent student study utility and is not affiliated with, endorsed by, or sponsored by CBSE or any external media channel. External links and official YouTube iframe embeds are provided strictly for convenience and educational reference.
+                      </li>
+                      <li>
+                        <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Copyright Claims &amp; Takedown Procedure:</strong> We respect the intellectual property rights of all authors, boards, and creators. If you are a copyright owner or authorized agent and believe any linked PDF, embedded video, diagram, or text on Quadra 12 infringes your copyright or wish it removed, email <span className="font-mono text-[#1E1B18] dark:text-[#F5F2EB]">ariyanpal090@gmail.com</span> with: (a) identification of the copyrighted work, (b) the exact location/section on Quadra 12, and (c) your contact and authorization details. Verified copyright notices are honored promptly through removal or attribution updates.
+                      </li>
+                      <li>
+                        <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">User Submissions:</strong> Feedback, feature requests, or corrections sent through the Suggestion Box may be used to improve Quadra 12 without royalty or obligation, and inappropriate submissions may be removed.
+                      </li>
+                      <li>
+                        <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Disclaimer of Warranties &amp; Limitation of Liability:</strong> Study schedules, countdown timers, self-graded OMR answer keys, and syllabus summaries are provided &ldquo;as is&rdquo; without warranty of accuracy or uninterrupted uptime. Quadra 12 is not liable for cleared browser storage, third-party embed availability, or official exam schedule changes; always verify official announcements on <span className="font-mono">cbse.gov.in</span>.
+                      </li>
+                    </ol>
+
+                    <div className="pt-3 border-t border-[#DDD6C7] dark:border-[#332E28] flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-[#787066] dark:text-[#9C9387]">
+                      <span>Terms &amp; Conditions · Copyright &amp; Takedown Policy</span>
+                      <span>26/12/2016</span>
+                    </div>
                   </div>
                 </div>
               )}

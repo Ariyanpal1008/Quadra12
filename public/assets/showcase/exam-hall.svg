@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="440" viewBox="0 0 760 440" role="img" aria-label="Quadra 12 Examination Hall 3-Hour CBSE Sample Paper and OMR Preview">
+  <rect width="760" height="440" rx="16" fill="#1E1B18"/>
+  <rect x="16" y="16" width="728" height="408" rx="14" fill="#24201C" stroke="#332E28" stroke-width="1.5"/>
+
+  <text x="40" y="52" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600" letter-spacing="1.4" fill="#D4785E">EXAMINATION HALL · OFFICIAL CBSE 2026–27 SQPs</text>
+  <text x="40" y="78" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#F5F2EB">3-Hour Timer · Embedded CBSE PDFs · Live OMR Sheet</text>
+
+  <!-- 3-Hour Timer Badge -->
+  <rect x="570" y="38" width="150" height="36" rx="8" fill="#1E1B18" stroke="#D4785E"/>
+  <text x="645" y="61" text-anchor="middle" font-family="ui-monospace, monospace" font-size="16" font-weight="700" fill="#F5F2EB">03:00:00</text>
+
+  <!-- Left Embedded Paper Mockup -->
+  <rect x="40" y="104" width="380" height="292" rx="10" fill="#FAF8F3"/>
+  <text x="60" y="132" font-family="ui-monospace, monospace" font-size="11" font-weight="700" fill="#A64B33">CBSE CLASS XII · PHYSICS (042) SQP 2026–27</text>
+  <line x1="60" y1="144" x2="400" y2="144" stroke="#DDD6C7"/>
+  <text x="60" y="170" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="700" fill="#1E1B18">SECTION A — Multiple Choice (16 × 1 = 16 Marks)</text>
+  <rect x="60" y="188" width="340" height="12" rx="4" fill="#E5DFD2"/>
+  <rect x="60" y="210" width="290" height="12" rx="4" fill="#E5DFD2"/>
+  <rect x="60" y="232" width="315" height="12" rx="4" fill="#E5DFD2"/>
+  <rect x="60" y="266" width="340" height="58" rx="8" fill="#ECE6D9"/>
+  <text x="76" y="290" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#1E1B18">Unmodified Official CBSE Question Paper PDF</text>
+  <text x="76" y="310" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="#575048">Download offline or read side-by-side with OMR bubbles</text>
+  <text x="60" y="370" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="700" fill="#A64B33">Score &gt;90% on any paper → Unlocks Exam Ready 🏆</text>
+
+  <!-- Right OMR Checklist Mockup -->
+  <rect x="440" y="104" width="280" height="292" rx="10" fill="#1E1B18" stroke="#332E28"/>
+  <text x="460" y="132" font-family="ui-monospace, monospace" font-size="11" font-weight="700" fill="#7AB88F">OMR AUTO-GRADER · SECTION A</text>
+
+  <g transform="translate(460, 152)" font-family="ui-monospace, monospace" font-size="12" font-weight="700">
+    <text x="0" y="19" fill="#CBC3B6">Q01</text>
+    <circle cx="54" cy="15" r="12" fill="#24201C" stroke="#4A423A"/><text x="54" y="19" text-anchor="middle" fill="#CBC3B6">A</text>
+    <circle cx="88" cy="15" r="12" fill="#A64B33" stroke="#D4785E"/><text x="88" y="19" text-anchor="middle" fill="#F5F2EB">B</text>
+    <circle cx="122" cy="15" r="12" fill="#24201C" stroke="#4A423A"/><text x="122" y="19" text-anchor="middle" fill="#CBC3B6">C</text>
+    <circle cx="156" cy="15" r="12" fill="#24201C" stroke="#4A423A"/><text x="156" y="19" text-anchor="middle" fill="#CBC3B6">D</text>
+
+    <text x="0" y="57" fill="#CBC3B6">Q02</text>
+    <circle cx="54" cy="53" r="12" fill="#3D6B4F" stroke="#7AB88F"/><text x="54" y="57" text-anchor="middle" fill="#F5F2EB">A</text>
+    <circle cx="88" cy="53" r="12" fill="#24201C" stroke="#4A423A"/><text x="88" y="57" text-anchor="middle" fill="#CBC3B6">B</text>
+    <circle cx="122" cy="53" r="12" fill="#24201C" stroke="#4A423A"/><text x="122" y="57" text-anchor="middle" fill="#CBC3B6">C</text>
+    <circle cx="156" cy="53" r="12" fill="#24201C" stroke="#4A423A"/><text x="156" y="57" text-anchor="middle" fill="#CBC3B6">D</text>
+
+    <text x="0" y="95" fill="#CBC3B6">Q03</text>
+    <circle cx="54" cy="91" r="12" fill="#24201C" stroke="#4A423A"/><text x="54" y="95" text-anchor="middle" fill="#CBC3B6">A</text>
+    <circle cx="88" cy="91" r="12" fill="#24201C" stroke="#4A423A"/><text x="88" y="95" text-anchor="middle" fill="#CBC3B6">B</text>
+    <circle cx="122" cy="91" r="12" fill="#A64B33" stroke="#D4785E"/><text x="122" y="95" text-anchor="middle" fill="#F5F2EB">C</text>
+    <circle cx="156" cy="91" r="12" fill="#24201C" stroke="#4A423A"/><text x="156" y="95" text-anchor="middle" fill="#CBC3B6">D</text>
+  </g>
+
+  <rect x="460" y="276" width="240" height="54" rx="8" fill="#1C2E22" stroke="#3D6B4F"/>
+  <text x="476" y="299" font-family="ui-monospace, monospace" font-size="12" font-weight="700" fill="#7AB88F">RESULT: 15 / 16 (93.8%)</text>
+  <text x="476" y="318" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="#B6DFC3">Best Exam Score Saved Locally</text>
+
+  <rect x="460" y="346" width="240" height="34" rx="8" fill="#F5F2EB"/>
+  <text x="580" y="367" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="700" fill="#1E1B18">Enter Examination Hall →</text>
+</svg>

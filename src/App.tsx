@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {
   AnimatePresence,
   MotionConfig,
@@ -21,6 +21,7 @@ import {
   Play,
   ShieldCheck,
   Sun,
+  Trophy,
   X,
 } from 'lucide-react';
 import {
@@ -40,6 +41,26 @@ import {
   NavSection,
 } from './components/HelpDeskModal';
 import {ResilientImage} from './components/ResilientImage';
+import {BoardCountdownClock} from './components/BoardCountdownClock';
+import {
+  AchievementsModal,
+  AchievementsTriggerCard,
+} from './components/AchievementsSection';
+import {
+  ACHIEVEMENTS,
+  AchievementActionTarget,
+  AchievementId,
+  UnlockedAchievementRecord,
+  computeAchievementStats,
+  evaluateAllAchievements,
+  getLocalDateKey,
+} from './data/achievements';
+import {
+  APPLE_EASE,
+  APPLE_SPRING,
+  AnimatedNumber,
+  ScrollRevealBand,
+} from './components/FluidPrimitives';
 
 type ActiveView = 'overview' | 'tracker' | 'exam-hall' | 'hackers';
 
@@ -55,6 +76,8 @@ const STORAGE_CHAPTER_TASKS_KEY = 'pcmb_desk_chapter_tasks_v1';
 const STORAGE_LECTURES_KEY = 'pcmb_desk_watched_lectures_v1';
 const STORAGE_SCORES_KEY = 'pcmb_desk_best_scores_v1';
 const STORAGE_THEME_KEY = 'pcmb_desk_theme_v1';
+const STORAGE_DAILY_LOG_KEY = 'pcmb_desk_daily_chapter_log_v1';
+const STORAGE_ACHIEVEMENTS_KEY = 'pcmb_desk_achievements_v1';
 
 type ThemeMode = 'light' | 'dark';
 
@@ -93,8 +116,13 @@ function HeroPreviewQuadrant({
     target: containerRef,
     offset: ['start end', 'end start'],
   });
-  const colOneY = useTransform(scrollYProgress, [0, 1], [10, -10]);
-  const colTwoY = useTransform(scrollYProgress, [0, 1], [-10, 10]);
+  const smoothScroll = useSpring(scrollYProgress, {
+    stiffness: 140,
+    damping: 24,
+    restDelta: 0.001,
+  });
+  const colOneY = useTransform(smoothScroll, [0, 1], [16, -16]);
+  const colTwoY = useTransform(smoothScroll, [0, 1], [-16, 16]);
 
   return (
     <div ref={containerRef} className="lg:col-span-5 grid grid-cols-2 gap-3.5">
@@ -103,17 +131,24 @@ function HeroPreviewQuadrant({
           key={subject.id}
           type="button"
           onClick={() => onSelectSubject(subject.id)}
+          initial={{opacity: 0, y: 18, scale: 0.96}}
+          animate={{opacity: 1, y: 0, scale: 1}}
           style={{y: idx % 2 === 0 ? colOneY : colTwoY}}
-          whileHover={{y: -3}}
-          transition={{duration: 0.18, ease: [0.16, 1, 0.3, 1]}}
-          className="text-left group overflow-hidden rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A64B33]"
+          whileHover={{y: -4, scale: 1.02}}
+          whileTap={{scale: 0.97}}
+          transition={{
+            opacity: {duration: 0.45, delay: 0.08 + idx * 0.05, ease: APPLE_EASE},
+            scale: APPLE_SPRING,
+            y: APPLE_SPRING,
+          }}
+          className="text-left group overflow-hidden rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] apple-surface focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A64B33]"
         >
           <div className="overflow-hidden border-b border-[#DDD6C7] dark:border-[#332E28]">
             <ResilientImage
               src={subject.imageUrl}
               alt={subject.imageAlt}
               fallbackTitle={subject.name}
-              className="w-full h-24 sm:h-28 object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+              className="w-full h-24 sm:h-28 object-cover transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.06]"
             />
           </div>
           <div className="px-3 py-2 flex items-center justify-between gap-2">
@@ -140,6 +175,7 @@ export default function App() {
   const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
   const [helpDeskOpen, setHelpDeskOpen] = useState(false);
   const [helpDeskTab, setHelpDeskTab] = useState<HelpDeskTab>('guide');
+  const [achievementsModalOpen, setAchievementsModalOpen] = useState(false);
 
   const openHelpDesk = (tab: HelpDeskTab) => {
     setHelpDeskTab(tab);
@@ -185,6 +221,27 @@ export default function App() {
       {},
     ),
   );
+
+  const [dailyChapterLog, setDailyChapterLog] = useState<Record<string, string[]>>(() =>
+    readStoredJson<Record<string, string[]>>(STORAGE_DAILY_LOG_KEY, {}),
+  );
+
+  const [unlockedAchievements, setUnlockedAchievements] = useState<
+    Partial<Record<AchievementId, UnlockedAchievementRecord>>
+  >(() =>
+    readStoredJson<Partial<Record<AchievementId, UnlockedAchievementRecord>>>(
+      STORAGE_ACHIEVEMENTS_KEY,
+      {},
+    ),
+  );
+
+  const [recentUnlockToast, setRecentUnlockToast] = useState<{
+    title: string;
+    detail: string;
+    extraCount: number;
+  } | null>(null);
+
+  const hasEvaluatedInitialAchievementsRef = useRef(false);
 
   useEffect(() => {
     const isDark = theme === 'dark';
@@ -237,117 +294,63 @@ export default function App() {
     }
   }, [bestScores]);
 
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        STORAGE_DAILY_LOG_KEY,
+        JSON.stringify(dailyChapterLog),
+      );
+    } catch {
+      // Ignore storage quota errors
+    }
+  }, [dailyChapterLog]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        STORAGE_ACHIEVEMENTS_KEY,
+        JSON.stringify(unlockedAchievements),
+      );
+    } catch {
+      // Ignore storage quota errors
+    }
+  }, [unlockedAchievements]);
+
   const navigateTo = (view: ActiveView) => {
     setActiveView(view);
     setMobileMenuOpen(false);
     window.scrollTo({top: 0, behavior: 'smooth'});
   };
 
-  const handleToggleChapter = (chapterId: string) => {
-    setCompletedChapters((prev) => ({
-      ...prev,
-      [chapterId]: !prev[chapterId],
-    }));
-  };
-
-  const handleToggleChapterTask = (chapterId: string, stage: StudyStageKey) => {
-    setChapterTasks((prev) => {
-      const current = prev[chapterId] ?? {};
-      const updatedChapter: ChapterTaskState = {
-        ...current,
-        [stage]: !current[stage],
-      };
-      const allFourDone = STUDY_STAGES.every((s) => Boolean(updatedChapter[s.key]));
-      if (allFourDone) {
-        setCompletedChapters((chPrev) =>
-          chPrev[chapterId] ? chPrev : {...chPrev, [chapterId]: true},
-        );
-      }
+  const recordDailyChapterChanges = (
+    addedIds: string[],
+    removedIds: string[] = [],
+  ) => {
+    if (addedIds.length === 0 && removedIds.length === 0) return;
+    const todayKey = getLocalDateKey();
+    setDailyChapterLog((prev) => {
+      const existing = Array.isArray(prev[todayKey]) ? prev[todayKey] : [];
+      const nextSet = new Set(existing);
+      addedIds.forEach((id) => nextSet.add(id));
+      removedIds.forEach((id) => nextSet.delete(id));
       return {
         ...prev,
-        [chapterId]: updatedChapter,
+        [todayKey]: Array.from(nextSet),
       };
     });
   };
 
-  const handleToggleSubjectStage = (subjectId: SubjectId, stage: StudyStageKey) => {
-    const subject = SUBJECTS.find((s) => s.id === subjectId);
-    if (!subject) return;
-
-    setChapterTasks((prev) => {
-      const allAlreadyDone = subject.chapters.every((ch) =>
-        Boolean(prev[ch.id]?.[stage]),
-      );
-      const nextValue = !allAlreadyDone;
-      const next = {...prev};
-      const newlyCompletedIds: string[] = [];
-
-      subject.chapters.forEach((ch) => {
-        const updatedChapter: ChapterTaskState = {
-          ...(next[ch.id] ?? {}),
-          [stage]: nextValue,
-        };
-        next[ch.id] = updatedChapter;
-        if (STUDY_STAGES.every((s) => Boolean(updatedChapter[s.key]))) {
-          newlyCompletedIds.push(ch.id);
-        }
-      });
-
-      if (newlyCompletedIds.length > 0) {
-        setCompletedChapters((chPrev) => {
-          const chNext = {...chPrev};
-          newlyCompletedIds.forEach((id) => {
-            chNext[id] = true;
-          });
-          return chNext;
-        });
-      }
-
-      return next;
-    });
-  };
-
-  const handleMarkSubjectComplete = (subjectId: SubjectId) => {
-    const subject = SUBJECTS.find((s) => s.id === subjectId);
-    if (!subject) return;
-    setCompletedChapters((prev) => {
-      const next = {...prev};
-      subject.chapters.forEach((ch) => {
-        next[ch.id] = true;
-      });
-      return next;
-    });
-    setChapterTasks((prev) => {
-      const next = {...prev};
-      subject.chapters.forEach((ch) => {
-        next[ch.id] = {
-          lecture: true,
-          practice: true,
-          ncert: true,
-          pyq: true,
-        };
-      });
-      return next;
-    });
-  };
-
-  const handleResetSubject = (subjectId: SubjectId) => {
-    const subject = SUBJECTS.find((s) => s.id === subjectId);
-    if (!subject) return;
-    setCompletedChapters((prev) => {
-      const next = {...prev};
-      subject.chapters.forEach((ch) => {
-        delete next[ch.id];
-      });
-      return next;
-    });
-    setChapterTasks((prev) => {
-      const next = {...prev};
-      subject.chapters.forEach((ch) => {
-        delete next[ch.id];
-      });
-      return next;
-    });
+  const handleToggleChapter = (chapterId: string) => {
+    const nextDone = !completedChapters[chapterId];
+    setCompletedChapters((prev) => ({
+      ...prev,
+      [chapterId]: nextDone,
+    }));
+    if (nextDone) {
+      recordDailyChapterChanges([chapterId]);
+    } else {
+      recordDailyChapterChanges([], [chapterId]);
+    }
   };
 
   const syncEpisodeWatchedFromTasks = (
@@ -368,27 +371,155 @@ export default function App() {
     });
   };
 
-  const handleSetChapterLectureDone = (chapterId: string, done: boolean) => {
-    setChapterTasks((prev) => {
-      if (Boolean(prev[chapterId]?.lecture) === done) {
-        return prev;
-      }
+  const handleToggleChapterTask = (chapterId: string, stage: StudyStageKey) => {
+    const current = chapterTasks[chapterId] ?? {};
+    const updatedChapter: ChapterTaskState = {
+      ...current,
+      [stage]: !current[stage],
+    };
+    const nextTasks = {
+      ...chapterTasks,
+      [chapterId]: updatedChapter,
+    };
+    setChapterTasks(nextTasks);
+
+    if (
+      STUDY_STAGES.every((s) => Boolean(updatedChapter[s.key])) &&
+      !completedChapters[chapterId]
+    ) {
+      setCompletedChapters((chPrev) =>
+        chPrev[chapterId] ? chPrev : {...chPrev, [chapterId]: true},
+      );
+      recordDailyChapterChanges([chapterId]);
+    }
+    if (stage === 'lecture') {
+      syncEpisodeWatchedFromTasks(nextTasks);
+    }
+  };
+
+  const handleToggleSubjectStage = (subjectId: SubjectId, stage: StudyStageKey) => {
+    const subject = SUBJECTS.find((s) => s.id === subjectId);
+    if (!subject) return;
+
+    const allAlreadyDone = subject.chapters.every((ch) =>
+      Boolean(chapterTasks[ch.id]?.[stage]),
+    );
+    const nextValue = !allAlreadyDone;
+    const nextTasks = {...chapterTasks};
+    const newlyCompletedIds: string[] = [];
+
+    subject.chapters.forEach((ch) => {
       const updatedChapter: ChapterTaskState = {
-        ...(prev[chapterId] ?? {}),
-        lecture: done,
+        ...(nextTasks[ch.id] ?? {}),
+        [stage]: nextValue,
       };
-      if (STUDY_STAGES.every((s) => Boolean(updatedChapter[s.key]))) {
-        setCompletedChapters((chPrev) =>
-          chPrev[chapterId] ? chPrev : {...chPrev, [chapterId]: true},
-        );
+      nextTasks[ch.id] = updatedChapter;
+      if (
+        STUDY_STAGES.every((s) => Boolean(updatedChapter[s.key])) &&
+        !completedChapters[ch.id]
+      ) {
+        newlyCompletedIds.push(ch.id);
       }
-      const next = {
-        ...prev,
-        [chapterId]: updatedChapter,
-      };
-      syncEpisodeWatchedFromTasks(next);
+    });
+
+    setChapterTasks(nextTasks);
+
+    if (newlyCompletedIds.length > 0) {
+      setCompletedChapters((chPrev) => {
+        const chNext = {...chPrev};
+        newlyCompletedIds.forEach((id) => {
+          chNext[id] = true;
+        });
+        return chNext;
+      });
+      recordDailyChapterChanges(newlyCompletedIds);
+    }
+    if (stage === 'lecture') {
+      syncEpisodeWatchedFromTasks(nextTasks);
+    }
+  };
+
+  const handleMarkSubjectComplete = (subjectId: SubjectId) => {
+    const subject = SUBJECTS.find((s) => s.id === subjectId);
+    if (!subject) return;
+
+    const newlyCompletedIds = subject.chapters
+      .filter((ch) => !completedChapters[ch.id])
+      .map((ch) => ch.id);
+
+    setCompletedChapters((prev) => {
+      const next = {...prev};
+      subject.chapters.forEach((ch) => {
+        next[ch.id] = true;
+      });
       return next;
     });
+
+    if (newlyCompletedIds.length > 0) {
+      recordDailyChapterChanges(newlyCompletedIds);
+    }
+
+    const nextTasks = {...chapterTasks};
+    subject.chapters.forEach((ch) => {
+      nextTasks[ch.id] = {
+        lecture: true,
+        practice: true,
+        ncert: true,
+        pyq: true,
+      };
+    });
+    setChapterTasks(nextTasks);
+    syncEpisodeWatchedFromTasks(nextTasks);
+  };
+
+  const handleResetSubject = (subjectId: SubjectId) => {
+    const subject = SUBJECTS.find((s) => s.id === subjectId);
+    if (!subject) return;
+
+    const resetIds = subject.chapters.map((ch) => ch.id);
+
+    setCompletedChapters((prev) => {
+      const next = {...prev};
+      resetIds.forEach((id) => {
+        delete next[id];
+      });
+      return next;
+    });
+
+    recordDailyChapterChanges([], resetIds);
+
+    const nextTasks = {...chapterTasks};
+    resetIds.forEach((id) => {
+      delete nextTasks[id];
+    });
+    setChapterTasks(nextTasks);
+    syncEpisodeWatchedFromTasks(nextTasks);
+  };
+
+  const handleSetChapterLectureDone = (chapterId: string, done: boolean) => {
+    if (Boolean(chapterTasks[chapterId]?.lecture) === done) {
+      return;
+    }
+    const updatedChapter: ChapterTaskState = {
+      ...(chapterTasks[chapterId] ?? {}),
+      lecture: done,
+    };
+    const nextTasks = {
+      ...chapterTasks,
+      [chapterId]: updatedChapter,
+    };
+    setChapterTasks(nextTasks);
+
+    if (
+      STUDY_STAGES.every((s) => Boolean(updatedChapter[s.key])) &&
+      !completedChapters[chapterId]
+    ) {
+      setCompletedChapters((chPrev) =>
+        chPrev[chapterId] ? chPrev : {...chPrev, [chapterId]: true},
+      );
+      recordDailyChapterChanges([chapterId]);
+    }
+    syncEpisodeWatchedFromTasks(nextTasks);
   };
 
   const handleToggleWatched = (lectureId: string) => {
@@ -400,33 +531,34 @@ export default function App() {
     }));
 
     if (episode && episode.chapterIds.length > 0) {
-      setChapterTasks((prev) => {
-        const next = {...prev};
-        const newlyCompletedIds: string[] = [];
-        episode.chapterIds.forEach((chId) => {
-          const updatedChapter: ChapterTaskState = {
-            ...(next[chId] ?? {}),
-            lecture: nextWatched,
-          };
-          next[chId] = updatedChapter;
-          if (
-            nextWatched &&
-            STUDY_STAGES.every((s) => Boolean(updatedChapter[s.key]))
-          ) {
-            newlyCompletedIds.push(chId);
-          }
-        });
-        if (newlyCompletedIds.length > 0) {
-          setCompletedChapters((chPrev) => {
-            const chNext = {...chPrev};
-            newlyCompletedIds.forEach((id) => {
-              chNext[id] = true;
-            });
-            return chNext;
-          });
+      const nextTasks = {...chapterTasks};
+      const newlyCompletedIds: string[] = [];
+      episode.chapterIds.forEach((chId) => {
+        const updatedChapter: ChapterTaskState = {
+          ...(nextTasks[chId] ?? {}),
+          lecture: nextWatched,
+        };
+        nextTasks[chId] = updatedChapter;
+        if (
+          nextWatched &&
+          STUDY_STAGES.every((s) => Boolean(updatedChapter[s.key])) &&
+          !completedChapters[chId]
+        ) {
+          newlyCompletedIds.push(chId);
         }
-        return next;
       });
+      setChapterTasks(nextTasks);
+
+      if (newlyCompletedIds.length > 0) {
+        setCompletedChapters((chPrev) => {
+          const chNext = {...chPrev};
+          newlyCompletedIds.forEach((id) => {
+            chNext[id] = true;
+          });
+          return chNext;
+        });
+        recordDailyChapterChanges(newlyCompletedIds);
+      }
     }
   };
 
@@ -436,7 +568,16 @@ export default function App() {
   ) => {
     setBestScores((prev) => {
       const existing = prev[subjectId];
-      if (!existing || summary.score >= existing.score) {
+      const existingPct = existing
+        ? existing.totalMarks > 0
+          ? existing.score / existing.totalMarks
+          : existing.accuracy / 100
+        : -1;
+      const incomingPct =
+        summary.totalMarks > 0
+          ? summary.score / summary.totalMarks
+          : summary.accuracy / 100;
+      if (!existing || incomingPct >= existingPct) {
         return {...prev, [subjectId]: summary};
       }
       return prev;
@@ -478,6 +619,84 @@ export default function App() {
     0,
   );
 
+  const todayKey = getLocalDateKey();
+  const achievementStats = useMemo(
+    () =>
+      computeAchievementStats({
+        completedChapters,
+        chapterTasks,
+        bestScores,
+        dailyChapterLog,
+        todayKey,
+      }),
+    [completedChapters, chapterTasks, bestScores, dailyChapterLog, todayKey],
+  );
+
+  const evaluatedAchievements = useMemo(
+    () => evaluateAllAchievements(achievementStats, unlockedAchievements),
+    [achievementStats, unlockedAchievements],
+  );
+
+  useEffect(() => {
+    const newlyUnlocked: {
+      id: AchievementId;
+      title: string;
+      detail: string;
+    }[] = [];
+
+    const nextMap: Partial<Record<AchievementId, UnlockedAchievementRecord>> = {
+      ...unlockedAchievements,
+    };
+
+    ACHIEVEMENTS.forEach((def) => {
+      if (nextMap[def.id]) return;
+      const result = def.evaluate(achievementStats);
+      if (result.satisfied) {
+        nextMap[def.id] = {
+          unlockedAt: new Date().toISOString(),
+          detail: result.detailText,
+        };
+        newlyUnlocked.push({
+          id: def.id,
+          title: def.title,
+          detail: result.detailText ?? def.description,
+        });
+      }
+    });
+
+    if (newlyUnlocked.length > 0) {
+      setUnlockedAchievements(nextMap);
+      if (hasEvaluatedInitialAchievementsRef.current) {
+        const latest = newlyUnlocked[newlyUnlocked.length - 1];
+        setRecentUnlockToast({
+          title: latest.title,
+          detail: latest.detail,
+          extraCount: newlyUnlocked.length - 1,
+        });
+      }
+    }
+
+    hasEvaluatedInitialAchievementsRef.current = true;
+  }, [achievementStats, unlockedAchievements]);
+
+  useEffect(() => {
+    if (!recentUnlockToast) return;
+    const timer = window.setTimeout(() => {
+      setRecentUnlockToast(null);
+    }, 6500);
+    return () => window.clearTimeout(timer);
+  }, [recentUnlockToast]);
+
+  const handleOpenAchievementsModal = () => {
+    setRecentUnlockToast(null);
+    setAchievementsModalOpen(true);
+  };
+
+  const handleAchievementAction = (target: AchievementActionTarget) => {
+    setAchievementsModalOpen(false);
+    navigateTo(target);
+  };
+
   const navItems: {id: ActiveView; label: string}[] = [
     {id: 'overview', label: 'Overview'},
     {id: 'tracker', label: 'Subject Tracker'},
@@ -491,19 +710,28 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <div className="min-h-screen flex flex-col bg-[#F5F2EB] dark:bg-[#161412] text-[#1E1B18] dark:text-[#F5F2EB] transition-colors duration-200">
         {/* Top Bar Contract: strictly 3 zones separated by gap-8 */}
-        <header className="sticky top-0 z-40 bg-[#F5F2EB]/95 dark:bg-[#161412]/95 backdrop-blur-xs border-b border-[#DDD6C7] dark:border-[#332E28] transition-colors duration-200">
+        <header className="sticky top-0 z-40 bg-[#F5F2EB]/82 dark:bg-[#161412]/82 apple-glass-bar border-b border-[#DDD6C7]/90 dark:border-[#332E28]/90 transition-colors duration-300">
           <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-8">
-            {/* Zone 1: Single text element wordmark */}
-            <button
+            {/* Zone 1: Brand icon + wordmark */}
+            <motion.button
               type="button"
+              whileHover={{scale: 1.03}}
+              whileTap={{scale: 0.96}}
+              transition={APPLE_SPRING}
               onClick={() => navigateTo('overview')}
-              className="text-lg font-semibold tracking-tight text-[#1E1B18] dark:text-[#F5F2EB] whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A64B33]"
+              className="inline-flex items-center gap-2.5 text-lg font-semibold tracking-tight text-[#1E1B18] dark:text-[#F5F2EB] whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A64B33]"
               style={{fontFamily: 'var(--font-display)'}}
             >
-              Quadra 12
-            </button>
+              <img
+                src={`${import.meta.env.BASE_URL}src/assets/images/quadra_12_icon_1795347655892.jpg`}
+                alt="Quadra 12 emblem"
+                referrerPolicy="no-referrer"
+                className="w-8 h-8 rounded-lg object-cover border border-[#DDD6C7] dark:border-[#332E28] shrink-0 shadow-xs"
+              />
+              <span>Quadra 12</span>
+            </motion.button>
 
-            {/* Zone 2: 4 concise single-line nav links */}
+            {/* Zone 2: 4 concise single-line nav links with gliding spring indicator */}
             <nav
               aria-label="Primary Navigation"
               className="hidden md:flex items-center gap-7 text-sm font-medium"
@@ -516,13 +744,20 @@ export default function App() {
                     type="button"
                     onClick={() => navigateTo(item.id)}
                     aria-current={isCurrent ? 'page' : undefined}
-                    className={`py-1 transition-colors whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A64B33] ${
+                    className={`relative py-2 transition-colors duration-200 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#A64B33] ${
                       isCurrent
-                        ? 'text-[#A64B33] dark:text-[#D4785E] underline underline-offset-8 decoration-2'
-                        : 'text-[#575048] dark:text-[#CBC3B6] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB] hover:underline underline-offset-8'
+                        ? 'text-[#A64B33] dark:text-[#D4785E]'
+                        : 'text-[#575048] dark:text-[#CBC3B6] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB]'
                     }`}
                   >
                     {item.label}
+                    {isCurrent && (
+                      <motion.span
+                        layoutId="primary-nav-indicator"
+                        transition={APPLE_SPRING}
+                        className="absolute inset-x-0 bottom-0 h-[2px] rounded-full bg-[#A64B33] dark:bg-[#D4785E]"
+                      />
+                    )}
                   </button>
                 );
               })}
@@ -642,26 +877,44 @@ export default function App() {
             {activeView === 'overview' && (
               <motion.div
                 key="overview"
-                initial={{opacity: 0, y: 10}}
-                animate={{opacity: 1, y: 0}}
-                exit={{opacity: 0, y: -8}}
-                transition={{duration: 0.2, ease: [0.16, 1, 0.3, 1]}}
+                initial={{opacity: 0, y: 14, scale: 0.992}}
+                animate={{opacity: 1, y: 0, scale: 1}}
+                exit={{opacity: 0, y: -10, scale: 0.992}}
+                transition={{duration: 0.3, ease: APPLE_EASE}}
                 className="space-y-14"
               >
-                {/* Hero Workspace Overview — Warm Editorial Monograph Composition */}
-                <section className="bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl p-6 sm:p-8 lg:p-12 transition-colors duration-200">
-                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
+                {/* Hero Workspace Overview — Warm Editorial Monograph with Ambient Motion */}
+                <section className="relative overflow-hidden bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl p-6 sm:p-8 lg:p-12 apple-surface">
+                  <div
+                    aria-hidden="true"
+                    className="apple-ambient-orb absolute -top-28 -right-24 w-80 h-80 rounded-full bg-[radial-gradient(circle,rgba(166,75,51,0.12)_0%,transparent_70%)] dark:bg-[radial-gradient(circle,rgba(212,120,94,0.14)_0%,transparent_70%)]"
+                  />
+                  <div
+                    aria-hidden="true"
+                    style={{animationDelay: '-7s'}}
+                    className="apple-ambient-orb absolute -bottom-32 -left-24 w-96 h-96 rounded-full bg-[radial-gradient(circle,rgba(61,107,79,0.08)_0%,transparent_70%)] dark:bg-[radial-gradient(circle,rgba(122,184,143,0.1)_0%,transparent_70%)]"
+                  />
+
+                  <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-stretch">
                     <div className="lg:col-span-7 flex flex-col justify-between">
                       <div>
-                        <div className="flex items-center gap-3 text-xs font-medium tracking-[0.14em] text-[#A64B33] dark:text-[#D4785E]">
+                        <motion.div
+                          initial={{opacity: 0, y: 10}}
+                          animate={{opacity: 1, y: 0}}
+                          transition={{duration: 0.45, ease: APPLE_EASE}}
+                          className="flex items-center gap-3 text-xs font-medium tracking-[0.14em] text-[#A64B33] dark:text-[#D4785E]"
+                        >
                           <span
                             className="w-6 h-px bg-[#A64B33] dark:bg-[#D4785E] shrink-0"
                             aria-hidden="true"
                           />
                           <span>Quadra 12 · CBSE Class 12 PCMB · Created by AriYan Pal (Keśava Dāsa)</span>
-                        </div>
+                        </motion.div>
 
-                        <h1
+                        <motion.h1
+                          initial={{opacity: 0, y: 14}}
+                          animate={{opacity: 1, y: 0}}
+                          transition={{duration: 0.52, delay: 0.06, ease: APPLE_EASE}}
                           className="mt-4 font-semibold tracking-tight text-[#1E1B18] dark:text-[#F5F2EB] leading-[1.06]"
                           style={{
                             fontSize: 'clamp(2.25rem, 4.1vw, 3.5rem)',
@@ -673,26 +926,36 @@ export default function App() {
                             deliberately
                           </em>{' '}
                           paced.
-                        </h1>
+                        </motion.h1>
 
-                        <div className="mt-6 pt-6 border-t border-[#DDD6C7] dark:border-[#332E28]">
+                        <motion.div
+                          initial={{opacity: 0, y: 12}}
+                          animate={{opacity: 1, y: 0}}
+                          transition={{duration: 0.52, delay: 0.12, ease: APPLE_EASE}}
+                          className="mt-6 pt-6 border-t border-[#DDD6C7] dark:border-[#332E28]"
+                        >
                           <p className="text-base leading-relaxed text-[#575048] dark:text-[#CBC3B6] max-w-[58ch]">
                             Track every NCERT chapter across Physics, Chemistry, Biology,
                             and Mathematics, write official CBSE 2026–27 sample papers
                             inside the 3-hour Examination Hall, and revise with the 12th
                             Hackers one-shot series.
                           </p>
-                        </div>
+                        </motion.div>
                       </div>
 
-                      <div className="mt-8 flex flex-wrap items-center gap-4">
+                      <motion.div
+                        initial={{opacity: 0, y: 12}}
+                        animate={{opacity: 1, y: 0}}
+                        transition={{duration: 0.5, delay: 0.18, ease: APPLE_EASE}}
+                        className="mt-8 flex flex-wrap items-center gap-4"
+                      >
                         <motion.button
                           type="button"
-                          whileHover={{y: -1}}
-                          whileTap={{scale: 0.97}}
-                          transition={{duration: 0.15}}
+                          whileHover={{y: -2, scale: 1.015}}
+                          whileTap={{scale: 0.965}}
+                          transition={APPLE_SPRING}
                           onClick={() => navigateTo('tracker')}
-                          className="inline-flex items-center gap-2.5 px-5 py-2.5 text-sm font-medium text-[#F5F2EB] dark:text-[#1E1B18] bg-[#1E1B18] hover:bg-[#332E28] dark:bg-[#F5F2EB] dark:hover:bg-[#E8E2D5] rounded-lg transition-colors whitespace-nowrap shrink-0"
+                          className="inline-flex items-center gap-2.5 px-5 py-2.5 text-sm font-medium text-[#F5F2EB] dark:text-[#1E1B18] bg-[#1E1B18] hover:bg-[#332E28] dark:bg-[#F5F2EB] dark:hover:bg-[#E8E2D5] rounded-lg transition-colors whitespace-nowrap shrink-0 shadow-xs"
                         >
                           <span>Open Subject Tracker</span>
                           <ArrowRight className="w-4 h-4" aria-hidden="true" />
@@ -702,16 +965,16 @@ export default function App() {
                           type="button"
                           whileHover={{y: -1}}
                           whileTap={{scale: 0.97}}
-                          transition={{duration: 0.15}}
+                          transition={APPLE_SPRING}
                           onClick={scrollToSubjects}
-                          className="inline-flex items-center gap-2 text-sm font-medium text-[#1E1B18] dark:text-[#F5F2EB] hover:text-[#A64B33] dark:hover:text-[#D4785E] transition-colors whitespace-nowrap shrink-0"
+                          className="group inline-flex items-center gap-2 text-sm font-medium text-[#1E1B18] dark:text-[#F5F2EB] hover:text-[#A64B33] dark:hover:text-[#D4785E] transition-colors whitespace-nowrap shrink-0"
                         >
                           <span>Explore subjects</span>
-                          <span className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-[#C9C1B2] dark:border-[#4A423A]">
+                          <span className="inline-flex items-center justify-center w-8 h-8 rounded-full border border-[#C9C1B2] dark:border-[#4A423A] transition-transform duration-300 group-hover:translate-y-0.5">
                             <ArrowDown className="w-3.5 h-3.5" aria-hidden="true" />
                           </span>
                         </motion.button>
-                      </div>
+                      </motion.div>
                     </div>
 
                     {/* 4-Quadrant PCMB Preview Grid with Live Scroll Parallax */}
@@ -720,22 +983,22 @@ export default function App() {
                     />
                   </div>
 
-                  {/* 4-Column PCMB Summary Metrics */}
-                  <div className="mt-10 pt-8 border-t border-[#DDD6C7] dark:border-[#332E28] grid grid-cols-2 lg:grid-cols-4 gap-6">
+                  {/* 4-Column PCMB Summary Metrics with Live Spring Counters */}
+                  <div className="relative z-10 mt-10 pt-8 border-t border-[#DDD6C7] dark:border-[#332E28] grid grid-cols-2 lg:grid-cols-4 gap-6">
                     <div>
                       <p className="text-xs text-[#787066] dark:text-[#9C9387]">Overall Syllabus</p>
                       <p className="mt-1 text-2xl sm:text-3xl font-semibold text-[#1E1B18] dark:text-[#F5F2EB] font-mono tabular-nums">
-                        {overallProgress}%
+                        <AnimatedNumber value={overallProgress} suffix="%" />
                       </p>
                       <p className="mt-0.5 text-xs text-[#787066] dark:text-[#9C9387] font-mono tabular-nums">
-                        {doneChapters}/{totalChapters} chapters
+                        <AnimatedNumber value={doneChapters} />/{totalChapters} chapters
                       </p>
                     </div>
 
                     <div>
                       <p className="text-xs text-[#787066] dark:text-[#9C9387]">Subjects Completed</p>
                       <p className="mt-1 text-2xl sm:text-3xl font-semibold text-[#1E1B18] dark:text-[#F5F2EB] font-mono tabular-nums">
-                        {completedSubjects} / 4
+                        <AnimatedNumber value={completedSubjects} /> / 4
                       </p>
                       <p className="mt-0.5 text-xs text-[#787066] dark:text-[#9C9387]">
                         Auto-completed at 100%
@@ -745,7 +1008,7 @@ export default function App() {
                     <div>
                       <p className="text-xs text-[#787066] dark:text-[#9C9387]">CBSE Sample Papers</p>
                       <p className="mt-1 text-2xl sm:text-3xl font-semibold text-[#1E1B18] dark:text-[#F5F2EB] font-mono tabular-nums">
-                        {papersAttempted} / 4
+                        <AnimatedNumber value={papersAttempted} /> / 4
                       </p>
                       <p className="mt-0.5 text-xs text-[#787066] dark:text-[#9C9387]">
                         Full 3-hour CBSE PDFs
@@ -755,7 +1018,7 @@ export default function App() {
                     <div>
                       <p className="text-xs text-[#787066] dark:text-[#9C9387]">12th Hackers Watched</p>
                       <p className="mt-1 text-2xl sm:text-3xl font-semibold text-[#1E1B18] dark:text-[#F5F2EB] font-mono tabular-nums">
-                        {watchedLecturesCount} / {totalPlaylistVideos}
+                        <AnimatedNumber value={watchedLecturesCount} /> / {totalPlaylistVideos}
                       </p>
                       <p className="mt-0.5 text-xs text-[#787066] dark:text-[#9C9387]">
                         Auto-synced with Lecture done
@@ -764,13 +1027,21 @@ export default function App() {
                   </div>
                 </section>
 
+                {/* Live Apple StandBy–Inspired Board Exam Countdown Clock */}
+                <BoardCountdownClock
+                  remainingChapters={totalChapters - doneChapters}
+                  totalChapters={totalChapters}
+                  onOpenTracker={() => navigateTo('tracker')}
+                  onOpenExamHall={() => navigateTo('exam-hall')}
+                />
+
                 {/* Subject Progress Grid — Selected Subjects Editorial Catalogue */}
                 <section aria-labelledby="overview-subjects-heading" className="space-y-6">
                   <motion.div
                     initial={{opacity: 0, y: 14}}
                     whileInView={{opacity: 1, y: 0}}
-                    viewport={{once: false, amount: 0.2}}
-                    transition={{duration: 0.28, ease: [0.16, 1, 0.3, 1]}}
+                    viewport={{once: true, amount: 0.1}}
+                    transition={{duration: 0.28, ease: APPLE_EASE}}
                     className="pb-5 border-b border-[#DDD6C7] dark:border-[#332E28] flex flex-wrap items-end justify-between gap-4"
                   >
                     <div>
@@ -812,14 +1083,15 @@ export default function App() {
                           key={subject.id}
                           initial={{opacity: 0, y: 20}}
                           whileInView={{opacity: 1, y: 0}}
-                          viewport={{once: false, amount: 0.15}}
-                          whileHover={{y: -2}}
+                          viewport={{once: true, amount: 0.06}}
+                          whileHover={{y: -4}}
                           transition={{
-                            duration: 0.3,
-                            delay: idx * 0.05,
-                            ease: [0.16, 1, 0.3, 1],
+                            duration: 0.48,
+                            delay: idx * 0.06,
+                            ease: APPLE_EASE,
+                            y: APPLE_SPRING,
                           }}
-                          className="bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl overflow-hidden flex flex-col justify-between transition-colors duration-200"
+                          className="group bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl overflow-hidden flex flex-col justify-between apple-surface"
                         >
                           <div>
                             <div className="aspect-[16/9] border-b border-[#DDD6C7] dark:border-[#332E28] bg-[#ECE6D9] dark:bg-[#24201C] overflow-hidden">
@@ -827,7 +1099,7 @@ export default function App() {
                                 src={subject.imageUrl}
                                 alt={subject.imageAlt}
                                 fallbackTitle={subject.name}
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.04]"
                               />
                             </div>
 
@@ -852,7 +1124,7 @@ export default function App() {
                                   </span>
                                 ) : (
                                   <span className="text-xs font-mono font-semibold text-[#A64B33] dark:text-[#D4785E] tabular-nums">
-                                    {pct}%
+                                    <AnimatedNumber value={pct} suffix="%" />
                                   </span>
                                 )}
                               </div>
@@ -861,7 +1133,7 @@ export default function App() {
                                 <motion.div
                                   initial={false}
                                   animate={{scaleX: pct / 100}}
-                                  transition={{duration: 0.35, ease: [0.16, 1, 0.3, 1]}}
+                                  transition={{type: 'spring', stiffness: 120, damping: 20}}
                                   className={`h-full w-full origin-left rounded-full ${
                                     isCompleted
                                       ? 'bg-[#3D6B4F] dark:bg-[#7AB88F] progress-shimmer'
@@ -881,15 +1153,17 @@ export default function App() {
                                     stageDone > 0 && stageDone < total;
 
                                   return (
-                                    <button
+                                    <motion.button
                                       key={stage.key}
                                       type="button"
                                       role="checkbox"
                                       aria-checked={allStageDone}
+                                      whileTap={{scale: 0.95}}
+                                      transition={APPLE_SPRING}
                                       onClick={() =>
                                         handleToggleSubjectStage(subject.id, stage.key)
                                       }
-                                      className={`flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg border text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A64B33] ${
+                                      className={`flex items-center justify-between gap-2 px-2.5 py-2 rounded-lg border text-left transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A64B33] ${
                                         allStageDone
                                           ? 'bg-[#E8F0EA] dark:bg-[#1C2E22] border-[#3D6B4F] dark:border-[#7AB88F] text-[#23422F] dark:text-[#B6DFC3]'
                                           : 'bg-[#F5F2EB] dark:bg-[#161412] border-[#DDD6C7] dark:border-[#332E28] text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#B8AF9F] dark:hover:border-[#4A423A]'
@@ -907,7 +1181,13 @@ export default function App() {
                                           }`}
                                         >
                                           {allStageDone ? (
-                                            <Check className="w-3 h-3 stroke-[2.5]" />
+                                            <motion.span
+                                              initial={{scale: 0.4, opacity: 0}}
+                                              animate={{scale: 1, opacity: 1}}
+                                              transition={APPLE_SPRING}
+                                            >
+                                              <Check className="w-3 h-3 stroke-[2.5]" />
+                                            </motion.span>
                                           ) : partialStageDone ? (
                                             <span className="w-2 h-0.5 bg-[#A64B33] dark:bg-[#D4785E] rounded-xs" />
                                           ) : null}
@@ -919,7 +1199,7 @@ export default function App() {
                                       <span className="text-[11px] font-mono tabular-nums text-[#787066] dark:text-[#9C9387] shrink-0">
                                         {stageDone}/{total}
                                       </span>
-                                    </button>
+                                    </motion.button>
                                   );
                                 })}
                               </div>
@@ -958,116 +1238,129 @@ export default function App() {
                   </div>
                 </section>
 
-                {/* Signature Dark Espresso Editorial Feature Band (Examination Hall) */}
-                <motion.section
-                  initial={{opacity: 0, y: 20}}
-                  whileInView={{opacity: 1, y: 0}}
-                  viewport={{once: false, amount: 0.15}}
-                  transition={{duration: 0.3, ease: [0.16, 1, 0.3, 1]}}
-                  className="bg-[#1E1B18] dark:bg-[#24201C] text-[#F5F2EB] border border-[#332E28] rounded-xl p-8 sm:p-10 lg:p-12"
-                >
-                  <div className="max-w-2xl">
-                    <div className="flex items-center gap-3 text-xs font-medium tracking-[0.14em] text-[#CBC3B6]">
-                      <span className="w-6 h-px bg-[#8A8075] shrink-0" aria-hidden="true" />
-                      <span>Official CBSE 2026–27 SQPs · 03:00:00 Timer</span>
-                    </div>
+                {/* Compact Milestones & Badges Trigger Card — Opens Full Achievements Interface on Tap */}
+                <AchievementsTriggerCard
+                  achievements={evaluatedAchievements}
+                  stats={achievementStats}
+                  onOpenModal={() => setAchievementsModalOpen(true)}
+                />
 
-                    <h2
-                      className="mt-4 text-3xl sm:text-4xl font-semibold tracking-tight text-[#F5F2EB] leading-[1.1]"
-                      style={{textWrap: 'balance'}}
-                    >
-                      Inside the{' '}
-                      <em className="italic font-medium text-[#D4785E]">
-                        examination hall.
-                      </em>
-                    </h2>
-
-                    <div className="mt-6 pt-6 border-t border-[#332E28]">
-                      <p className="text-sm sm:text-base text-[#CBC3B6] leading-relaxed">
-                        Write the complete, unmodified 3-hour CBSE 2026–27 Sample Question
-                        Papers across Physics, Chemistry, Biology, and Mathematics. The
-                        original CBSE PDF stays embedded beside an interactive 33/38
-                        question OMR &amp; written checklist and instant Section A grading.
-                      </p>
-                    </div>
-
-                    <div className="mt-8 flex flex-wrap items-center gap-4">
-                      <motion.button
-                        type="button"
-                        whileHover={{y: -1}}
-                        whileTap={{scale: 0.97}}
-                        onClick={() => navigateTo('exam-hall')}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-[#1E1B18] bg-[#F5F2EB] hover:bg-[#E8E2D5] rounded-lg transition-colors whitespace-nowrap"
-                      >
-                        <FileCheck2 className="w-4 h-4" aria-hidden="true" />
-                        <span>Open Examination Hall</span>
-                        <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
-                      </motion.button>
-                    </div>
-                  </div>
-                </motion.section>
-
-                {/* Closing Editorial Callout Band — 12th Hackers Playlist */}
-                <motion.section
-                  initial={{opacity: 0, y: 20}}
-                  whileInView={{opacity: 1, y: 0}}
-                  viewport={{once: false, amount: 0.15}}
-                  transition={{duration: 0.3, ease: [0.16, 1, 0.3, 1]}}
-                  className="bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl p-8 sm:p-10 lg:p-12 transition-colors duration-200"
-                >
-                  <div className="max-w-xl">
-                    <div className="flex items-center gap-3 text-xs font-medium tracking-[0.14em] text-[#A64B33] dark:text-[#D4785E]">
-                      <span
-                        className="w-6 h-px bg-[#A64B33] dark:bg-[#D4785E] shrink-0"
-                        aria-hidden="true"
-                      />
-                      <span>Official YouTube Series · PCMB</span>
-                    </div>
-
-                    <h2
-                      className="mt-4 text-3xl sm:text-4xl font-semibold tracking-tight text-[#1E1B18] dark:text-[#F5F2EB] leading-[1.1]"
-                      style={{textWrap: 'balance'}}
-                    >
-                      Ready for{' '}
-                      <em className="italic font-medium text-[#A64B33] dark:text-[#D4785E]">
-                        one-shot
-                      </em>{' '}
-                      revision?
-                    </h2>
-
-                    <p className="mt-4 text-sm sm:text-base text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
-                      Stream the official 12th Hackers playlists for Physics, Chemistry,
-                      Biology, and Mathematics with chapter formulas, timestamps, and
-                      completion tracking.
-                    </p>
-
-                    <div className="mt-7">
-                      <motion.button
-                        type="button"
-                        whileHover={{y: -1}}
-                        whileTap={{scale: 0.97}}
-                        onClick={() => navigateTo('hackers')}
-                        className="w-full sm:w-auto min-w-[260px] inline-flex items-center justify-between gap-4 px-5 py-3 text-sm font-medium text-[#F5F2EB] dark:text-[#1E1B18] bg-[#1E1B18] hover:bg-[#332E28] dark:bg-[#F5F2EB] dark:hover:bg-[#E8E2D5] rounded-lg transition-colors whitespace-nowrap"
-                      >
-                        <span className="inline-flex items-center gap-2">
-                          <Play className="w-4 h-4" aria-hidden="true" />
-                          <span>Open 12th Hackers Playlist</span>
+                {/* Signature Dark Espresso Editorial Feature Band (Examination Hall) with Scroll Scale Reveal */}
+                <ScrollRevealBand>
+                  <section className="relative overflow-hidden bg-[#1E1B18] dark:bg-[#24201C] text-[#F5F2EB] border border-[#332E28] rounded-xl p-8 sm:p-10 lg:p-12 apple-surface">
+                    <div
+                      aria-hidden="true"
+                      className="apple-ambient-orb absolute -top-24 -right-16 w-80 h-80 rounded-full bg-[radial-gradient(circle,rgba(212,120,94,0.18)_0%,transparent_70%)]"
+                    />
+                    <div className="relative z-10 max-w-2xl">
+                      <div className="flex items-center gap-3 text-xs font-medium tracking-[0.14em] text-[#CBC3B6]">
+                        <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
+                          <span className="live-beacon-ring absolute inline-flex h-full w-full rounded-full bg-[#D4785E]" />
+                          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#D4785E]" />
                         </span>
-                        <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
-                      </motion.button>
+                        <span>Official CBSE 2026–27 SQPs · 03:00:00 Timer</span>
+                      </div>
+
+                      <h2
+                        className="mt-4 text-3xl sm:text-4xl font-semibold tracking-tight text-[#F5F2EB] leading-[1.1]"
+                        style={{textWrap: 'balance'}}
+                      >
+                        Inside the{' '}
+                        <em className="italic font-medium text-[#D4785E]">
+                          examination hall.
+                        </em>
+                      </h2>
+
+                      <div className="mt-6 pt-6 border-t border-[#332E28]">
+                        <p className="text-sm sm:text-base text-[#CBC3B6] leading-relaxed">
+                          Write the complete, unmodified 3-hour CBSE 2026–27 Sample Question
+                          Papers across Physics, Chemistry, Biology, and Mathematics. The
+                          original CBSE PDF stays embedded beside an interactive 33/38
+                          question OMR &amp; written checklist and instant Section A grading.
+                        </p>
+                      </div>
+
+                      <div className="mt-8 flex flex-wrap items-center gap-4">
+                        <motion.button
+                          type="button"
+                          whileHover={{y: -2, scale: 1.015}}
+                          whileTap={{scale: 0.965}}
+                          transition={APPLE_SPRING}
+                          onClick={() => navigateTo('exam-hall')}
+                          className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-[#1E1B18] bg-[#F5F2EB] hover:bg-[#E8E2D5] rounded-lg transition-colors whitespace-nowrap"
+                        >
+                          <FileCheck2 className="w-4 h-4" aria-hidden="true" />
+                          <span>Open Examination Hall</span>
+                          <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
+                        </motion.button>
+                      </div>
                     </div>
-                  </div>
-                </motion.section>
+                  </section>
+                </ScrollRevealBand>
+
+                {/* Closing Editorial Callout Band — 12th Hackers Playlist with Scroll Scale Reveal */}
+                <ScrollRevealBand>
+                  <section className="relative overflow-hidden bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl p-8 sm:p-10 lg:p-12 apple-surface">
+                    <div
+                      aria-hidden="true"
+                      style={{animationDelay: '-4s'}}
+                      className="apple-ambient-orb absolute -bottom-24 -right-16 w-72 h-72 rounded-full bg-[radial-gradient(circle,rgba(166,75,51,0.1)_0%,transparent_70%)] dark:bg-[radial-gradient(circle,rgba(212,120,94,0.12)_0%,transparent_70%)]"
+                    />
+                    <div className="relative z-10 max-w-xl">
+                      <div className="flex items-center gap-3 text-xs font-medium tracking-[0.14em] text-[#A64B33] dark:text-[#D4785E]">
+                        <span
+                          className="w-6 h-px bg-[#A64B33] dark:bg-[#D4785E] shrink-0"
+                          aria-hidden="true"
+                        />
+                        <span>Official YouTube Series · PCMB</span>
+                      </div>
+
+                      <h2
+                        className="mt-4 text-3xl sm:text-4xl font-semibold tracking-tight text-[#1E1B18] dark:text-[#F5F2EB] leading-[1.1]"
+                        style={{textWrap: 'balance'}}
+                      >
+                        Ready for{' '}
+                        <em className="italic font-medium text-[#A64B33] dark:text-[#D4785E]">
+                          one-shot
+                        </em>{' '}
+                        revision?
+                      </h2>
+
+                      <p className="mt-4 text-sm sm:text-base text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
+                        Stream the official 12th Hackers playlists for Physics, Chemistry,
+                        Biology, and Mathematics with chapter formulas, timestamps, and
+                        completion tracking.
+                      </p>
+
+                      <div className="mt-7">
+                        <motion.button
+                          type="button"
+                          whileHover={{y: -2, scale: 1.015}}
+                          whileTap={{scale: 0.965}}
+                          transition={APPLE_SPRING}
+                          onClick={() => navigateTo('hackers')}
+                          className="w-full sm:w-auto min-w-[260px] inline-flex items-center justify-between gap-4 px-5 py-3 text-sm font-medium text-[#F5F2EB] dark:text-[#1E1B18] bg-[#1E1B18] hover:bg-[#332E28] dark:bg-[#F5F2EB] dark:hover:bg-[#E8E2D5] rounded-lg transition-colors whitespace-nowrap"
+                        >
+                          <span className="inline-flex items-center gap-2">
+                            <Play className="w-4 h-4" aria-hidden="true" />
+                            <span>Open 12th Hackers Playlist</span>
+                          </span>
+                          <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
+                        </motion.button>
+                      </div>
+                    </div>
+                  </section>
+                </ScrollRevealBand>
               </motion.div>
             )}
 
             {activeView === 'tracker' && (
               <motion.div
                 key="tracker"
-                initial={{opacity: 0, y: 10}}
-                animate={{opacity: 1, y: 0}}
-                exit={{opacity: 0, y: -8}}
-                transition={{duration: 0.2, ease: [0.16, 1, 0.3, 1]}}
+                initial={{opacity: 0, y: 14, scale: 0.992}}
+                animate={{opacity: 1, y: 0, scale: 1}}
+                exit={{opacity: 0, y: -10, scale: 0.992}}
+                transition={{duration: 0.28, ease: APPLE_EASE}}
               >
                 <SubjectTrackerSection
                   completedChapters={completedChapters}
@@ -1085,10 +1378,10 @@ export default function App() {
             {activeView === 'exam-hall' && (
               <motion.div
                 key="exam-hall"
-                initial={{opacity: 0, y: 10}}
-                animate={{opacity: 1, y: 0}}
-                exit={{opacity: 0, y: -8}}
-                transition={{duration: 0.2, ease: [0.16, 1, 0.3, 1]}}
+                initial={{opacity: 0, y: 14, scale: 0.992}}
+                animate={{opacity: 1, y: 0, scale: 1}}
+                exit={{opacity: 0, y: -10, scale: 0.992}}
+                transition={{duration: 0.28, ease: APPLE_EASE}}
               >
                 <ExamHallSection
                   initialSubjectId={examTargetSubject}
@@ -1101,10 +1394,10 @@ export default function App() {
             {activeView === 'hackers' && (
               <motion.div
                 key="hackers"
-                initial={{opacity: 0, y: 10}}
-                animate={{opacity: 1, y: 0}}
-                exit={{opacity: 0, y: -8}}
-                transition={{duration: 0.2, ease: [0.16, 1, 0.3, 1]}}
+                initial={{opacity: 0, y: 14, scale: 0.992}}
+                animate={{opacity: 1, y: 0, scale: 1}}
+                exit={{opacity: 0, y: -10, scale: 0.992}}
+                transition={{duration: 0.28, ease: APPLE_EASE}}
               >
                 <HackersPlaylistSection
                   watchedLectures={watchedLectures}
@@ -1122,13 +1415,21 @@ export default function App() {
             <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
               <div className="space-y-3 max-w-2xl">
                 <div>
-                  <p
-                    className="text-sm font-semibold text-[#1E1B18] dark:text-[#F5F2EB]"
-                    style={{fontFamily: 'var(--font-display)'}}
-                  >
-                    Quadra 12
-                  </p>
-                  <p className="mt-1 text-xs text-[#787066] dark:text-[#9C9387]">
+                  <div className="flex items-center gap-2.5">
+                    <img
+                      src={`${import.meta.env.BASE_URL}src/assets/images/quadra_12_icon_1795347655892.jpg`}
+                      alt="Quadra 12 emblem"
+                      referrerPolicy="no-referrer"
+                      className="w-7 h-7 rounded-lg object-cover border border-[#DDD6C7] dark:border-[#332E28] shrink-0"
+                    />
+                    <p
+                      className="text-sm font-semibold text-[#1E1B18] dark:text-[#F5F2EB]"
+                      style={{fontFamily: 'var(--font-display)'}}
+                    >
+                      Quadra 12
+                    </p>
+                  </div>
+                  <p className="mt-1.5 text-xs text-[#787066] dark:text-[#9C9387]">
                     Class 12 CBSE Syllabus Tracker · Examination Hall · 12th Hackers Playlist
                   </p>
                   <p className="mt-1.5 text-xs font-medium text-[#575048] dark:text-[#CBC3B6]">
@@ -1155,18 +1456,18 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => openHelpDesk('about')}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] transition-colors whitespace-nowrap"
                   >
                     <ShieldCheck
                       className="w-3.5 h-3.5 text-[#A64B33] dark:text-[#D4785E]"
                       aria-hidden="true"
                     />
-                    <span>About &amp; Disclaimers</span>
+                    <span>About &amp; Terms</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => openHelpDesk('suggest')}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] hover:opacity-90 transition-opacity"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] hover:opacity-90 transition-opacity whitespace-nowrap"
                   >
                     <MessageSquarePlus className="w-3.5 h-3.5" aria-hidden="true" />
                     <span>Suggest Addition / Change</span>
@@ -1188,8 +1489,24 @@ export default function App() {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-[#DDD6C7]/70 dark:border-[#332E28] text-[11px] text-[#787066] dark:text-[#9C9387] leading-relaxed">
-              Disclaimer: Quadra 12 is an independent Class 12 student study workspace. Official CBSE Sample Question Papers and 12th Hackers YouTube lectures belong to their respective owners and are organized here solely for revision convenience. Built by AriYan Pal (Keśava Dāsa) with partial AI-assisted development support; your study progress saves locally in your browser.
+            <div className="pt-4 border-t border-[#DDD6C7]/70 dark:border-[#332E28] space-y-2 text-[11px] text-[#787066] dark:text-[#9C9387] leading-relaxed">
+              <p>
+                Terms &amp; Conditions: Quadra 12 is an independent, non-commercial Class 12 student study workspace. Official CBSE Sample Question Papers and 12th Hackers YouTube lectures remain the intellectual property of their respective copyright holders and are organized strictly for revision convenience. Any copyright claim or takedown request sent to{' '}
+                <span className="font-mono text-[#575048] dark:text-[#CBC3B6]">
+                  ariyanpal090@gmail.com
+                </span>{' '}
+                will be reviewed and acted upon promptly. Study progress saves locally in your browser.{' '}
+                <button
+                  type="button"
+                  onClick={() => openHelpDesk('about')}
+                  className="font-medium text-[#A64B33] dark:text-[#D4785E] hover:underline whitespace-nowrap"
+                >
+                  Read Terms &amp; Conditions →
+                </button>
+              </p>
+              <p className="font-mono text-[11px] text-[#787066] dark:text-[#9C9387]">
+                Terms &amp; Conditions · 26/12/2016
+              </p>
             </div>
           </div>
         </footer>
@@ -1200,6 +1517,73 @@ export default function App() {
           onClose={() => setHelpDeskOpen(false)}
           onNavigateSection={handleHelpDeskNavigate}
         />
+
+        <AchievementsModal
+          isOpen={achievementsModalOpen}
+          achievements={evaluatedAchievements}
+          stats={achievementStats}
+          onClose={() => setAchievementsModalOpen(false)}
+          onNavigateTarget={handleAchievementAction}
+        />
+
+        {/* Non-intrusive Live Achievement Unlock Toast */}
+        <AnimatePresence>
+          {recentUnlockToast && (
+            <motion.aside
+              role="status"
+              aria-live="polite"
+              initial={{opacity: 0, y: 20, scale: 0.96}}
+              animate={{opacity: 1, y: 0, scale: 1}}
+              exit={{opacity: 0, y: 14, scale: 0.96}}
+              transition={APPLE_SPRING}
+              className="fixed bottom-4 right-4 z-50 w-[min(360px,calc(100vw-2rem))] rounded-xl border border-[#C9C1B2] dark:border-[#4A423A] bg-[#FAF8F3] dark:bg-[#1E1B18] p-4 shadow-lg"
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-full border border-[#B7791F] dark:border-[#E6B17A] bg-[#FBF3E4] dark:bg-[#2D2416] text-[#8C5A12] dark:text-[#E6B17A] flex items-center justify-center shrink-0">
+                  <Trophy className="w-4 h-4" aria-hidden="true" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] font-mono text-[#A64B33] dark:text-[#D4785E]">
+                    Achievement Unlocked
+                    {recentUnlockToast.extraCount > 0
+                      ? ` · +${recentUnlockToast.extraCount} more`
+                      : ''}
+                  </p>
+                  <p className="mt-0.5 text-sm font-semibold text-[#1E1B18] dark:text-[#F5F2EB] truncate">
+                    {recentUnlockToast.title}
+                  </p>
+                  <p className="mt-0.5 text-xs text-[#575048] dark:text-[#CBC3B6] line-clamp-2">
+                    {recentUnlockToast.detail}
+                  </p>
+                  <div className="mt-2.5 flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={handleOpenAchievementsModal}
+                      className="text-xs font-medium text-[#A64B33] dark:text-[#D4785E] hover:underline whitespace-nowrap"
+                    >
+                      View Badges →
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setRecentUnlockToast(null)}
+                      className="text-xs text-[#787066] dark:text-[#9C9387] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB] whitespace-nowrap"
+                    >
+                      Dismiss
+                    </button>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setRecentUnlockToast(null)}
+                  aria-label="Dismiss achievement notification"
+                  className="text-[#787066] dark:text-[#9C9387] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB] p-1 rounded-md shrink-0"
+                >
+                  <X className="w-4 h-4" aria-hidden="true" />
+                </button>
+              </div>
+            </motion.aside>
+          )}
+        </AnimatePresence>
       </div>
     </MotionConfig>
   );

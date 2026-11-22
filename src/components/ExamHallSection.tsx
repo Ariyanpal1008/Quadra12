@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import {EXAM_QUESTIONS, SUBJECTS, SubjectId} from '../data/pcmbData';
 import {ExamDiagram} from './ExamDiagrams';
+import {APPLE_EASE, APPLE_SPRING} from './FluidPrimitives';
 
 interface ExamAttemptSummary {
   score: number;
@@ -85,6 +86,7 @@ export function ExamHallSection({
       }
     });
 
+    const hasSelfWrittenMarks = selfWrittenMarks.trim() !== '';
     const parsedWritten = Math.min(
       maxWrittenMarks,
       Math.max(0, Number(selfWrittenMarks) || 0),
@@ -102,8 +104,8 @@ export function ExamHallSection({
     };
     setLastAttempt({
       ...summary,
-      score: selfWrittenMarks ? totalScore : sectionAScore,
-      totalMarks: selfWrittenMarks ? totalMarks : sectionAQuestions.length,
+      score: hasSelfWrittenMarks ? totalScore : sectionAScore,
+      totalMarks: hasSelfWrittenMarks ? totalMarks : sectionAQuestions.length,
     });
     onSaveAttempt(selectedSubjectId, summary);
     setExamPhase('review');
@@ -111,16 +113,18 @@ export function ExamHallSection({
 
   useEffect(() => {
     if (examPhase !== 'active' || isPaused) return;
-    if (secondsLeft <= 0) {
-      finalizeExam();
-      return;
-    }
     const timer = window.setInterval(() => {
-      setSecondsLeft((prev) => prev - 1);
+      setSecondsLeft((prev) => (prev <= 1 ? 0 : prev - 1));
     }, 1000);
     return () => window.clearInterval(timer);
+  }, [examPhase, isPaused]);
+
+  useEffect(() => {
+    if (examPhase === 'active' && secondsLeft <= 0) {
+      finalizeExam();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [examPhase, isPaused, secondsLeft]);
+  }, [examPhase, secondsLeft]);
 
   const startThreeHourExam = (subjectId: SubjectId) => {
     setSelectedSubjectId(subjectId);
@@ -138,11 +142,14 @@ export function ExamHallSection({
   if (examPhase === 'lobby') {
     return (
       <section aria-labelledby="exam-hall-heading" className="space-y-8">
-        <div className="bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl p-6 sm:p-8 space-y-6 transition-colors duration-200">
+        <div className="relative overflow-hidden bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl p-6 sm:p-8 space-y-6 apple-surface">
           <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
             <div className="max-w-3xl">
               <div className="flex items-center gap-3 text-xs font-medium tracking-[0.12em] text-[#A64B33] dark:text-[#D4785E]">
-                <span className="w-5 h-px bg-[#A64B33] dark:bg-[#D4785E] shrink-0" aria-hidden="true" />
+                <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
+                  <span className="live-beacon-ring absolute inline-flex h-full w-full rounded-full bg-[#A64B33] dark:bg-[#D4785E]" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#A64B33] dark:bg-[#D4785E]" />
+                </span>
                 <span>Official CBSE Class XII Sample Question Papers · Session 2026–27</span>
               </div>
               <h1
@@ -199,25 +206,21 @@ export function ExamHallSection({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {SUBJECTS.map((subject, idx) => {
             const best = bestScores[subject.id];
-            const isHighlighted = subject.id === selectedSubjectId;
 
             return (
               <motion.div
                 key={subject.id}
                 initial={{opacity: 0, y: 20}}
                 whileInView={{opacity: 1, y: 0}}
-                viewport={{once: false, amount: 0.15}}
-                whileHover={{y: -2}}
+                viewport={{once: true, amount: 0.06}}
+                whileHover={{y: -4}}
                 transition={{
-                  duration: 0.3,
+                  duration: 0.42,
                   delay: idx * 0.05,
-                  ease: [0.16, 1, 0.3, 1],
+                  ease: APPLE_EASE,
+                  y: APPLE_SPRING,
                 }}
-                className={`bg-[#FAF8F3] dark:bg-[#1E1B18] border rounded-xl p-6 flex flex-col justify-between gap-6 transition-colors ${
-                  isHighlighted
-                    ? 'border-[#A64B33] dark:border-[#D4785E]'
-                    : 'border-[#DDD6C7] dark:border-[#332E28]'
-                }`}
+                className="bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] hover:border-[#A64B33]/65 dark:hover:border-[#D4785E]/65 rounded-xl p-6 flex flex-col justify-between gap-6 apple-surface"
               >
                 <div>
                   <div className="flex items-center justify-between gap-4">
@@ -286,7 +289,7 @@ export function ExamHallSection({
 
   if (examPhase === 'active') {
     const omrAnsweredCount = sectionAQuestions.filter(
-      (q) => omrAnswers[q.id] !== undefined,
+      (q) => omrAnswers[q.id] !== undefined && omrAnswers[q.id] !== -1,
     ).length;
     const writtenDoneCount = writtenQuestionNumbers.filter(
       (n) => writtenDone[n],
@@ -369,6 +372,15 @@ export function ExamHallSection({
                 </span>
               </div>
               <div className="flex items-center gap-4 text-xs">
+                <a
+                  href={activeSubject.samplePaperPdfUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 font-medium text-[#1E1B18] dark:text-[#F5F2EB] hover:text-[#A64B33] dark:hover:text-[#D4785E]"
+                >
+                  <span>Open PDF</span>
+                  <ExternalLink className="w-3 h-3" aria-hidden="true" />
+                </a>
                 <a
                   href={activeSubject.samplePaperPdfUrl}
                   download
@@ -671,10 +683,10 @@ export function ExamHallSection({
           </div>
           <div>
             <p className="text-xs text-[#787066] dark:text-[#9C9387]">
-              {selfWrittenMarks ? 'Total Self-Evaluated' : 'Section A Accuracy'}
+              {selfWrittenMarks.trim() !== '' ? 'Total Self-Evaluated' : 'Section A Accuracy'}
             </p>
             <p className="mt-1 text-2xl font-semibold text-[#A64B33] dark:text-[#D4785E] font-mono tabular-nums">
-              {selfWrittenMarks && lastAttempt
+              {selfWrittenMarks.trim() !== '' && lastAttempt
                 ? `${lastAttempt.score} / ${lastAttempt.totalMarks}`
                 : `${lastAttempt?.accuracy ?? 0}%`}
             </p>
@@ -698,10 +710,10 @@ export function ExamHallSection({
           return (
             <motion.div
               key={q.id}
-              initial={{opacity: 0, y: 16}}
+              initial={{opacity: 0, y: 14}}
               whileInView={{opacity: 1, y: 0}}
-              viewport={{once: false, amount: 0.1}}
-              transition={{duration: 0.28, ease: [0.16, 1, 0.3, 1]}}
+              viewport={{once: true, amount: 0.05}}
+              transition={{duration: 0.28, ease: APPLE_EASE}}
               className="bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl p-6 space-y-4 transition-colors duration-200"
             >
               <div className="flex flex-wrap items-center justify-between gap-2">

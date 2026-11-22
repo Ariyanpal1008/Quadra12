@@ -21,8 +21,10 @@ I am a Class 12 student currently preparing for board exams.
 ## Main Workspace Features
 
 1. **Overview**
+   - Features a live Apple-style CBSE Class 12 Board Exam Countdown Clock (`Days · Hours · Minutes · Seconds` synced to Feb 16, 10:30 AM IST) with remaining-chapter urgency tracking, custom date adjustment, and automatic annual rollover (`2027 → 2028` on Feb 16).
    - Shows combined mastery across all 50 NCERT Class 12 chapters (200 checkpoints), completed subjects (`/ 4`), CBSE sample papers attempted (`/ 4`), and 12th Hackers lectures watched (`/ 50`).
    - Displays individual cards for Physics (042), Chemistry (043), Biology (044), and Mathematics (041) with live progress bars (100% completion shimmer), subject-level stage checkboxes, and Best Sample Paper scores.
+   - Includes a gamified **Achievements** section with 9 milestone badges (such as **Quick Learner** for completing 3–5 chapters in a single day, **Syllabus Sprinter** for 5 chapters in a day, **Exam Ready** for scoring >90% on an official CBSE sample paper, **Four-Stage Purist**, **Subject Champion**, and **Quadra 12 Grandmaster**) with live progress meters, category filters (`All`, `Unlocked`, `Locked`), and instant unlock notifications.
 
 2. **Subject Tracker**
    - Covers Physics (14 chapters), Chemistry (10 chapters), Biology (13 chapters), and Mathematics (13 chapters).
@@ -41,7 +43,8 @@ I am a Class 12 student currently preparing for board exams.
 ## Help Desk, Suggestion Box & Creator Inbox
 
 - **Help Desk Tab:** Explains every tab of Quadra 12 (Overview, Subject Tracker, Examination Hall, 12th Hackers) with step-by-step usage tips and one-click navigation buttons.
-- **Creator & Disclaimers Tab:** Presents the **About the Creator** story alongside full **Disclaimers & Credits** (Independent Student Initiative, Third-Party Content Ownership for CBSE PDFs and 12th Hackers YouTube playlists, Development Assistance Note, and Local & Cloud Data privacy).
+- **Interactive Tour Tab:** Sandbox visual walkthrough inside Help Desk letting visitors test interactive previews of the Board Countdown Clock, My Achievements (*Quick Learner*, *Exam Ready*), Subject Tracker 4-stage checkboxes, Examination Hall OMR bubbles, and 12th Hackers player.
+- **Creator & Disclaimers Tab:** Presents the **About the Creator** story alongside full **Disclaimers & Credits** and **Terms & Conditions (Copyright & Fair Use)**—covering non-commercial student use, CBSE & 12th Hackers third-party copyright ownership, no official affiliation, copyright/takedown notice procedure (`ariyanpal090@gmail.com`), and warranty limitations.
 - **Suggest Addition / Change (Suggestion Box) Tab:**
   - Visitors can select a request type (`Add New Feature / Content`, `Change Existing Design / Flow`, `Syllabus / Chapter Correction`, `Report an Issue`), choose a target tab (`Full Website`, `Overview`, `Subject Tracker`, `Examination Hall`, `12th Hackers`), enter a title and details, and submit directly to Firebase Cloud Firestore after Google Sign-In.
   - Signed-in visitors can track their own submitted requests (`Submitted`, `Planned`, `Added / Updated`), view creator reply notes, or withdraw new requests.
@@ -50,5 +53,10 @@ I am a Class 12 student currently preparing for board exams.
 
 ## Data Storage & Privacy
 
-- All study progress (chapter checkboxes, 4-stage tasks, watched lectures, exam best scores, and Light/Dark theme) is saved locally in browser `localStorage` (`pcmb_desk_*`), requiring no account or sign-in.
+- All study progress (chapter checkboxes, 4-stage tasks, watched lectures, exam best scores, daily chapter velocity log, achievements, custom board date, and Light/Dark theme) is saved locally in browser `localStorage` (`pcmb_desk_*`), requiring no account or sign-in.
 - Google Sign-In is optional and used only for submitting or tracking community suggestions in Cloud Firestore (`changeRequests`).
+
+## Terms & Conditions
+
+- Quadra 12 is an independent, non-commercial educational study tool. Third-party CBSE Sample Question Papers and 12th Hackers YouTube playlists remain the intellectual property of their respective copyright owners. Valid copyright or takedown requests sent to `ariyanpal090@gmail.com` are reviewed and handled promptly.
+- Terms & Conditions · 26/12/2016

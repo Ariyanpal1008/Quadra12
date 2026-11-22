@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="440" viewBox="0 0 760 440" role="img" aria-label="Quadra 12 Subject Tracker 50 Chapters and SVG Diagrams Preview">
+  <rect width="760" height="440" rx="16" fill="#F5F2EB"/>
+  <rect x="16" y="16" width="728" height="408" rx="14" fill="#FAF8F3" stroke="#DDD6C7" stroke-width="1.5"/>
+
+  <text x="40" y="52" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600" letter-spacing="1.4" fill="#A64B33">SUBJECT TRACKER · 50 NCERT CHAPTERS × 4 STAGES</text>
+  <text x="40" y="78" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#1E1B18">Physics (042) · Chemistry (043) · Biology (044) · Maths (041)</text>
+
+  <!-- Bulk 4-Stage Bar -->
+  <rect x="40" y="102" width="160" height="38" rx="8" fill="#E8F0EA" stroke="#3D6B4F"/>
+  <text x="120" y="125" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#23422F">✓ Lecture done (14/14)</text>
+  <rect x="212" y="102" width="160" height="38" rx="8" fill="#F5F2EB" stroke="#DDD6C7"/>
+  <text x="292" y="125" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#1E1B18">Practice done (9/14)</text>
+  <rect x="384" y="102" width="160" height="38" rx="8" fill="#F5F2EB" stroke="#DDD6C7"/>
+  <text x="464" y="125" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#1E1B18">NCERT done (11/14)</text>
+  <rect x="556" y="102" width="164" height="38" rx="8" fill="#F5F2EB" stroke="#DDD6C7"/>
+  <text x="638" y="125" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#1E1B18">PYQ done (7/14)</text>
+
+  <!-- Chapter Card with Bespoke Diagram -->
+  <rect x="40" y="160" width="420" height="236" rx="12" fill="#F5F2EB" stroke="#DDD6C7"/>
+  <text x="60" y="190" font-family="ui-monospace, monospace" font-size="11" fill="#787066">CHAPTER 01 · UNIT ELECTROSTATICS · 8 MARKS</text>
+  <text x="60" y="214" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="700" fill="#1E1B18">Electric Charges and Fields</text>
+
+  <rect x="60" y="236" width="380" height="32" rx="7" fill="#E8F0EA" stroke="#3D6B4F"/>
+  <text x="76" y="256" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#23422F">✓  Lecture done · Synced with 12th Hackers</text>
+
+  <rect x="60" y="276" width="380" height="32" rx="7" fill="#E8F0EA" stroke="#3D6B4F"/>
+  <text x="76" y="296" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#23422F">✓  Practice done</text>
+
+  <rect x="60" y="316" width="380" height="32" rx="7" fill="#E8F0EA" stroke="#3D6B4F"/>
+  <text x="76" y="336" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#23422F">✓  NCERT + PYQ done · Chapter Complete</text>
+
+  <text x="60" y="378" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#A64B33">Complete 3 chapters in a day → Unlocks Quick Learner ⚡</text>
+
+  <!-- Bespoke Diagram Plate -->
+  <rect x="480" y="160" width="240" height="236" rx="12" fill="#1E1B18" stroke="#332E28"/>
+  <text x="500" y="188" font-family="ui-monospace, monospace" font-size="10" fill="#D4785E">50 CUSTOM SVG PLATES</text>
+  <circle cx="556" cy="264" r="24" fill="none" stroke="#D4785E" stroke-width="2"/>
+  <circle cx="644" cy="264" r="24" fill="none" stroke="#7AB88F" stroke-width="2"/>
+  <path d="M556 264 C585 220, 615 220, 644 264" fill="none" stroke="#F5F2EB" stroke-width="1.8" stroke-dasharray="4 3"/>
+  <path d="M556 264 C585 308, 615 308, 644 264" fill="none" stroke="#F5F2EB" stroke-width="1.8"/>
+  <text x="556" y="269" text-anchor="middle" font-family="ui-monospace, monospace" font-size="14" font-weight="700" fill="#D4785E">+q</text>
+  <text x="644" y="269" text-anchor="middle" font-family="ui-monospace, monospace" font-size="14" font-weight="700" fill="#7AB88F">-q</text>
+  <rect x="516" y="346" width="168" height="32" rx="8" fill="#F5F2EB"/>
+  <text x="600" y="366" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="700" fill="#1E1B18">Try Subject Tracker →</text>
+</svg>

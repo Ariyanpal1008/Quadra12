@@ -20,6 +20,7 @@ import {
 } from '../data/pcmbData';
 import {ResilientImage} from './ResilientImage';
 import {ChapterIllustration} from './ChapterIllustrations';
+import {APPLE_EASE, APPLE_SPRING, AnimatedNumber} from './FluidPrimitives';
 
 interface SubjectTrackerSectionProps {
   completedChapters: Record<string, boolean>;
@@ -99,7 +100,7 @@ export function SubjectTrackerSection({
   return (
     <section aria-labelledby="tracker-heading" className="space-y-8">
       {/* Header & Overall PCMB Progress Summary */}
-      <div className="bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl p-6 sm:p-8 transition-colors duration-200">
+      <div className="bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl p-6 sm:p-8 apple-surface">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-3 text-xs font-medium tracking-[0.12em] text-[#A64B33] dark:text-[#D4785E]">
@@ -126,19 +127,19 @@ export function SubjectTrackerSection({
             <div>
               <p className="text-xs text-[#787066] dark:text-[#9C9387]">Overall PCMB</p>
               <p className="mt-1 text-2xl font-semibold text-[#1E1B18] dark:text-[#F5F2EB] font-mono tabular-nums">
-                {overallPercent}%
+                <AnimatedNumber value={overallPercent} suffix="%" />
               </p>
             </div>
             <div>
               <p className="text-xs text-[#787066] dark:text-[#9C9387]">Chapters Done</p>
               <p className="mt-1 text-2xl font-semibold text-[#1E1B18] dark:text-[#F5F2EB] font-mono tabular-nums">
-                {doneAllChapters}/{totalAllChapters}
+                <AnimatedNumber value={doneAllChapters} />/{totalAllChapters}
               </p>
             </div>
             <div>
               <p className="text-xs text-[#787066] dark:text-[#9C9387]">Subjects Completed</p>
               <p className="mt-1 text-2xl font-semibold text-[#1E1B18] dark:text-[#F5F2EB] font-mono tabular-nums">
-                {completedSubjectsCount}/4
+                <AnimatedNumber value={completedSubjectsCount} />/4
               </p>
             </div>
           </div>
@@ -155,25 +156,33 @@ export function SubjectTrackerSection({
                 type="button"
                 initial={{opacity: 0, y: 16}}
                 whileInView={{opacity: 1, y: 0}}
-                viewport={{once: false, amount: 0.15}}
-                whileHover={{y: -2}}
-                whileTap={{scale: 0.985}}
+                viewport={{once: true, amount: 0.08}}
+                whileHover={{y: -3}}
+                whileTap={{scale: 0.98}}
                 transition={{
-                  duration: 0.28,
-                  delay: idx * 0.04,
-                  ease: [0.16, 1, 0.3, 1],
+                  duration: 0.38,
+                  delay: idx * 0.05,
+                  ease: APPLE_EASE,
+                  y: APPLE_SPRING,
                 }}
                 onClick={() => {
                   setActiveSubjectId(subject.id);
                   setSearchQuery('');
                 }}
                 aria-pressed={isSelected}
-                className={`text-left p-4 rounded-xl border transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A64B33] ${
+                className={`relative text-left p-4 rounded-xl border transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A64B33] ${
                   isSelected
                     ? 'bg-[#ECE6D9] dark:bg-[#28231F] border-[#A64B33] dark:border-[#D4785E]'
                     : 'bg-[#F5F2EB] dark:bg-[#161412] border-[#DDD6C7] dark:border-[#332E28] hover:border-[#B8AF9F] dark:hover:border-[#4A423A]'
                 }`}
               >
+                {isSelected && (
+                  <motion.span
+                    layoutId="tracker-active-subject-accent"
+                    transition={APPLE_SPRING}
+                    className="absolute inset-x-4 top-0 h-[2px] rounded-b-full bg-[#A64B33] dark:bg-[#D4785E]"
+                  />
+                )}
                 <div className="flex items-center justify-between gap-2">
                   <span
                     className="text-base font-semibold text-[#1E1B18] dark:text-[#F5F2EB]"
@@ -208,7 +217,7 @@ export function SubjectTrackerSection({
                   <motion.div
                     initial={false}
                     animate={{scaleX: stats.percent / 100}}
-                    transition={{duration: 0.35, ease: [0.16, 1, 0.3, 1]}}
+                    transition={{type: 'spring', stiffness: 125, damping: 21}}
                     className={`h-full w-full origin-left rounded-full ${
                       stats.isCompleted
                         ? 'bg-[#3D6B4F] dark:bg-[#7AB88F] progress-shimmer'
@@ -277,14 +286,14 @@ export function SubjectTrackerSection({
                         : 'text-[#A64B33] dark:text-[#D4785E]'
                     }`}
                   >
-                    {activeStats.percent}%
+                    <AnimatedNumber value={activeStats.percent} suffix="%" />
                   </span>
                 </div>
                 <div className="h-2 w-full bg-[#E5DFD2] dark:bg-[#2E2924] rounded-full overflow-hidden">
                   <motion.div
                     initial={false}
                     animate={{scaleX: activeStats.percent / 100}}
-                    transition={{duration: 0.35, ease: [0.16, 1, 0.3, 1]}}
+                    transition={{type: 'spring', stiffness: 125, damping: 21}}
                     className={`h-full w-full origin-left rounded-full ${
                       activeStats.isCompleted
                         ? 'bg-[#3D6B4F] dark:bg-[#7AB88F] progress-shimmer'
@@ -310,11 +319,13 @@ export function SubjectTrackerSection({
                     stageDoneCount > 0 && stageDoneCount < activeStats.total;
 
                   return (
-                    <button
+                    <motion.button
                       key={stage.key}
                       type="button"
                       role="checkbox"
                       aria-checked={allStageDone}
+                      whileTap={{scale: 0.96}}
+                      transition={APPLE_SPRING}
                       onClick={() =>
                         onToggleSubjectStage(activeSubject.id, stage.key)
                       }
@@ -336,7 +347,13 @@ export function SubjectTrackerSection({
                           }`}
                         >
                           {allStageDone ? (
-                            <Check className="w-3 h-3 stroke-[2.5]" />
+                            <motion.span
+                              initial={{scale: 0.4, opacity: 0}}
+                              animate={{scale: 1, opacity: 1}}
+                              transition={APPLE_SPRING}
+                            >
+                              <Check className="w-3 h-3 stroke-[2.5]" />
+                            </motion.span>
                           ) : partialStageDone ? (
                             <span className="w-2 h-0.5 bg-[#A64B33] dark:bg-[#D4785E] rounded-xs" />
                           ) : null}
@@ -346,7 +363,7 @@ export function SubjectTrackerSection({
                         </span>
                       </div>
                       <span className="text-xs font-medium">{stage.doneLabel}</span>
-                    </button>
+                    </motion.button>
                   );
                 })}
               </div>
@@ -474,8 +491,8 @@ export function SubjectTrackerSection({
                   key={chapter.id}
                   initial={{opacity: 0, y: 12}}
                   whileInView={{opacity: 1, y: 0}}
-                  viewport={{once: false, amount: 0.08}}
-                  transition={{duration: 0.25, ease: [0.16, 1, 0.3, 1]}}
+                  viewport={{once: true, amount: 0.04}}
+                  transition={{duration: 0.28, ease: APPLE_EASE}}
                   className={`flex flex-col md:flex-row md:items-center justify-between gap-4 px-5 sm:px-6 py-4 transition-colors duration-150 ${
                     isDone
                       ? 'bg-[#F5F2EB]/70 dark:bg-[#24201C]/60'
@@ -552,11 +569,13 @@ export function SubjectTrackerSection({
                         {STUDY_STAGES.map((stage) => {
                           const stageDone = Boolean(chapterTasks[chapter.id]?.[stage.key]);
                           return (
-                            <button
+                            <motion.button
                               key={stage.key}
                               type="button"
                               role="checkbox"
                               aria-checked={stageDone}
+                              whileTap={{scale: 0.94}}
+                              transition={APPLE_SPRING}
                               onClick={() => onToggleChapterTask(chapter.id, stage.key)}
                               className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-md border text-xs font-medium transition-colors whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A64B33] ${
                                 stageDone
@@ -572,10 +591,18 @@ export function SubjectTrackerSection({
                                     : 'border-[#B8AF9F] dark:border-[#575048] bg-[#F5F2EB] dark:bg-[#1E1B18]'
                                 }`}
                               >
-                                {stageDone && <Check className="w-2.5 h-2.5 stroke-[2.75]" />}
+                                {stageDone && (
+                                  <motion.span
+                                    initial={{scale: 0.4, opacity: 0}}
+                                    animate={{scale: 1, opacity: 1}}
+                                    transition={APPLE_SPRING}
+                                  >
+                                    <Check className="w-2.5 h-2.5 stroke-[2.75]" />
+                                  </motion.span>
+                                )}
                               </span>
                               <span>{stage.doneLabel}</span>
-                            </button>
+                            </motion.button>
                           );
                         })}
                       </div>

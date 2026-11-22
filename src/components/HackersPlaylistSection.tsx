@@ -21,6 +21,7 @@ import {
 } from '../data/pcmbData';
 import {ResilientImage} from './ResilientImage';
 import {EmbedPlayerMode, YouTubeSyncPlayer} from './YouTubeSyncPlayer';
+import {APPLE_EASE, APPLE_SPRING, AnimatedNumber} from './FluidPrimitives';
 
 interface HackersPlaylistSectionProps {
   watchedLectures: Record<string, boolean>;
@@ -520,7 +521,7 @@ export function HackersPlaylistSection({
             <div>
               <p className="text-xs text-[#787066] dark:text-[#9C9387]">Playlist Lectures Watched</p>
               <p className="mt-1 text-2xl font-semibold text-[#1E1B18] dark:text-[#F5F2EB] font-mono tabular-nums">
-                {watchedPlaylistVideos} / {totalPlaylistVideos}
+                <AnimatedNumber value={watchedPlaylistVideos} /> / {totalPlaylistVideos}
               </p>
             </div>
           </div>
@@ -538,16 +539,17 @@ export function HackersPlaylistSection({
             return (
               <motion.div
                 key={subject.id}
-                initial={{opacity: 0, y: 16}}
+                initial={{opacity: 0, y: 18}}
                 whileInView={{opacity: 1, y: 0}}
-                viewport={{once: false, amount: 0.15}}
-                whileHover={{y: -2}}
+                viewport={{once: true, amount: 0.06}}
+                whileHover={{y: -3}}
                 transition={{
-                  duration: 0.28,
-                  delay: idx * 0.04,
-                  ease: [0.16, 1, 0.3, 1],
+                  duration: 0.4,
+                  delay: idx * 0.05,
+                  ease: APPLE_EASE,
+                  y: APPLE_SPRING,
                 }}
-                className="p-4 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] flex flex-col justify-between gap-4"
+                className="p-4 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] flex flex-col justify-between gap-4 apple-surface"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 text-xs text-[#787066] dark:text-[#9C9387] font-mono tabular-nums">
@@ -566,13 +568,15 @@ export function HackersPlaylistSection({
                     12th Hackers {subject.name}
                   </h2>
                   <div className="mt-2.5 h-1.5 w-full bg-[#DDD6C7] dark:bg-[#332E28] rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all duration-300 ${
+                    <motion.div
+                      initial={false}
+                      animate={{scaleX: subPct / 100}}
+                      transition={{type: 'spring', stiffness: 120, damping: 20}}
+                      className={`h-full w-full origin-left rounded-full ${
                         subDone === subTotal
-                          ? 'bg-[#3D6B4F] dark:bg-[#7AB88F]'
+                          ? 'bg-[#3D6B4F] dark:bg-[#7AB88F] progress-shimmer'
                           : 'bg-[#A64B33] dark:bg-[#D4785E]'
                       }`}
-                      style={{width: `${subPct}%`}}
                     />
                   </div>
                 </div>
@@ -603,7 +607,7 @@ export function HackersPlaylistSection({
           })}
         </div>
 
-        {/* Filter Bar & Search */}
+        {/* Filter Bar & Search with Gliding Segmented Pill */}
         <div className="pt-4 border-t border-[#DDD6C7] dark:border-[#332E28] flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div
             role="group"
@@ -618,13 +622,20 @@ export function HackersPlaylistSection({
                   type="button"
                   onClick={() => setFilter(tab.id)}
                   aria-pressed={isSelected}
-                  className={`px-3.5 py-2 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
+                  className={`relative px-3.5 py-2 text-xs font-medium rounded-md transition-colors duration-200 whitespace-nowrap shrink-0 ${
                     isSelected
-                      ? 'bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#1E1B18] dark:text-[#F5F2EB] shadow-xs'
+                      ? 'text-[#1E1B18] dark:text-[#F5F2EB]'
                       : 'text-[#575048] dark:text-[#9C9387] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB]'
                   }`}
                 >
-                  {tab.label}
+                  {isSelected && (
+                    <motion.span
+                      layoutId="hackers-filter-pill"
+                      transition={APPLE_SPRING}
+                      className="absolute inset-0 rounded-md bg-[#FAF8F3] dark:bg-[#1E1B18] shadow-xs"
+                    />
+                  )}
+                  <span className="relative z-10">{tab.label}</span>
                 </button>
               );
             })}
@@ -679,16 +690,17 @@ export function HackersPlaylistSection({
             return (
               <motion.article
                 key={lecture.id}
-                initial={{opacity: 0, y: 18}}
+                initial={{opacity: 0, y: 20}}
                 whileInView={{opacity: 1, y: 0}}
-                viewport={{once: false, amount: 0.12}}
-                whileHover={{y: -2}}
+                viewport={{once: true, amount: 0.06}}
+                whileHover={{y: -4}}
                 transition={{
-                  duration: 0.28,
-                  delay: (idx % 3) * 0.04,
-                  ease: [0.16, 1, 0.3, 1],
+                  duration: 0.42,
+                  delay: (idx % 3) * 0.05,
+                  ease: APPLE_EASE,
+                  y: APPLE_SPRING,
                 }}
-                className="bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl overflow-hidden flex flex-col justify-between transition-colors hover:border-[#B8AF9F] dark:hover:border-[#4A423A]"
+                className="group bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl overflow-hidden flex flex-col justify-between apple-surface hover:border-[#B8AF9F] dark:hover:border-[#4A423A]"
               >
                 <div>
                   <div className="relative aspect-[16/9] border-b border-[#DDD6C7] dark:border-[#332E28] overflow-hidden bg-[#ECE6D9] dark:bg-[#24201C]">
