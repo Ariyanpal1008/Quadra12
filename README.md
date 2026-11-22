@@ -1,37 +1,39 @@
 # Quadra 12
 
 **Live Website:** [https://ariyanpal1008.github.io/Quadra12/](https://ariyanpal1008.github.io/Quadra12/)  
-**Repository:** [https://github.com/Ariyanpal1008/Quadra12](https://github.com/Ariyanpal1008/Quadra12)  
+**GitHub Repository:** [https://github.com/Ariyanpal1008/Quadra12](https://github.com/Ariyanpal1008/Quadra12)  
 **Creator:** AriYan Pal (Keśava Dāsa) · `ariyanpal090@gmail.com`  
 **Copyright:** © 2026 Quadra 12 · Invented November 2026
 
-Quadra 12 is an independent Class 12 CBSE PCMB (Physics 042, Chemistry 043, Biology 044, and Mathematics 041) study workspace. It unifies a live **Board Exam Countdown Clock**, a gamified **My Achievements** milestone system, syllabus tracking across 50 NCERT chapters, full-length official CBSE 2026–27 Sample Question Paper practice inside a timed Examination Hall, and 50 synced **12th Hackers** one-shot video lectures in one calm, distraction-free web application.
+Quadra 12 is a calm, distraction-free Class 12 CBSE PCMB (Physics 042, Chemistry 043, Biology 044, and Mathematics 041) academic preparation workspace. It brings together an Apple StandBy–inspired **Live Board Exam Countdown Clock**, a gamified **My Achievements** milestone system, comprehensive syllabus tracking across all 50 NCERT chapters, full-length official CBSE 2026–27 Sample Question Paper practice in a 3-hour **Examination Hall**, and 50 synced **12th Hackers** one-shot video lectures in one unified web application.
 
 ---
 
-## Visual Walkthrough (Interactive Preview Showcase)
+## Visual Showcase (Click Any Card to Launch Live)
 
-> Click any preview below to open **Quadra 12** live, or open **Help Desk → Interactive Tour** inside the website to test buttons, checkboxes, countdown urgency, achievement unlocks, and OMR bubbles directly.
+> Click any visual preview below to launch **Quadra 12** directly, or explore the in-app **Help Desk → Interactive Tour** to test real interactive widgets, countdown clocks, milestone seals, and OMR bubbles.
 
 | Overview: Live Board Clock & Achievements | Subject Tracker: 50 Chapters & SVG Plates |
 | :---: | :---: |
 | [![Quadra 12 Live Board Countdown Clock and My Achievements Preview](public/assets/showcase/overview-clock-achievements.svg)](https://ariyanpal1008.github.io/Quadra12/) | [![Quadra 12 Subject Tracker 50 Chapters and SVG Diagrams Preview](public/assets/showcase/subject-tracker.svg)](https://ariyanpal1008.github.io/Quadra12/) |
-| **Live 1s Chronometer** (`16 Feb · 10:30 AM IST`, auto `2027 → 2028` rollover) + **My Achievements** (`Quick Learner`, `Exam Ready`). | **50 NCERT Chapters × 4 Stages** (`Lecture`, `Practice`, `NCERT`, `PYQ`) + 50 interactive study diagrams. |
+| **Live 1s Chronometer** (`16 Feb · 10:30 AM IST`, auto `2027 → 2028` rollover) + **My Achievements** (`Quick Learner`, `Exam Ready`). | **50 NCERT Chapters × 4 Stages** (`Lecture`, `Practice`, `NCERT`, `PYQ`) + 50 bespoke interactive vector study plates. |
 
 | Examination Hall: 3-Hour CBSE SQP & OMR | 12th Hackers & Help Desk Interactive Tour |
 | :---: | :---: |
 | [![Quadra 12 Examination Hall 3-Hour CBSE Sample Paper and OMR Preview](public/assets/showcase/exam-hall.svg)](https://ariyanpal1008.github.io/Quadra12/) | [![Quadra 12 12th Hackers Playlist and Help Desk Suggestion Box Preview](public/assets/showcase/hackers-playlist.svg)](https://ariyanpal1008.github.io/Quadra12/) |
-| **Official CBSE 2026–27 PDFs**, `03:00:00` exam clock, interactive Section A OMR auto-grading, and best score saving. | **50 One-Shot Lectures** synced to `Lecture done`, 3 player embed modes, **Interactive Tour**, & Cloud Suggestion Box. |
+| **Official CBSE 2026–27 PDFs**, `03:00:00` exam clock, interactive Section A OMR auto-grading, and per-subject best scores. | **50 One-Shot Lectures** synced to `Lecture done`, 3 player embed modes, **Interactive Tour**, & Cloud Suggestion Box. |
 
 <details>
 <summary><strong>Step-by-Step Interactive Guide — How to Use Quadra 12</strong></summary>
 
-1. **Live Board Exam Countdown Clock (`Overview`):** Counts every second down to **16 Feb at 10:30 AM IST**. Automatically resets to **16 Feb 2028** once 2027 boards start (and repeats yearly), with an **Auto: Feb 16 / Custom Date** selector if CBSE adjusts a future exam start date.
-2. **My Achievements (`Overview`):** Tap the compact **My Achievements** card to open all **9 Milestone Seals**, including **Quick Learner** (`3–5` chapters completed in one calendar day), **Syllabus Sprinter** (`5` chapters in one day), **Exam Ready** (`>90%` on a sample paper), and **Quadra 12 Grandmaster** (`50/50` chapters). Live unlock banners notify you from any tab.
-3. **Subject Tracker:** Expand Physics (`14`), Chemistry (`10`), Biology (`13`), or Maths (`13`) chapters, check off **Lecture**, **Practice**, **NCERT**, and **PYQ** checkpoints, or inspect any chapter's interactive SVG plate.
-4. **Examination Hall:** Pick Physics (`042`), Chemistry (`043`), Biology (`044`), or Maths (`041`) to load the unmodified CBSE 2026–27 PDF beside the 3-hour clock and interactive OMR answer sheet.
-5. **12th Hackers:** Stream one-shot videos with unit formulas and timestamps. Checking off a video automatically updates `Lecture done` in Subject Tracker.
-6. **Help Desk & Interactive Tour:** Use **Help Desk → Interactive Tour** to test miniature live previews of every feature, **Suggest Addition / Change** to propose updates (via Google Sign-In or `ariyanpal090@gmail.com`), and **Creator Inbox** for creator moderation.
+1. **Live Board Exam Countdown Clock (`Overview`):** Counts every second down to **16 Feb at 10:30 AM IST**. Features rolling flip-clock digits, pacing urgency badges, and an **Auto: Feb 16 / Custom Date** picker. It automatically rolls over to the next year's exam once the current date passes.
+2. **My Achievements (`Overview`):** Click the compact **My Achievements** card to inspect all **9 Milestone Seals**, including **First Step**, **Quick Learner** (`3–5` chapters in one day), **Syllabus Sprinter** (`5` chapters in a single calendar day), **Four-Stage Purist**, **Subject Champion**, **Hall Debut**, **Exam Ready** (`>90%` score on a CBSE sample paper), **One-Shot Scholar**, and **Quadra 12 Grandmaster** (`50/50` chapters). Live unlock banners notify you from any view.
+3. **Subject Tracker:** Expand Physics (`14`), Chemistry (`10`), Biology (`13`), or Mathematics (`13`) chapters. Check off **Lecture**, **Practice**, **NCERT**, and **PYQ** checkpoints, view subject-level progress percentages, or inspect each chapter's custom interactive SVG illustration.
+4. **Examination Hall:** Select Physics (`042`), Chemistry (`043`), Biology (`044`), or Mathematics (`041`) to load the official, unmodified CBSE 2026–27 Sample Question Paper PDF beside the 3-hour timer and interactive OMR answer sheet with automated scoring.
+5. **12th Hackers:** Stream unit-curated one-shot video lectures with key formulas, summaries, and timestamps. Checking off a lecture automatically updates `Lecture done` in the Subject Tracker.
+6. **Help Desk & Interactive Tour:** Access the **Help Desk** to explore the interactive visual tour sandbox, read syllabus notes, submit suggestions or bug reports via Google Sign-In, or access the Creator Inbox.
+7. **Terms & Conditions:** Tap the dull blue **Terms & Conditions · 2026** link in the footer to review the standalone Copyright, Fair Use, and Takedown Policy modal.
+8. **GitHub Repository:** Click the official bold **GitHub** link in the footer to inspect source code, contribute, or star the repository.
 
 </details>
 
@@ -39,146 +41,179 @@ Quadra 12 is an independent Class 12 CBSE PCMB (Physics 042, Chemistry 043, Biol
 
 ## About the Creator
 
-I am **AriYan Pal (Keśava Dāsa)** (`ariyanpal090@gmail.com`), a Class 12 student currently preparing for board exams.
+I am **AriYan Pal (Keśava Dāsa)** (`ariyanpal090@gmail.com`), a Class 12 student preparing for board exams.
 
-- **The Problem:** Keeping board exam preparation organized and finding one clean, distraction-free study tracker was a real struggle.
-- **The Solution:** I built **Quadra 12** to solve that exact problem for myself and fellow PCMB students.
-
----
-
-## System Overview (For AI Assistants & Developers)
-
-Quadra 12 is a **client-first React + TypeScript + Vite SPA** styled with **Tailwind CSS v4** and animated with **Motion**, deployed statically to **GitHub Pages** with **Firebase Authentication & Cloud Firestore** powering community suggestions and the Creator Inbox.
-
-### Core Modules & Views
-
-| View / Module | Primary File(s) | Purpose & Capabilities |
-| :--- | :--- | :--- |
-| **App Shell & Overview** | `src/App.tsx`<br>`src/components/FluidPrimitives.tsx` | Sticky 3-zone navigation, Light/Dark theme switcher, top mobile `☰` menu (with **About the Creator** & **Help Desk**), smooth Motion primitives (`APPLE_SPRING`, `AnimatedNumber`, `ScrollRevealBand`), combined PCMB mastery metrics (50 chapters / 200 stage checkboxes), subject summary cards, and unlock toast notifications. |
-| **Live Board Countdown Clock** | `src/components/BoardCountdownClock.tsx` | Apple StandBy–inspired live 1-second chronometer targeting **16 Feb 10:30 AM IST**, with automatic annual rollover (`2027 → 2028`), rolling flip-clock digit tiles, chapter-pace urgency states, and custom exam start date override. |
-| **Achievements System** | `src/components/AchievementsSection.tsx`<br>`src/data/achievements.ts` | Compact clickable **My Achievements** card on Overview opening an accessible modal with 9 milestone badges (**First Step**, **Quick Learner**, **Syllabus Sprinter**, **Four-Stage Purist**, **Subject Champion**, **Hall Debut**, **Exam Ready**, **One-Shot Scholar**, **Quadra 12 Grandmaster**), live daily sprint tracking, and `All / Unlocked / Locked` filters. |
-| **Subject Tracker** | `src/components/SubjectTrackerSection.tsx`<br>`src/components/ChapterIllustrations.tsx` | Tracks **50 NCERT Class 12 chapters** (Physics 14, Chemistry 10, Biology 13, Maths 13) across 4 stages (`lecture`, `practice`, `ncert`, `pyq`), bulk subject-level stage toggles, completion shimmer at 100%, and 50 bespoke SVG study diagrams. |
-| **Examination Hall** | `src/components/ExamHallSection.tsx`<br>`src/components/ExamDiagrams.tsx` | Embedded official **CBSE 2026–27 Sample Question Paper PDFs**, 3-hour (`03:00:00`) live exam timer, interactive OMR / question checklist, automatic Section A evaluation, and per-subject best score tracking. |
-| **12th Hackers** | `src/components/HackersPlaylistSection.tsx`<br>`src/components/YouTubeSyncPlayer.tsx` | Curated unit cards and playlist queue for all 50 one-shot lectures, bidirectionally synced with the `lecture` checkpoint in Subject Tracker. Supports 3 embed player modes (`standard`, `pure`, `nocookie`), YouTube `postMessage` completion detection, and **"Open on YouTube" + "Mark Done & Next"**. |
-| **Help Desk, Interactive Tour & Feedback** | `src/components/HelpDeskModal.tsx`<br>`src/components/InteractiveTourTab.tsx`<br>`src/firebase.ts` | 5-tab support modal: **Help Desk**, **Interactive Tour** (sandbox interactive previews & hotspots), **Creator & Disclaimers**, **Suggest Addition / Change** (Google Sign-In Firestore form + `mailto:` fallback), and **Creator Inbox** (unlocked for verified creator admin). |
+- **The Problem:** Staying organized across Physics, Chemistry, Biology, and Mathematics without getting overwhelmed by clutter, ads, or disorienting apps was a major challenge during board prep.
+- **The Solution:** I created **Quadra 12** to provide a calm, aesthetic, and completely focused study sanctuary tailored for Class 12 PCMB students.
 
 ---
 
-## Data & State Architecture
+## Key Features & Capabilities
 
-### 1. Local Browser Persistence (`localStorage`)
-All student study data saves locally in the browser with zero account required:
+### 1. Live Board Exam Countdown Clock
+- Apple StandBy–inspired minimalist chronometer updating every second with rolling flip-card digits.
+- Targets official CBSE Board Exam kick-off: **16 February at 10:30 AM IST**.
+- Intelligent annual rollover: automatically resets to **16 February 2028** once 2027 exams begin.
+- Built-in **Auto: Feb 16 / Custom Date** selector allowing students to adjust target dates if official schedules shift.
+- Dynamic daily chapter pace calculator and urgency indicator.
 
-| Key | Data Stored |
-| :--- | :--- |
-| `pcmb_desk_completed_chapters_v1` | `Record<string, boolean>` — chapter-level completion map |
-| `pcmb_desk_chapter_tasks_v1` | `Record<string, { lecture?, practice?, ncert?, pyq? }>` — 4-stage progress per chapter |
-| `pcmb_desk_watched_lectures_v1` | `Record<string, boolean>` — episode watched state synced with `lecture` tasks |
-| `pcmb_desk_best_scores_v1` | `Partial<Record<SubjectId, ExamAttemptSummary>>` — highest Examination Hall score per subject |
-| `pcmb_desk_daily_chapter_log_v1` | `Record<string, string[]>` — daily unique completed chapter IDs (`YYYY-MM-DD`) for *Quick Learner* & *Syllabus Sprinter* |
-| `pcmb_desk_achievements_v1` | `Partial<Record<AchievementId, UnlockedAchievementRecord>>` — persistent earned badge timestamps |
-| `pcmb_desk_custom_board_date_v1` | `string` (`YYYY-MM-DD`) — optional custom board exam date override |
-| `pcmb_desk_theme_v1` | `'light' \| 'dark'` — UI theme preference |
+### 2. Gamified Milestone Badges (My Achievements)
+- Accessible via a compact overview trigger card that opens a dedicated milestone dialog.
+- 9 milestone seals:
+  - **First Step:** Complete your first chapter across all 4 stages.
+  - **Quick Learner:** Complete 3 or more chapters in a single calendar day.
+  - **Syllabus Sprinter:** Complete 5 or more chapters in a single day.
+  - **Four-Stage Purist:** Check off Lecture, Practice, NCERT, and PYQ for 10 chapters.
+  - **Subject Champion:** Achieve 100% completion in any single subject.
+  - **Hall Debut:** Complete your first 3-hour Examination Hall paper.
+  - **Exam Ready:** Score 90% or higher on an official CBSE sample paper.
+  - **One-Shot Scholar:** Watch and complete 25 12th Hackers lectures.
+  - **Quadra 12 Grandmaster:** Complete all 50 chapters across Physics, Chemistry, Biology, and Mathematics.
+- Non-intrusive floating unlock toast notifications with soundless, smooth Motion entrance.
 
-### 2. Cloud Firestore (`changeRequests` Collection)
-Used strictly for community suggestions & change requests inside the Help Desk modal (`firestore.rules` enforces authenticated ownership and creator-only moderation):
+### 3. Subject Tracker (50 NCERT Chapters)
+- Detailed tracking for **Physics (042)**, **Chemistry (043)**, **Biology (044)**, and **Mathematics (041)**.
+- 4 study stages per chapter: **Lecture**, **Practice**, **NCERT Intext/Exercises**, and **PYQs**.
+- 50 custom-crafted interactive SVG vector study diagrams providing visual recall for key concepts.
+- 100% completion celebration banner with subtle gold shimmer.
 
-- `authorUid` (`string`) — Firebase Auth UID of submitter
-- `authorName` (`string`) — display name
-- `category` (`'addition' | 'change' | 'syllabus_fix' | 'bug_report'`)
-- `targetSection` (`'general' | 'overview' | 'subjects' | 'exam' | 'hackers'`)
-- `title` (`string`, 3–120 chars)
-- `details` (`string`, 5–1500 chars)
-- `status` (`'new' | 'planned' | 'added'`)
-- `creatorNote` (`string`, max 500 chars)
-- `createdAt` / `updatedAt` (Firestore server timestamps)
+### 4. Examination Hall (CBSE 2026–27 SQP Simulation)
+- Official unmodified CBSE 2026–27 Sample Question Paper PDFs embedded directly in-app.
+- Realistic 3-hour (`03:00:00`) countdown chronometer with pause, resume, and reset controls.
+- Interactive digital OMR sheet for Section A with automatic scoring, accuracy analytics, and best score persistence.
+
+### 5. 12th Hackers One-Shot Video Workspace
+- Curated queue of 50 comprehensive one-shot YouTube lectures aligned with the latest syllabus.
+- Bidirectional synchronization: marking a video done checks off the chapter's `Lecture` task in the Subject Tracker.
+- 3 playback options: Standard Player, Pure Mode, and Privacy-Enhanced (`youtube-nocookie.com`).
+- Direct "Open on YouTube" and "Mark Done & Next" shortcuts.
+
+### 6. Help Desk, Interactive Tour & Standalone Terms Modal
+- 5 clean Help Desk tabs: **Interactive Guide**, **Interactive Tour** (sandbox preview widgets), **Creator & Disclaimers**, **Suggest Addition / Change**, and **Creator Inbox**.
+- Standalone **Terms & Conditions · 2026** modal accessible directly from the footer with fair use and copyright takedown details.
+- Footer features high-resolution official vector **GitHub** logo (`Octicons-mark-github_12794390.svg`) linking to the GitHub repository.
 
 ---
 
-## Project Structure
+## System Architecture
 
 ```text
 Quadra12/
-├── .github/workflows/deploy.yml           # Automated GitHub Pages build & deploy (Node 22)
+├── .github/workflows/deploy.yml           # Automated GitHub Pages CI/CD workflow (Node 22)
 ├── public/
 │   ├── assets/
-│   │   ├── aistudio/                      # Official CBSE 2026-27 PDFs & media assets
-│   │   └── showcase/                      # Clickable README feature preview cards (SVG)
-│   ├── favicon.svg                        # Scalable SVG brand icon
-│   ├── google5e9a994eb74ab809.html        # Google Search Console ownership verification
-│   ├── llms.txt                           # Structured summary for AI crawlers & assistants
-│   ├── robots.txt                         # Search crawler directives
-│   └── sitemap.xml                        # Canonical sitemap for Search Console
+│   │   ├── aistudio/                      # Official CBSE SQP PDFs & vector brand assets
+│   │   └── showcase/                      # Interactive SVG preview cards for README
+│   ├── favicon.svg                        # Scalable SVG brand emblem
+│   ├── google5e9a994eb74ab809.html        # Google Search Console verification token
+│   ├── llms.txt                           # Structured summary for AI assistants & search indexers
+│   ├── robots.txt                         # Search engine crawler instructions
+│   └── sitemap.xml                        # XML sitemap for SEO discovery
 ├── src/
 │   ├── components/
-│   │   ├── AchievementsSection.tsx        # Compact Overview trigger card & Achievements modal
-│   │   ├── BoardCountdownClock.tsx        # Apple StandBy live countdown clock (auto Feb 16 rollover)
-│   │   ├── ChapterIllustrations.tsx       # 50 bespoke chapter vector diagrams
-│   │   ├── ErrorBoundary.tsx              # React error boundary for Firestore/UI errors
-│   │   ├── ExamDiagrams.tsx               # Exam visual aids
-│   │   ├── ExamHallSection.tsx            # 3-hour CBSE SQP workspace + OMR grader
-│   │   ├── FluidPrimitives.tsx            # Apple-style Motion springs & scroll reveal primitives
-│   │   ├── HackersPlaylistSection.tsx     # 12th Hackers playlist & notes view
-│   │   ├── HelpDeskModal.tsx              # Guide, Interactive Tour, Creator & Suggestion Inbox modal
-│   │   ├── InteractiveTourTab.tsx         # Interactive screenshot sandbox walkthrough
-│   │   ├── ResilientImage.tsx             # Image loader with fallback
-│   │   ├── SubjectTrackerSection.tsx      # 50-chapter PCMB tracker & SVG modal
-│   │   ├── TermsModal.tsx                 # Standalone Terms & Conditions & Copyright Policy modal
-│   │   └── YouTubeSyncPlayer.tsx          # Multi-mode YouTube iframe + completion listener
+│   │   ├── AchievementsSection.tsx        # Compact trigger card & Achievements dialog
+│   │   ├── BoardCountdownClock.tsx        # Apple StandBy live countdown chronometer
+│   │   ├── ChapterIllustrations.tsx       # 50 bespoke chapter SVG illustrations
+│   │   ├── ErrorBoundary.tsx              # Robust fallback boundary for errors
+│   │   ├── ExamDiagrams.tsx               # Examination visual diagram plates
+│   │   ├── ExamHallSection.tsx            # 3-hour CBSE SQP simulator + OMR grader
+│   │   ├── FluidPrimitives.tsx            # Apple springs, animated numbers & scroll reveals
+│   │   ├── HackersPlaylistSection.tsx     # 12th Hackers playlist and notes interface
+│   │   ├── HelpDeskModal.tsx              # Guide, Tour, Disclaimers & Feedback modal
+│   │   ├── InteractiveTourTab.tsx         # Interactive feature sandbox walkthrough
+│   │   ├── ResilientImage.tsx             # Fault-tolerant image component
+│   │   ├── SubjectTrackerSection.tsx      # 50-chapter PCMB syllabus tracker
+│   │   ├── TermsModal.tsx                 # Standalone Terms & Conditions dialog
+│   │   └── YouTubeSyncPlayer.tsx          # Multi-mode synchronized video player
 │   ├── data/
-│   │   ├── achievements.ts                # 9 achievement rules, daily velocity & >90% exam logic
-│   │   └── pcmbData.ts                    # Canonical CBSE PCMB syllabus, SQP & playlist data
-│   ├── App.tsx                            # Main workspace controller, navigation & footer
-│   ├── firebase.ts                        # Firebase App, Auth (Google) & Firestore setup
-│   ├── index.css                          # Tailwind CSS v4 tokens, typography & shimmer keyframes
-│   └── main.tsx                           # Root React mount wrapped in ErrorBoundary
-├── firebase-applet-config.json            # Public Firebase client configuration
-├── firebase-blueprint.json                # Firestore schema blueprint
-├── firestore.rules                        # Production Firestore security rules
-├── index.html                             # SEO metadata, OpenGraph, Twitter & JSON-LD schema
-├── package.json                           # Scripts & dependencies
-└── vite.config.ts                         # Vite build with relative `base: './'` for GitHub Pages
+│   │   ├── achievements.ts                # 9 milestone rules & unlock velocity logic
+│   │   └── pcmbData.ts                    # Canonical CBSE syllabus, SQPs & playlist records
+│   ├── App.tsx                            # Root application layout, navigation & footer
+│   ├── firebase.ts                        # Firebase Auth (Google Sign-In) & Firestore integration
+│   ├── index.css                          # Tailwind CSS v4 directives & typography tokens
+│   └── main.tsx                           # React entry point with ErrorBoundary
+├── firebase-applet-config.json            # Public Firebase client config
+├── firebase-blueprint.json                # Cloud Firestore database schema
+├── firestore.rules                        # Secure Firestore security rules
+├── index.html                             # SEO meta tags, OpenGraph, Twitter Cards & JSON-LD
+├── package.json                           # NPM dependencies and scripts
+└── vite.config.ts                         # Vite configuration with relative base: './'
 ```
+
+---
+
+## Data & Persistence Architecture
+
+### 1. Local Browser Storage (`localStorage`)
+All personal study records, timestamps, and exam scores are preserved locally in the student's browser with zero login required:
+
+| Key | Type | Description |
+| :--- | :--- | :--- |
+| `pcmb_desk_completed_chapters_v1` | `Record<string, boolean>` | Map of completed chapter IDs |
+| `pcmb_desk_chapter_tasks_v1` | `Record<string, ChapterTaskState>` | 4-stage task checkboxes per chapter (`lecture`, `practice`, `ncert`, `pyq`) |
+| `pcmb_desk_watched_lectures_v1` | `Record<string, boolean>` | Watched status for all 50 one-shot lectures |
+| `pcmb_desk_best_scores_v1` | `Partial<Record<SubjectId, ExamAttemptSummary>>` | Highest examination score and accuracy per subject |
+| `pcmb_desk_daily_chapter_log_v1` | `Record<string, string[]>` | Daily completed chapter history (`YYYY-MM-DD`) for sprint achievements |
+| `pcmb_desk_achievements_v1` | `Partial<Record<AchievementId, UnlockedAchievementRecord>>` | Timestamps and metadata of unlocked milestone seals |
+| `pcmb_desk_custom_board_date_v1` | `string` (`YYYY-MM-DD`) | User-configured exam countdown date override |
+| `pcmb_desk_theme_v1` | `'light' \| 'dark'` | UI theme preference |
+
+### 2. Cloud Firestore (`changeRequests` Collection)
+Used solely for user suggestions and change requests submitted via Google Sign-In:
+
+- `authorUid` (`string`) — Submitter's Firebase Auth UID.
+- `authorName` (`string`) — Submitter's display name.
+- `category` (`'addition' | 'change' | 'syllabus_fix' | 'bug_report'`) — Category of suggestion.
+- `targetSection` (`'general' | 'overview' | 'subjects' | 'exam' | 'hackers'`) — Relevant app section.
+- `title` (`string`, 3–120 chars) — Suggestion title.
+- `details` (`string`, 5–1500 chars) — Detailed feedback or report.
+- `status` (`'new' | 'planned' | 'added'`) — Status badge.
+- `creatorNote` (`string`, max 500 chars) — Official response note from the creator.
+- `createdAt` / `updatedAt` — Firestore server timestamps.
 
 ---
 
 ## Tech Stack
 
-- **Frontend:** React 19, TypeScript, Vite 8
-- **Styling & Motion:** Tailwind CSS v4 (`@tailwindcss/vite`), Lucide Icons, Motion (`motion/react`)
-- **Backend / Cloud:** Firebase Authentication (Google Sign-In) & Cloud Firestore
-- **Hosting & CI/CD:** GitHub Pages via `.github/workflows/deploy.yml`
-- **SEO & Discovery:** Canonical `<link>`, OpenGraph, Twitter Card, Schema.org `WebApplication` JSON-LD, `llms.txt`, `robots.txt`, and `sitemap.xml`
+- **Framework:** React 19, TypeScript
+- **Bundler:** Vite 8 (configured with `base: './'` for GitHub Pages)
+- **Styling:** Tailwind CSS v4 (`@tailwindcss/vite`)
+- **Animations:** Motion (`motion/react`) with custom Apple spring presets
+- **Icons:** Lucide Icons & official Octicons GitHub SVG
+- **Backend / Authentication:** Firebase Authentication (Google Sign-In) & Cloud Firestore
+- **Deployment:** GitHub Pages via GitHub Actions (`.github/workflows/deploy.yml`)
+- **SEO & Discoverability:** Canonical links, OpenGraph, Twitter Cards, Schema.org `WebApplication` JSON-LD, `llms.txt`, `robots.txt`, and `sitemap.xml`
 
 ---
 
 ## Local Development & Build
 
 ```bash
-# 1. Install dependencies
+# 1. Clone repository
+git clone https://github.com/Ariyanpal1008/Quadra12.git
+cd Quadra12
+
+# 2. Install dependencies
 npm install --legacy-peer-deps
 
-# 2. Start local dev server on port 3000
+# 3. Start local development server
 npm run dev
 
-# 3. Type-check
+# 4. Type check with TypeScript compiler
 npm run lint
 
-# 4. Build production bundle into dist/
+# 5. Build for production (outputs to dist/)
 npm run build
 ```
 
-> **GitHub Pages Note:** `vite.config.ts` uses `base: './'` and `pcmbData.ts` resolves static asset URLs with `import.meta.env.BASE_URL` so all assets and CBSE PDFs load cleanly under `/Quadra12/`.
-
 ---
 
-## Disclaimers, Terms &amp; Conditions (Copyright Claims)
+## Disclaimers, Terms &amp; Conditions (Copyright &amp; Fair Use)
 
-- **Independent Student Initiative:** Quadra 12 is a free, non-commercial educational study tracker and self-practice tool. Always verify official CBSE circulars, exam dates, and syllabus updates on `cbse.gov.in`.
-- **Intellectual Property & Third-Party Ownership:** Original Quadra 12 layout, custom SVG chapter diagrams, countdown clock, and achievement seals belong to Quadra 12. Official CBSE 2026–27 Sample Question Papers remain the copyright of CBSE, and all 12th Hackers YouTube playlists remain the copyright of their original educators and creators; Quadra 12 organizes links and embeds strictly for student revision convenience.
-- **No Official Affiliation:** Quadra 12 is not officially affiliated with, endorsed by, or sponsored by CBSE or any external media channel.
-- **Copyright Claims & Takedown Policy:** If you are a copyright holder or authorized agent and believe any linked PDF, embedded video, diagram, or material on Quadra 12 infringes your copyright or wish it removed, email `ariyanpal090@gmail.com` with identification of the work, exact location on Quadra 12, and contact details. Valid requests are reviewed and acted upon promptly.
-- **No Warranty:** Study timelines, self-graded OMR answer keys, and schedules are provided "as is" without warranty; Quadra 12 is not responsible for cleared local browser storage or third-party embed availability.
+- **Independent Student Initiative:** Quadra 12 is an independent, non-commercial educational study workspace. Students should always cross-reference official circulars, examination schedules, and syllabus announcements on [cbse.gov.in](https://cbse.gov.in).
+- **Intellectual Property & Ownership:** The original Quadra 12 interface, custom vector SVG study diagrams, countdown algorithms, and achievement seals remain the property of Quadra 12. Official CBSE 2026–27 Sample Question Papers belong to the Central Board of Secondary Education, and all embedded 12th Hackers YouTube lectures belong to their original educators and creators; Quadra 12 organizes them strictly for student revision convenience.
+- **Copyright Claims & Takedown Policy:** If you are a copyright owner or authorized agent and believe any content or link on Quadra 12 infringes your copyright or wish it removed, please contact `ariyanpal090@gmail.com` with: (a) identification of the copyrighted work, (b) the exact section on Quadra 12, and (c) your contact information. Valid inquiries are addressed promptly.
+- **No Warranty:** Timers, study schedules, and self-graded OMR answer keys are provided "as is" without warranty; clearing local browser data resets local study progress.
 
 ---
 
