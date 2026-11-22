@@ -40,6 +40,7 @@ import {
   HelpDeskTab,
   NavSection,
 } from './components/HelpDeskModal';
+import {TermsModal} from './components/TermsModal';
 import {ResilientImage} from './components/ResilientImage';
 import {BoardCountdownClock} from './components/BoardCountdownClock';
 import {
@@ -176,6 +177,7 @@ export default function App() {
   const [helpDeskOpen, setHelpDeskOpen] = useState(false);
   const [helpDeskTab, setHelpDeskTab] = useState<HelpDeskTab>('guide');
   const [achievementsModalOpen, setAchievementsModalOpen] = useState(false);
+  const [termsModalOpen, setTermsModalOpen] = useState(false);
 
   const openHelpDesk = (tab: HelpDeskTab) => {
     setHelpDeskTab(tab);
@@ -1432,15 +1434,8 @@ export default function App() {
                   <p className="mt-1.5 text-xs text-[#787066] dark:text-[#9C9387]">
                     Class 12 CBSE Syllabus Tracker · Examination Hall · 12th Hackers Playlist
                   </p>
-                  <p className="mt-1.5 text-xs font-medium text-[#575048] dark:text-[#CBC3B6]">
-                    © 2026 Quadra 12 · Invented November 2026 · Creator:{' '}
-                    <span className="text-[#A64B33] dark:text-[#D4785E]">
-                      AriYan Pal (Keśava Dāsa)
-                    </span>
-                  </p>
                 </div>
-
-                {/* Help Desk, Disclaimers & Change Request Dock anchored beside Creator attribution */}
+                {/* Help Desk, Disclaimers & Change Request Dock */}
                 <div className="flex flex-wrap items-center gap-2.5 pt-1">
                   <button
                     type="button"
@@ -1462,7 +1457,7 @@ export default function App() {
                       className="w-3.5 h-3.5 text-[#A64B33] dark:text-[#D4785E]"
                       aria-hidden="true"
                     />
-                    <span>About &amp; Terms</span>
+                    <span>About &amp; Disclaimers</span>
                   </button>
                   <button
                     type="button"
@@ -1489,24 +1484,19 @@ export default function App() {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-[#DDD6C7]/70 dark:border-[#332E28] space-y-2 text-[11px] text-[#787066] dark:text-[#9C9387] leading-relaxed">
-              <p>
-                Terms &amp; Conditions: Quadra 12 is an independent, non-commercial Class 12 student study workspace. Official CBSE Sample Question Papers and 12th Hackers YouTube lectures remain the intellectual property of their respective copyright holders and are organized strictly for revision convenience. Any copyright claim or takedown request sent to{' '}
-                <span className="font-mono text-[#575048] dark:text-[#CBC3B6]">
-                  ariyanpal090@gmail.com
-                </span>{' '}
-                will be reviewed and acted upon promptly. Study progress saves locally in your browser.{' '}
+            <div className="pt-4 border-t border-[#DDD6C7]/70 dark:border-[#332E28] space-y-1.5 text-[11px] text-[#787066] dark:text-[#9C9387]">
+              <p className="font-medium text-[#1E1B18] dark:text-[#F5F2EB]">
+                © 2026 Quadra 12 · Invented November 2026 · <span className="font-semibold text-[#A64B33] dark:text-[#D4785E]">Creator: AriYan Pal (Keśava Dāsa)</span>
+              </p>
+              <div>
                 <button
                   type="button"
-                  onClick={() => openHelpDesk('about')}
-                  className="font-medium text-[#A64B33] dark:text-[#D4785E] hover:underline whitespace-nowrap"
+                  onClick={() => setTermsModalOpen(true)}
+                  className="font-mono text-[11px] text-[#787066] dark:text-[#9C9387] hover:text-[#A64B33] dark:hover:text-[#D4785E] underline underline-offset-2 transition-colors cursor-pointer text-left"
                 >
-                  Read Terms &amp; Conditions →
+                  Terms &amp; Conditions · 2026
                 </button>
-              </p>
-              <p className="font-mono text-[11px] text-[#787066] dark:text-[#9C9387]">
-                Terms &amp; Conditions · 26/12/2016
-              </p>
+              </div>
             </div>
           </div>
         </footer>
@@ -1524,6 +1514,11 @@ export default function App() {
           stats={achievementStats}
           onClose={() => setAchievementsModalOpen(false)}
           onNavigateTarget={handleAchievementAction}
+        />
+
+        <TermsModal
+          isOpen={termsModalOpen}
+          onClose={() => setTermsModalOpen(false)}
         />
 
         {/* Non-intrusive Live Achievement Unlock Toast */}

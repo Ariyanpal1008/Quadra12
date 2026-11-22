@@ -544,6 +544,8 @@ export function HelpDeskModal({
                 <span className="relative z-10">Creator &amp; Disclaimers</span>
               </button>
 
+
+
               <button
                 type="button"
                 onClick={() => setActiveTab('suggest')}
@@ -1131,52 +1133,10 @@ export function HelpDeskModal({
                       </li>
                     </ul>
                   </div>
-
-                  {/* Terms & Conditions & Copyright Claims Policy */}
-                  <div
-                    id="terms-and-conditions-section"
-                    className="p-5 sm:p-6 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#24201C]/70 space-y-4"
-                  >
-                    <div className="flex items-center justify-between gap-3 pb-3 border-b border-[#DDD6C7] dark:border-[#332E28]">
-                      <div className="flex items-center gap-2.5">
-                        <ShieldCheck
-                          className="w-4 h-4 text-[#A64B33] dark:text-[#D4785E] shrink-0"
-                          aria-hidden="true"
-                        />
-                        <h3 className="text-base font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
-                          Terms &amp; Conditions (Copyright &amp; Fair Use)
-                        </h3>
-                      </div>
-                    </div>
-
-                    <ol className="space-y-3 text-xs sm:text-sm text-[#575048] dark:text-[#CBC3B6] leading-relaxed list-decimal pl-5">
-                      <li>
-                        <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Acceptance &amp; Non-Commercial Use:</strong> Quadra 12 is a free, non-commercial educational study workspace for Class 12 CBSE students. By browsing or using this website, you agree to use all resources strictly for personal academic preparation and not for resale, scraping, or unauthorized commercial redistribution.
-                      </li>
-                      <li>
-                        <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Intellectual Property &amp; Copyright Ownership:</strong> Original Quadra 12 interface design, bespoke SVG study diagrams, syllabus tracker logic, countdown clock, and achievement seals belong to Quadra 12. All third-party resources—including official CBSE Sample Question Paper PDFs (© Central Board of Secondary Education) and embedded 12th Hackers YouTube playlists (© respective educators and channels)—remain the sole copyright and property of their respective owners.
-                      </li>
-                      <li>
-                        <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">No Official Affiliation:</strong> Quadra 12 is an independent student study utility and is not affiliated with, endorsed by, or sponsored by CBSE or any external media channel. External links and official YouTube iframe embeds are provided strictly for convenience and educational reference.
-                      </li>
-                      <li>
-                        <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Copyright Claims &amp; Takedown Procedure:</strong> We respect the intellectual property rights of all authors, boards, and creators. If you are a copyright owner or authorized agent and believe any linked PDF, embedded video, diagram, or text on Quadra 12 infringes your copyright or wish it removed, email <span className="font-mono text-[#1E1B18] dark:text-[#F5F2EB]">ariyanpal090@gmail.com</span> with: (a) identification of the copyrighted work, (b) the exact location/section on Quadra 12, and (c) your contact and authorization details. Verified copyright notices are honored promptly through removal or attribution updates.
-                      </li>
-                      <li>
-                        <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">User Submissions:</strong> Feedback, feature requests, or corrections sent through the Suggestion Box may be used to improve Quadra 12 without royalty or obligation, and inappropriate submissions may be removed.
-                      </li>
-                      <li>
-                        <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Disclaimer of Warranties &amp; Limitation of Liability:</strong> Study schedules, countdown timers, self-graded OMR answer keys, and syllabus summaries are provided &ldquo;as is&rdquo; without warranty of accuracy or uninterrupted uptime. Quadra 12 is not liable for cleared browser storage, third-party embed availability, or official exam schedule changes; always verify official announcements on <span className="font-mono">cbse.gov.in</span>.
-                      </li>
-                    </ol>
-
-                    <div className="pt-3 border-t border-[#DDD6C7] dark:border-[#332E28] flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-[#787066] dark:text-[#9C9387]">
-                      <span>Terms &amp; Conditions · Copyright &amp; Takedown Policy</span>
-                      <span>26/12/2016</span>
-                    </div>
-                  </div>
                 </div>
               )}
+
+
             </div>
           </motion.div>
         </motion.div>

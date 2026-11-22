@@ -2,13 +2,14 @@
 
 **Live Website:** [https://ariyanpal1008.github.io/Quadra12/](https://ariyanpal1008.github.io/Quadra12/)  
 **Repository:** [https://github.com/Ariyanpal1008/Quadra12](https://github.com/Ariyanpal1008/Quadra12)  
-**Creator:** AriYan Pal (Keśava Dāsa) · `© 2026 Quadra 12` (Invented November 2026)
+**Creator:** AriYan Pal (Keśava Dāsa) · `ariyanpal090@gmail.com`  
+**Copyright:** © 2026 Quadra 12 · Invented November 2026
 
-Quadra 12 is an independent Class 12 CBSE PCMB (Physics, Chemistry, Biology, and Mathematics) study workspace. It unifies a live **Board Exam Countdown Clock**, a gamified **My Achievements** milestone system, syllabus tracking across 50 NCERT chapters, full-length official CBSE 2026–27 Sample Question Paper practice inside a timed Examination Hall, and 50 synced **12th Hackers** one-shot video lectures in one calm, distraction-free web application.
+Quadra 12 is an independent Class 12 CBSE PCMB (Physics 042, Chemistry 043, Biology 044, and Mathematics 041) study workspace. It unifies a live **Board Exam Countdown Clock**, a gamified **My Achievements** milestone system, syllabus tracking across 50 NCERT chapters, full-length official CBSE 2026–27 Sample Question Paper practice inside a timed Examination Hall, and 50 synced **12th Hackers** one-shot video lectures in one calm, distraction-free web application.
 
 ---
 
-## Visual Walkthrough (Click Any Card to Launch Live)
+## Visual Walkthrough (Interactive Preview Showcase)
 
 > Click any preview below to open **Quadra 12** live, or open **Help Desk → Interactive Tour** inside the website to test buttons, checkboxes, countdown urgency, achievement unlocks, and OMR bubbles directly.
 
@@ -38,10 +39,10 @@ Quadra 12 is an independent Class 12 CBSE PCMB (Physics, Chemistry, Biology, and
 
 ## About the Creator
 
-I am a Class 12 student currently preparing for board exams.
+I am **AriYan Pal (Keśava Dāsa)** (`ariyanpal090@gmail.com`), a Class 12 student currently preparing for board exams.
 
 - **The Problem:** Keeping board exam preparation organized and finding one clean, distraction-free study tracker was a real struggle.
-- **The Solution:** I built this app to solve that exact problem for myself and other students facing the same challenge.
+- **The Solution:** I built **Quadra 12** to solve that exact problem for myself and fellow PCMB students.
 
 ---
 
@@ -122,6 +123,7 @@ Quadra12/
 │   │   ├── InteractiveTourTab.tsx         # Interactive screenshot sandbox walkthrough
 │   │   ├── ResilientImage.tsx             # Image loader with fallback
 │   │   ├── SubjectTrackerSection.tsx      # 50-chapter PCMB tracker & SVG modal
+│   │   ├── TermsModal.tsx                 # Standalone Terms & Conditions & Copyright Policy modal
 │   │   └── YouTubeSyncPlayer.tsx          # Multi-mode YouTube iframe + completion listener
 │   ├── data/
 │   │   ├── achievements.ts                # 9 achievement rules, daily velocity & >90% exam logic
@@ -174,11 +176,10 @@ npm run build
 
 - **Independent Student Initiative:** Quadra 12 is a free, non-commercial educational study tracker and self-practice tool. Always verify official CBSE circulars, exam dates, and syllabus updates on `cbse.gov.in`.
 - **Intellectual Property & Third-Party Ownership:** Original Quadra 12 layout, custom SVG chapter diagrams, countdown clock, and achievement seals belong to Quadra 12. Official CBSE 2026–27 Sample Question Papers remain the copyright of CBSE, and all 12th Hackers YouTube playlists remain the copyright of their original educators and creators; Quadra 12 organizes links and embeds strictly for student revision convenience.
-- **No Official Affiliation:** Quadra 12 is not affiliated with, endorsed by, or sponsored by CBSE or any external media channel.
+- **No Official Affiliation:** Quadra 12 is not officially affiliated with, endorsed by, or sponsored by CBSE or any external media channel.
 - **Copyright Claims & Takedown Policy:** If you are a copyright holder or authorized agent and believe any linked PDF, embedded video, diagram, or material on Quadra 12 infringes your copyright or wish it removed, email `ariyanpal090@gmail.com` with identification of the work, exact location on Quadra 12, and contact details. Valid requests are reviewed and acted upon promptly.
 - **No Warranty:** Study timelines, self-graded OMR answer keys, and schedules are provided "as is" without warranty; Quadra 12 is not responsible for cleared local browser storage or third-party embed availability.
 
 ---
 
-Terms &amp; Conditions · Copyright &amp; Fair Use Policy · **26/12/2016**
-
+© 2026 Quadra 12 · Invented November 2026 · Creator: AriYan Pal (Keśava Dāsa)
