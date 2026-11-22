@@ -965,18 +965,18 @@ export function HelpDeskModal({
               {activeTab === 'about' && (
                 <div className="space-y-6">
                   {/* About the Creator */}
-                  <div className="p-5 sm:p-6 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] space-y-3">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-9 h-9 rounded-lg bg-[#ECE6D9] dark:bg-[#2C2722] flex items-center justify-center text-[#A64B33] dark:text-[#D4785E] shrink-0">
+                  <div className="p-6 sm:p-7 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] space-y-5">
+                    <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#DDD6C7] dark:border-[#332E28]">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-[#ECE6D9] dark:bg-[#2C2722] flex items-center justify-center text-[#A64B33] dark:text-[#D4785E] shrink-0">
                           <UserCheck className="w-4 h-4" aria-hidden="true" />
                         </div>
                         <div>
-                          <h3 className="text-base font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
-                            About the Creator — AriYan Pal (Keśava Dāsa)
+                          <h3 className="text-base sm:text-lg font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+                            About the Creator
                           </h3>
                           <p className="text-xs text-[#787066] dark:text-[#9C9387]">
-                            Class 12 Student (CBSE PCMB) · Invented November 2026
+                            AriYan Pal (Keśava Dāsa) · Invented November 2026
                           </p>
                         </div>
                       </div>
@@ -985,9 +985,38 @@ export function HelpDeskModal({
                       </span>
                     </div>
 
-                    <p className="text-sm text-[#1E1B18] dark:text-[#F5F2EB] leading-relaxed">
-                      &ldquo;I am a Class 12 student currently studying in Class 12. While preparing for boards, I struggled to keep track of every lecture, NCERT reading, practice set, and PYQ across Physics, Chemistry, Biology, and Mathematics in one clear place. Out of my own real struggle, I built Quadra 12 so students who are struggling for a reliable tracker have one calm, complete workspace.&rdquo;
-                    </p>
+                    <div className="space-y-4 text-sm text-[#1E1B18] dark:text-[#F5F2EB] leading-relaxed">
+                      <p className="font-medium">
+                        I am a Class 12 student currently preparing for board exams.
+                      </p>
+
+                      <ul className="space-y-3 text-[#575048] dark:text-[#CBC3B6]">
+                        <li className="flex items-start gap-3">
+                          <span
+                            className="mt-2 w-1.5 h-1.5 rounded-full bg-[#A64B33] dark:bg-[#D4785E] shrink-0"
+                            aria-hidden="true"
+                          />
+                          <span>
+                            <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">
+                              The Problem:
+                            </strong>{' '}
+                            Keeping board exam preparation organized and finding one clean, distraction-free study tracker was a real struggle.
+                          </span>
+                        </li>
+                        <li className="flex items-start gap-3">
+                          <span
+                            className="mt-2 w-1.5 h-1.5 rounded-full bg-[#A64B33] dark:bg-[#D4785E] shrink-0"
+                            aria-hidden="true"
+                          />
+                          <span>
+                            <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">
+                              The Solution:
+                            </strong>{' '}
+                            I built this app to solve that exact problem for myself and other students facing the same challenge.
+                          </span>
+                        </li>
+                      </ul>
+                    </div>
                   </div>
 
                   {/* Disclaimers */}

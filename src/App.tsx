@@ -608,6 +608,30 @@ export default function App() {
                     {item.label}
                   </button>
                 ))}
+                <div className="pt-2 mt-2 border-t border-[#DDD6C7] dark:border-[#332E28] space-y-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      openHelpDesk('about');
+                    }}
+                    className="w-full text-left px-3 py-2.5 text-sm font-medium rounded-lg text-[#1E1B18] dark:text-[#F5F2EB] hover:bg-[#ECE6D9]/60 dark:hover:bg-[#24201C] flex items-center gap-2"
+                  >
+                    <ShieldCheck className="w-4 h-4 text-[#A64B33] dark:text-[#D4785E]" aria-hidden="true" />
+                    <span>About the Creator</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      openHelpDesk('guide');
+                    }}
+                    className="w-full text-left px-3 py-2.5 text-sm font-medium rounded-lg text-[#575048] dark:text-[#CBC3B6] hover:bg-[#ECE6D9]/60 dark:hover:bg-[#24201C] flex items-center gap-2"
+                  >
+                    <HelpCircle className="w-4 h-4 text-[#A64B33] dark:text-[#D4785E]" aria-hidden="true" />
+                    <span>Help Desk</span>
+                  </button>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -1112,9 +1136,6 @@ export default function App() {
                     <span className="text-[#A64B33] dark:text-[#D4785E]">
                       AriYan Pal (Keśava Dāsa)
                     </span>
-                  </p>
-                  <p className="mt-1.5 text-xs text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
-                    About the creator: I am a Class 12 student studying in Class 12. From my own real struggle to keep board prep organized, I built this app for students struggling to find one clean study tracker.
                   </p>
                 </div>
 
