@@ -19,6 +19,7 @@ import {
   MessageSquarePlus,
   Moon,
   Play,
+  ShieldCheck,
   Sun,
   X,
 } from 'lucide-react';
@@ -1093,68 +1094,81 @@ export default function App() {
         </main>
 
         <footer className="border-t border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] py-8 mt-12 transition-colors duration-200">
-          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-            <div className="space-y-3">
-              <div>
-                <p
-                  className="text-sm font-semibold text-[#1E1B18] dark:text-[#F5F2EB]"
-                  style={{fontFamily: 'var(--font-display)'}}
-                >
-                  Quadra 12
-                </p>
-                <p className="mt-1 text-xs text-[#787066] dark:text-[#9C9387]">
-                  Class 12 CBSE Syllabus Tracker · Examination Hall · 12th Hackers Playlist
-                </p>
-                <p className="mt-1.5 text-xs font-medium text-[#575048] dark:text-[#CBC3B6]">
-                  Creator:{' '}
-                  <span className="text-[#A64B33] dark:text-[#D4785E]">
-                    AriYan Pal (Keśava Dāsa)
-                  </span>
-                </p>
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+              <div className="space-y-3 max-w-2xl">
+                <div>
+                  <p
+                    className="text-sm font-semibold text-[#1E1B18] dark:text-[#F5F2EB]"
+                    style={{fontFamily: 'var(--font-display)'}}
+                  >
+                    Quadra 12
+                  </p>
+                  <p className="mt-1 text-xs text-[#787066] dark:text-[#9C9387]">
+                    Class 12 CBSE Syllabus Tracker · Examination Hall · 12th Hackers Playlist
+                  </p>
+                  <p className="mt-1.5 text-xs font-medium text-[#575048] dark:text-[#CBC3B6]">
+                    © 2026 Quadra 12 · Invented November 2026 · Creator:{' '}
+                    <span className="text-[#A64B33] dark:text-[#D4785E]">
+                      AriYan Pal (Keśava Dāsa)
+                    </span>
+                  </p>
+                  <p className="mt-1.5 text-xs text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
+                    About the creator: I am a Class 12 student studying in Class 12. From my own real struggle to keep board prep organized, I built this app for students struggling to find one clean study tracker.
+                  </p>
+                </div>
+
+                {/* Help Desk, Disclaimers & Change Request Dock anchored beside Creator attribution */}
+                <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => openHelpDesk('guide')}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] transition-colors"
+                  >
+                    <HelpCircle
+                      className="w-3.5 h-3.5 text-[#A64B33] dark:text-[#D4785E]"
+                      aria-hidden="true"
+                    />
+                    <span>Help Desk</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openHelpDesk('about')}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] transition-colors"
+                  >
+                    <ShieldCheck
+                      className="w-3.5 h-3.5 text-[#A64B33] dark:text-[#D4785E]"
+                      aria-hidden="true"
+                    />
+                    <span>About &amp; Disclaimers</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openHelpDesk('suggest')}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] hover:opacity-90 transition-opacity"
+                  >
+                    <MessageSquarePlus className="w-3.5 h-3.5" aria-hidden="true" />
+                    <span>Suggest Addition / Change</span>
+                  </button>
+                </div>
               </div>
 
-              {/* Help Desk & Change Request Dock anchored beside Creator attribution */}
-              <div className="flex flex-wrap items-center gap-2.5 pt-1">
-                <button
-                  type="button"
-                  onClick={() => openHelpDesk('guide')}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] transition-colors"
-                >
-                  <HelpCircle
-                    className="w-3.5 h-3.5 text-[#A64B33] dark:text-[#D4785E]"
-                    aria-hidden="true"
-                  />
-                  <span>Help Desk (Understand All Tabs)</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => openHelpDesk('suggest')}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] hover:opacity-90 transition-opacity"
-                >
-                  <MessageSquarePlus className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>Suggest Addition / Change</span>
-                </button>
+              <div className="flex flex-wrap items-center gap-6 text-xs font-medium text-[#575048] dark:text-[#CBC3B6] shrink-0">
+                {navItems.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => navigateTo(item.id)}
+                    className="hover:text-[#1E1B18] dark:hover:text-[#F5F2EB] transition-colors"
+                  >
+                    {item.label}
+                  </button>
+                ))}
               </div>
             </div>
 
-            <div className="flex flex-wrap items-center gap-6 text-xs font-medium text-[#575048] dark:text-[#CBC3B6]">
-              {navItems.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => navigateTo(item.id)}
-                  className="hover:text-[#1E1B18] dark:hover:text-[#F5F2EB] transition-colors"
-                >
-                  {item.label}
-                </button>
-              ))}
-              <button
-                type="button"
-                onClick={() => openHelpDesk('guide')}
-                className="text-[#A64B33] dark:text-[#D4785E] hover:underline transition-colors"
-              >
-                Help Desk
-              </button>
+            <div className="pt-4 border-t border-[#DDD6C7]/70 dark:border-[#332E28] text-[11px] text-[#787066] dark:text-[#9C9387] leading-relaxed">
+              Disclaimer: Quadra 12 is an independent Class 12 student study workspace. Official CBSE Sample Question Papers and 12th Hackers YouTube lectures belong to their respective owners and are organized here solely for revision convenience. Built by AriYan Pal (Keśava Dāsa) with partial AI-assisted development support; your study progress saves locally in your browser.
             </div>
           </div>
         </footer>

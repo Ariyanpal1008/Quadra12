@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ariyanpal1008.github.io/Quadra12/sitemap.xml

@@ -27,7 +27,9 @@ import {
   MessageSquarePlus,
   PlaySquare,
   Send,
+  ShieldCheck,
   Trash2,
+  UserCheck,
   X,
 } from 'lucide-react';
 import {
@@ -40,7 +42,7 @@ import {
   signOutUser,
 } from '../firebase';
 
-export type HelpDeskTab = 'guide' | 'suggest' | 'inbox';
+export type HelpDeskTab = 'guide' | 'about' | 'suggest' | 'inbox';
 export type NavSection = 'overview' | 'subjects' | 'exam' | 'hackers';
 
 interface HelpDeskModalProps {
@@ -486,7 +488,20 @@ export function HelpDeskModal({
                 }`}
               >
                 <HelpCircle className="w-3.5 h-3.5" aria-hidden="true" />
-                <span>Website Guide (What Every Tab Means)</span>
+                <span>Help Desk</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('about')}
+                className={`inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg border transition-colors ${
+                  activeTab === 'about'
+                    ? 'bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] border-[#1E1B18] dark:border-[#F5F2EB]'
+                    : 'bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#575048] dark:text-[#CBC3B6] border-[#DDD6C7] dark:border-[#332E28] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB]'
+                }`}
+              >
+                <ShieldCheck className="w-3.5 h-3.5" aria-hidden="true" />
+                <span>Creator &amp; Disclaimers</span>
               </button>
 
               <button
@@ -944,6 +959,76 @@ export function HelpDeskModal({
                       })}
                     </div>
                   )}
+                </div>
+              )}
+
+              {activeTab === 'about' && (
+                <div className="space-y-6">
+                  {/* About the Creator */}
+                  <div className="p-5 sm:p-6 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] space-y-3">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-9 h-9 rounded-lg bg-[#ECE6D9] dark:bg-[#2C2722] flex items-center justify-center text-[#A64B33] dark:text-[#D4785E] shrink-0">
+                          <UserCheck className="w-4 h-4" aria-hidden="true" />
+                        </div>
+                        <div>
+                          <h3 className="text-base font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+                            About the Creator — AriYan Pal (Keśava Dāsa)
+                          </h3>
+                          <p className="text-xs text-[#787066] dark:text-[#9C9387]">
+                            Class 12 Student (CBSE PCMB) · Invented November 2026
+                          </p>
+                        </div>
+                      </div>
+                      <span className="text-xs font-mono text-[#787066] dark:text-[#9C9387]">
+                        © 2026 Quadra 12
+                      </span>
+                    </div>
+
+                    <p className="text-sm text-[#1E1B18] dark:text-[#F5F2EB] leading-relaxed">
+                      &ldquo;I am a Class 12 student currently studying in Class 12. While preparing for boards, I struggled to keep track of every lecture, NCERT reading, practice set, and PYQ across Physics, Chemistry, Biology, and Mathematics in one clear place. Out of my own real struggle, I built Quadra 12 so students who are struggling for a reliable tracker have one calm, complete workspace.&rdquo;
+                    </p>
+                  </div>
+
+                  {/* Disclaimers */}
+                  <div className="p-5 sm:p-6 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#24201C]/70 space-y-4">
+                    <div className="flex items-center gap-2.5">
+                      <ShieldCheck
+                        className="w-4 h-4 text-[#A64B33] dark:text-[#D4785E] shrink-0"
+                        aria-hidden="true"
+                      />
+                      <h3 className="text-base font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+                        Disclaimers &amp; Credits
+                      </h3>
+                    </div>
+
+                    <ul className="space-y-3 text-xs sm:text-sm text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
+                      <li className="flex items-start gap-2.5">
+                        <span className="text-[#A64B33] dark:text-[#D4785E] font-semibold" aria-hidden="true">–</span>
+                        <span>
+                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Independent Student Initiative:</strong> Quadra 12 is an educational study tracker and self-practice tool. Always verify official CBSE circulars, exam schedules, and syllabus updates on <span className="font-mono">cbse.gov.in</span>.
+                        </span>
+                      </li>
+                      <li className="flex items-start gap-2.5">
+                        <span className="text-[#A64B33] dark:text-[#D4785E] font-semibold" aria-hidden="true">–</span>
+                        <span>
+                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Third-Party Content Ownership:</strong> Official CBSE 2026–27 Sample Question Paper PDFs remain the intellectual property of CBSE, and all 12th Hackers YouTube playlists belong to their original educators and creators. Quadra 12 organizes links and embeds solely for convenient revision.
+                        </span>
+                      </li>
+                      <li className="flex items-start gap-2.5">
+                        <span className="text-[#A64B33] dark:text-[#D4785E] font-semibold" aria-hidden="true">–</span>
+                        <span>
+                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Development Assistance Note:</strong> Conceived, structured, and curated by AriYan Pal (Keśava Dāsa), with select coding, layout, and technical setup assistance supported by modern AI development tools.
+                        </span>
+                      </li>
+                      <li className="flex items-start gap-2.5">
+                        <span className="text-[#A64B33] dark:text-[#D4785E] font-semibold" aria-hidden="true">–</span>
+                        <span>
+                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Local &amp; Cloud Data:</strong> Your chapter checkboxes, exam best scores, and theme choices save locally in your browser storage; clearing browser data resets local progress. Only suggestions you submit via Google Sign-In are stored in the cloud inbox.
+                        </span>
+                      </li>
+                    </ul>
+                  </div>
                 </div>
               )}
             </div>
