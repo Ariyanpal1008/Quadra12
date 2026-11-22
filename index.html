@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <title>Quadra 12 — Class 12 CBSE Tracker, Examination Hall &amp; 12th Hackers</title>
+    <meta name="description" content="Quadra 12 is a Class 12 PCMB study workspace created by AriYan Pal (Keśava Dāsa) for tracking Physics, Chemistry, Biology, and Mathematics syllabus progress, practicing official CBSE sample papers in Exam Hall mode, and watching 12th Hackers one-shot lectures." />
+    <meta name="author" content="AriYan Pal (Keśava Dāsa)" />
+    <meta property="og:title" content="Quadra 12 — Class 12 CBSE Tracker, Examination Hall &amp; 12th Hackers" />
+    <meta property="og:description" content="Track Class 12 PCMB subjects, practice CBSE sample papers in Examination Hall mode, and study with 12th Hackers one-shot lecture playlists on Quadra 12." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=IBM+Plex+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet" />
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('pcmb_desk_theme_v1');
+          var prefersDark =
+            window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (saved === 'dark' || (!saved && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body class="bg-[#F5F2EB] dark:bg-[#161412] text-[#1E1B18] dark:text-[#F5F2EB] antialiased selection:bg-[#A64B33] selection:text-[#F5F2EB] transition-colors duration-200">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

@@ -1,0 +1,85 @@
+{
+  "entities": {
+    "ChangeRequest": {
+      "title": "ChangeRequest",
+      "description": "A suggestion, addition, or change request submitted by a Quadra 12 visitor or student for review by the creator.",
+      "type": "object",
+      "properties": {
+        "authorUid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "Firebase Auth UID of the submitting user."
+        },
+        "authorName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "description": "Display name of the submitting user."
+        },
+        "category": {
+          "type": "string",
+          "enum": ["addition", "change", "syllabus_fix", "bug_report"],
+          "description": "Type of request."
+        },
+        "targetSection": {
+          "type": "string",
+          "enum": ["overview", "subjects", "exam", "hackers", "general"],
+          "description": "Quadra 12 tab or section the suggestion applies to."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 120,
+          "description": "Short summary of the addition or change."
+        },
+        "details": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 1500,
+          "description": "Detailed description of what should be added or changed."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["new", "planned", "added"],
+          "description": "Review lifecycle status controlled by the creator."
+        },
+        "creatorNote": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 500,
+          "description": "Optional response note from the creator."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when last updated."
+        }
+      },
+      "required": [
+        "authorUid",
+        "authorName",
+        "category",
+        "targetSection",
+        "title",
+        "details",
+        "status",
+        "creatorNote",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/changeRequests/{requestId}": {
+      "schema": { "$ref": "#/entities/ChangeRequest" },
+      "description": "Stores community additions and change requests readable by their author or the Quadra 12 creator admin."
+    }
+  }
+}

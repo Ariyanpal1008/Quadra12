@@ -1,0 +1,955 @@
+import {FormEvent, useEffect, useState} from 'react';
+import {AnimatePresence, motion} from 'motion/react';
+import {User, onAuthStateChanged} from 'firebase/auth';
+import {
+  Timestamp,
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+  serverTimestamp,
+  updateDoc,
+  where,
+} from 'firebase/firestore';
+import {
+  BookOpen,
+  CheckCircle2,
+  ClipboardCheck,
+  Compass,
+  HelpCircle,
+  Inbox,
+  LogIn,
+  LogOut,
+  Mail,
+  MessageSquarePlus,
+  PlaySquare,
+  Send,
+  Trash2,
+  X,
+} from 'lucide-react';
+import {
+  CREATOR_ADMIN_EMAIL,
+  OperationType,
+  auth,
+  db,
+  handleFirestoreError,
+  signInWithGoogle,
+  signOutUser,
+} from '../firebase';
+
+export type HelpDeskTab = 'guide' | 'suggest' | 'inbox';
+export type NavSection = 'overview' | 'subjects' | 'exam' | 'hackers';
+
+interface HelpDeskModalProps {
+  isOpen: boolean;
+  initialTab: HelpDeskTab;
+  onClose: () => void;
+  onNavigateSection: (section: NavSection) => void;
+}
+
+type RequestCategory = 'addition' | 'change' | 'syllabus_fix' | 'bug_report';
+type TargetSection = 'general' | 'overview' | 'subjects' | 'exam' | 'hackers';
+type RequestStatus = 'new' | 'planned' | 'added';
+
+interface ChangeRequestItem {
+  id: string;
+  authorUid: string;
+  authorName: string;
+  category: RequestCategory;
+  targetSection: TargetSection;
+  title: string;
+  details: string;
+  status: RequestStatus;
+  creatorNote: string;
+  createdAtMs: number;
+}
+
+const CATEGORY_LABELS: Record<RequestCategory, string> = {
+  addition: 'Add New Feature / Content',
+  change: 'Change Existing Design / Flow',
+  syllabus_fix: 'Syllabus / Chapter Correction',
+  bug_report: 'Report an Issue',
+};
+
+const SECTION_LABELS: Record<TargetSection, string> = {
+  general: 'Full Website (General)',
+  overview: 'Overview Tab',
+  subjects: 'Subject Tracker Tab',
+  exam: 'Examination Hall Tab',
+  hackers: '12th Hackers Tab',
+};
+
+const STATUS_STYLES: Record<RequestStatus, {label: string; cls: string}> = {
+  new: {
+    label: 'Submitted',
+    cls: 'bg-[#ECE6D9] dark:bg-[#2A2520] text-[#575048] dark:text-[#CBC3B6] border-[#DDD6C7] dark:border-[#3A332C]',
+  },
+  planned: {
+    label: 'Planned',
+    cls: 'bg-[#F5E8E2] dark:bg-[#33211B] text-[#A64B33] dark:text-[#E59882] border-[#E0B9AC] dark:border-[#5C3328]',
+  },
+  added: {
+    label: 'Added / Updated',
+    cls: 'bg-[#E8F0EA] dark:bg-[#1C2E22] text-[#23422F] dark:text-[#B6DFC3] border-[#B8D0BF] dark:border-[#2F4D39]',
+  },
+};
+
+const GUIDE_SECTIONS: {
+  id: NavSection;
+  title: string;
+  tagline: string;
+  description: string;
+  howToUse: string[];
+  icon: typeof Compass;
+}[] = [
+  {
+    id: 'overview',
+    title: 'Overview',
+    tagline: 'Your Class 12 PCMB Master Dashboard',
+    description:
+      'Shows your combined progress across all 50 chapters (200 total checkpoints across Lecture, Practice, NCERT, and PYQ), plus quick cards for each subject.',
+    howToUse: [
+      'Check the Overall Syllabus Mastery bar to see how much of Class 12 PCMB is complete.',
+      'Click any of the 4 boxes inside Physics, Chemistry, Biology, or Maths cards to review subject-level progress.',
+      'Use quick links to jump straight into a Subject, Exam Hall paper, or 12th Hackers playlist.',
+    ],
+    icon: Compass,
+  },
+  {
+    id: 'subjects',
+    title: 'Subject Tracker',
+    tagline: '50 Chapters × 4 Completion Checkboxes + Diagrams',
+    description:
+      'Contains every NCERT Class 12 chapter across Physics (14), Chemistry (10), Biology (13), and Mathematics (13), paired with 50 bespoke vector diagrams.',
+    howToUse: [
+      'Each chapter has 4 checkboxes: Lecture done, Practice done, NCERT done, and PYQ done.',
+      'Use the 4 Subject Banner toggles at the top of a subject to mark an entire stage across all chapters in one click.',
+      'Click any chapter title or diagram plate to open its large SVG study diagram and toggle its 4 checkboxes directly.',
+    ],
+    icon: BookOpen,
+  },
+  {
+    id: 'exam',
+    title: 'Examination Hall',
+    tagline: 'Official CBSE 2026–27 SQPs & 3-Hour Timer',
+    description:
+      'Practice full CBSE Class 12 Sample Question Papers inside an authentic 3-hour timed workspace and record your score after self-evaluation.',
+    howToUse: [
+      'Pick Physics, Chemistry, Biology, or Mathematics to load the official CBSE Sample Question Paper PDF.',
+      'Start the 3-hour exam clock when ready, pause/reset anytime, or download the PDF for offline printing.',
+      'Enter your marks out of 70 (PCB) or 80 (Maths) after finishing to track your Best Exam Score.',
+    ],
+    icon: ClipboardCheck,
+  },
+  {
+    id: 'hackers',
+    title: '12th Hackers',
+    tagline: 'All 50 Official One-Shot Lectures Synced to Tracker',
+    description:
+      'Browse and watch every chapter lecture from all four 12th Hackers YouTube playlists, auto-synced with the Lecture done box in Subject Tracker.',
+    howToUse: [
+      'Click Watch Playlist on any subject card to open the full 10–14 lecture playlist queue beside the player.',
+      'Or click Watch & Notes on any unit card to inspect High-Yield Board Topics, formulas, and switch chapter videos.',
+      'If embedded video stalls in your browser, cycle Player: Standard / Pure Embed / No-Cookie, open Quadra 12 in a full tab, or click Open on YouTube and tap Mark Done & Next when you return.',
+    ],
+    icon: PlaySquare,
+  },
+];
+
+function timestampToMs(val: unknown): number {
+  if (val instanceof Timestamp) return val.toMillis();
+  return Date.now();
+}
+
+export function HelpDeskModal({
+  isOpen,
+  initialTab,
+  onClose,
+  onNavigateSection,
+}: HelpDeskModalProps) {
+  const [activeTab, setActiveTab] = useState<HelpDeskTab>(initialTab);
+  const [user, setUser] = useState<User | null>(auth.currentUser);
+  const [authBusy, setAuthBusy] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
+
+  const [category, setCategory] = useState<RequestCategory>('addition');
+  const [targetSection, setTargetSection] = useState<TargetSection>('general');
+  const [title, setTitle] = useState('');
+  const [details, setDetails] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [submitMessage, setSubmitMessage] = useState<{
+    type: 'success' | 'error';
+    text: string;
+  } | null>(null);
+
+  const [myRequests, setMyRequests] = useState<ChangeRequestItem[]>([]);
+  const [allRequests, setAllRequests] = useState<ChangeRequestItem[]>([]);
+  const [noteDrafts, setNoteDrafts] = useState<Record<string, string>>({});
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
+
+  const isCreatorAdmin = Boolean(
+    user?.emailVerified && user.email === CREATOR_ADMIN_EMAIL,
+  );
+
+  useEffect(() => {
+    if (isOpen) {
+      setActiveTab(initialTab);
+      setSubmitMessage(null);
+      setAuthError(null);
+    }
+  }, [initialTab, isOpen]);
+
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (nextUser) => {
+      setUser(nextUser);
+    });
+    return () => unsub();
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [isOpen, onClose]);
+
+  useEffect(() => {
+    if (!isOpen || !user || !user.emailVerified) {
+      setMyRequests([]);
+      setAllRequests([]);
+      return;
+    }
+
+    const myQuery = query(
+      collection(db, 'changeRequests'),
+      where('authorUid', '==', user.uid),
+    );
+    const unsubMine = onSnapshot(
+      myQuery,
+      (snap) => {
+        const items: ChangeRequestItem[] = snap.docs
+          .map((d) => {
+            const data = d.data();
+            return {
+              id: d.id,
+              authorUid: String(data.authorUid || ''),
+              authorName: String(data.authorName || 'Student'),
+              category: (data.category as RequestCategory) || 'addition',
+              targetSection: (data.targetSection as TargetSection) || 'general',
+              title: String(data.title || ''),
+              details: String(data.details || ''),
+              status: (data.status as RequestStatus) || 'new',
+              creatorNote: String(data.creatorNote || ''),
+              createdAtMs: timestampToMs(data.createdAt),
+            };
+          })
+          .sort((a, b) => b.createdAtMs - a.createdAtMs);
+        setMyRequests(items);
+      },
+      (error) => {
+        handleFirestoreError(error, OperationType.LIST, 'changeRequests');
+      },
+    );
+
+    let unsubAdmin: (() => void) | undefined;
+    if (isCreatorAdmin) {
+      const adminQuery = query(
+        collection(db, 'changeRequests'),
+        orderBy('createdAt', 'desc'),
+      );
+      unsubAdmin = onSnapshot(
+        adminQuery,
+        (snap) => {
+          const items: ChangeRequestItem[] = snap.docs.map((d) => {
+            const data = d.data();
+            return {
+              id: d.id,
+              authorUid: String(data.authorUid || ''),
+              authorName: String(data.authorName || 'Student'),
+              category: (data.category as RequestCategory) || 'addition',
+              targetSection: (data.targetSection as TargetSection) || 'general',
+              title: String(data.title || ''),
+              details: String(data.details || ''),
+              status: (data.status as RequestStatus) || 'new',
+              creatorNote: String(data.creatorNote || ''),
+              createdAtMs: timestampToMs(data.createdAt),
+            };
+          });
+          setAllRequests(items);
+        },
+        (error) => {
+          handleFirestoreError(error, OperationType.LIST, 'changeRequests');
+        },
+      );
+    }
+
+    return () => {
+      unsubMine();
+      if (unsubAdmin) unsubAdmin();
+    };
+  }, [isCreatorAdmin, isOpen, user]);
+
+  const handleGoogleSignIn = async () => {
+    setAuthBusy(true);
+    setAuthError(null);
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      setAuthError(
+        error instanceof Error
+          ? error.message
+          : 'Could not complete Google Sign-In. Please allow popups and try again.',
+      );
+    } finally {
+      setAuthBusy(false);
+    }
+  };
+
+  const handleSubmitRequest = async (e: FormEvent) => {
+    e.preventDefault();
+    setSubmitMessage(null);
+
+    if (!user || !user.emailVerified) {
+      setSubmitMessage({
+        type: 'error',
+        text: 'Please sign in with Google first (or use the Email Creator button below) so your suggestion is saved for AriYan Pal (Keśava Dāsa).',
+      });
+      return;
+    }
+
+    const cleanTitle = title.trim().slice(0, 120);
+    const cleanDetails = details.trim().slice(0, 1500);
+    const cleanAuthorName = (user.displayName || 'Quadra 12 Student')
+      .trim()
+      .slice(0, 80);
+
+    if (cleanTitle.length < 3) {
+      setSubmitMessage({
+        type: 'error',
+        text: 'Please enter a short summary of at least 3 characters.',
+      });
+      return;
+    }
+    if (cleanDetails.length < 5) {
+      setSubmitMessage({
+        type: 'error',
+        text: 'Please describe what should be added or changed (at least 5 characters).',
+      });
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await addDoc(collection(db, 'changeRequests'), {
+        authorUid: user.uid,
+        authorName: cleanAuthorName || 'Quadra 12 Student',
+        category,
+        targetSection,
+        title: cleanTitle,
+        details: cleanDetails,
+        status: 'new',
+        creatorNote: '',
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+      });
+      setTitle('');
+      setDetails('');
+      setSubmitMessage({
+        type: 'success',
+        text: 'Suggestion saved! AriYan Pal (Keśava Dāsa) can now review your addition or change request in the Creator Inbox.',
+      });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.CREATE, 'changeRequests');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDeleteOwnRequest = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, 'changeRequests', id));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, `changeRequests/${id}`);
+    }
+  };
+
+  const handleCreatorUpdate = async (
+    item: ChangeRequestItem,
+    nextStatus: RequestStatus,
+  ) => {
+    setUpdatingId(item.id);
+    const nextNote = (noteDrafts[item.id] ?? item.creatorNote).trim().slice(0, 500);
+    try {
+      await updateDoc(doc(db, 'changeRequests', item.id), {
+        status: nextStatus,
+        creatorNote: nextNote,
+        updatedAt: serverTimestamp(),
+      });
+    } catch (error) {
+      handleFirestoreError(
+        error,
+        OperationType.UPDATE,
+        `changeRequests/${item.id}`,
+      );
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
+  const newInboxCount = allRequests.filter((r) => r.status === 'new').length;
+  const mailtoSubject = encodeURIComponent(
+    `[Quadra 12 ${CATEGORY_LABELS[category]}] ${title.trim() || 'Suggestion / Change Request'}`,
+  );
+  const mailtoBody = encodeURIComponent(
+    `Section: ${SECTION_LABELS[targetSection]}\nType: ${CATEGORY_LABELS[category]}\n\nSuggestion / Change Details:\n${details.trim() || '(Write your idea here)'}`,
+  );
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{opacity: 0}}
+          animate={{opacity: 1}}
+          exit={{opacity: 0}}
+          transition={{duration: 0.18}}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#161412]/70 dark:bg-black/80 backdrop-blur-xs p-3 sm:p-6"
+          onClick={onClose}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="helpdesk-modal-title"
+        >
+          <motion.div
+            initial={{opacity: 0, y: 14, scale: 0.98}}
+            animate={{opacity: 1, y: 0, scale: 1}}
+            exit={{opacity: 0, y: 10, scale: 0.98}}
+            transition={{duration: 0.2, ease: [0.16, 1, 0.3, 1]}}
+            className="relative w-full max-w-5xl max-h-[92vh] flex flex-col bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl shadow-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="px-5 sm:px-7 py-4 border-b border-[#DDD6C7] dark:border-[#332E28] flex flex-wrap items-center justify-between gap-4 shrink-0">
+              <div>
+                <p className="text-xs font-medium tracking-[0.1em] text-[#A64B33] dark:text-[#D4785E]">
+                  Quadra 12 Support · Creator: AriYan Pal (Keśava Dāsa)
+                </p>
+                <h2
+                  id="helpdesk-modal-title"
+                  className="mt-0.5 text-lg sm:text-xl font-semibold text-[#1E1B18] dark:text-[#F5F2EB]"
+                >
+                  Website Help Desk &amp; Change Requests
+                </h2>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                {user ? (
+                  <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#F5F2EB] dark:bg-[#24201C] border border-[#DDD6C7] dark:border-[#332E28] text-xs text-[#575048] dark:text-[#CBC3B6]">
+                    <span className="max-w-[140px] truncate font-medium text-[#1E1B18] dark:text-[#F5F2EB]">
+                      {user.displayName || 'Signed In'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => void signOutUser()}
+                      title="Sign out"
+                      className="text-[#A64B33] dark:text-[#D4785E] hover:underline inline-flex items-center gap-1"
+                    >
+                      <LogOut className="w-3.5 h-3.5" aria-hidden="true" />
+                      <span>Sign out</span>
+                    </button>
+                  </div>
+                ) : null}
+
+                <button
+                  type="button"
+                  onClick={onClose}
+                  aria-label="Close Help Desk"
+                  className="inline-flex items-center justify-center w-9 h-9 rounded-lg text-[#575048] dark:text-[#CBC3B6] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB] hover:bg-[#ECE6D9] dark:hover:bg-[#24201C]"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Sub-Navigation Tabs */}
+            <div className="px-5 sm:px-7 py-2.5 border-b border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#161412]/70 flex flex-wrap items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => setActiveTab('guide')}
+                className={`inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg border transition-colors ${
+                  activeTab === 'guide'
+                    ? 'bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] border-[#1E1B18] dark:border-[#F5F2EB]'
+                    : 'bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#575048] dark:text-[#CBC3B6] border-[#DDD6C7] dark:border-[#332E28] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB]'
+                }`}
+              >
+                <HelpCircle className="w-3.5 h-3.5" aria-hidden="true" />
+                <span>Website Guide (What Every Tab Means)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setActiveTab('suggest')}
+                className={`inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg border transition-colors ${
+                  activeTab === 'suggest'
+                    ? 'bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] border-[#1E1B18] dark:border-[#F5F2EB]'
+                    : 'bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#575048] dark:text-[#CBC3B6] border-[#DDD6C7] dark:border-[#332E28] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB]'
+                }`}
+              >
+                <MessageSquarePlus className="w-3.5 h-3.5" aria-hidden="true" />
+                <span>Suggest Addition / Change</span>
+              </button>
+
+              {isCreatorAdmin && (
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('inbox')}
+                  className={`inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg border transition-colors ${
+                    activeTab === 'inbox'
+                      ? 'bg-[#A64B33] text-[#F5F2EB] border-[#A64B33]'
+                      : 'bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#A64B33] dark:text-[#D4785E] border-[#DDD6C7] dark:border-[#332E28]'
+                  }`}
+                >
+                  <Inbox className="w-3.5 h-3.5" aria-hidden="true" />
+                  <span>
+                    Creator Inbox ({newInboxCount} new · {allRequests.length} total)
+                  </span>
+                </button>
+              )}
+            </div>
+
+            {/* Body */}
+            <div className="p-5 sm:p-7 overflow-y-auto flex-1 space-y-6">
+              {activeTab === 'guide' && (
+                <div className="space-y-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl bg-[#F5F2EB] dark:bg-[#24201C] border border-[#DDD6C7] dark:border-[#332E28]">
+                    <div>
+                      <h3 className="text-sm font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+                        How Quadra 12 Works
+                      </h3>
+                      <p className="mt-1 text-xs text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
+                        Every tab in the top navigation covers one part of your Class 12 CBSE PCMB preparation. All study checkboxes, exam best scores, and theme settings save automatically in your browser.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setActiveTab('suggest')}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium rounded-lg bg-[#A64B33] hover:bg-[#8E3E29] text-[#F5F2EB] whitespace-nowrap shrink-0"
+                    >
+                      <MessageSquarePlus className="w-3.5 h-3.5" aria-hidden="true" />
+                      <span>Suggest a Change</span>
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {GUIDE_SECTIONS.map((sec) => {
+                      const Icon = sec.icon;
+                      return (
+                        <div
+                          key={sec.id}
+                          className="p-5 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#24201C]/70 flex flex-col justify-between gap-4"
+                        >
+                          <div className="space-y-3">
+                            <div className="flex items-start justify-between gap-3">
+                              <div className="flex items-center gap-2.5">
+                                <div className="w-9 h-9 rounded-lg bg-[#ECE6D9] dark:bg-[#2C2722] flex items-center justify-center text-[#A64B33] dark:text-[#D4785E] shrink-0">
+                                  <Icon className="w-4 h-4" aria-hidden="true" />
+                                </div>
+                                <div>
+                                  <h4 className="text-base font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+                                    {sec.title}
+                                  </h4>
+                                  <p className="text-xs text-[#787066] dark:text-[#9C9387]">
+                                    {sec.tagline}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+
+                            <p className="text-xs sm:text-sm text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
+                              {sec.description}
+                            </p>
+
+                            <ul className="space-y-1.5 text-xs text-[#575048] dark:text-[#CBC3B6]">
+                              {sec.howToUse.map((tip) => (
+                                <li key={tip} className="flex items-start gap-2">
+                                  <span
+                                    className="text-[#A64B33] dark:text-[#D4785E] font-semibold"
+                                    aria-hidden="true"
+                                  >
+                                    –
+                                  </span>
+                                  <span>{tip}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              onNavigateSection(sec.id);
+                              onClose();
+                            }}
+                            className="self-start px-3 py-1.5 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#1E1B18] text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] transition-colors"
+                          >
+                            Open {sec.title} Tab
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'suggest' && (
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                  {/* Left: Request Form */}
+                  <form
+                    onSubmit={handleSubmitRequest}
+                    className="lg:col-span-7 space-y-4 p-5 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C]"
+                  >
+                    <div>
+                      <h3 className="text-base font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+                        Propose an Addition or Change
+                      </h3>
+                      <p className="mt-1 text-xs text-[#575048] dark:text-[#CBC3B6]">
+                        Anyone visiting Quadra 12 can submit ideas, corrections, or feature requests directly to AriYan Pal (Keśava Dāsa).
+                      </p>
+                    </div>
+
+                    {!user ? (
+                      <div className="p-3.5 rounded-lg bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] flex flex-wrap items-center justify-between gap-3">
+                        <div className="text-xs text-[#575048] dark:text-[#CBC3B6]">
+                          Sign in with Google to save &amp; track your request in the cloud inbox (or write below and use Email Creator).
+                        </div>
+                        <button
+                          type="button"
+                          disabled={authBusy}
+                          onClick={() => void handleGoogleSignIn()}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] hover:opacity-90 disabled:opacity-50 whitespace-nowrap"
+                        >
+                          <LogIn className="w-3.5 h-3.5" aria-hidden="true" />
+                          <span>{authBusy ? 'Signing in...' : 'Sign in with Google'}</span>
+                        </button>
+                      </div>
+                    ) : null}
+
+                    {authError && (
+                      <p className="text-xs text-[#B43C2E] dark:text-[#F29B8E]">
+                        {authError}
+                      </p>
+                    )}
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      <div>
+                        <label
+                          htmlFor="req-category"
+                          className="block text-xs font-medium text-[#1E1B18] dark:text-[#F5F2EB] mb-1.5"
+                        >
+                          Request Type
+                        </label>
+                        <select
+                          id="req-category"
+                          value={category}
+                          onChange={(e) =>
+                            setCategory(e.target.value as RequestCategory)
+                          }
+                          className="w-full px-3 py-2 text-xs sm:text-sm rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#1E1B18] dark:text-[#F5F2EB]"
+                        >
+                          {Object.entries(CATEGORY_LABELS).map(([k, label]) => (
+                            <option key={k} value={k}>
+                              {label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="req-section"
+                          className="block text-xs font-medium text-[#1E1B18] dark:text-[#F5F2EB] mb-1.5"
+                        >
+                          Which Tab / Area?
+                        </label>
+                        <select
+                          id="req-section"
+                          value={targetSection}
+                          onChange={(e) =>
+                            setTargetSection(e.target.value as TargetSection)
+                          }
+                          className="w-full px-3 py-2 text-xs sm:text-sm rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#1E1B18] dark:text-[#F5F2EB]"
+                        >
+                          {Object.entries(SECTION_LABELS).map(([k, label]) => (
+                            <option key={k} value={k}>
+                              {label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="req-title"
+                        className="block text-xs font-medium text-[#1E1B18] dark:text-[#F5F2EB] mb-1.5"
+                      >
+                        Short Title (3–120 characters)
+                      </label>
+                      <input
+                        id="req-title"
+                        type="text"
+                        maxLength={120}
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        placeholder="e.g. Add Physics Formula Sheet PDF or Chapter 6 PYQ Notes"
+                        className="w-full px-3 py-2 text-xs sm:text-sm rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#1E1B18] dark:text-[#F5F2EB] placeholder:text-[#968E83]"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="req-details"
+                        className="block text-xs font-medium text-[#1E1B18] dark:text-[#F5F2EB] mb-1.5"
+                      >
+                        What should be added or changed?
+                      </label>
+                      <textarea
+                        id="req-details"
+                        rows={4}
+                        maxLength={1500}
+                        value={details}
+                        onChange={(e) => setDetails(e.target.value)}
+                        placeholder="Describe your suggestion clearly so it can be added or updated on Quadra 12..."
+                        className="w-full px-3 py-2 text-xs sm:text-sm rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#1E1B18] dark:text-[#F5F2EB] placeholder:text-[#968E83]"
+                      />
+                      <p className="mt-1 text-[11px] font-mono tabular-nums text-[#787066] dark:text-[#9C9387] text-right">
+                        {details.length} / 1500
+                      </p>
+                    </div>
+
+                    {submitMessage && (
+                      <div
+                        className={`px-3.5 py-2.5 rounded-lg border text-xs flex items-center gap-2 ${
+                          submitMessage.type === 'success'
+                            ? 'bg-[#E8F0EA] dark:bg-[#1C2E22] border-[#B8D0BF] dark:border-[#2F4D39] text-[#23422F] dark:text-[#B6DFC3]'
+                            : 'bg-[#F5E8E2] dark:bg-[#33211B] border-[#E0B9AC] dark:border-[#5C3328] text-[#9E3724] dark:text-[#F2B5A7]'
+                        }`}
+                      >
+                        {submitMessage.type === 'success' && (
+                          <CheckCircle2 className="w-4 h-4 shrink-0" aria-hidden="true" />
+                        )}
+                        <span>{submitMessage.text}</span>
+                      </div>
+                    )}
+
+                    <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+                      <button
+                        type="submit"
+                        disabled={submitting || !user}
+                        className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium rounded-lg bg-[#A64B33] hover:bg-[#8E3E29] text-[#F5F2EB] disabled:opacity-50"
+                      >
+                        <Send className="w-3.5 h-3.5" aria-hidden="true" />
+                        <span>
+                          {submitting ? 'Saving...' : 'Submit Suggestion'}
+                        </span>
+                      </button>
+
+                      <a
+                        href={`mailto:${CREATOR_ADMIN_EMAIL}?subject=${mailtoSubject}&body=${mailtoBody}`}
+                        className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#575048] dark:text-[#CBC3B6] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB]"
+                      >
+                        <Mail className="w-3.5 h-3.5" aria-hidden="true" />
+                        <span>Email Creator Directly</span>
+                      </a>
+                    </div>
+                  </form>
+
+                  {/* Right: User's Submitted Requests */}
+                  <div className="lg:col-span-5 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+                        Your Submitted Requests
+                      </h3>
+                      <span className="text-xs font-mono tabular-nums text-[#787066] dark:text-[#9C9387]">
+                        {myRequests.length}
+                      </span>
+                    </div>
+
+                    {!user ? (
+                      <div className="p-5 rounded-xl border border-dashed border-[#DDD6C7] dark:border-[#332E28] text-xs text-[#787066] dark:text-[#9C9387] leading-relaxed">
+                        Sign in with Google on the left to submit cloud-synced requests and see status updates (<span className="font-medium">Submitted</span>, <span className="font-medium">Planned</span>, <span className="font-medium">Added</span>) from AriYan Pal (Keśava Dāsa).
+                      </div>
+                    ) : myRequests.length === 0 ? (
+                      <div className="p-5 rounded-xl border border-dashed border-[#DDD6C7] dark:border-[#332E28] text-xs text-[#787066] dark:text-[#9C9387]">
+                        You haven&rsquo;t submitted any additions or change requests yet.
+                      </div>
+                    ) : (
+                      <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
+                        {myRequests.map((item) => {
+                          const st = STATUS_STYLES[item.status];
+                          return (
+                            <div
+                              key={item.id}
+                              className="p-3.5 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#24201C]/70 space-y-2"
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <span className="text-xs font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+                                  {item.title}
+                                </span>
+                                <span
+                                  className={`px-2 py-0.5 text-[10px] font-medium rounded border shrink-0 ${st.cls}`}
+                                >
+                                  {st.label}
+                                </span>
+                              </div>
+                              <p className="text-[11px] text-[#787066] dark:text-[#9C9387]">
+                                {CATEGORY_LABELS[item.category]} ·{' '}
+                                {SECTION_LABELS[item.targetSection]}
+                              </p>
+                              <p className="text-xs text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
+                                {item.details}
+                              </p>
+                              {item.creatorNote && (
+                                <div className="px-2.5 py-1.5 rounded bg-[#ECE6D9] dark:bg-[#1E1B18] text-[11px] text-[#1E1B18] dark:text-[#F5F2EB]">
+                                  <span className="font-semibold text-[#A64B33] dark:text-[#D4785E]">
+                                    Creator note:
+                                  </span>{' '}
+                                  {item.creatorNote}
+                                </div>
+                              )}
+                              {item.status === 'new' && (
+                                <button
+                                  type="button"
+                                  onClick={() => void handleDeleteOwnRequest(item.id)}
+                                  className="inline-flex items-center gap-1 text-[11px] text-[#787066] hover:text-[#B43C2E]"
+                                >
+                                  <Trash2 className="w-3 h-3" aria-hidden="true" />
+                                  <span>Withdraw</span>
+                                </button>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'inbox' && isCreatorAdmin && (
+                <div className="space-y-4">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <h3 className="text-base font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+                        Creator Inbox — Community Suggestions &amp; Changes
+                      </h3>
+                      <p className="text-xs text-[#575048] dark:text-[#CBC3B6]">
+                        Signed in as {CREATOR_ADMIN_EMAIL}. Update statuses or reply with a creator note.
+                      </p>
+                    </div>
+                  </div>
+
+                  {allRequests.length === 0 ? (
+                    <div className="p-8 rounded-xl border border-dashed border-[#DDD6C7] dark:border-[#332E28] text-center text-xs text-[#787066] dark:text-[#9C9387]">
+                      No visitor requests have been submitted yet.
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {allRequests.map((item) => {
+                        const st = STATUS_STYLES[item.status];
+                        const draft = noteDrafts[item.id] ?? item.creatorNote;
+                        return (
+                          <div
+                            key={item.id}
+                            className="p-4 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] space-y-3"
+                          >
+                            <div className="flex flex-wrap items-start justify-between gap-2">
+                              <div>
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <h4 className="text-sm font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+                                    {item.title}
+                                  </h4>
+                                  <span
+                                    className={`px-2 py-0.5 text-[10px] font-medium rounded border ${st.cls}`}
+                                  >
+                                    {st.label}
+                                  </span>
+                                </div>
+                                <p className="mt-0.5 text-[11px] text-[#787066] dark:text-[#9C9387]">
+                                  By {item.authorName} · {CATEGORY_LABELS[item.category]} ·{' '}
+                                  {SECTION_LABELS[item.targetSection]}
+                                </p>
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={() => void handleDeleteOwnRequest(item.id)}
+                                className="inline-flex items-center gap-1 text-[11px] text-[#787066] hover:text-[#B43C2E]"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
+                                <span>Remove</span>
+                              </button>
+                            </div>
+
+                            <p className="text-xs sm:text-sm text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
+                              {item.details}
+                            </p>
+
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 pt-1">
+                              <input
+                                type="text"
+                                maxLength={500}
+                                value={draft}
+                                onChange={(e) =>
+                                  setNoteDrafts((prev) => ({
+                                    ...prev,
+                                    [item.id]: e.target.value,
+                                  }))
+                                }
+                                placeholder="Optional reply note for the student..."
+                                className="flex-1 px-3 py-1.5 text-xs rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#1E1B18] dark:text-[#F5F2EB]"
+                              />
+
+                              <div className="flex items-center gap-1.5 shrink-0">
+                                {(['new', 'planned', 'added'] as RequestStatus[]).map(
+                                  (statusOpt) => (
+                                    <button
+                                      key={statusOpt}
+                                      type="button"
+                                      disabled={updatingId === item.id}
+                                      onClick={() =>
+                                        void handleCreatorUpdate(item, statusOpt)
+                                      }
+                                      className={`px-2.5 py-1.5 text-[11px] font-medium rounded-lg border transition-colors ${
+                                        item.status === statusOpt
+                                          ? 'bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] border-[#1E1B18] dark:border-[#F5F2EB]'
+                                          : 'bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#575048] dark:text-[#CBC3B6] border-[#DDD6C7] dark:border-[#332E28] hover:border-[#A64B33]'
+                                      }`}
+                                    >
+                                      {statusOpt === 'new'
+                                        ? 'Mark New'
+                                        : statusOpt === 'planned'
+                                          ? 'Mark Planned'
+                                          : 'Mark Added'}
+                                    </button>
+                                  ),
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}

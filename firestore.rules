@@ -1,0 +1,110 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function isCreatorAdmin() {
+      return isSignedIn() && request.auth.token.email == 'ariyanpal090@gmail.com';
+    }
+
+    function isValidChangeRequest(data) {
+      return data.keys().hasAll([
+        'authorUid',
+        'authorName',
+        'category',
+        'targetSection',
+        'title',
+        'details',
+        'status',
+        'creatorNote',
+        'createdAt',
+        'updatedAt'
+      ])
+      && data.keys().hasOnly([
+        'authorUid',
+        'authorName',
+        'category',
+        'targetSection',
+        'title',
+        'details',
+        'status',
+        'creatorNote',
+        'createdAt',
+        'updatedAt'
+      ])
+      && data.authorUid is string && isValidId(data.authorUid)
+      && data.authorName is string && data.authorName.size() >= 1 && data.authorName.size() <= 80
+      && data.category in ['addition', 'change', 'syllabus_fix', 'bug_report']
+      && data.targetSection in ['overview', 'subjects', 'exam', 'hackers', 'general']
+      && data.title is string && data.title.size() >= 3 && data.title.size() <= 120
+      && data.details is string && data.details.size() >= 5 && data.details.size() <= 1500
+      && data.status in ['new', 'planned', 'added']
+      && data.creatorNote is string && data.creatorNote.size() <= 500
+      && data.createdAt is timestamp
+      && data.updatedAt is timestamp;
+    }
+
+    match /changeRequests/{requestId} {
+      allow get: if isSignedIn() && isValidId(requestId) && (
+        existing().authorUid == request.auth.uid || isCreatorAdmin()
+      );
+
+      allow list: if isSignedIn() && (
+        resource.data.authorUid == request.auth.uid || isCreatorAdmin()
+      );
+
+      allow create: if isSignedIn()
+        && isValidId(requestId)
+        && isValidChangeRequest(incoming())
+        && incoming().authorUid == request.auth.uid
+        && incoming().status == 'new'
+        && incoming().creatorNote == ''
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      allow update: if isSignedIn()
+        && isValidId(requestId)
+        && isValidChangeRequest(incoming())
+        && incoming().authorUid == existing().authorUid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          (
+            isCreatorAdmin()
+            && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'creatorNote', 'updatedAt'])
+          )
+          || (
+            existing().authorUid == request.auth.uid
+            && existing().status == 'new'
+            && incoming().status == 'new'
+            && incoming().creatorNote == existing().creatorNote
+            && incoming().diff(existing()).affectedKeys().hasOnly(['category', 'targetSection', 'title', 'details', 'updatedAt'])
+          )
+        );
+
+      allow delete: if isSignedIn() && isValidId(requestId) && (
+        isCreatorAdmin()
+        || (existing().authorUid == request.auth.uid && existing().status == 'new')
+      );
+    }
+  }
+}
