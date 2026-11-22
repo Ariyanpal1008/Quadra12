@@ -1488,14 +1488,29 @@ export default function App() {
               <p className="font-medium text-[#1E1B18] dark:text-[#F5F2EB]">
                 © 2026 Quadra 12 · Invented November 2026 · <span className="font-semibold text-[#A64B33] dark:text-[#D4785E]">Creator: AriYan Pal (Keśava Dāsa)</span>
               </p>
-              <div>
+              <div className="flex flex-wrap items-center gap-4">
                 <button
                   type="button"
                   onClick={() => setTermsModalOpen(true)}
-                  className="font-mono text-[11px] text-[#787066] dark:text-[#9C9387] hover:text-[#A64B33] dark:hover:text-[#D4785E] underline underline-offset-2 transition-colors cursor-pointer text-left"
+                  className="font-mono text-[11px] text-[#486581] dark:text-[#829AB1] hover:text-[#2E475D] dark:hover:text-[#BCCCDC] underline underline-offset-2 transition-colors cursor-pointer text-left"
                 >
                   Terms &amp; Conditions · 2026
                 </button>
+                <a
+                  href="https://github.com/Ariyanpal1008/Quadra12"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="GitHub repository"
+                  className="group inline-flex items-center gap-1.5 font-mono text-[11px] font-bold text-[#1E1B18] dark:text-[#F5F2EB] hover:text-[#A64B33] dark:hover:text-[#D4785E] transition-colors"
+                >
+                  <img
+                    src={`${import.meta.env.BASE_URL}assets/aistudio/Octicons-mark-github_12794390.svg`}
+                    alt="GitHub"
+                    className="w-4 h-4 dark:invert shrink-0 transition-transform duration-200 group-hover:scale-110"
+                    referrerPolicy="no-referrer"
+                  />
+                  <span className="font-bold underline underline-offset-2">GitHub</span>
+                </a>
               </div>
             </div>
           </div>
