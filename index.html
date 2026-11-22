@@ -58,7 +58,7 @@
   </head>
   <body class="bg-[#F5F2EB] dark:bg-[#161412] text-[#1E1B18] dark:text-[#F5F2EB] antialiased selection:bg-[#A64B33] selection:text-[#F5F2EB] transition-colors duration-200">
     <div id="root">
-      <main class="max-w-[960px] mx-auto px-6 py-12 space-y-6">
+      <main class="max-w-[960px] mx-auto px-6 py-12 space-y-8">
         <header class="space-y-2 border-b border-[#DDD6C7] dark:border-[#332E28] pb-6">
           <p class="text-xs font-medium tracking-[0.14em] text-[#A64B33] dark:text-[#D4785E]">
             Quadra 12 · CBSE Class 12 PCMB · Created by AriYan Pal (Keśava Dāsa)
@@ -67,24 +67,39 @@
             Quadra 12 — Class 12 CBSE Tracker, Examination Hall &amp; 12th Hackers
           </h1>
           <p class="text-sm text-[#575048] dark:text-[#CBC3B6]">
-            An independent Class 12 CBSE PCMB study workspace covering Physics, Chemistry, Biology, and Mathematics.
+            An independent, free Class 12 CBSE PCMB study workspace covering Physics (042), Chemistry (043), Biology (044), and Mathematics (041), with Light &amp; Dark mode, mobile top menu (☰), Help Desk, and community Suggestion Box.
           </p>
         </header>
-        <section class="space-y-2 text-sm text-[#575048] dark:text-[#CBC3B6]">
-          <h2 class="text-lg font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">Workspace Features</h2>
-          <ul class="list-disc pl-5 space-y-1">
-            <li><strong>Overview:</strong> Combined progress across all 50 NCERT Class 12 chapters (200 completion checkpoints).</li>
-            <li><strong>Subject Tracker:</strong> Track Lecture, Practice, NCERT, and PYQ completion for Physics (14 chapters), Chemistry (10 chapters), Biology (13 chapters), and Mathematics (13 chapters), with custom SVG diagrams.</li>
-            <li><strong>Examination Hall:</strong> Practice official CBSE 2026–27 Sample Question Paper PDFs with a 3-hour countdown timer, OMR checklist, and instant Section A scoring.</li>
-            <li><strong>12th Hackers Playlist:</strong> Watch all 50 one-shot chapter lectures synced directly to Subject Tracker.</li>
+
+        <section class="space-y-3 text-sm text-[#575048] dark:text-[#CBC3B6]">
+          <h2 class="text-lg font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">Core Study Workspace</h2>
+          <ul class="list-disc pl-5 space-y-1.5">
+            <li><strong>Overview Dashboard:</strong> Combined syllabus mastery across all 50 NCERT Class 12 chapters (200 completion checkpoints), subjects completed out of 4, CBSE sample papers attempted, and 12th Hackers lectures watched, plus subject cards with quick stage toggles and 100% completion shimmer.</li>
+            <li><strong>Subject Tracker:</strong> Tracks all 50 NCERT chapters — Physics (14), Chemistry (10), Biology (13), and Mathematics (13) — across 4 checkpoints per chapter (Lecture done, Practice done, NCERT done, PYQ done), one-click subject bulk toggles, and 50 interactive custom SVG study diagrams.</li>
+            <li><strong>Examination Hall:</strong> Practice official CBSE 2026–27 Sample Question Paper PDFs (70 marks PCB / 80 marks Maths) with an embedded PDF reader, offline download, 3-hour (03:00:00) countdown timer, 33/38-question OMR &amp; written checklist, automatic Section A grading, and personal best score tracking.</li>
+            <li><strong>12th Hackers One-Shot Lectures:</strong> Stream all 50 official chapter lectures with unit notes, high-yield board topics, and key formulas, bidirectionally synced to Lecture done in Subject Tracker. Includes 3 player embed modes (Standard, Pure Embed, No-Cookie), auto-completion detection, and an Open on YouTube + Mark Done &amp; Next fallback bar.</li>
           </ul>
         </section>
+
+        <section class="space-y-3 text-sm text-[#575048] dark:text-[#CBC3B6]">
+          <h2 class="text-lg font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">Help Desk, Suggestion Box &amp; Creator Inbox</h2>
+          <ul class="list-disc pl-5 space-y-1.5">
+            <li><strong>Help Desk Guide:</strong> Accessible from the top mobile menu (☰) and footer; explains how every tab works (Overview, Subject Tracker, Examination Hall, and 12th Hackers) with direct jump buttons.</li>
+            <li><strong>Suggest Addition / Change (Suggestion Box):</strong> Visitors can propose new features, design changes, syllabus corrections, or bug reports for any tab. Supports Google Sign-In cloud tracking (Submitted, Planned, Added / Updated with creator replies via Firebase Firestore) as well as a direct Email Creator button (ariyanpal090@gmail.com).</li>
+            <li><strong>Creator Inbox:</strong> Moderation inbox unlocked for the verified creator to review visitor requests, update statuses, and leave reply notes.</li>
+            <li><strong>Theme &amp; Data Privacy:</strong> Switch anytime between Light and Dark modes. All chapter checkboxes, best exam scores, and theme choices save automatically in local browser storage without requiring sign-in.</li>
+          </ul>
+        </section>
+
         <section class="space-y-2 text-sm text-[#575048] dark:text-[#CBC3B6]">
-          <h2 class="text-lg font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">About the Creator</h2>
+          <h2 class="text-lg font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">About the Creator &amp; Disclaimers</h2>
           <p>I am a Class 12 student currently preparing for board exams.</p>
           <p><strong>The Problem:</strong> Keeping board exam preparation organized and finding one clean, distraction-free study tracker was a real struggle.</p>
           <p><strong>The Solution:</strong> I built this app to solve that exact problem for myself and other students facing the same challenge.</p>
-          <p class="text-xs pt-2">© 2026 Quadra 12 · Invented November 2026 · Creator: AriYan Pal (Keśava Dāsa)</p>
+          <p class="text-xs pt-1">
+            Disclaimer: Quadra 12 is an independent Class 12 student study workspace. Official CBSE Sample Question Papers and 12th Hackers YouTube lectures belong to their respective owners and are organized here solely for revision convenience. Built by AriYan Pal (Keśava Dāsa) with partial AI-assisted development support.
+          </p>
+          <p class="text-xs">© 2026 Quadra 12 · Invented November 2026 · Creator: AriYan Pal (Keśava Dāsa)</p>
         </section>
       </main>
     </div>
