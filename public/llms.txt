@@ -1,0 +1,39 @@
+# Quadra 12
+
+> Quadra 12 is a free, distraction-free Class 12 CBSE PCMB (Physics, Chemistry, Biology, Mathematics) study tracker, 3-hour Examination Hall, and 12th Hackers one-shot lecture workspace created by AriYan Pal (Keśava Dāsa).
+
+- Live URL: https://ariyanpal1008.github.io/Quadra12/
+- Source Repository: https://github.com/Ariyanpal1008/Quadra12
+- Creator: AriYan Pal (Keśava Dāsa) (`ariyanpal090@gmail.com`)
+- Copyright: © 2026 Quadra 12 · Invented November 2026
+
+## About the Creator
+
+I am a Class 12 student currently preparing for board exams.
+- The Problem: Keeping board exam preparation organized and finding one clean, distraction-free study tracker was a real struggle.
+- The Solution: I built this app to solve that exact problem for myself and other students facing the same challenge.
+
+## Main Workspace Tabs
+
+1. **Overview**
+   - Displays combined syllabus completion across 50 NCERT Class 12 chapters (200 total checkpoints), completed subject count, CBSE sample papers attempted, and watched 12th Hackers lectures.
+   - Includes quick subject progress cards for Physics (042), Chemistry (043), Biology (044), and Mathematics (041).
+
+2. **Subject Tracker**
+   - Covers Physics (14 chapters), Chemistry (10 chapters), Biology (13 chapters), and Mathematics (13 chapters).
+   - Tracks 4 stages per chapter: `Lecture done`, `Practice done`, `NCERT done`, and `PYQ done`.
+   - Provides 50 custom SVG study diagrams and one-click subject-level stage toggles.
+
+3. **Examination Hall**
+   - Embeds official CBSE 2026–27 Sample Question Paper PDFs alongside a 3-hour (`03:00:00`) exam timer, interactive OMR/written question checklist, and automatic Section A scoring.
+
+4. **12th Hackers**
+   - Organizes all 50 official one-shot lectures across Physics, Chemistry, Biology, and Mathematics with topic notes and automatic synchronization to `Lecture done` in Subject Tracker.
+
+5. **Help Desk, Creator & Disclaimers, and Suggest Addition / Change**
+   - Interactive guide to every tab, creator disclaimers, and a community feedback form backed by Firebase Authentication & Cloud Firestore (`changeRequests`).
+
+## Data & Privacy
+
+- All study progress (chapter checkboxes, exam best scores, and Light/Dark theme) is saved locally in the user's browser (`localStorage`), so students do not need an account to study.
+- Google Sign-In is only needed if a visitor wants to submit cloud-synced feature requests or syllabus corrections.
