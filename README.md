@@ -3,7 +3,7 @@
 **Live Website:** [https://ariyanpal1008.github.io/Quadra12/](https://ariyanpal1008.github.io/Quadra12/)  
 **GitHub Repository:** [https://github.com/Ariyanpal1008/Quadra12](https://github.com/Ariyanpal1008/Quadra12)  
 **Creator:** AriYan Pal (Keśava Dāsa) · `ariyanpal090@gmail.com`  
-**Copyright:** © 2026 Quadra 12 · Invented November 2026
+**Copyright:** © 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)
 
 Quadra 12 is a calm, distraction-free Class 12 CBSE PCMB (Physics 042, Chemistry 043, Biology 044, and Mathematics 041) academic preparation workspace. It brings together an Apple StandBy–inspired **Live Board Exam Countdown Clock**, a gamified **My Achievements** milestone system, comprehensive syllabus tracking across all 50 NCERT chapters, full-length official CBSE 2026–27 Sample Question Paper practice in a 3-hour **Examination Hall**, and 50 synced **12th Hackers** one-shot video lectures in one unified web application.
 
@@ -235,4 +235,4 @@ npm run build
 
 ---
 
-© 2026 Quadra 12 · Invented November 2026 · Creator: AriYan Pal (Keśava Dāsa)
+© 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)

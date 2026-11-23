@@ -1642,7 +1642,7 @@ export default function App() {
 
             <div className="pt-4 border-t border-[#DDD6C7]/70 dark:border-[#332E28] space-y-1.5 text-[11px] text-[#787066] dark:text-[#9C9387]">
               <p className="font-medium text-[#1E1B18] dark:text-[#F5F2EB]">
-                © 2026 Quadra 12 · Invented November 2026 · <span className="font-semibold text-[#A64B33] dark:text-[#D4785E]">Creator: AriYan Pal (Keśava Dāsa)</span>
+                © 2026 Quadra 12 · <span className="font-semibold text-[#A64B33] dark:text-[#D4785E]">Creator: AriYan Pal (Keśava Dāsa)</span>
               </p>
               <div className="flex flex-wrap items-center gap-4">
                 <button
