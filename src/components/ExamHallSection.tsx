@@ -15,6 +15,7 @@ import {
 import {EXAM_QUESTIONS, SUBJECTS, SubjectId} from '../data/pcmbData';
 import {ExamDiagram} from './ExamDiagrams';
 import {APPLE_EASE, APPLE_SPRING} from './FluidPrimitives';
+import {playExamCompletionChime, playOmrBubbleSound} from '../utils/soundEffects';
 
 interface ExamAttemptSummary {
   score: number;
@@ -121,6 +122,7 @@ export function ExamHallSection({
 
   useEffect(() => {
     if (examPhase === 'active' && secondsLeft <= 0) {
+      playExamCompletionChime();
       finalizeExam();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -492,12 +494,13 @@ export function ExamHallSection({
                                     whileTap={{scale: 0.92}}
                                     aria-label={`Question ${q.questionNumber} option ${letter}`}
                                     aria-pressed={active}
-                                    onClick={() =>
+                                    onClick={() => {
+                                      playOmrBubbleSound();
                                       setOmrAnswers((prev) => ({
                                         ...prev,
                                         [q.id]: active ? -1 : idx,
-                                      }))
-                                    }
+                                      }));
+                                    }}
                                     className={`w-8 h-8 rounded-md font-mono text-xs font-semibold border transition-colors ${
                                       active
                                         ? 'bg-[#A64B33] dark:bg-[#D4785E] border-[#A64B33] dark:border-[#D4785E] text-[#F5F2EB] dark:text-[#1E1B18]'

@@ -1091,6 +1091,16 @@ export function HelpDeskModal({
                           </span>
                         </li>
                       </ul>
+
+                      {/* Upcoming 2027 App Updates */}
+                      <div className="pt-4 border-t border-[#DDD6C7] dark:border-[#332E28] space-y-2">
+                        <h4 className="text-sm font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+                          Upcoming 2027 App Updates
+                        </h4>
+                        <p className="text-xs sm:text-sm text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
+                          Quadra 12 is currently dedicated to core CBSE PCMB revision for the 2026–27 board exams. Optional 5th and 6th subjects (English Core, Computer Science, Physical Education, Fine Arts) along with community-requested features from the Suggestion Box will roll out after boards conclude.
+                        </p>
+                      </div>
                     </div>
                   </div>
 

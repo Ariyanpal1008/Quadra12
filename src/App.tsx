@@ -22,8 +22,19 @@ import {
   ShieldCheck,
   Sun,
   Trophy,
+  Volume2,
+  VolumeX,
   X,
 } from 'lucide-react';
+import {
+  isSoundMuted,
+  playAchievementChime,
+  playCheckSound,
+  playMasteryChime,
+  playThemeSwitchSound,
+  toggleSoundMuted,
+  unlockAudioContext,
+} from './utils/soundEffects';
 import {
   ChapterTaskState,
   HACKERS_PLAYLIST,
@@ -178,6 +189,19 @@ export default function App() {
   const [helpDeskTab, setHelpDeskTab] = useState<HelpDeskTab>('guide');
   const [achievementsModalOpen, setAchievementsModalOpen] = useState(false);
   const [termsModalOpen, setTermsModalOpen] = useState(false);
+  const [isMuted, setIsMuted] = useState(isSoundMuted);
+
+  useEffect(() => {
+    const handleFirstGesture = () => {
+      unlockAudioContext();
+    };
+    window.addEventListener('click', handleFirstGesture, {once: true});
+    window.addEventListener('keydown', handleFirstGesture, {once: true});
+    return () => {
+      window.removeEventListener('click', handleFirstGesture);
+      window.removeEventListener('keydown', handleFirstGesture);
+    };
+  }, []);
 
   const openHelpDesk = (tab: HelpDeskTab) => {
     setHelpDeskTab(tab);
@@ -344,6 +368,7 @@ export default function App() {
 
   const handleToggleChapter = (chapterId: string) => {
     const nextDone = !completedChapters[chapterId];
+    playCheckSound(nextDone);
     setCompletedChapters((prev) => ({
       ...prev,
       [chapterId]: nextDone,
@@ -375,9 +400,11 @@ export default function App() {
 
   const handleToggleChapterTask = (chapterId: string, stage: StudyStageKey) => {
     const current = chapterTasks[chapterId] ?? {};
+    const nextState = !current[stage];
+    playCheckSound(nextState);
     const updatedChapter: ChapterTaskState = {
       ...current,
-      [stage]: !current[stage],
+      [stage]: nextState,
     };
     const nextTasks = {
       ...chapterTasks,
@@ -407,6 +434,7 @@ export default function App() {
       Boolean(chapterTasks[ch.id]?.[stage]),
     );
     const nextValue = !allAlreadyDone;
+    playCheckSound(nextValue);
     const nextTasks = {...chapterTasks};
     const newlyCompletedIds: string[] = [];
 
@@ -442,6 +470,7 @@ export default function App() {
   };
 
   const handleMarkSubjectComplete = (subjectId: SubjectId) => {
+    playMasteryChime();
     const subject = SUBJECTS.find((s) => s.id === subjectId);
     if (!subject) return;
 
@@ -475,6 +504,7 @@ export default function App() {
   };
 
   const handleResetSubject = (subjectId: SubjectId) => {
+    playCheckSound(false);
     const subject = SUBJECTS.find((s) => s.id === subjectId);
     if (!subject) return;
 
@@ -502,6 +532,7 @@ export default function App() {
     if (Boolean(chapterTasks[chapterId]?.lecture) === done) {
       return;
     }
+    playCheckSound(done);
     const updatedChapter: ChapterTaskState = {
       ...(chapterTasks[chapterId] ?? {}),
       lecture: done,
@@ -527,6 +558,7 @@ export default function App() {
   const handleToggleWatched = (lectureId: string) => {
     const episode = HACKERS_PLAYLIST.find((ep) => ep.id === lectureId);
     const nextWatched = !watchedLectures[lectureId];
+    playCheckSound(nextWatched);
     setWatchedLectures((prev) => ({
       ...prev,
       [lectureId]: nextWatched,
@@ -669,6 +701,7 @@ export default function App() {
     if (newlyUnlocked.length > 0) {
       setUnlockedAchievements(nextMap);
       if (hasEvaluatedInitialAchievementsRef.current) {
+        playAchievementChime();
         const latest = newlyUnlocked[newlyUnlocked.length - 1];
         setRecentUnlockToast({
           title: latest.title,
@@ -711,8 +744,7 @@ export default function App() {
   return (
     <MotionConfig reducedMotion="user">
       <div className="min-h-screen flex flex-col bg-[#F5F2EB] dark:bg-[#161412] text-[#1E1B18] dark:text-[#F5F2EB] transition-colors duration-200">
-        {/* Top Bar Contract: strictly 3 zones separated by gap-8 */}
-        <header className="sticky top-0 z-40 bg-[#F5F2EB]/82 dark:bg-[#161412]/82 apple-glass-bar border-b border-[#DDD6C7]/90 dark:border-[#332E28]/90 transition-colors duration-300">
+        <header className="sticky top-0 z-40 bg-[#FAF8F5] dark:bg-[#121212] supports-[backdrop-filter]:bg-[#FAF8F5]/96 dark:supports-[backdrop-filter]:bg-[#121212]/96 apple-glass-bar border-b border-[rgba(0,0,0,0.06)] dark:border-[#2C2C2E] transition-colors duration-300">
           <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-8">
             {/* Zone 1: Brand icon + wordmark */}
             <motion.button
@@ -776,7 +808,11 @@ export default function App() {
                 whileHover={{y: -1}}
                 whileTap={{scale: 0.95}}
                 transition={{duration: 0.15}}
-                onClick={() => setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'))}
+                onClick={() => {
+                  const nextTheme = theme === 'dark' ? 'light' : 'dark';
+                  playThemeSwitchSound(nextTheme === 'dark');
+                  setTheme(nextTheme);
+                }}
                 className="inline-flex items-center gap-1.5 px-2.5 py-2 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#24201C] text-[#1E1B18] dark:text-[#F5F2EB] hover:bg-[#ECE6D9] dark:hover:bg-[#332E28] transition-colors whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A64B33]"
               >
                 {isDark ? (
@@ -788,6 +824,35 @@ export default function App() {
                   <>
                     <Moon className="w-4 h-4 text-[#575048]" aria-hidden="true" />
                     <span className="hidden sm:inline">Dark</span>
+                  </>
+                )}
+              </motion.button>
+
+              {/* Header Mute / Unmute Toggle */}
+              <motion.button
+                type="button"
+                role="switch"
+                aria-checked={!isMuted}
+                aria-label={isMuted ? 'Unmute sounds' : 'Mute sounds'}
+                title={isMuted ? 'Sound muted (click to unmute)' : 'Sound enabled (click to mute)'}
+                whileHover={{y: -1}}
+                whileTap={{scale: 0.95}}
+                transition={{duration: 0.15}}
+                onClick={() => {
+                  const nextMuted = toggleSoundMuted();
+                  setIsMuted(nextMuted);
+                }}
+                className="inline-flex items-center gap-1.5 px-2.5 py-2 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#24201C] text-[#1E1B18] dark:text-[#F5F2EB] hover:bg-[#ECE6D9] dark:hover:bg-[#332E28] transition-colors whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A64B33]"
+              >
+                {isMuted ? (
+                  <>
+                    <VolumeX className="w-4 h-4 text-[#787066] dark:text-[#9C9387]" aria-hidden="true" />
+                    <span className="sr-only sm:not-sr-only text-[11px] font-mono">Muted</span>
+                  </>
+                ) : (
+                  <>
+                    <Volume2 className="w-4 h-4 text-[#A64B33] dark:text-[#D4785E]" aria-hidden="true" />
+                    <span className="sr-only sm:not-sr-only text-[11px] font-mono">Sound</span>
                   </>
                 )}
               </motion.button>
@@ -867,6 +932,26 @@ export default function App() {
                   >
                     <HelpCircle className="w-4 h-4 text-[#A64B33] dark:text-[#D4785E]" aria-hidden="true" />
                     <span>Help Desk</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const nextMuted = toggleSoundMuted();
+                      setIsMuted(nextMuted);
+                    }}
+                    className="w-full text-left px-3 py-2.5 text-sm font-medium rounded-lg text-[#575048] dark:text-[#CBC3B6] hover:bg-[#ECE6D9]/60 dark:hover:bg-[#24201C] flex items-center justify-between"
+                  >
+                    <span className="flex items-center gap-2">
+                      {isMuted ? (
+                        <VolumeX className="w-4 h-4 text-[#787066] dark:text-[#9C9387]" aria-hidden="true" />
+                      ) : (
+                        <Volume2 className="w-4 h-4 text-[#A64B33] dark:text-[#D4785E]" aria-hidden="true" />
+                      )}
+                      <span>Sound Effects</span>
+                    </span>
+                    <span className="text-xs font-mono text-[#787066] dark:text-[#9C9387]">
+                      {isMuted ? 'Muted' : 'Enabled'}
+                    </span>
                   </button>
                 </div>
               </motion.div>
@@ -1482,6 +1567,16 @@ export default function App() {
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Coming in 2027 Announcement Card */}
+            <div className="my-4 rounded-[12px] p-[14px_16px] bg-[#F2EFE9] dark:bg-[#1C1C1E] border border-[#E2DDD5] dark:border-[#2C2C2E] flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3.5 transition-colors">
+              <span className="inline-flex items-center justify-center bg-[#1E1E1E] text-[#FFFFFF] text-[11px] font-medium px-2.5 py-0.5 rounded-full shrink-0 self-start sm:self-center">
+                New Subjects in 2027
+              </span>
+              <p className="text-xs sm:text-[13px] text-[#5C5C5C] dark:text-[#A1A1A6] leading-relaxed">
+                Currently focused on 2026–27 Board Exams. English Core, Physical Education, Computer Science, Fine Arts &amp; more will be added right after exams!
+              </p>
             </div>
 
             <div className="pt-4 border-t border-[#DDD6C7]/70 dark:border-[#332E28] space-y-1.5 text-[11px] text-[#787066] dark:text-[#9C9387]">

@@ -14,6 +14,7 @@ import {
   Zap,
 } from 'lucide-react';
 import {APPLE_EASE, APPLE_SPRING} from './FluidPrimitives';
+import {playCheckSound, playOmrBubbleSound} from '../utils/soundEffects';
 
 export type TourTargetSection = 'overview' | 'subjects' | 'exam' | 'hackers';
 
@@ -425,12 +426,14 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
                         <button
                           key={st.key}
                           type="button"
-                          onClick={() =>
+                          onClick={() => {
+                            const nextVal = !simStages[st.key];
+                            playCheckSound(nextVal);
                             setSimStages((prev) => ({
                               ...prev,
-                              [st.key]: !prev[st.key],
-                            }))
-                          }
+                              [st.key]: nextVal,
+                            }));
+                          }}
                           className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium transition-colors whitespace-nowrap ${
                             checked
                               ? 'bg-[#E8F0EA] dark:bg-[#1C2E22] border-[#3D6B4F] dark:border-[#7AB88F] text-[#23422F] dark:text-[#B6DFC3]'
@@ -487,7 +490,10 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
                           <button
                             key={opt}
                             type="button"
-                            onClick={() => setSimOmrPick(opt)}
+                            onClick={() => {
+                              playOmrBubbleSound();
+                              setSimOmrPick(opt);
+                            }}
                             className={`w-9 h-9 rounded-full border font-mono text-xs font-semibold transition-colors ${
                               selected
                                 ? opt === 'B'

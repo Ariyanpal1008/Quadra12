@@ -90,8 +90,23 @@ I am **AriYan Pal (Keśava Dāsa)** (`ariyanpal090@gmail.com`), a Class 12 stude
 
 ### 6. Help Desk, Interactive Tour & Standalone Terms Modal
 - 5 clean Help Desk tabs: **Interactive Guide**, **Interactive Tour** (sandbox preview widgets), **Creator & Disclaimers**, **Suggest Addition / Change**, and **Creator Inbox**.
+- Dedicated **Upcoming 2027 App Updates** section inside About & Disclaimers noting upcoming 5th/6th subject additions (English Core, Physical Education, Computer Science, Fine Arts) and community suggestions post-boards.
 - Standalone **Terms & Conditions · 2026** modal accessible directly from the footer with fair use and copyright takedown details.
 - Footer features high-resolution official vector **GitHub** logo (`Octicons-mark-github_12794390.svg`) linking to the GitHub repository.
+
+### 7. Footer 2027 Announcement & Non-Overlap Sticky Header
+- **Footer "Coming in 2027" Card:** Positioned above the copyright line, featuring a dark pill badge `New Subjects in 2027` and a warm-cream secondary container announcing future post-board subject expansions (English Core, Physical Education, Computer Science, Fine Arts).
+- **Solid Frosted Header (No Text Overlap):** Upgraded sticky top navigation bar with `#FAF8F5` (Light) and `#121212` (Dark) background, `backdrop-filter: blur(10px)`, and subtle bottom divider (`rgba(0,0,0,0.06)`), preventing underlying headings and cards from clashing or overlapping during scrolling on desktop and mobile.
+
+### 8. Zero-Dependency Web Audio API Sound System
+- **Synthesized Micro-Interactions (<200ms):** Native browser `AudioContext` synthesizes tactile sounds on the fly with no external audio files required.
+  - **Chapter Checkboxes (Lecture, Practice, NCERT, PYQ):** Crisp, low-volume tactile pop (sine/triangle rapid pitch sweep, ~60ms) on check, softer reverse tick on uncheck.
+  - **Theme Switch (Light/Dark Mode):** Subtle mechanical switch click (~40ms).
+  - **OMR Bubble Selection (Examination Hall):** Soft, muted option tap sound (~45ms).
+  - **Achievement Unlocked & 100% Subject Mastery:** Warm, two-note harmonic chime (C5 → G5, soft decay ~300ms).
+  - **Exam Timer Completion:** Gentle, non-jarring multi-tone bell chime when the 3-hour timer reaches `00:00:00`.
+- **Header Sound Toggle:** Compact mute/unmute button (🔊 / 🔇) in the sticky navbar directly next to the theme toggle, persisted in `localStorage`.
+- **Subtle Haptics:** Subtle gain levels (0.08–0.15 max) and automatic gesture unlock compliant with browser autoplay policies.
 
 ---
 
@@ -128,6 +143,8 @@ Quadra12/
 │   ├── data/
 │   │   ├── achievements.ts                # 9 milestone rules & unlock velocity logic
 │   │   └── pcmbData.ts                    # Canonical CBSE syllabus, SQPs & playlist records
+│   ├── utils/
+│   │   └── soundEffects.ts                # Zero-dependency Web Audio API micro-sound synthesizer
 │   ├── App.tsx                            # Root application layout, navigation & footer
 │   ├── firebase.ts                        # Firebase Auth (Google Sign-In) & Firestore integration
 │   ├── index.css                          # Tailwind CSS v4 directives & typography tokens
@@ -156,6 +173,7 @@ All personal study records, timestamps, and exam scores are preserved locally in
 | `pcmb_desk_daily_chapter_log_v1` | `Record<string, string[]>` | Daily completed chapter history (`YYYY-MM-DD`) for sprint achievements |
 | `pcmb_desk_achievements_v1` | `Partial<Record<AchievementId, UnlockedAchievementRecord>>` | Timestamps and metadata of unlocked milestone seals |
 | `pcmb_desk_custom_board_date_v1` | `string` (`YYYY-MM-DD`) | User-configured exam countdown date override |
+| `pcmb_desk_sound_muted_v1` | `string` (`'true'` \| `'false'`) | User sound effects mute/unmute preference |
 | `pcmb_desk_theme_v1` | `'light' \| 'dark'` | UI theme preference |
 
 ### 2. Cloud Firestore (`changeRequests` Collection)

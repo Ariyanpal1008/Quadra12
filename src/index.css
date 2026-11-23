@@ -33,8 +33,27 @@
 }
 
 .apple-glass-bar {
-  backdrop-filter: saturate(180%) blur(18px);
-  -webkit-backdrop-filter: saturate(180%) blur(18px);
+  background-color: #FAF8F5;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+@supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+  .apple-glass-bar {
+    background-color: rgba(250, 248, 245, 0.96);
+  }
+}
+
+.dark .apple-glass-bar {
+  background-color: #121212;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@supports ((-webkit-backdrop-filter: none) or (backdrop-filter: none)) {
+  .dark .apple-glass-bar {
+    background-color: rgba(18, 18, 18, 0.96);
+  }
 }
 
 .apple-surface {
