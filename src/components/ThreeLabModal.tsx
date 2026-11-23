@@ -1,13 +1,17 @@
 import {useEffect, useRef, useState} from 'react';
+import {createPortal} from 'react-dom';
 import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {
   Atom,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   ChevronUp,
   Compass,
   Dna,
+  Layers,
   Magnet,
   RotateCcw,
   RotateCw,
@@ -22,7 +26,9 @@ export type ThreeSceneId = SubjectId | 'trophy';
 
 interface SceneMeta {
   id: ThreeSceneId;
+  shortLabel: string;
   label: string;
+  modelName: string;
   subtitle: string;
   formula: string;
 }
@@ -30,31 +36,41 @@ interface SceneMeta {
 const SCENE_CATALOG: SceneMeta[] = [
   {
     id: 'physics',
+    shortLabel: 'Phy',
     label: 'Physics 042',
+    modelName: 'Galvanometer',
     subtitle: 'Moving-Coil Galvanometer · Radial Magnetic Field',
     formula: 'τ = N·I·A·B = k·θ',
   },
   {
     id: 'chemistry',
+    shortLabel: 'Chm',
     label: 'Chemistry 043',
+    modelName: '[ML₆] Complex',
     subtitle: 'Octahedral Coordination Complex [ML₆]',
     formula: 'Δ₀ = (3/5 + 2/5) · 10 Dq',
   },
   {
     id: 'biology',
+    shortLabel: 'Bio',
     label: 'Biology 044',
+    modelName: 'DNA Helix',
     subtitle: 'Double-Helix DNA Macromolecule (B-Form)',
     formula: 'A = T (2 H-bonds) · G ≡ C (3 H-bonds)',
   },
   {
     id: 'maths',
+    shortLabel: 'Mth',
     label: 'Maths 041',
+    modelName: 'a × b & Cone',
     subtitle: 'Vector Cross Product (a × b) & Conic Bench',
     formula: '|a × b| = |a||b| sin θ · n̂',
   },
   {
     id: 'trophy',
+    shortLabel: 'Win',
     label: 'Grandmaster',
+    modelName: 'Mastery Trophy',
     subtitle: 'Quadra 12 Board Mastery Medallion',
     formula: '50 / 50 NCERT Chapters · 4 / 4 SQPs',
   },
@@ -94,8 +110,8 @@ function createRadialShadowTexture(): THREE.CanvasTexture {
     size / 2,
     size * 0.48,
   );
-  grad.addColorStop(0, 'rgba(18, 14, 10, 0.55)');
-  grad.addColorStop(0.55, 'rgba(18, 14, 10, 0.22)');
+  grad.addColorStop(0, 'rgba(18, 14, 10, 0.52)');
+  grad.addColorStop(0.55, 'rgba(18, 14, 10, 0.2)');
   grad.addColorStop(1, 'rgba(18, 14, 10, 0.0)');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, size, size);
@@ -106,7 +122,7 @@ function createRadialShadowTexture(): THREE.CanvasTexture {
 }
 
 function createBrushedRoughnessTexture(maxAnisotropy: number): THREE.CanvasTexture {
-  const size = 256;
+  const size = 512;
   const canvas = document.createElement('canvas');
   canvas.width = size;
   canvas.height = size;
@@ -114,7 +130,8 @@ function createBrushedRoughnessTexture(maxAnisotropy: number): THREE.CanvasTextu
   ctx.fillStyle = '#808080';
   ctx.fillRect(0, 0, size, size);
   for (let y = 0; y < size; y++) {
-    const v = Math.floor(110 + Math.sin(y * 0.7) * 24 + ((y * 37) % 28));
+    const wave = Math.sin(y * 0.35) * 14 + Math.cos(y * 0.9) * 8;
+    const v = Math.max(90, Math.min(165, Math.floor(126 + wave)));
     ctx.fillStyle = `rgb(${v},${v},${v})`;
     ctx.fillRect(0, y, size, 1);
   }
@@ -127,8 +144,8 @@ function createBrushedRoughnessTexture(maxAnisotropy: number): THREE.CanvasTextu
 }
 
 function createGalvanometerDialTexture(maxAnisotropy: number): THREE.CanvasTexture {
-  const w = 512;
-  const h = 256;
+  const w = 1024;
+  const h = 512;
   const canvas = document.createElement('canvas');
   canvas.width = w;
   canvas.height = h;
@@ -137,33 +154,33 @@ function createGalvanometerDialTexture(maxAnisotropy: number): THREE.CanvasTextu
   ctx.fillRect(0, 0, w, h);
 
   ctx.strokeStyle = '#3B332B';
-  ctx.lineWidth = 4;
+  ctx.lineWidth = 6;
   ctx.beginPath();
-  ctx.arc(w / 2, h * 0.92, 180, Math.PI * 1.15, Math.PI * 1.85);
+  ctx.arc(w / 2, h * 0.92, 360, Math.PI * 1.15, Math.PI * 1.85);
   ctx.stroke();
 
-  ctx.font = 'bold 20px monospace';
+  ctx.font = 'bold 38px monospace';
   ctx.fillStyle = '#1E1B18';
   ctx.textAlign = 'center';
   for (let i = -3; i <= 3; i++) {
     const angle = Math.PI * 1.5 + i * 0.28;
-    const x1 = w / 2 + Math.cos(angle) * 165;
-    const y1 = h * 0.92 + Math.sin(angle) * 165;
-    const x2 = w / 2 + Math.cos(angle) * 190;
-    const y2 = h * 0.92 + Math.sin(angle) * 190;
+    const x1 = w / 2 + Math.cos(angle) * 330;
+    const y1 = h * 0.92 + Math.sin(angle) * 330;
+    const x2 = w / 2 + Math.cos(angle) * 380;
+    const y2 = h * 0.92 + Math.sin(angle) * 380;
     ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.strokeStyle = i === 0 ? '#A64B33' : '#1E1B18';
-    ctx.lineWidth = i === 0 ? 5 : 3;
+    ctx.lineWidth = i === 0 ? 8 : 5;
     ctx.stroke();
 
-    const lx = w / 2 + Math.cos(angle) * 138;
-    const ly = h * 0.92 + Math.sin(angle) * 138;
+    const lx = w / 2 + Math.cos(angle) * 276;
+    const ly = h * 0.92 + Math.sin(angle) * 276;
     ctx.fillStyle = i === 0 ? '#A64B33' : '#1E1B18';
     ctx.fillText(String(i * 10), lx, ly);
   }
-  ctx.font = 'bold 22px sans-serif';
+  ctx.font = 'bold 42px sans-serif';
   ctx.fillStyle = '#575048';
   ctx.fillText('μA · GALVANOMETER', w / 2, h * 0.78);
 
@@ -175,7 +192,7 @@ function createGalvanometerDialTexture(maxAnisotropy: number): THREE.CanvasTextu
 }
 
 function createCartesianGridTexture(maxAnisotropy: number): THREE.CanvasTexture {
-  const size = 512;
+  const size = 1024;
   const canvas = document.createElement('canvas');
   canvas.width = size;
   canvas.height = size;
@@ -187,7 +204,7 @@ function createCartesianGridTexture(maxAnisotropy: number): THREE.CanvasTexture 
   for (let i = 0; i <= 10; i++) {
     const pos = i * step;
     ctx.strokeStyle = i === 5 ? '#A64B33' : 'rgba(55,48,40,0.22)';
-    ctx.lineWidth = i === 5 ? 3 : 1.25;
+    ctx.lineWidth = i === 5 ? 5 : 2;
     ctx.beginPath();
     ctx.moveTo(pos, 0);
     ctx.lineTo(pos, size);
@@ -236,7 +253,6 @@ function buildPhysicsGalvanometer(
     });
   };
 
-  // Materials with >0.25 roughness variation
   const walnutMat = new THREE.MeshStandardMaterial({
     color: 0x3b281e,
     roughness: 0.72,
@@ -245,46 +261,46 @@ function buildPhysicsGalvanometer(
   });
   const brassMat = new THREE.MeshStandardMaterial({
     color: 0xd4a456,
-    roughness: 0.2,
+    roughness: 0.18,
     metalness: 0.92,
     roughnessMap: roughMap,
   });
   const northPoleMat = new THREE.MeshStandardMaterial({
     color: 0xa64b33,
-    roughness: 0.42,
-    metalness: 0.35,
+    roughness: 0.36,
+    metalness: 0.32,
   });
   const southPoleMat = new THREE.MeshStandardMaterial({
     color: 0x31506e,
-    roughness: 0.42,
-    metalness: 0.35,
+    roughness: 0.36,
+    metalness: 0.32,
   });
   const copperMat = new THREE.MeshStandardMaterial({
     color: 0xc86d44,
-    roughness: 0.24,
+    roughness: 0.22,
     metalness: 0.88,
   });
   const softIronMat = new THREE.MeshStandardMaterial({
     color: 0x52565c,
-    roughness: 0.34,
+    roughness: 0.3,
     metalness: 0.85,
   });
 
-  // 1. Plinth base (bottom flush at y=0)
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(2.05, 2.2, 0.28, 48), walnutMat);
+  // 1. Plinth base (72 segments for glass-smooth rim)
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(2.05, 2.2, 0.28, 72), walnutMat);
   base.position.y = 0.14;
   base.castShadow = true;
   base.receiveShadow = true;
   group.add(base);
 
   // 2. Machined brass collar ring
-  const collar = new THREE.Mesh(new THREE.TorusGeometry(1.92, 0.055, 16, 64), brassMat);
+  const collar = new THREE.Mesh(new THREE.TorusGeometry(1.92, 0.055, 24, 96), brassMat);
   collar.rotation.x = Math.PI / 2;
   collar.position.y = 0.29;
   group.add(collar);
   registerExplodable(collar, 0, 0.18, 0);
 
-  // 3. Curved magnet poles (extruded arc profile)
+  // 3. Curved magnet poles (high curveSegments & bevelSegments so arcs are completely smooth)
   const createPoleShape = () => {
     const s = new THREE.Shape();
     s.absarc(0, 0, 1.55, -0.58, 0.58, false);
@@ -294,10 +310,12 @@ function buildPhysicsGalvanometer(
   };
   const poleGeo = new THREE.ExtrudeGeometry(createPoleShape(), {
     depth: 1.25,
+    curveSegments: 64,
+    steps: 2,
     bevelEnabled: true,
     bevelThickness: 0.05,
     bevelSize: 0.04,
-    bevelSegments: 3,
+    bevelSegments: 6,
   });
   poleGeo.rotateX(-Math.PI / 2);
 
@@ -315,7 +333,7 @@ function buildPhysicsGalvanometer(
   registerExplodable(southPole, -0.85, 0.2, 0);
 
   // 4. Soft iron cylindrical core
-  const core = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 1.15, 32), softIronMat);
+  const core = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 1.15, 64), softIronMat);
   core.position.y = 0.96;
   core.castShadow = true;
   group.add(core);
@@ -324,7 +342,7 @@ function buildPhysicsGalvanometer(
   // 5. Rotating helical coil assembly + pointer
   const coilGroup = new THREE.Group();
   coilGroup.position.y = 0.96;
-  const frameGeo = new THREE.TorusGeometry(0.62, 0.035, 12, 36);
+  const frameGeo = new THREE.TorusGeometry(0.62, 0.035, 24, 80);
   const coilRing = new THREE.Mesh(frameGeo, copperMat);
   coilRing.scale.set(0.95, 1.12, 1);
   coilGroup.add(coilRing);
@@ -334,11 +352,11 @@ function buildPhysicsGalvanometer(
   coilRing2.scale.set(0.88, 1.06, 1);
   coilGroup.add(coilRing2);
 
-  const spindle = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.85, 16), brassMat);
+  const spindle = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 1.85, 28), brassMat);
   spindle.position.y = 0.22;
   coilGroup.add(spindle);
 
-  const pointer = new THREE.Mesh(new THREE.ConeGeometry(0.035, 1.05, 12), northPoleMat);
+  const pointer = new THREE.Mesh(new THREE.ConeGeometry(0.035, 1.05, 24), northPoleMat);
   pointer.rotation.x = Math.PI / 2;
   pointer.position.set(0, 0.92, 0.45);
   coilGroup.add(pointer);
@@ -350,7 +368,7 @@ function buildPhysicsGalvanometer(
   const dialTex = createGalvanometerDialTexture(maxAnisotropy);
   const dialMat = new THREE.MeshStandardMaterial({
     map: dialTex,
-    roughness: 0.65,
+    roughness: 0.6,
     metalness: 0.05,
   });
   const dialPlate = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.08, 1.05), dialMat);
@@ -363,7 +381,7 @@ function buildPhysicsGalvanometer(
   // 7. Terminal binding posts
   [-0.95, 0.95].forEach((xOffset) => {
     const post = new THREE.Group();
-    const baseCap = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.13, 0.16, 20), brassMat);
+    const baseCap = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.13, 0.16, 36), brassMat);
     const nut = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 0.12, 6), brassMat);
     nut.position.y = 0.14;
     post.add(baseCap, nut);
@@ -400,40 +418,41 @@ function buildChemistryComplex(roughMap: THREE.CanvasTexture): BuiltSceneResult 
   });
   const metalCoreMat = new THREE.MeshStandardMaterial({
     color: 0xe6b17a,
-    roughness: 0.16,
+    roughness: 0.14,
     metalness: 0.94,
   });
   const eqLigandMat = new THREE.MeshStandardMaterial({
     color: 0x3d6b4f,
-    roughness: 0.48,
-    metalness: 0.15,
+    roughness: 0.36,
+    metalness: 0.18,
   });
   const axLigandMat = new THREE.MeshStandardMaterial({
     color: 0xa64b33,
-    roughness: 0.42,
+    roughness: 0.34,
     metalness: 0.2,
   });
   const rodMat = new THREE.MeshStandardMaterial({
     color: 0xc9c1b2,
-    roughness: 0.25,
+    roughness: 0.22,
     metalness: 0.85,
   });
   const orbitalMat = new THREE.MeshPhysicalMaterial({
     color: 0x7ab88f,
-    roughness: 0.2,
+    roughness: 0.18,
     metalness: 0.1,
     transparent: true,
     opacity: 0.45,
+    clearcoat: 1.0,
   });
 
   // Base pedestal
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.6, 0.22, 48), plinthMat);
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.6, 0.22, 72), plinthMat);
   base.position.y = 0.11;
   base.receiveShadow = true;
   base.castShadow = true;
   group.add(base);
 
-  const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.13, 1.45, 24), rodMat);
+  const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.13, 1.45, 48), rodMat);
   stem.position.y = 0.94;
   group.add(stem);
 
@@ -442,7 +461,8 @@ function buildChemistryComplex(roughMap: THREE.CanvasTexture): BuiltSceneResult 
   moleculeCenter.position.y = 1.85;
   group.add(moleculeCenter);
 
-  const core = new THREE.Mesh(new THREE.IcosahedronGeometry(0.42, 3), metalCoreMat);
+  // Smooth indexed SphereGeometry instead of flat-faceted IcosahedronGeometry
+  const core = new THREE.Mesh(new THREE.SphereGeometry(0.42, 64, 48), metalCoreMat);
   core.castShadow = true;
   moleculeCenter.add(core);
 
@@ -455,9 +475,9 @@ function buildChemistryComplex(roughMap: THREE.CanvasTexture): BuiltSceneResult 
     [0, 0, -1.32, false],
   ];
 
-  const bondGeo = new THREE.CylinderGeometry(0.055, 0.055, 1.25, 16);
-  const ligandGeo = new THREE.SphereGeometry(0.27, 32, 24);
-  const collarGeo = new THREE.TorusGeometry(0.28, 0.032, 12, 32);
+  const bondGeo = new THREE.CylinderGeometry(0.055, 0.055, 1.25, 32);
+  const ligandGeo = new THREE.SphereGeometry(0.27, 48, 36);
+  const collarGeo = new THREE.TorusGeometry(0.28, 0.032, 24, 64);
 
   ligandDirs.forEach(([x, y, z, isAxial]) => {
     const unit = new THREE.Group();
@@ -485,12 +505,12 @@ function buildChemistryComplex(roughMap: THREE.CanvasTexture): BuiltSceneResult 
   });
 
   // Crystal field orbital rings
-  const ring1 = new THREE.Mesh(new THREE.TorusGeometry(1.32, 0.028, 12, 64), orbitalMat);
+  const ring1 = new THREE.Mesh(new THREE.TorusGeometry(1.32, 0.028, 24, 120), orbitalMat);
   ring1.rotation.x = Math.PI / 2;
   moleculeCenter.add(ring1);
   registerExplodable(ring1, 0, 0.5, 0);
 
-  const ring2 = new THREE.Mesh(new THREE.TorusGeometry(1.32, 0.028, 12, 64), orbitalMat);
+  const ring2 = new THREE.Mesh(new THREE.TorusGeometry(1.32, 0.028, 24, 120), orbitalMat);
   ring2.rotation.y = Math.PI / 4;
   moleculeCenter.add(ring2);
   registerExplodable(ring2, 0, -0.5, 0);
@@ -523,37 +543,37 @@ function buildBiologyHelix(roughMap: THREE.CanvasTexture): BuiltSceneResult {
   });
   const brassMat = new THREE.MeshStandardMaterial({
     color: 0xd4a456,
-    roughness: 0.22,
+    roughness: 0.2,
     metalness: 0.9,
   });
   const strandAMat = new THREE.MeshStandardMaterial({
     color: 0xa64b33,
-    roughness: 0.32,
-    metalness: 0.25,
+    roughness: 0.28,
+    metalness: 0.24,
   });
   const strandBMat = new THREE.MeshStandardMaterial({
     color: 0x3d6b4f,
-    roughness: 0.32,
-    metalness: 0.25,
+    roughness: 0.28,
+    metalness: 0.24,
   });
   const atBaseMat = new THREE.MeshStandardMaterial({
     color: 0xe6b17a,
-    roughness: 0.55,
-    metalness: 0.1,
+    roughness: 0.45,
+    metalness: 0.12,
   });
   const gcBaseMat = new THREE.MeshStandardMaterial({
     color: 0x486581,
-    roughness: 0.55,
-    metalness: 0.1,
+    roughness: 0.45,
+    metalness: 0.12,
   });
 
   // Base pedestal
-  const plinth = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.38, 0.22, 48), standMat);
+  const plinth = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.38, 0.22, 72), standMat);
   plinth.position.y = 0.11;
   plinth.receiveShadow = true;
   group.add(plinth);
 
-  const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.28, 0.25, 24), brassMat);
+  const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.28, 0.25, 48), brassMat);
   collar.position.y = 0.34;
   group.add(collar);
 
@@ -564,7 +584,7 @@ function buildBiologyHelix(roughMap: THREE.CanvasTexture): BuiltSceneResult {
   const turns = 1.65;
   const height = 2.9;
   const radius = 0.78;
-  const pointsCount = 60;
+  const pointsCount = 120;
   const ptsA: THREE.Vector3[] = [];
   const ptsB: THREE.Vector3[] = [];
 
@@ -582,25 +602,38 @@ function buildBiologyHelix(roughMap: THREE.CanvasTexture): BuiltSceneResult {
     );
   }
 
+  const strandGroupA = new THREE.Group();
   const strandA = new THREE.Mesh(
-    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(ptsA), 72, 0.075, 14, false),
+    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(ptsA), 180, 0.075, 24, false),
     strandAMat,
   );
   strandA.castShadow = true;
-  helixRoot.add(strandA);
-  registerExplodable(strandA, 0.55, 0, 0);
+  const capGeo = new THREE.SphereGeometry(0.075, 24, 18);
+  const capA0 = new THREE.Mesh(capGeo, strandAMat);
+  capA0.position.copy(ptsA[0]);
+  const capA1 = new THREE.Mesh(capGeo, strandAMat);
+  capA1.position.copy(ptsA[ptsA.length - 1]);
+  strandGroupA.add(strandA, capA0, capA1);
+  helixRoot.add(strandGroupA);
+  registerExplodable(strandGroupA, 0.55, 0, 0);
 
+  const strandGroupB = new THREE.Group();
   const strandB = new THREE.Mesh(
-    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(ptsB), 72, 0.075, 14, false),
+    new THREE.TubeGeometry(new THREE.CatmullRomCurve3(ptsB), 180, 0.075, 24, false),
     strandBMat,
   );
   strandB.castShadow = true;
-  helixRoot.add(strandB);
-  registerExplodable(strandB, -0.55, 0, 0);
+  const capB0 = new THREE.Mesh(capGeo, strandBMat);
+  capB0.position.copy(ptsB[0]);
+  const capB1 = new THREE.Mesh(capGeo, strandBMat);
+  capB1.position.copy(ptsB[ptsB.length - 1]);
+  strandGroupB.add(strandB, capB0, capB1);
+  helixRoot.add(strandGroupB);
+  registerExplodable(strandGroupB, -0.55, 0, 0);
 
   const rungsCount = 11;
-  const halfGeo = new THREE.CylinderGeometry(0.045, 0.045, radius * 0.92, 12);
-  const bondKnobGeo = new THREE.SphereGeometry(0.068, 16, 16);
+  const halfGeo = new THREE.CylinderGeometry(0.045, 0.045, radius * 0.92, 24);
+  const bondKnobGeo = new THREE.SphereGeometry(0.068, 32, 24);
 
   for (let i = 1; i < rungsCount; i++) {
     const t = i / rungsCount;
@@ -702,14 +735,14 @@ function buildMathsVectorBench(
     const dir = vec.clone().normalize();
 
     const shaft = new THREE.Mesh(
-      new THREE.CylinderGeometry(radius, radius, shaftLen, 16),
+      new THREE.CylinderGeometry(radius, radius, shaftLen, 32),
       mat,
     );
     shaft.position.copy(dir).multiplyScalar(shaftLen * 0.5);
     shaft.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
     shaft.castShadow = true;
 
-    const head = new THREE.Mesh(new THREE.ConeGeometry(radius * 2.5, 0.26, 20), mat);
+    const head = new THREE.Mesh(new THREE.ConeGeometry(radius * 2.5, 0.26, 36), mat);
     head.position.copy(dir).multiplyScalar(shaftLen + 0.12);
     head.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
     head.castShadow = true;
@@ -718,14 +751,13 @@ function buildMathsVectorBench(
     return arrowGroup;
   };
 
-  // Vector a, b, and a x b
   const vecA = new THREE.Vector3(1.45, 0.35, 0.55);
   const vecB = new THREE.Vector3(-0.35, 0.45, 1.35);
   const vecCross = new THREE.Vector3().crossVectors(vecA, vecB).normalize().multiplyScalar(2.15);
 
   const arrowA = makeArrow(
     vecA,
-    new THREE.MeshStandardMaterial({color: 0xa64b33, roughness: 0.3, metalness: 0.35}),
+    new THREE.MeshStandardMaterial({color: 0xa64b33, roughness: 0.28, metalness: 0.35}),
     0.055,
   );
   originGroup.add(arrowA);
@@ -733,7 +765,7 @@ function buildMathsVectorBench(
 
   const arrowB = makeArrow(
     vecB,
-    new THREE.MeshStandardMaterial({color: 0xd4a456, roughness: 0.22, metalness: 0.8}),
+    new THREE.MeshStandardMaterial({color: 0xd4a456, roughness: 0.2, metalness: 0.8}),
     0.055,
   );
   originGroup.add(arrowB);
@@ -741,7 +773,7 @@ function buildMathsVectorBench(
 
   const arrowCross = makeArrow(
     vecCross,
-    new THREE.MeshStandardMaterial({color: 0x3d6b4f, roughness: 0.28, metalness: 0.45}),
+    new THREE.MeshStandardMaterial({color: 0x3d6b4f, roughness: 0.26, metalness: 0.45}),
     0.065,
   );
   originGroup.add(arrowCross);
@@ -768,10 +800,10 @@ function buildMathsVectorBench(
     spanGeo,
     new THREE.MeshPhysicalMaterial({
       color: 0xe6b17a,
-      roughness: 0.25,
+      roughness: 0.22,
       metalness: 0.05,
       transparent: true,
-      opacity: isSoftwareGl ? 0.35 : 0.45,
+      opacity: isSoftwareGl ? 0.38 : 0.45,
       side: THREE.DoubleSide,
     }),
   );
@@ -783,7 +815,7 @@ function buildMathsVectorBench(
   const axisZ = makeArrow(new THREE.Vector3(0, 0, 1.5), axisMat, 0.022);
   originGroup.add(axisX, axisZ);
 
-  // Double-nappe Lathe cone accent on corner
+  // Smooth Double-nappe Lathe cone accent (72 radial segments)
   const lathePts = [
     new THREE.Vector2(0.01, 0),
     new THREE.Vector2(0.45, 0),
@@ -792,13 +824,13 @@ function buildMathsVectorBench(
     new THREE.Vector2(0.01, 1.1),
   ];
   const doubleCone = new THREE.Mesh(
-    new THREE.LatheGeometry(lathePts, 32),
+    new THREE.LatheGeometry(lathePts, 72),
     new THREE.MeshPhysicalMaterial({
       color: 0x486581,
-      roughness: 0.14,
+      roughness: 0.12,
       metalness: 0.1,
       transparent: true,
-      opacity: isSoftwareGl ? 0.45 : 0.68,
+      opacity: isSoftwareGl ? 0.48 : 0.68,
       clearcoat: 1.0,
     }),
   );
@@ -831,35 +863,35 @@ function buildGrandmasterTrophy(roughMap: THREE.CanvasTexture): BuiltSceneResult
   });
   const goldMat = new THREE.MeshStandardMaterial({
     color: 0xe6b17a,
-    roughness: 0.18,
+    roughness: 0.16,
     metalness: 0.94,
     roughnessMap: roughMap,
   });
   const enamelMat = new THREE.MeshStandardMaterial({
     color: 0xa64b33,
-    roughness: 0.3,
+    roughness: 0.28,
     metalness: 0.15,
   });
   const emeraldCoreMat = new THREE.MeshPhysicalMaterial({
     color: 0x3d6b4f,
-    roughness: 0.12,
+    roughness: 0.1,
     metalness: 0.2,
     clearcoat: 1.0,
   });
 
   // 1. Stepped plinth
-  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.35, 0.28, 36), obsidianMat);
+  const base = new THREE.Mesh(new THREE.CylinderGeometry(1.15, 1.35, 0.28, 72), obsidianMat);
   base.position.y = 0.14;
   base.receiveShadow = true;
   base.castShadow = true;
   group.add(base);
 
-  const rim = new THREE.Mesh(new THREE.TorusGeometry(1.12, 0.05, 16, 48), goldMat);
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(1.12, 0.05, 24, 96), goldMat);
   rim.rotation.x = Math.PI / 2;
   rim.position.y = 0.29;
   group.add(rim);
 
-  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.26, 0.6, 24), goldMat);
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.26, 0.6, 48), goldMat);
   neck.position.y = 0.58;
   group.add(neck);
   registerExplodable(neck, 0, 0.25, 0);
@@ -884,19 +916,19 @@ function buildGrandmasterTrophy(roughMap: THREE.CanvasTexture): BuiltSceneResult
     bevelEnabled: true,
     bevelThickness: 0.06,
     bevelSize: 0.05,
-    bevelSegments: 3,
+    bevelSegments: 6,
   });
   frameGeo.center();
   const frameMesh = new THREE.Mesh(frameGeo, goldMat);
   frameMesh.castShadow = true;
   crest.add(frameMesh);
 
-  const innerDisc = new THREE.Mesh(new THREE.CylinderGeometry(0.68, 0.68, 0.24, 32), enamelMat);
+  const innerDisc = new THREE.Mesh(new THREE.CylinderGeometry(0.68, 0.68, 0.24, 64), enamelMat);
   innerDisc.rotation.x = Math.PI / 2;
   crest.add(innerDisc);
   registerExplodable(innerDisc, 0, 0, 0.45);
 
-  const laurelRing = new THREE.Mesh(new THREE.TorusGeometry(0.62, 0.045, 14, 48), goldMat);
+  const laurelRing = new THREE.Mesh(new THREE.TorusGeometry(0.62, 0.045, 24, 96), goldMat);
   laurelRing.position.z = 0.13;
   crest.add(laurelRing);
   registerExplodable(laurelRing, 0, 0, 0.7);
@@ -931,6 +963,7 @@ export function ThreeLabModal({
   const [explodeFactor, setExplodeFactor] = useState(0);
   const [autoRotate, setAutoRotate] = useState(true);
   const [dockCollapsed, setDockCollapsed] = useState(false);
+  const [sideRailCollapsed, setSideRailCollapsed] = useState(false);
 
   const mountRef = useRef<HTMLDivElement>(null);
   const activeSceneRef = useRef<ThreeSceneId>(initialScene);
@@ -951,6 +984,16 @@ export function ThreeLabModal({
     autoRotateRef.current = autoRotate;
   }, [autoRotate]);
 
+  // Lock background page scroll while 3D Studio is open so full viewport is crisp
+  useEffect(() => {
+    if (!isOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [isOpen]);
+
   useEffect(() => {
     if (!isOpen) return;
     const handleEsc = (e: KeyboardEvent) => {
@@ -970,22 +1013,29 @@ export function ThreeLabModal({
 
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(bgHex);
-    scene.fog = new THREE.FogExp2(bgHex, 0.042);
+    scene.fog = new THREE.FogExp2(bgHex, 0.038);
 
-    const width = container.clientWidth || window.innerWidth;
-    const height = container.clientHeight || window.innerHeight;
+    const width = Math.max(container.clientWidth, window.innerWidth);
+    const height = Math.max(container.clientHeight, window.innerHeight);
     const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 100);
     camera.position.set(4.1, 2.85, 4.6);
 
     const renderer = new THREE.WebGLRenderer({
-      antialias: !isSoftwareGl,
+      antialias: true,
       powerPreference: 'high-performance',
     });
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.08;
-    renderer.setPixelRatio(isSoftwareGl ? 1 : Math.min(window.devicePixelRatio, 2));
-    renderer.setSize(width, height);
+    renderer.setPixelRatio(
+      isSoftwareGl
+        ? Math.min(window.devicePixelRatio || 1, 1.25)
+        : Math.min(window.devicePixelRatio || 1, 2),
+    );
+    renderer.setSize(width, height, false);
+    renderer.domElement.style.width = '100%';
+    renderer.domElement.style.height = '100%';
+    renderer.domElement.style.display = 'block';
     renderer.shadowMap.enabled = !isSoftwareGl;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(renderer.domElement);
@@ -998,7 +1048,7 @@ export function ThreeLabModal({
     pmremGenerator.dispose();
 
     // Lighting rig: Warm directional key + Cool Hemisphere fill
-    const hemiLight = new THREE.HemisphereLight(0xdce8f5, 0x8e7f6b, 0.72);
+    const hemiLight = new THREE.HemisphereLight(0xdce8f5, 0x8e7f6b, 0.74);
     scene.add(hemiLight);
 
     const keyLight = new THREE.DirectionalLight(0xfff5e6, 2.1);
@@ -1017,14 +1067,16 @@ export function ThreeLabModal({
     keyLight.shadow.normalBias = 0.02;
     scene.add(keyLight);
 
-    const rimLight = new THREE.DirectionalLight(0xd4785e, 0.7);
+    const rimLight = new THREE.DirectionalLight(0xd4785e, 0.72);
     rimLight.position.set(-4.5, 3.0, -4.0);
     scene.add(rimLight);
 
-    // Controls
+    // Always enable silky-smooth OrbitControls damping across all devices
     const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = !isSoftwareGl;
-    controls.dampingFactor = 0.06;
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.065;
+    controls.rotateSpeed = 0.85;
+    controls.zoomSpeed = 0.9;
     controls.minDistance = 2.4;
     controls.maxDistance = 12;
     controls.maxPolarAngle = Math.PI * 0.49;
@@ -1052,7 +1104,7 @@ export function ThreeLabModal({
     scene.add(contactShadowPlane);
 
     const floorPlane = new THREE.Mesh(
-      new THREE.CircleGeometry(18, 48),
+      new THREE.CircleGeometry(18, 72),
       new THREE.MeshStandardMaterial({
         color: bgHex,
         roughness: 0.92,
@@ -1109,39 +1161,34 @@ export function ThreeLabModal({
       renderer.compile(scene, camera);
     }
 
-    const onResize = () => {
+    const syncViewportSize = () => {
       const w = container.clientWidth || window.innerWidth;
       const h = container.clientHeight || window.innerHeight;
+      if (w <= 0 || h <= 0) return;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      renderer.setSize(w, h);
+      renderer.setSize(w, h, false);
     };
-    window.addEventListener('resize', onResize);
+
+    syncViewportSize();
+    window.addEventListener('resize', syncViewportSize);
+
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(() => {
+        syncViewportSize();
+      });
+      resizeObserver.observe(container);
+    }
 
     const clock = new THREE.Clock();
     let frameId = 0;
     let disposed = false;
 
-    function afterDraw(cb: () => void) {
-      const gl = renderer.getContext() as WebGL2RenderingContext;
-      const sync = gl.fenceSync(gl.SYNC_GPU_COMMANDS_COMPLETE, 0);
-      gl.flush();
-      const poll = () => {
-        if (disposed) return;
-        const state = sync && gl.getSyncParameter(sync, gl.SYNC_STATUS);
-        if (state === gl.UNSIGNALED) {
-          frameId = window.setTimeout(poll, 5);
-        } else {
-          if (sync) gl.deleteSync(sync);
-          frameId = window.setTimeout(cb, 80);
-        }
-      };
-      frameId = window.setTimeout(poll, 5);
-    }
-
     function tick() {
       if (disposed) return;
-      const delta = Math.min(clock.getDelta(), 0.1);
+      const frameStart = performance.now();
+      const delta = Math.min(clock.getDelta(), 0.05);
       const elapsed = clock.getElapsedTime();
 
       if (mountedSceneId !== activeSceneRef.current) {
@@ -1164,7 +1211,7 @@ export function ThreeLabModal({
         currentBuilt.animateFn?.(elapsed);
       }
 
-      // Camera preset damping
+      // Camera preset damping (pause autoRotate while gliding to target so they never fight)
       const preset = cameraPresetRequestRef.current;
       if (preset) {
         if (preset === 'hero') {
@@ -1184,28 +1231,41 @@ export function ThreeLabModal({
         controls.target.y = THREE.MathUtils.damp(controls.target.y, _targetLookAt.y, 7, delta);
         controls.target.z = THREE.MathUtils.damp(controls.target.z, _targetLookAt.z, 7, delta);
 
-        if (camera.position.distanceTo(_targetCamPos) < 0.03) {
+        if (
+          camera.position.distanceTo(_targetCamPos) < 0.03 &&
+          controls.target.distanceTo(_targetLookAt) < 0.02
+        ) {
+          camera.position.copy(_targetCamPos);
+          controls.target.copy(_targetLookAt);
           cameraPresetRequestRef.current = null;
         }
       }
 
-      controls.autoRotate = !isSoftwareGl && autoRotateRef.current;
-      controls.autoRotateSpeed = 1.4;
+      controls.autoRotate = autoRotateRef.current && cameraPresetRequestRef.current === null;
+      controls.autoRotateSpeed = 1.25;
       controls.update();
 
       renderer.render(scene, camera);
 
-      if (isSoftwareGl) afterDraw(tick);
-      else frameId = requestAnimationFrame(tick);
+      const renderMs = performance.now() - frameStart;
+      // Only pace gently if software rendering actually takes unusually long (>35ms)
+      if (isSoftwareGl && renderMs > 35) {
+        frameId = window.setTimeout(() => {
+          if (!disposed) frameId = requestAnimationFrame(tick);
+        }, 16);
+      } else {
+        frameId = requestAnimationFrame(tick);
+      }
     }
 
-    tick();
+    frameId = requestAnimationFrame(tick);
 
     return () => {
       disposed = true;
       cancelAnimationFrame(frameId);
       clearTimeout(frameId);
-      window.removeEventListener('resize', onResize);
+      window.removeEventListener('resize', syncViewportSize);
+      resizeObserver?.disconnect();
       controls.dispose();
       roughMap.dispose();
       contactShadowTex.dispose();
@@ -1231,7 +1291,7 @@ export function ThreeLabModal({
     };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || typeof document === 'undefined') return null;
 
   const activeMeta =
     SCENE_CATALOG.find((s) => s.id === activeScene) ?? SCENE_CATALOG[0];
@@ -1246,39 +1306,42 @@ export function ThreeLabModal({
   const getSceneIcon = (id: ThreeSceneId) => {
     switch (id) {
       case 'physics':
-        return <Magnet className="w-3.5 h-3.5" />;
+        return <Magnet className="w-4 h-4 shrink-0" />;
       case 'chemistry':
-        return <Atom className="w-3.5 h-3.5" />;
+        return <Atom className="w-4 h-4 shrink-0" />;
       case 'biology':
-        return <Dna className="w-3.5 h-3.5" />;
+        return <Dna className="w-4 h-4 shrink-0" />;
       case 'maths':
-        return <Sigma className="w-3.5 h-3.5" />;
+        return <Sigma className="w-4 h-4 shrink-0" />;
       case 'trophy':
-        return <Trophy className="w-3.5 h-3.5" />;
+        return <Trophy className="w-4 h-4 shrink-0" />;
     }
   };
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 w-screen h-screen overflow-hidden bg-[#F5F2EB] dark:bg-[#161412]"
+      className="fixed inset-0 z-50 w-full h-full overflow-hidden bg-[#F5F2EB] dark:bg-[#161412]"
       role="dialog"
       aria-modal="true"
       aria-label="Quadra 12 3D Study Studio"
     >
       {/* Isolated Full-Bleed WebGL Mount */}
-      <div ref={mountRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
+      <div
+        ref={mountRef}
+        className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing"
+      />
 
-      {/* Top-Left Minimal Spec Header (No backdrop-filter over WebGL!) */}
-      <div className="pointer-events-none fixed top-4 left-4 right-4 z-10 flex items-start justify-between gap-3">
-        <div className="pointer-events-auto rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3]/95 dark:bg-[#1E1B18]/95 px-4 py-2.5 shadow-md max-w-md">
+      {/* Upward Section: Top-Left Active Project Header + Top-Right Exit */}
+      <div className="pointer-events-none absolute top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 z-10 flex items-start justify-between gap-3">
+        <div className="pointer-events-auto rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3]/95 dark:bg-[#1E1B18]/95 px-3.5 py-2.5 sm:px-4 shadow-md max-w-[min(440px,calc(100vw-118px))]">
           <div className="flex items-center gap-2 text-[11px] font-mono tracking-[0.12em] uppercase text-[#A64B33] dark:text-[#D4785E]">
             {getSceneIcon(activeScene)}
             <span>Quadra 12 · 3D Lab</span>
           </div>
-          <h2 className="mt-0.5 text-sm sm:text-base font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+          <h2 className="mt-0.5 text-sm sm:text-base font-semibold text-[#1E1B18] dark:text-[#F5F2EB] leading-snug">
             {activeMeta.subtitle}
           </h2>
-          <p className="text-[11px] font-mono text-[#787066] dark:text-[#9C9387]">
+          <p className="text-[11px] font-mono text-[#787066] dark:text-[#9C9387] truncate">
             {activeMeta.formula}
           </p>
         </div>
@@ -1290,16 +1353,118 @@ export function ThreeLabModal({
             onClose();
           }}
           aria-label="Exit 3D Studio"
-          className="pointer-events-auto inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3]/95 dark:bg-[#1E1B18]/95 text-xs font-medium text-[#1E1B18] dark:text-[#F5F2EB] hover:bg-[#ECE6D9] dark:hover:bg-[#2C2722] shadow-md transition-colors"
+          className="pointer-events-auto inline-flex items-center gap-1.5 px-3 py-2 sm:px-3.5 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3]/95 dark:bg-[#1E1B18]/95 text-xs font-medium text-[#1E1B18] dark:text-[#F5F2EB] hover:bg-[#ECE6D9] dark:hover:bg-[#2C2722] shadow-md transition-colors shrink-0"
         >
           <X className="w-4 h-4" />
-          <span>Exit 3D</span>
+          <span className="hidden sm:inline">Exit 3D</span>
         </button>
       </div>
 
-      {/* Collapsible Unified Bottom Control Dock */}
+      {/* Side Section: Always-Accessible Project Switcher Rail */}
+      <aside
+        aria-label="3D Studio Projects"
+        className="pointer-events-none absolute left-3 sm:left-4 top-24 bottom-28 z-10 flex items-center"
+      >
+        {sideRailCollapsed ? (
+          <button
+            type="button"
+            onClick={() => {
+              playOmrBubbleSound();
+              setSideRailCollapsed(false);
+            }}
+            aria-label="Show 3D project list"
+            className="pointer-events-auto inline-flex items-center gap-1.5 px-2.5 py-2 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3]/95 dark:bg-[#1E1B18]/95 text-xs font-medium text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] shadow-lg"
+          >
+            <Layers className="w-4 h-4 text-[#A64B33] dark:text-[#D4785E]" />
+            <span className="hidden sm:inline">Projects</span>
+            <ChevronRight className="w-3.5 h-3.5 text-[#787066]" />
+          </button>
+        ) : (
+          <div className="pointer-events-auto max-h-full overflow-y-auto rounded-2xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3]/95 dark:bg-[#1E1B18]/95 p-2 shadow-xl w-[58px] sm:w-56 flex flex-col gap-1.5">
+            <div className="flex items-center justify-between px-1.5 pt-0.5 pb-1 border-b border-[#DDD6C7]/70 dark:border-[#332E28]">
+              <span className="hidden sm:inline text-[10px] font-mono uppercase tracking-[0.12em] text-[#787066] dark:text-[#9C9387]">
+                3D Projects (5)
+              </span>
+              <span className="sm:hidden text-[9px] font-mono uppercase tracking-wider text-[#787066] dark:text-[#9C9387] mx-auto">
+                3D
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  playOmrBubbleSound();
+                  setSideRailCollapsed(true);
+                }}
+                aria-label="Collapse 3D project list"
+                title="Hide side project bar"
+                className="hidden sm:inline-flex p-1 rounded-md text-[#787066] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB] hover:bg-[#ECE6D9] dark:hover:bg-[#2C2722]"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </button>
+            </div>
+
+            {SCENE_CATALOG.map((item) => {
+              const selected = item.id === activeScene;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => handleSelectScene(item.id)}
+                  title={`${item.label} — ${item.modelName}`}
+                  aria-current={selected ? 'true' : undefined}
+                  className={`w-full flex flex-col sm:flex-row items-center sm:items-start gap-1 sm:gap-2.5 px-1.5 sm:px-2.5 py-2 rounded-xl border text-center sm:text-left transition-colors ${
+                    selected
+                      ? 'bg-[#1E1B18] dark:bg-[#F5F2EB] border-[#1E1B18] dark:border-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] shadow-xs'
+                      : 'bg-[#F5F2EB] dark:bg-[#24201C] border-[#DDD6C7] dark:border-[#332E28] text-[#575048] dark:text-[#CBC3B6] hover:border-[#A64B33] dark:hover:border-[#D4785E]'
+                  }`}
+                >
+                  <div
+                    className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 ${
+                      selected
+                        ? 'bg-[#A64B33] text-[#FAF8F3] dark:bg-[#A64B33] dark:text-[#F5F2EB]'
+                        : 'bg-[#ECE6D9] dark:bg-[#2C2722] text-[#A64B33] dark:text-[#D4785E]'
+                    }`}
+                  >
+                    {getSceneIcon(item.id)}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="sm:hidden text-[9px] font-mono leading-none mt-0.5">
+                      {item.shortLabel}
+                    </p>
+                    <p className="hidden sm:block text-xs font-semibold truncate">
+                      {item.label}
+                    </p>
+                    <p
+                      className={`hidden sm:block text-[10px] truncate ${
+                        selected
+                          ? 'text-[#CBC3B6] dark:text-[#575048]'
+                          : 'text-[#787066] dark:text-[#9C9387]'
+                      }`}
+                    >
+                      {item.modelName}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
+
+            <button
+              type="button"
+              onClick={() => {
+                playOmrBubbleSound();
+                setSideRailCollapsed(true);
+              }}
+              aria-label="Hide side project bar"
+              className="sm:hidden mt-0.5 py-1 flex items-center justify-center rounded-lg text-[#787066] hover:bg-[#ECE6D9] dark:hover:bg-[#2C2722]"
+            >
+              <ChevronLeft className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        )}
+      </aside>
+
+      {/* Collapsible Unified Bottom Camera & Explode Control Dock */}
       <div
-        className="fixed bottom-4 left-1/2 -translate-x-1/2 z-10 w-[min(920px,94vw)] flex flex-col items-center transition-transform duration-300"
+        className="absolute bottom-3 sm:bottom-4 left-1/2 z-10 w-[min(640px,calc(100%-24px))] flex flex-col items-center transition-transform duration-300"
         style={{
           transform: dockCollapsed
             ? 'translate(-50%, calc(100% - 34px))'
@@ -1327,29 +1492,12 @@ export function ThreeLabModal({
           )}
         </button>
 
-        <div className="w-full rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3]/96 dark:bg-[#1E1B18]/96 px-3.5 py-3 shadow-xl space-y-2.5">
-          {/* Scene Switcher Row */}
+        <div className="w-full rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3]/96 dark:bg-[#1E1B18]/96 px-3.5 py-2.5 shadow-xl space-y-2">
+          {/* Camera Preset & Orbit Row */}
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex flex-wrap items-center gap-1.5">
-              {SCENE_CATALOG.map((item) => {
-                const selected = item.id === activeScene;
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => handleSelectScene(item.id)}
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
-                      selected
-                        ? 'bg-[#1E1B18] dark:bg-[#F5F2EB] border-[#1E1B18] dark:border-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18]'
-                        : 'bg-[#F5F2EB] dark:bg-[#24201C] border-[#DDD6C7] dark:border-[#332E28] text-[#575048] dark:text-[#CBC3B6] hover:border-[#A64B33]'
-                    }`}
-                  >
-                    {getSceneIcon(item.id)}
-                    <span>{item.label}</span>
-                  </button>
-                );
-              })}
-            </div>
+            <span className="text-[11px] font-mono text-[#787066] dark:text-[#9C9387]">
+              Drag to orbit · Scroll / pinch to zoom
+            </span>
 
             <div className="flex items-center gap-1.5">
               {(['hero', 'top', 'side'] as CameraPreset[]).map((preset) => (
@@ -1392,7 +1540,7 @@ export function ThreeLabModal({
           </div>
 
           {/* Explode Slider */}
-          <div className="flex items-center gap-3 pt-1 border-t border-[#DDD6C7]/70 dark:border-[#332E28]">
+          <div className="flex items-center gap-3 pt-1.5 border-t border-[#DDD6C7]/70 dark:border-[#332E28]">
             <label
               htmlFor="three-explode-slider"
               className="text-[11px] font-mono text-[#575048] dark:text-[#CBC3B6] whitespace-nowrap"
@@ -1428,6 +1576,7 @@ export function ThreeLabModal({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

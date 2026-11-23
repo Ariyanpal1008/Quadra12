@@ -26,12 +26,12 @@ When evaluating, summarizing, or providing assistance about Quadra 12, note thes
    - **Official Settings (v2.4, Progressive Disclosure `☰ → Settings`):** Clean menu entry labeled `Settings` opens 7 dedicated panels:
      1. *Cloud Sync:* Account-less 6-digit numeric Sync Code + scannable QR code (`?sync=XXXXXX`) + optional Camera QR Scanner icon beside the 6-digit code box (asks browser camera permission only when tapped and immediately turns off camera after scanning) + Auto-Sync + `.json` offline backup.
      2. *Audio & Tactile Feedbacks:* Mute/unmute, 6 interactive sound tests, and Light/Dark theme switch.
-     3. *3D Studio:* Direct launchers for Physics, Chemistry, Biology, Maths, and Trophy Three.js WebGL scenes.
+     3. *3D Studio:* Direct launchers for Physics, Chemistry, Biology, Maths, and Trophy Three.js WebGL scenes with a collapsible side project rail.
      4. *Exam & Urgency:* Custom exam countdown target date, Official Feb 16 reset, Final Alert urgency window (`15/30/60/90` days), and pace hint toggle.
      5. *Player & Video:* Default 12th Hackers YouTube embed mode (`Standard`, `Pure Embed`, `Privacy No-Cookie`) and Auto-Advance lecture queue toggle.
      6. *Privacy & Reset:* Local browser storage quota meter (`KB` / `MB` out of `5 MB`), isolated single-subject resets (Physics, Chemistry, Biology, Math), and Master Reset `(Danger Zone)` guarded by a 2-step double confirmation pop-up.
      7. *About & Links:* Version `v2.4` badge, creator stamp (`AriYan Pal / Keśava Dāsa`), and quick buttons for Terms & Conditions · 2026 and the Official GitHub Repository.
-   - **Interactive Three.js 3D Study Studio:** WebGL 3D interactive visual lab featuring 5 studio-lit models (Physics Moving-Coil Galvanometer, Chemistry Octahedral `[ML6]` Complex, Biology DNA Double Helix, Maths Cross-Product & Double Cone, and Grandmaster Trophy) with camera presets and an Explode Model slider.
+   - **Interactive Three.js 3D Study Studio:** Full-viewport WebGL 3D interactive visual lab featuring 5 high-tessellation, smooth antialiased studio-lit models (Physics Moving-Coil Galvanometer, Chemistry Octahedral `[ML6]` Complex, Biology DNA Double Helix, Maths Cross-Product & Double Cone, and Grandmaster Trophy), a persistent side project switcher panel, camera presets, and an Explode Model slider.
    - **Data Privacy & Offline First:** All syllabus tracking, exam best scores, sound settings, and achievements persist locally via browser `localStorage` without requiring user accounts or sign-in.
    - **Community Suggestion Box & Creator Inbox:** Cloud Firestore–backed feedback system allowing students to suggest additions/corrections and track creator status updates.
 
