@@ -1760,19 +1760,8 @@ export default function App() {
                     Class 12 CBSE Syllabus Tracker · Examination Hall · 12th Hackers Playlist
                   </p>
                 </div>
-                {/* Help Desk, Disclaimers, Settings & Change Request Dock */}
+                {/* Help Desk, Disclaimers & Change Request Dock */}
                 <div className="flex flex-wrap items-center gap-2.5 pt-1">
-                  <button
-                    type="button"
-                    onClick={() => openSettings('sync')}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] transition-colors"
-                  >
-                    <Settings
-                      className="w-3.5 h-3.5 text-[#A64B33] dark:text-[#D4785E]"
-                      aria-hidden="true"
-                    />
-                    <span>Settings</span>
-                  </button>
                   <button
                     type="button"
                     onClick={() => openHelpDesk('guide')}

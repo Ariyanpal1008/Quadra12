@@ -230,7 +230,7 @@ All personal study records, timestamps, and exam scores are preserved locally in
 
 ## Release v2.4 Highlights
 
-- **Official Settings (`v2.4`):** Accessible via a clean `Settings` trigger inside `☰`, desktop header, and footer across 7 dedicated panels (**Cloud Sync**, **Audio & Tactile**, **3D Studio**, **Exam & Urgency**, **Player & Video**, **Privacy & Reset**, and **About & Links**).
+- **Official Settings (`v2.4`):** Accessible via a clean `Settings` trigger inside the sticky `☰` drawer and desktop header across 7 dedicated panels (**Cloud Sync**, **Audio & Tactile**, **3D Studio**, **Exam & Urgency**, **Player & Video**, **Privacy & Reset**, and **About & Links**).
 - **Account-less Cloud Sync & Optional Camera QR Scanner:** Sync study progress between laptops and mobiles without login using a **6-digit numeric Sync Code**, a live scannable **QR Code** (`?sync=XXXXXX`), or the compact **Camera QR Scanner icon** right beside the 6-digit code box (on-demand browser camera prompt + instant auto-pair), plus **Auto-Sync** and offline `.json` backup export/restore.
 - **Three.js 3D Study Studio:** Interactive WebGL models for **Physics**, **Chemistry**, **Biology**, **Maths**, and the **Grandmaster Trophy** with orbit/zoom, camera presets, and an Explode Model slider.
 - **Safety & Privacy Controls:** Local storage quota meter (`KB` / `MB` out of `5 MB`), isolated single-subject resets (including clearing that subject's best exam score cleanly), and **Master Reset (Danger Zone)** with a 2-step double-confirmation pop-up.
