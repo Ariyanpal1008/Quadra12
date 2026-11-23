@@ -355,24 +355,38 @@ export default function App() {
     if (addedIds.length === 0 && removedIds.length === 0) return;
     const todayKey = getLocalDateKey();
     setDailyChapterLog((prev) => {
-      const existing = Array.isArray(prev[todayKey]) ? prev[todayKey] : [];
-      const nextSet = new Set(existing);
-      addedIds.forEach((id) => nextSet.add(id));
-      removedIds.forEach((id) => nextSet.delete(id));
-      return {
-        ...prev,
-        [todayKey]: Array.from(nextSet),
-      };
+      const next = {...prev};
+      const existingToday = Array.isArray(next[todayKey]) ? next[todayKey] : [];
+      const nextTodaySet = new Set(existingToday);
+      addedIds.forEach((id) => nextTodaySet.add(id));
+      removedIds.forEach((id) => nextTodaySet.delete(id));
+      next[todayKey] = Array.from(nextTodaySet);
+
+      if (removedIds.length > 0) {
+        const removedSet = new Set(removedIds);
+        Object.keys(next).forEach((key) => {
+          if (Array.isArray(next[key])) {
+            next[key] = next[key].filter((id) => !removedSet.has(id));
+          }
+        });
+      }
+
+      return next;
     });
   };
 
   const handleToggleChapter = (chapterId: string) => {
     const nextDone = !completedChapters[chapterId];
     playCheckSound(nextDone);
-    setCompletedChapters((prev) => ({
-      ...prev,
-      [chapterId]: nextDone,
-    }));
+    setCompletedChapters((prev) => {
+      const next = {...prev};
+      if (nextDone) {
+        next[chapterId] = true;
+      } else {
+        delete next[chapterId];
+      }
+      return next;
+    });
     if (nextDone) {
       recordDailyChapterChanges([chapterId]);
     } else {
@@ -412,14 +426,19 @@ export default function App() {
     };
     setChapterTasks(nextTasks);
 
-    if (
-      STUDY_STAGES.every((s) => Boolean(updatedChapter[s.key])) &&
-      !completedChapters[chapterId]
-    ) {
+    const allStagesDone = STUDY_STAGES.every((s) => Boolean(updatedChapter[s.key]));
+    if (allStagesDone && !completedChapters[chapterId]) {
       setCompletedChapters((chPrev) =>
         chPrev[chapterId] ? chPrev : {...chPrev, [chapterId]: true},
       );
       recordDailyChapterChanges([chapterId]);
+    } else if (!allStagesDone && completedChapters[chapterId]) {
+      setCompletedChapters((chPrev) => {
+        const chNext = {...chPrev};
+        delete chNext[chapterId];
+        return chNext;
+      });
+      recordDailyChapterChanges([], [chapterId]);
     }
     if (stage === 'lecture') {
       syncEpisodeWatchedFromTasks(nextTasks);
@@ -437,6 +456,7 @@ export default function App() {
     playCheckSound(nextValue);
     const nextTasks = {...chapterTasks};
     const newlyCompletedIds: string[] = [];
+    const newlyUncompletedIds: string[] = [];
 
     subject.chapters.forEach((ch) => {
       const updatedChapter: ChapterTaskState = {
@@ -444,11 +464,11 @@ export default function App() {
         [stage]: nextValue,
       };
       nextTasks[ch.id] = updatedChapter;
-      if (
-        STUDY_STAGES.every((s) => Boolean(updatedChapter[s.key])) &&
-        !completedChapters[ch.id]
-      ) {
+      const allStagesDone = STUDY_STAGES.every((s) => Boolean(updatedChapter[s.key]));
+      if (allStagesDone && !completedChapters[ch.id]) {
         newlyCompletedIds.push(ch.id);
+      } else if (!allStagesDone && completedChapters[ch.id]) {
+        newlyUncompletedIds.push(ch.id);
       }
     });
 
@@ -463,6 +483,16 @@ export default function App() {
         return chNext;
       });
       recordDailyChapterChanges(newlyCompletedIds);
+    }
+    if (newlyUncompletedIds.length > 0) {
+      setCompletedChapters((chPrev) => {
+        const chNext = {...chPrev};
+        newlyUncompletedIds.forEach((id) => {
+          delete chNext[id];
+        });
+        return chNext;
+      });
+      recordDailyChapterChanges([], newlyUncompletedIds);
     }
     if (stage === 'lecture') {
       syncEpisodeWatchedFromTasks(nextTasks);
@@ -543,14 +573,19 @@ export default function App() {
     };
     setChapterTasks(nextTasks);
 
-    if (
-      STUDY_STAGES.every((s) => Boolean(updatedChapter[s.key])) &&
-      !completedChapters[chapterId]
-    ) {
+    const allStagesDone = STUDY_STAGES.every((s) => Boolean(updatedChapter[s.key]));
+    if (allStagesDone && !completedChapters[chapterId]) {
       setCompletedChapters((chPrev) =>
         chPrev[chapterId] ? chPrev : {...chPrev, [chapterId]: true},
       );
       recordDailyChapterChanges([chapterId]);
+    } else if (!allStagesDone && completedChapters[chapterId]) {
+      setCompletedChapters((chPrev) => {
+        const chNext = {...chPrev};
+        delete chNext[chapterId];
+        return chNext;
+      });
+      recordDailyChapterChanges([], [chapterId]);
     }
     syncEpisodeWatchedFromTasks(nextTasks);
   };
@@ -567,18 +602,18 @@ export default function App() {
     if (episode && episode.chapterIds.length > 0) {
       const nextTasks = {...chapterTasks};
       const newlyCompletedIds: string[] = [];
+      const newlyUncompletedIds: string[] = [];
       episode.chapterIds.forEach((chId) => {
         const updatedChapter: ChapterTaskState = {
           ...(nextTasks[chId] ?? {}),
           lecture: nextWatched,
         };
         nextTasks[chId] = updatedChapter;
-        if (
-          nextWatched &&
-          STUDY_STAGES.every((s) => Boolean(updatedChapter[s.key])) &&
-          !completedChapters[chId]
-        ) {
+        const allStagesDone = STUDY_STAGES.every((s) => Boolean(updatedChapter[s.key]));
+        if (allStagesDone && !completedChapters[chId]) {
           newlyCompletedIds.push(chId);
+        } else if (!allStagesDone && completedChapters[chId]) {
+          newlyUncompletedIds.push(chId);
         }
       });
       setChapterTasks(nextTasks);
@@ -592,6 +627,16 @@ export default function App() {
           return chNext;
         });
         recordDailyChapterChanges(newlyCompletedIds);
+      }
+      if (newlyUncompletedIds.length > 0) {
+        setCompletedChapters((chPrev) => {
+          const chNext = {...chPrev};
+          newlyUncompletedIds.forEach((id) => {
+            delete chNext[id];
+          });
+          return chNext;
+        });
+        recordDailyChapterChanges([], newlyUncompletedIds);
       }
     }
   };
@@ -672,47 +717,63 @@ export default function App() {
   );
 
   useEffect(() => {
-    const newlyUnlocked: {
-      id: AchievementId;
-      title: string;
-      detail: string;
-    }[] = [];
+    setUnlockedAchievements((prevMap) => {
+      const nextMap: Partial<Record<AchievementId, UnlockedAchievementRecord>> = {};
+      const newlyUnlocked: {
+        id: AchievementId;
+        title: string;
+        detail: string;
+      }[] = [];
 
-    const nextMap: Partial<Record<AchievementId, UnlockedAchievementRecord>> = {
-      ...unlockedAchievements,
-    };
+      ACHIEVEMENTS.forEach((def) => {
+        const result = def.evaluate(achievementStats);
+        if (result.satisfied) {
+          const prevRecord = prevMap[def.id];
+          nextMap[def.id] = {
+            unlockedAt: prevRecord?.unlockedAt ?? new Date().toISOString(),
+            detail: result.detailText,
+          };
+          if (!prevRecord) {
+            newlyUnlocked.push({
+              id: def.id,
+              title: def.title,
+              detail: result.detailText ?? def.description,
+            });
+          }
+        }
+      });
 
-    ACHIEVEMENTS.forEach((def) => {
-      if (nextMap[def.id]) return;
-      const result = def.evaluate(achievementStats);
-      if (result.satisfied) {
-        nextMap[def.id] = {
-          unlockedAt: new Date().toISOString(),
-          detail: result.detailText,
-        };
-        newlyUnlocked.push({
-          id: def.id,
-          title: def.title,
-          detail: result.detailText ?? def.description,
-        });
+      const prevKeys = Object.keys(prevMap);
+      const nextKeys = Object.keys(nextMap);
+      const hasChanged =
+        prevKeys.length !== nextKeys.length ||
+        prevKeys.some((k) => !nextMap[k as AchievementId]) ||
+        nextKeys.some((k) => !prevMap[k as AchievementId]);
+
+      if (!hasChanged) {
+        return prevMap;
       }
+
+      if (hasEvaluatedInitialAchievementsRef.current) {
+        if (newlyUnlocked.length > 0) {
+          playAchievementChime();
+          const latest = newlyUnlocked[newlyUnlocked.length - 1];
+          setRecentUnlockToast({
+            title: latest.title,
+            detail: latest.detail,
+            extraCount: newlyUnlocked.length - 1,
+          });
+        } else {
+          // If unclicked and achievement was locked, dismiss active toast
+          setRecentUnlockToast(null);
+        }
+      }
+
+      return nextMap;
     });
 
-    if (newlyUnlocked.length > 0) {
-      setUnlockedAchievements(nextMap);
-      if (hasEvaluatedInitialAchievementsRef.current) {
-        playAchievementChime();
-        const latest = newlyUnlocked[newlyUnlocked.length - 1];
-        setRecentUnlockToast({
-          title: latest.title,
-          detail: latest.detail,
-          extraCount: newlyUnlocked.length - 1,
-        });
-      }
-    }
-
     hasEvaluatedInitialAchievementsRef.current = true;
-  }, [achievementStats, unlockedAchievements]);
+  }, [achievementStats]);
 
   useEffect(() => {
     if (!recentUnlockToast) return;

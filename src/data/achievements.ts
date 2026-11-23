@@ -134,9 +134,18 @@ export function computeAchievementStats({
     0,
   );
 
-  const todayChaptersCount = (dailyChapterLog[todayKey] ?? []).length;
+  const completedSet = new Set(
+    Object.keys(completedChapters).filter((id) => Boolean(completedChapters[id])),
+  );
+  const todayChaptersCount = (dailyChapterLog[todayKey] ?? []).filter((id) =>
+    completedSet.has(id),
+  ).length;
   const maxDailyChaptersCount = Object.values(dailyChapterLog).reduce(
-    (maxCount, ids) => Math.max(maxCount, Array.isArray(ids) ? ids.length : 0),
+    (maxCount, ids) =>
+      Math.max(
+        maxCount,
+        Array.isArray(ids) ? ids.filter((id) => completedSet.has(id)).length : 0,
+      ),
     0,
   );
 
@@ -349,7 +358,8 @@ export function evaluateAllAchievements(
   return ACHIEVEMENTS.map((definition) => {
     const result = definition.evaluate(stats);
     const saved = unlockedMap[definition.id];
-    const unlocked = Boolean(saved) || result.satisfied;
+    // Dynamic lock/unlock: an achievement is unlocked strictly if its conditions are currently satisfied
+    const unlocked = result.satisfied;
     const rawPercent =
       result.target > 0 ? Math.round((result.current / result.target) * 100) : 0;
     const percent = unlocked ? 100 : Math.min(99, Math.max(0, rawPercent));
@@ -357,8 +367,8 @@ export function evaluateAllAchievements(
     return {
       definition,
       unlocked,
-      unlockedAt: saved?.unlockedAt,
-      detailText: saved?.detail ?? (result.satisfied ? result.detailText : undefined),
+      unlockedAt: unlocked ? saved?.unlockedAt ?? new Date().toISOString() : undefined,
+      detailText: unlocked ? (result.detailText ?? saved?.detail) : undefined,
       current: result.current,
       target: result.target,
       percent,
