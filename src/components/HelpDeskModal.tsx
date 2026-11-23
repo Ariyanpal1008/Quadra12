@@ -138,13 +138,14 @@ const GUIDE_SECTIONS: {
   {
     id: 'exam',
     title: 'Examination Hall',
-    tagline: 'Official CBSE 2026–27 SQPs & 3-Hour Timer',
+    tagline: '100% Original CBSE-Blueprint Papers & AI Board Examiner',
     description:
-      'Practice full CBSE Class 12 Sample Question Papers inside an authentic 3-hour timed workspace and record your score after self-evaluation.',
+      'Practice full PCMB papers featuring original copyright-safe questions with 10-year board frequency badges, smart Section B–E camera/upload/text inputs, and instant AI step-by-step grading.',
     howToUse: [
-      'Pick Physics, Chemistry, Biology, or Mathematics to load the official CBSE Sample Question Paper PDF.',
-      'Start the 3-hour exam clock when ready, pause/reset anytime, or download the PDF for offline printing.',
-      'Enter your marks out of 70 (PCB) or 80 (Maths) after finishing to track your Best Exam Score.',
+      'Pick Physics, Chemistry, Biology, or Mathematics to launch the 3-hour timed exam paper.',
+      'Answer Section A MCQs interactively with automated OMR scoring.',
+      'For Sections B–E, type your text or use Take Photo / Upload Image to attach multi-page handwritten/diagram answers.',
+      'Submit Test to run gemini-3.8-flash AI board examiner evaluation, view color-coded palette grades, AI feedback, and step-by-step model answers.',
     ],
     icon: ClipboardCheck,
   },
@@ -1126,19 +1127,19 @@ export function HelpDeskModal({
                       <li className="flex items-start gap-2.5">
                         <span className="text-[#A64B33] dark:text-[#D4785E] font-semibold" aria-hidden="true">–</span>
                         <span>
-                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Third-Party Content Ownership:</strong> Official CBSE 2026–27 Sample Question Paper PDFs remain the intellectual property of CBSE, and all 12th Hackers YouTube playlists belong to their original educators and creators. Quadra 12 organizes links and embeds solely for convenient revision.
+                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Original Practice Material &amp; Third-Party Content:</strong> Examination Hall practice papers, case scenarios, modified numericals, and step marking schemes are 100% original copyright-safe content created for Quadra 12. 12th Hackers YouTube lecture playlists belong to their original educators and creators.
                         </span>
                       </li>
                       <li className="flex items-start gap-2.5">
                         <span className="text-[#A64B33] dark:text-[#D4785E] font-semibold" aria-hidden="true">–</span>
                         <span>
-                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Development Assistance Note:</strong> Conceived and structured for Class 12 PCMB students, with select coding, layout, and technical setup assistance supported by modern development tools.
+                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Dual Storage &amp; Post-Submission Wipe:</strong> Typed drafts are saved in <code className="font-mono">localStorage</code> and captured photos in <code className="font-mono">IndexedDB</code> for refresh protection. Both are wiped completely and automatically immediately after successful AI grading and rendering of the Results Screen.
                         </span>
                       </li>
                       <li className="flex items-start gap-2.5">
                         <span className="text-[#A64B33] dark:text-[#D4785E] font-semibold" aria-hidden="true">–</span>
                         <span>
-                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Local &amp; Cloud Data:</strong> Your chapter checkboxes, exam best scores, countdown date overrides, and achievements save locally in your browser storage; clearing browser data resets local progress. Only suggestions you submit via Google Sign-In are stored in the cloud inbox.
+                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">AI Board Examiner Disclaimer:</strong> Sections B to E subjective evaluation is performed by <code className="font-mono">gemini-3.8-flash</code> as an automated practice examiner for study guidance and self-assessment only.
                         </span>
                       </li>
                     </ul>

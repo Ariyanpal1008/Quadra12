@@ -4,12 +4,16 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
+  Camera,
   Check,
   CheckCircle2,
   Clock,
   FileCheck2,
+  Flame,
+  ImagePlus,
   Play,
   RotateCcw,
+  Sparkles,
   Trophy,
   Zap,
 } from 'lucide-react';
@@ -115,23 +119,27 @@ const TOUR_STEPS: {
     id: 'exam',
     stepNum: '04',
     label: 'Exam Hall',
-    title: '3-Hour CBSE Sample Papers & Live OMR',
+    title: 'Original PCMB Blueprint Papers & AI Board Examiner',
     summary:
-      'Write full official CBSE 2026–27 papers side-by-side with a 03:00:00 timer, instant Section A OMR grading, and best score saving.',
+      'Practice 100% original copyright-safe papers with 10-year board frequency badges, smart camera/upload inputs for Sections B–E, and instant AI step-grading.',
     targetSection: 'exam',
     ctaLabel: 'Enter Examination Hall',
     hotspots: [
       {
-        label: 'Embedded CBSE PDFs',
-        detail: 'Read unmodified official SQPs inline or download PDFs offline.',
+        label: '🔥 Board Frequency Badges',
+        detail: 'Every question displays its 10-year board repeat frequency (e.g., Asked 5x in Boards · 2016, 2018, 2020, 2023, 2025).',
       },
       {
-        label: 'Interactive OMR Bubbles',
-        detail: 'Tap A/B/C/D for Section A to grade automatically against CBSE keys.',
+        label: 'Smart Camera & Photo Inputs',
+        detail: 'Take Photo directly via device camera or Upload Image for diagrams and proofs with multi-page thumbnail previews.',
       },
       {
-        label: 'Best Score Tracker',
-        detail: 'Saves your highest percentage and triggers Exam Ready above 90%.',
+        label: 'gemini-3.8-flash AI Step-Marking',
+        detail: 'Strict CBSE examiner evaluation awarding step-by-step marks, color-coded palette (Green/Yellow/Red), and revealing model answers.',
+      },
+      {
+        label: 'Dual Storage Refresh Protection',
+        detail: 'Typed text in localStorage and photos in IndexedDB are auto-restored on accidental refresh, wiping cleanly only after final review.',
       },
     ],
   },
@@ -176,6 +184,9 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
     pyq: false,
   });
   const [simOmrPick, setSimOmrPick] = useState<'A' | 'B' | 'C' | 'D' | null>('B');
+  const [simExamTab, setSimExamTab] = useState<'secA' | 'secBE'>('secA');
+  const [simPhotoAttached, setSimPhotoAttached] = useState(false);
+  const [simAiGraded, setSimAiGraded] = useState(false);
   const [simEmbedMode, setSimEmbedMode] = useState<'Standard' | 'Pure Embed' | 'No-Cookie'>('Standard');
   const [simLectureDone, setSimLectureDone] = useState(false);
 
@@ -467,54 +478,146 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
               {/* STEP 4: EXAMINATION HALL */}
               {currentStep.id === 'exam' && (
                 <div className="rounded-xl border border-[#332E28] bg-[#1E1B18] text-[#F5F2EB] p-4 sm:p-5 space-y-4">
-                  <div className="flex items-center justify-between gap-2">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
                       <FileCheck2 className="w-4 h-4 text-[#D4785E]" aria-hidden="true" />
                       <span className="text-xs font-semibold">
-                        Physics Official 2026–27 SQP · Section A
+                        Physics Original 3-Hour Paper (Code 042)
                       </span>
                     </div>
-                    <span className="font-mono text-xs text-[#CBC3B6] tabular-nums">
-                      02:59:42
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-xs text-[#CBC3B6] tabular-nums">
+                        02:59:42
+                      </span>
+                      <div className="flex rounded-md p-0.5 bg-[#24201C] border border-[#332E28] text-[10px]">
+                        <button
+                          type="button"
+                          onClick={() => setSimExamTab('secA')}
+                          className={`px-2 py-0.5 rounded transition-colors ${
+                            simExamTab === 'secA'
+                              ? 'bg-[#3D6B4F] text-[#F5F2EB] font-semibold'
+                              : 'text-[#CBC3B6] hover:text-white'
+                          }`}
+                        >
+                          Sec A OMR
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSimExamTab('secBE')}
+                          className={`px-2 py-0.5 rounded transition-colors ${
+                            simExamTab === 'secBE'
+                              ? 'bg-[#4F46E5] text-[#F5F2EB] font-semibold'
+                              : 'text-[#CBC3B6] hover:text-white'
+                          }`}
+                        >
+                          Sec B–E AI Check
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
-                  <div className="rounded-lg border border-[#332E28] bg-[#24201C] p-3.5 space-y-3">
-                    <p className="text-xs text-[#CBC3B6]">
-                      Sample Question Q1: Two charges +q and -q form an electric dipole. Tap an OMR bubble:
-                    </p>
-                    <div className="flex items-center gap-2.5">
-                      {(['A', 'B', 'C', 'D'] as const).map((opt) => {
-                        const selected = simOmrPick === opt;
-                        return (
-                          <button
-                            key={opt}
-                            type="button"
-                            onClick={() => {
-                              playOmrBubbleSound();
-                              setSimOmrPick(opt);
-                            }}
-                            className={`w-9 h-9 rounded-full border font-mono text-xs font-semibold transition-colors ${
-                              selected
-                                ? opt === 'B'
-                                  ? 'bg-[#3D6B4F] border-[#7AB88F] text-[#F5F2EB]'
-                                  : 'bg-[#A64B33] border-[#D4785E] text-[#F5F2EB]'
-                                : 'bg-[#1E1B18] border-[#4A423A] text-[#CBC3B6] hover:border-[#D4785E]'
-                            }`}
-                          >
-                            {opt}
-                          </button>
-                        );
-                      })}
-                      <span className="ml-2 text-xs font-mono text-[#CBC3B6]">
-                        {simOmrPick === 'B'
-                          ? 'Correct (+1 Mark · Key: B)'
-                          : simOmrPick
-                            ? `Selected ${simOmrPick} · Key is B`
-                            : 'Tap a bubble'}
-                      </span>
+                  {simExamTab === 'secA' ? (
+                    <div className="rounded-lg border border-[#332E28] bg-[#24201C] p-3.5 space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[11px] font-mono text-[#D4785E] font-semibold">
+                          Q01 · Section A (MCQ · 1 Mark)
+                        </span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-[#3A1E18] border border-[#7A3528] text-[#F09986]">
+                          <Flame className="w-2.5 h-2.5" />
+                          <span>Asked 5x in Boards · 2016, 2018, 2020, 2023, 2025</span>
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#CBC3B6] leading-relaxed">
+                        Two identical point charges +2q and +2q are separated by distance 2a. Determine the net electrostatic potential at their midpoint:
+                      </p>
+                      <div className="flex items-center gap-2.5">
+                        {(['A', 'B', 'C', 'D'] as const).map((opt) => {
+                          const selected = simOmrPick === opt;
+                          return (
+                            <button
+                              key={opt}
+                              type="button"
+                              onClick={() => {
+                                playOmrBubbleSound();
+                                setSimOmrPick(opt);
+                              }}
+                              className={`w-9 h-9 rounded-full border font-mono text-xs font-semibold transition-colors ${
+                                selected
+                                  ? opt === 'B'
+                                    ? 'bg-[#3D6B4F] border-[#7AB88F] text-[#F5F2EB]'
+                                    : 'bg-[#A64B33] border-[#D4785E] text-[#F5F2EB]'
+                                  : 'bg-[#1E1B18] border-[#4A423A] text-[#CBC3B6] hover:border-[#D4785E]'
+                              }`}
+                            >
+                              {opt}
+                            </button>
+                          );
+                        })}
+                        <span className="ml-2 text-xs font-mono text-[#CBC3B6]">
+                          {simOmrPick === 'B'
+                            ? 'Correct (+1 Mark · Key: B)'
+                            : simOmrPick
+                              ? `Selected ${simOmrPick} · Key is B`
+                              : 'Tap a bubble'}
+                        </span>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <div className="rounded-lg border border-[#332E28] bg-[#24201C] p-3.5 space-y-3">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[11px] font-mono text-[#A5B4FC] font-semibold">
+                          Q22 · Section C (Derivation / Proof · 3 Marks)
+                        </span>
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-[#3A1E18] border border-[#7A3528] text-[#F09986]">
+                          <Flame className="w-2.5 h-2.5" />
+                          <span>Asked 4x in Boards · High Yield</span>
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#CBC3B6] leading-relaxed">
+                        Derive the expression for magnetic field B at an axial point of a circular current loop using Biot-Savart Law.
+                      </p>
+
+                      <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-[#332E28]">
+                        <button
+                          type="button"
+                          onClick={() => setSimPhotoAttached((prev) => !prev)}
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
+                            simPhotoAttached
+                              ? 'bg-[#3D6B4F] border-[#7AB88F] text-white'
+                              : 'bg-[#4F46E5] border-[#4F46E5] text-white hover:bg-[#4338CA]'
+                          }`}
+                        >
+                          <Camera className="w-3.5 h-3.5" />
+                          <span>{simPhotoAttached ? '✓ Photo 1 Attached' : 'Simulate Take Photo'}</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSimAiGraded((prev) => !prev)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#A64B33] bg-[#2F1D19] text-[#D4785E] hover:bg-[#3D231E] text-xs font-medium"
+                        >
+                          <Sparkles className="w-3.5 h-3.5" />
+                          <span>{simAiGraded ? 'Hide AI Grade' : 'Simulate AI Grading'}</span>
+                        </button>
+                      </div>
+
+                      {simAiGraded && (
+                        <div className="mt-2 p-2.5 rounded-md bg-[#1E1B18] border border-[#7AB88F]/40 space-y-1.5 text-xs">
+                          <div className="flex items-center justify-between">
+                            <span className="font-semibold text-[#7AB88F] font-mono">
+                              AI Examiner: 2.5 / 3.0 Marks (Partial - Yellow)
+                            </span>
+                            <span className="text-[10px] text-[#A5B4FC] font-mono">gemini-3.8-flash</span>
+                          </div>
+                          <p className="text-[11px] text-[#CBC3B6]">
+                            ✓ Correct Biot-Savart equation &amp; diagram (+1.5m). Loop integration accurate (+1m). Omitted SI unit in final result (-0.5m).
+                          </p>
+                          <p className="text-[11px] font-mono text-[#D4785E]">
+                            Model Key: B = (μ₀ I R²) / [2(R² + x²)^(3/2)] T
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -648,6 +751,9 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
                 setSimOmrPick('B');
                 setSimEmbedMode('Standard');
                 setSimLectureDone(false);
+                setSimExamTab('secA');
+                setSimPhotoAttached(false);
+                setSimAiGraded(false);
               }}
               className="inline-flex items-center gap-1 text-[#A64B33] dark:text-[#D4785E] hover:underline whitespace-nowrap shrink-0"
             >

@@ -679,7 +679,7 @@ export function SettingsModal({
                       Settings
                     </h2>
                     <span className="px-2 py-0.5 rounded-full bg-[#ECE6D9] dark:bg-[#2C2722] text-[10px] font-mono text-[#787066] dark:text-[#9C9387]">
-                      v2.4
+                      v2.5
                     </span>
                   </div>
                 </div>
@@ -1560,7 +1560,7 @@ export function SettingsModal({
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
                           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] text-[11px] font-mono font-semibold">
-                            Version 2.4
+                            Version 2.5
                           </span>
                           <h3 className="mt-2 text-lg font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
                             Quadra 12 — Class 12 CBSE PCMB Workspace
