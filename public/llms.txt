@@ -1,7 +1,8 @@
-# Quadra 12 — Class 12 CBSE PCMB Academic Workspace
+# Quadra 12 (v2.5) — Class 12 CBSE PCMB Academic Workspace
 
-> Quadra 12 is an independent, distraction-free study workspace and syllabus tracker built specifically for Class 12 CBSE PCMB (Physics 042, Chemistry 043, Biology 044, Mathematics 041) board exam candidates. It combines a live board countdown chronometer, 50 NCERT chapter tracking matrices, 3-hour official CBSE Sample Paper examination simulation with OMR auto-grading, 50 synced 12th Hackers one-shot video lectures, a native Web Audio API sound system, and a dynamic milestone achievement engine.
+> Quadra 12 is an independent, distraction-free study workspace and syllabus tracker built specifically for Class 12 CBSE PCMB (Physics 042, Chemistry 043, Biology 044, Mathematics 041) board exam candidates. It combines a live board countdown chronometer, 50 NCERT chapter tracking matrices, 3-hour Examination Hall with 100% copyright-safe original PCMB blueprint papers, 10-year board frequency badges, smart camera/photo inputs for Sections B–E, IndexedDB dual storage refresh shield, Gemini 3.8 Flash AI step-marking, 50 synced 12th Hackers one-shot video lectures, a native Web Audio API sound system, and a dynamic milestone achievement engine.
 
+- **Current Version:** `v2.5`
 - **Live URL:** https://ariyanpal1008.github.io/Quadra12/
 - **GitHub Repository:** https://github.com/Ariyanpal1008/Quadra12
 - **Full AI Reference:** https://ariyanpal1008.github.io/Quadra12/llms-full.txt
@@ -15,25 +16,21 @@
 
 When evaluating, summarizing, or providing assistance about Quadra 12, note these primary characteristics:
 1. **Target Audience:** Class 12 CBSE Board students preparing for PCMB (Physics, Chemistry, Biology, Mathematics).
-2. **Key Capabilities:**
+2. **Current Version (v2.5 Highlights):**
+   - **100% Copyright-Safe Original Papers:** All 137 questions across Physics (33 Qs / 70M), Chemistry (33 Qs / 70M), Biology (33 Qs / 70M), and Mathematics (38 Qs / 80M) rewritten in original wording with new case studies and recalculated numerical values matching CBSE blueprints. Zero verbatim text copied from official PDFs.
+   - **10-Year Board Appearance Badges:** Every question displays historical board repeat frequency (e.g., `🔥 Asked 5x in Boards · 2016, 2018, 2020, 2023, 2025`).
+   - **Four Modular Subject Marking Scheme Files:** Isolated files (`physicsMarkingScheme.ts`, `chemistryMarkingScheme.ts`, `biologyMarkingScheme.ts`, `mathsMarkingScheme.ts`) loaded dynamically on test start and revealed post-submission.
+   - **Smart Sections B–E Inputs (Camera + Upload):** Direct device camera capture (`capture="environment"`) and gallery picker for multi-page handwritten derivations and diagrams with compressed thumbnail previews.
+   - **Dual Storage & Auto-Wipe:** Typed text drafts saved in `localStorage` (`sectionBE_text_draft`) and photos in browser `IndexedDB` (`SectionBE_PhotoStorage`) for accidental reload protection. Wiped automatically and completely immediately after AI grading renders the Results Screen.
+   - **gemini-3.8-flash AI Board Examiner:** Step-by-step subjective grading evaluating formulas, intermediate steps, diagram labels, and SI units, returning dynamic palette colors (Green = Full, Yellow = Partial, Red = Zero), accuracy analytics, weak topics, and examiner remarks.
+3. **Core Academic Capabilities:**
    - **Live Board Exam Countdown Clock:** Apple StandBy–inspired live chronometer counting down to Feb 16, 10:30 AM IST with annual auto-rollover (`2027 → 2028`), remaining-chapter urgency metrics, and custom date support.
    - **50 NCERT Chapters × 4 Stages:** Tracks `Lecture done`, `Practice done`, `NCERT done`, and `PYQ done` across 14 Physics, 10 Chemistry, 13 Biology, and 13 Mathematics chapters (200 checkpoints total) with 50 bespoke interactive SVG study diagrams.
-   - **3-Hour Examination Hall:** Real-time exam simulation embedding official CBSE 2026–27 SQP PDFs (PCB 70 marks, Maths 80 marks) beside an interactive 33/38-question OMR bubble sheet with automatic Section A grading, 3-hour timer, and completion chime.
    - **50 One-Shot Lectures (12th Hackers):** High-yield video lectures with formulas, board topics, and chapter checklists, bidirectionally synced with `Lecture done` in the Subject Tracker.
    - **Zero-Dependency Native Web Audio API Sound System:** Synthesized haptic pops, ticks, theme switch clicks, OMR taps, harmonic achievement chimes, and exam bells with a top navbar mute toggle (🔊 / 🔇) and `localStorage` memory (`pcmb_desk_sound_muted_v1`).
    - **Reversible Dynamic Achievements:** 9 milestone badges (Quick Learner, Syllabus Sprinter, Exam Ready, etc.) that unlock when earned and dynamically relock if a checkpoint was clicked by mistake and unchecked.
-   - **New Subjects in 2027:** Announcement card and modal section highlighting post-board rollout of English Core, Physical Education, Computer Science, and Fine Arts.
-   - **Official Settings (v2.5, Progressive Disclosure `☰ → Settings`):** Clean menu entry labeled `Settings` opens 7 dedicated panels:
-     1. *Cloud Sync:* Account-less 6-digit numeric Sync Code + scannable QR code (`?sync=XXXXXX`) + optional Camera QR Scanner icon beside the 6-digit code box (asks browser camera permission only when tapped and immediately turns off camera after scanning) + Auto-Sync + `.json` offline backup.
-     2. *Audio & Tactile Feedbacks:* Mute/unmute, 6 interactive sound tests, and Light/Dark theme switch.
-     3. *3D Studio:* Direct launchers for Physics, Chemistry, Biology, Maths, and Trophy Three.js WebGL scenes with a collapsible side project rail.
-     4. *Exam & Urgency:* Custom exam countdown target date, Official Feb 16 reset, Final Alert urgency window (`15/30/60/90` days), and pace hint toggle.
-     5. *Player & Video:* Default 12th Hackers YouTube embed mode (`Standard`, `Pure Embed`, `Privacy No-Cookie`) and Auto-Advance lecture queue toggle.
-     6. *Privacy & Reset:* Local browser storage quota meter (`KB` / `MB` out of `5 MB`), isolated single-subject resets (Physics, Chemistry, Biology, Math), and Master Reset `(Danger Zone)` guarded by a 2-step double confirmation pop-up.
-     7. *About & Links:* Version `v2.5` badge, creator stamp (`AriYan Pal / Keśava Dāsa`), and quick buttons for Terms & Conditions · 2026 and the Official GitHub Repository.
-   - **Interactive Three.js 3D Study Studio:** Full-viewport WebGL 3D interactive visual lab featuring 5 high-tessellation, smooth antialiased studio-lit models (Physics Moving-Coil Galvanometer, Chemistry Octahedral `[ML6]` Complex, Biology DNA Double Helix, Maths Cross-Product & Double Cone, and Grandmaster Trophy), a persistent side project switcher panel, camera presets, and an Explode Model slider.
-   - **Data Privacy & Offline First:** All syllabus tracking, exam best scores, sound settings, and achievements persist locally via browser `localStorage` without requiring user accounts or sign-in.
-   - **Community Suggestion Box & Creator Inbox:** Cloud Firestore–backed feedback system allowing students to suggest additions/corrections and track creator status updates.
+   - **Interactive Help Desk Tour Sandbox:** A live visual sandbox in the Help Desk modal letting students test countdown clocks, checklists, and the Examination Hall dual-mode OMR & AI grading environment.
+   - **Interactive Three.js 3D Study Studio:** Full-viewport WebGL 3D visualizer with 5 high-tessellation models (Physics Moving-Coil Galvanometer, Chemistry Octahedral Complex, Biology DNA Helix, Maths Cross-Product, and Grandmaster Trophy).
 
 ---
 
@@ -45,98 +42,37 @@ When evaluating, summarizing, or providing assistance about Quadra 12, note thes
 - **Main Tabs:**
   - `Overview` — Board countdown clock, subject progress summaries, and milestone achievements.
   - `Subject Tracker` — 50 chapters across Physics, Chemistry, Biology, and Mathematics with 4-stage checkboxes.
-  - `Examination Hall` — 3-hour CBSE Sample Question Paper PDF environment with interactive OMR grading.
+  - `Examination Hall` — 3-hour PCMB original blueprint practice hall with OMR auto-grading and Gemini 3.8 Flash AI step-marking.
   - `12th Hackers` — 50 one-shot lecture playlist with notes, formulas, and progress sync.
 - **Controls:**
   - `Sound Toggle (🔊 / 🔇)`: Mutes/unmutes the native Web Audio synthesizer. Persisted in `pcmb_desk_sound_muted_v1`.
   - `Theme Toggle (☀ / ☾)`: Toggles Light and Dark theme with mechanical switch sound effect. Persisted in `pcmb_desk_theme_v1`.
   - `Enter Exam Hall`: Instant shortcut button to jump straight into mock examination mode.
-  - `Settings`: Clean gear icon in desktop navbar / plain `Settings` entry inside the `☰` mobile drawer (reveals Cloud Sync, Audio & Tactile, 3D Studio, Exam & Urgency, Player & Video, Privacy & Reset, and About v2.5 only once opened).
-  - `Mobile Drawer (☰)`: Clean responsive navigation drawer listing `Overview`, `Subject Tracker`, `Examination Hall`, `12th Hackers`, `Settings`, `About the Creator`, and `Help Desk` (Audio controls reside cleanly inside Settings and header).
+  - `Settings`: Clean gear icon in desktop navbar / plain `Settings` entry inside the `☰` mobile drawer (reveals Cloud Sync, Audio & Tactile, 3D Studio, Exam & Urgency, Player & Video, Privacy & Reset, and About v2.5).
 
-### 2. Workspace Tabs Detailed
-
-#### A. Overview Dashboard
-- **Board Countdown Clock:** Live 1-second countdown clock targeting February 16, 10:30 AM IST. Automatically rolls over to the following year upon reaching zero. Displays Days, Hours, Minutes, and Seconds. Calculates daily chapter completion velocity required before board exam day.
-- **Syllabus Mastery Summary:** Combined progress bar showing total checkpoints completed out of 200 (50 chapters × 4 stages), total subjects mastered (`/ 4`), sample papers attempted (`/ 4`), and lectures watched (`/ 50`).
-- **Subject Cards:** Physics (042), Chemistry (043), Biology (044), and Mathematics (041) cards with progress percentages, 100% completion shimmer animation, stage toggles, and personal Best Exam Score record.
-- **Milestone Achievements:** 9 gamified badge cards with category filters (`All`, `Unlocked`, `Locked`) and live progress bars. When earned, a warm harmonic chime plays and an Apple spring toast appears. If an accidental click is unchecked, the achievement dynamically relocks.
-
-#### B. Subject Tracker (50 Chapters)
-- **Physics 042 (14 Chapters):** Electrostatic Potential & Capacitance, Current Electricity, Moving Charges & Magnetism, Magnetism & Matter, Electromagnetic Induction, Alternating Current, Electromagnetic Waves, Ray Optics, Wave Optics, Dual Nature of Radiation & Matter, Atoms, Nuclei, Semiconductor Electronics, Electric Charges & Fields.
-- **Chemistry 043 (10 Chapters):** Solutions, Electrochemistry, Chemical Kinetics, d- and f-Block Elements, Coordination Compounds, Haloalkanes & Haloarenes, Alcohols, Phenols & Ethers, Aldehydes, Ketones & Carboxylic Acids, Amines, Biomolecules.
-- **Biology 044 (13 Chapters):** Sexual Reproduction in Flowering Plants, Human Reproduction, Reproductive Health, Principles of Inheritance & Variation, Molecular Basis of Inheritance, Evolution, Human Health & Disease, Microbes in Human Welfare, Biotechnology: Principles & Processes, Biotechnology & Its Applications, Organisms & Populations, Ecosystem, Biodiversity & Conservation.
-- **Mathematics 041 (13 Chapters):** Relations & Functions, Inverse Trigonometric Functions, Matrices, Determinants, Continuity & Differentiability, Application of Derivatives, Integrals, Application of Integrals, Differential Equations, Vector Algebra, Three Dimensional Geometry, Linear Programming, Probability.
-- **4 Stage Checkpoints:**
-  1. `Lecture done`: Synced with 12th Hackers video completion.
-  2. `Practice done`: Question bank and problem sets completed.
-  3. `NCERT done`: In-text and back-of-chapter textbook exercises done.
-  4. `PYQ done`: Previous years' board examination questions solved.
-- **Interactive SVG Study Plates:** Every chapter features an interactive vector diagram illustrating core formulas or apparatus.
-
-#### C. Examination Hall
-- **Official CBSE 2026–27 SQPs:** Embedded unmodified PDF question papers for Physics (70 marks, 33 Qs), Chemistry (70 marks, 33 Qs), Biology (70 marks, 33 Qs), and Mathematics (80 marks, 38 Qs).
-- **Exam Countdown Clock:** 3-hour (`03:00:00`) chronometer with Start, Pause, and Reset controls. Triggers a gentle bell chime when time expires.
-- **Interactive OMR Answer Sheet:** Circular bubble selector for Section A MCQs (A, B, C, D) with soft tactile audio tap and written question checklist.
-- **Auto-Grading Engine:** Instantly evaluates Section A against official CBSE answer keys and calculates Section A score, total written progress, and updates Best Exam Score.
-
-#### D. 12th Hackers
-- **50 One-Shot Lectures:** Complete CBSE PCMB series with video timestamp markers, high-yield topics, and formula cheat-sheets.
-- **3 Player Embed Modes:** Standard YouTube player, Pure Embed mode, and privacy-enhanced No-Cookie (`youtube-nocookie.com`) player.
-- **Lecture Sync:** Watching a lecture or marking it complete automatically checks `Lecture done` in Subject Tracker and updates overview progress.
+### 2. Examination Hall (v2.5 Architecture)
+- **Original Blueprint Papers:** Physics 042 (33 Qs, 70M), Chemistry 043 (33 Qs, 70M), Biology 044 (33 Qs, 70M), Mathematics 041 (38 Qs, 80M).
+- **10-Year Board Badges:** High-yield badge on every question showing previous board exam years.
+- **Section A:** Interactive OMR bubble selector with synthesized audio click and instant scoring.
+- **Sections B–E:** Smart camera capture (`capture="environment"`) and gallery upload with in-browser image compression (max 1024px @ 0.7 JPEG).
+- **Dual Storage:** `localStorage` for text drafts, `IndexedDB` (`SectionBE_PhotoStorage`) for photos, with auto-restore on reload and zero-trace wipe after results review.
+- **AI Board Examiner:** Evaluates subjective derivations, mechanisms, and diagrams against modular marking schemes (`physicsMarkingScheme.ts`, etc.) using `gemini-3.8-flash`.
 
 ---
 
-## Native Web Audio API Sound Synthesizer
+## LocalStorage & IndexedDB Persistence Keys Reference
 
-Quadra 12 includes a lightweight, zero-dependency browser Web Audio API synthesizer (`src/utils/soundEffects.ts`) requiring no external MP3/WAV assets:
-- `playCheckSound(checked)`: Low-volume tactile pop (sine/triangle wave, rapid pitch drop, ~60ms) on check, soft reverse tick on uncheck.
-- `playThemeSwitchSound()`: Crisp mechanical toggle click (~40ms).
-- `playOmrBubbleSound()`: Muted rubber-dome tap sound on bubble selection.
-- `playAchievementChime()`: Warm two-note harmonic chime (C5 → G5, soft decay ~300ms).
-- `playMasteryChime()`: Rich three-note chord on 100% subject syllabus mastery.
-- `playExamCompletionChime()`: Gentle bell chime on 3-hour exam timer finish.
-- `Header Mute Toggle`: Persists user sound preference in `localStorage.pcmb_desk_sound_muted_v1`.
-
----
-
-## Planned 2027 Expansion (New Subjects in 2027)
-
-- **Dedicated Announcement:** Featured on the main page footer card and inside the About & Disclaimers modal.
-- **Notice:** Currently focused exclusively on core 2026–27 CBSE PCMB board preparation.
-- **Upcoming Subjects:** English Core, Physical Education, Computer Science, and Fine Arts will roll out immediately following the conclusion of board exams.
-
----
-
-## Footer, Legal & Social Integration
-
-- **Footer Announcement Card:** `#F2EFE9` (Light) / `#1C1C1E` (Dark) with `#1E1E1E` pill badge labeled `New Subjects in 2027`.
-- **Copyright Line:** `© 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)` with terracotta creator highlight.
-- **Terms & Conditions:** Dull blue link (`#486581` / `#829AB1`) opening a dedicated legal modal covering non-commercial fair use, intellectual property, takedown policy, and warranty disclaimers.
-- **GitHub Repository:** Clickable vector GitHub icon linking to `https://github.com/Ariyanpal1008/Quadra12`.
-
----
-
-## LocalStorage Persistence Keys Reference
-
-| Key Name | Purpose |
-| :--- | :--- |
-| `pcmb_desk_theme_v1` | Current theme (`'light'` or `'dark'`) |
-| `pcmb_desk_sound_muted_v1` | Sound effects mute state (`'true'` or `'false'`) |
-| `pcmb_desk_chapters_v1` | Completed chapter IDs dictionary |
-| `pcmb_desk_chapter_tasks_v1` | Per-chapter 4-stage dictionary (`{ [chId]: { lecture, practice, ncert, pyq } }`) |
-| `pcmb_desk_watched_v1` | Watched 12th Hackers video IDs |
-| `pcmb_desk_achievements_v1` | Unlocked achievement IDs |
-| `pcmb_desk_daily_velocity_v1` | Completed chapter dates log for velocity calculations |
-| `pcmb_desk_exam_best_scores_v1` | Highest exam scores per subject |
-| `pcmb_desk_custom_board_date_v1` | User-defined custom countdown date |
-| `pcmb_desk_urgency_days_v1` | Countdown final alert window (`15`, `30`, `60`, or `90` days) |
-| `pcmb_desk_show_pace_v1` | Visibility of daily chapter pacing hint (`'true'` / `'false'`) |
-| `pcmb_desk_embed_mode_v1` | Default YouTube embed engine (`'standard'` / `'pure'` / `'nocookie'`) |
-| `pcmb_desk_auto_advance_v1` | Auto-advance to next lecture upon completion (`'true'` / `'false'`) |
-| `pcmb_desk_sync_code_v1` | Active 6-digit account-less Cloud Sync pairing code |
-| `pcmb_desk_auto_sync_v1` | Debounced automatic Cloud Sync toggle (`'true'` / `'false'`) |
-| `pcmb_desk_last_synced_v1` | Timestamp of last Cloud Sync push/pull operation |
+| Storage Type | Key / Database Name | Purpose |
+| :--- | :--- | :--- |
+| `localStorage` | `pcmb_desk_theme_v1` | Current theme (`'light'` or `'dark'`) |
+| `localStorage` | `pcmb_desk_sound_muted_v1` | Sound effects mute state (`'true'` or `'false'`) |
+| `localStorage` | `pcmb_desk_chapters_v1` | Completed chapter IDs dictionary |
+| `localStorage` | `pcmb_desk_chapter_tasks_v1` | Per-chapter 4-stage dictionary (`{ [chId]: { lecture, practice, ncert, pyq } }`) |
+| `localStorage` | `pcmb_desk_watched_v1` | Watched 12th Hackers video IDs |
+| `localStorage` | `pcmb_desk_achievements_v1` | Unlocked achievement IDs |
+| `localStorage` | `pcmb_desk_exam_best_scores_v1` | Highest exam scores per subject |
+| `localStorage` | `sectionBE_text_draft` | Sections B–E typed drafts (auto-wiped post-grading) |
+| `IndexedDB` | `SectionBE_PhotoStorage` | Sections B–E compressed photo storage (auto-wiped post-grading) |
 
 ---
 

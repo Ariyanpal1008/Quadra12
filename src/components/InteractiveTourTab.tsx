@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {AnimatePresence, motion} from 'motion/react';
+import {motion} from 'motion/react';
 import {
   ArrowLeft,
   ArrowRight,
@@ -15,9 +15,9 @@ import {
   RotateCcw,
   Sparkles,
   Trophy,
+  X,
   Zap,
 } from 'lucide-react';
-import {APPLE_EASE, APPLE_SPRING} from './FluidPrimitives';
 import {playCheckSound, playOmrBubbleSound} from '../utils/soundEffects';
 
 export type TourTargetSection = 'overview' | 'subjects' | 'exam' | 'hackers';
@@ -55,15 +55,15 @@ const TOUR_STEPS: {
     hotspots: [
       {
         label: 'Auto Rollover (Feb 16)',
-        detail: 'Switches seamlessly from 2027 → 2028 on Feb 16 at 10:30 AM IST.',
+        detail: 'Switches seamlessly from 2027 → 2028 on Feb 16 at 10:30 AM IST without resetting student study logs.',
       },
       {
         label: 'Custom Date Toggle',
-        detail: 'Tap Auto: Feb 16 if CBSE shifts a future exam start date.',
+        detail: 'Tap Auto: Feb 16 to set a custom board schedule if your specific stream starts on a different date.',
       },
       {
         label: 'Pace Alert Tiers',
-        detail: 'Transitions from Long-Run (>90d) → Crunch (≤90d) → Final Month (≤30d).',
+        detail: 'Dynamically shifts urgency from Long-Run (>90d) → Crunch (≤90d) → Final Month (≤30d) based on remaining days.',
       },
     ],
   },
@@ -78,16 +78,16 @@ const TOUR_STEPS: {
     ctaLabel: 'Open Overview & My Achievements',
     hotspots: [
       {
-        label: 'Quick Learner',
-        detail: 'Completing 3–5 chapters in a single calendar day unlocks this seal.',
+        label: 'Quick Learner Badge',
+        detail: 'Completing 3 or more chapters in a single calendar day unlocks the Quick Learner seal.',
       },
       {
-        label: 'Exam Ready',
-        detail: 'Scoring strictly >90% on any official sample paper unlocks Exam Ready.',
+        label: 'Exam Ready Distinction',
+        detail: 'Scoring strictly >90% on any full Examination Hall blueprint paper unlocks the Exam Ready trophy.',
       },
       {
-        label: 'Live Unlock Toast',
-        detail: 'Pops cleanly at the bottom-right from any tab the moment you qualify.',
+        label: 'Reversible Unlock Toast',
+        detail: 'Floats non-intrusively from any view upon qualification; dynamically relocks if a checkbox was clicked by mistake.',
       },
     ],
   },
@@ -97,21 +97,21 @@ const TOUR_STEPS: {
     label: 'Subject Tracker',
     title: '50 NCERT Chapters × 4 Study Checkpoints',
     summary:
-      'Every chapter across Physics (14), Chemistry (10), Biology (13), and Maths (13) includes 4 checkboxes plus a custom SVG diagram plate.',
+      'Every chapter across Physics (14), Chemistry (10), Biology (13), and Maths (13) includes 4 checkpoints plus a custom SVG diagram plate.',
     targetSection: 'subjects',
     ctaLabel: 'Open Subject Tracker',
     hotspots: [
       {
         label: '4-Stage Checklist',
-        detail: 'Lecture done, Practice done, NCERT done, and PYQ done per chapter.',
+        detail: 'Lecture done, Practice done, NCERT done, and PYQ done per chapter (200 total checkpoints).',
       },
       {
-        label: 'Bulk Subject Bar',
-        detail: 'Toggle an entire study stage across a full subject in one click.',
+        label: 'Bulk Subject Action Bar',
+        detail: 'Toggle an entire study stage across all chapters of a subject in one click with audio confirmation.',
       },
       {
-        label: '50 SVG Diagrams',
-        detail: 'Click any chapter card or plate to inspect its dedicated study diagram.',
+        label: '50 Interactive SVG Plates',
+        detail: 'Click any chapter card or plate to inspect high-yield visual vector diagrams for quick memory recall.',
       },
     ],
   },
@@ -119,27 +119,27 @@ const TOUR_STEPS: {
     id: 'exam',
     stepNum: '04',
     label: 'Exam Hall',
-    title: 'Original PCMB Blueprint Papers & AI Board Examiner',
+    title: 'Original PCMB Blueprint Papers & AI Board Examiner (v2.5)',
     summary:
-      'Practice 100% original copyright-safe papers with 10-year board frequency badges, smart camera/upload inputs for Sections B–E, and instant AI step-grading.',
+      '100% original copyright-safe papers with 10-year board frequency badges, smart camera/upload inputs for Sections B–E, and Gemini 3.8 Flash step-grading.',
     targetSection: 'exam',
     ctaLabel: 'Enter Examination Hall',
     hotspots: [
       {
-        label: '🔥 Board Frequency Badges',
-        detail: 'Every question displays its 10-year board repeat frequency (e.g., Asked 5x in Boards · 2016, 2018, 2020, 2023, 2025).',
+        label: '🔥 10-Year Board Badges',
+        detail: 'Every question displays its historical board frequency (e.g., Asked 5x in Boards · 2016, 2018, 2020, 2023, 2025).',
       },
       {
-        label: 'Smart Camera & Photo Inputs',
-        detail: 'Take Photo directly via device camera or Upload Image for diagrams and proofs with multi-page thumbnail previews.',
+        label: 'Smart Camera & Photo Upload',
+        detail: 'Direct device camera capture (Take Photo) and gallery picker (Upload Image) for multi-page handwritten answers.',
       },
       {
-        label: 'gemini-3.8-flash AI Step-Marking',
+        label: 'gemini-3.8-flash Step-Marking',
         detail: 'Strict CBSE examiner evaluation awarding step-by-step marks, color-coded palette (Green/Yellow/Red), and revealing model answers.',
       },
       {
-        label: 'Dual Storage Refresh Protection',
-        detail: 'Typed text in localStorage and photos in IndexedDB are auto-restored on accidental refresh, wiping cleanly only after final review.',
+        label: 'Dual Storage Refresh Shield',
+        detail: 'Typed drafts in localStorage and compressed photos in IndexedDB are auto-restored on reload and wiped only after final results.',
       },
     ],
   },
@@ -155,15 +155,15 @@ const TOUR_STEPS: {
     hotspots: [
       {
         label: 'Bidirectional Sync',
-        detail: 'Watching or marking a lecture updates Subject Tracker automatically.',
+        detail: 'Watching or marking a lecture updates Subject Tracker automatically in real-time.',
       },
       {
-        label: '3 Embed Modes',
-        detail: 'Switch between Standard, Pure Embed, and No-Cookie if a network blocks YouTube.',
+        label: '3 Player Embed Modes',
+        detail: 'Switch between Standard, Pure Embed, and No-Cookie (youtube-nocookie.com) if school networks restrict YouTube.',
       },
       {
-        label: 'Mark Done & Next',
-        detail: 'Watch externally on YouTube and advance to the next chapter in one tap.',
+        label: 'Mark Done & Next Shortcut',
+        detail: 'Check off the current chapter lecture and auto-advance to the next chapter in one smooth tap.',
       },
     ],
   },
@@ -173,7 +173,7 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
   const [stepIdx, setStepIdx] = useState(0);
   const [activeHotspotIdx, setActiveHotspotIdx] = useState(0);
 
-  // Ephemeral interactive preview states (never mutates student's saved localStorage)
+  // Ephemeral preview states for sandbox simulation (never mutates real study logs)
   const [simClockUrgent, setSimClockUrgent] = useState(false);
   const [simDailyChapters, setSimDailyChapters] = useState(2);
   const [simExamPct, setSimExamPct] = useState(88);
@@ -206,13 +206,16 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
       {/* Header & Step Selector */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#DDD6C7] dark:border-[#332E28]">
         <div>
-          <p className="text-xs font-medium tracking-[0.12em] text-[#A64B33] dark:text-[#D4785E]">
-            Interactive Visual Walkthrough · Sandbox Preview
-          </p>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-[#A64B33]/10 text-[#A64B33] dark:text-[#D4785E] border border-[#A64B33]/20">
+              Interactive Tour v2.5
+            </span>
+            <span className="text-xs text-[#787066] dark:text-[#9C9387]">Safe Sandbox Mode</span>
+          </div>
           <h3 className="mt-1 text-base sm:text-lg font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
             {currentStep.stepNum}. {currentStep.title}
           </h3>
-          <p className="mt-1 text-xs text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
+          <p className="mt-1 text-xs text-[#575048] dark:text-[#CBC3B6] leading-relaxed max-w-2xl">
             {currentStep.summary}
           </p>
         </div>
@@ -220,14 +223,14 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
         <button
           type="button"
           onClick={() => onJumpToSection(currentStep.targetSection)}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium rounded-lg bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] hover:opacity-90 transition-opacity whitespace-nowrap shrink-0 self-start sm:self-auto"
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium rounded-lg bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] hover:opacity-90 transition-opacity whitespace-nowrap shrink-0 self-start sm:self-auto shadow-xs"
         >
           <span>{currentStep.ctaLabel}</span>
           <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
         </button>
       </div>
 
-      {/* Interactive Segmented Step Switcher */}
+      {/* Segmented Step Switcher */}
       <div
         role="tablist"
         aria-label="Interactive walkthrough steps"
@@ -242,9 +245,9 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
               role="tab"
               aria-selected={isCurrent}
               onClick={() => selectStep(idx)}
-              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 ${
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all whitespace-nowrap shrink-0 ${
                 isCurrent
-                  ? 'bg-[#FAF8F3] dark:bg-[#24201C] text-[#1E1B18] dark:text-[#F5F2EB] shadow-xs border border-[#DDD6C7] dark:border-[#332E28]'
+                  ? 'bg-[#FAF8F3] dark:bg-[#24201C] text-[#1E1B18] dark:text-[#F5F2EB] shadow-xs border border-[#DDD6C7] dark:border-[#332E28] font-semibold'
                   : 'text-[#575048] dark:text-[#CBC3B6] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB]'
               }`}
             >
@@ -254,283 +257,278 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
         })}
       </div>
 
-      {/* Main Split: Interactive Screenshot Canvas + Clickable Hotspots */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
-        {/* Left: Live Interactive Screenshot Preview */}
-        <div className="lg:col-span-7 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#161412] p-4 sm:p-5 flex flex-col justify-between gap-4">
+      {/* Main Split: Interactive Canvas (Left) + Clickable Hotspots (Right) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        {/* Left: Stable Interactive Screenshot Preview Canvas */}
+        <div className="lg:col-span-7 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#161412] p-4 sm:p-5 flex flex-col justify-between gap-4 min-h-[460px]">
           <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-[#DDD6C7] dark:border-[#332E28] text-[11px] font-mono text-[#787066] dark:text-[#9C9387]">
-            <span>Interactive Preview · Tap elements below to test</span>
-            <span>Safe Sandbox Mode</span>
+            <span>Live Interactive Preview</span>
+            <span className="text-[#A64B33] dark:text-[#D4785E]">Tap elements to test</span>
           </div>
 
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={currentStep.id}
-              initial={{opacity: 0, y: 8}}
-              animate={{opacity: 1, y: 0}}
-              exit={{opacity: 0, y: -6}}
-              transition={{duration: 0.2, ease: APPLE_EASE}}
-              className="flex-1 flex flex-col justify-center"
-            >
-              {/* STEP 1: BOARD CLOCK */}
-              {currentStep.id === 'clock' && (
-                <div className="rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] p-4 sm:p-5 space-y-4">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div>
-                      <p className="text-[11px] font-mono text-[#A64B33] dark:text-[#D4785E]">
-                        CBSE Class XII 2027 · 16 Feb 10:30 AM IST
-                      </p>
-                      <p className="text-sm font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
-                        {simClockUrgent
-                          ? 'Final Month Alert (≤ 30 days)'
-                          : 'Crunch Window Active (85 days)'}
-                      </p>
+          <div className="flex-1 flex flex-col justify-center py-1">
+            {/* STEP 1: BOARD CLOCK */}
+            {currentStep.id === 'clock' && (
+              <div className="rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] p-4 sm:p-5 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div>
+                    <p className="text-[11px] font-mono text-[#A64B33] dark:text-[#D4785E]">
+                      CBSE Class XII 2027 · 16 Feb 10:30 AM IST
+                    </p>
+                    <p className="text-sm font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+                      {simClockUrgent ? 'Final Month Alert (≤ 30 days)' : 'Crunch Window Active (85 days)'}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setSimClockUrgent((prev) => !prev)}
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] whitespace-nowrap shrink-0 self-start sm:self-auto"
+                  >
+                    {simClockUrgent ? 'Switch to 85 Days' : 'Simulate Final 30 Days'}
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-4 gap-2">
+                  {[
+                    {val: simClockUrgent ? '24' : '85', lbl: 'DAYS'},
+                    {val: simClockUrgent ? '06' : '14', lbl: 'HOURS'},
+                    {val: '32', lbl: 'MINS'},
+                    {val: '09', lbl: 'SECS'},
+                  ].map((tile) => (
+                    <div key={tile.lbl} className="text-center">
+                      <div
+                        className={`py-3 rounded-lg border font-mono text-lg sm:text-2xl font-bold tabular-nums text-[#F5F2EB] transition-colors ${
+                          simClockUrgent
+                            ? 'bg-[#2C1815] border-[#7A3528]'
+                            : 'bg-[#1E1B18] border-[#332E28]'
+                        }`}
+                      >
+                        {tile.val}
+                      </div>
+                      <span className="mt-1 block text-[10px] font-mono font-medium text-[#787066] dark:text-[#9C9387]">
+                        {tile.lbl}
+                      </span>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setSimClockUrgent((prev) => !prev)}
-                      className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] whitespace-nowrap shrink-0"
-                    >
-                      {simClockUrgent ? 'Switch to 85 Days' : 'Simulate Final 30 Days'}
-                    </button>
+                  ))}
+                </div>
+
+                <div className="pt-2 border-t border-[#DDD6C7]/60 dark:border-[#332E28]/60 flex items-center gap-2 text-xs text-[#575048] dark:text-[#CBC3B6]">
+                  <Clock className="w-3.5 h-3.5 text-[#A64B33] dark:text-[#D4785E] shrink-0" aria-hidden="true" />
+                  <span>Annual Rollover: Resets automatically to 16 Feb 2028 when 2027 exams begin.</span>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 2: ACHIEVEMENTS */}
+            {currentStep.id === 'achievements' && (
+              <div className="rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] p-4 sm:p-5 space-y-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div
+                    className={`rounded-lg border p-3.5 transition-colors ${
+                      simDailyChapters >= 3
+                        ? 'border-[#B7791F] dark:border-[#E6B17A] bg-[#FBF3E4]/70 dark:bg-[#2D2416]/60'
+                        : 'border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C]'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+                        Quick Learner
+                      </span>
+                      <Zap
+                        className={`w-4 h-4 shrink-0 ${
+                          simDailyChapters >= 3 ? 'text-[#8C5A12] dark:text-[#E6B17A]' : 'text-[#968E83]'
+                        }`}
+                        aria-hidden="true"
+                      />
+                    </div>
+                    <p className="mt-1.5 text-[11px] font-mono tabular-nums text-[#575048] dark:text-[#CBC3B6]">
+                      {simDailyChapters >= 3
+                        ? `✓ Unlocked · ${simDailyChapters} chapters today`
+                        : `Progress: ${simDailyChapters} / 3 chapters today`}
+                    </p>
                   </div>
 
-                  <div className="grid grid-cols-4 gap-2">
-                    {[
-                      {val: simClockUrgent ? '24' : '85', lbl: 'DAYS'},
-                      {val: simClockUrgent ? '06' : '14', lbl: 'HOURS'},
-                      {val: '32', lbl: 'MINS'},
-                      {val: '09', lbl: 'SECS'},
-                    ].map((tile) => (
-                      <div key={tile.lbl} className="text-center">
-                        <div
-                          className={`py-3 rounded-lg border font-mono text-xl sm:text-2xl font-semibold tabular-nums text-[#F5F2EB] transition-colors ${
-                            simClockUrgent
-                              ? 'bg-[#2C1815] border-[#7A3528]'
-                              : 'bg-[#1E1B18] border-[#332E28]'
+                  <div
+                    className={`rounded-lg border p-3.5 transition-colors ${
+                      simExamPct > 90
+                        ? 'border-[#A64B33] dark:border-[#D4785E] bg-[#F7EBE7]/80 dark:bg-[#2F1D19]/70'
+                        : 'border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C]'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+                        Exam Ready
+                      </span>
+                      <Trophy
+                        className={`w-4 h-4 shrink-0 ${
+                          simExamPct > 90 ? 'text-[#A64B33] dark:text-[#D4785E]' : 'text-[#968E83]'
+                        }`}
+                        aria-hidden="true"
+                      />
+                    </div>
+                    <p className="mt-1.5 text-[11px] font-mono tabular-nums text-[#575048] dark:text-[#CBC3B6]">
+                      {simExamPct > 90
+                        ? `✓ Unlocked · Scored ${simExamPct}% in Exam Hall`
+                        : `Best: ${simExamPct}% · Need >90% to unlock`}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setSimDailyChapters((prev) => (prev >= 5 ? 1 : prev + 1))}
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] whitespace-nowrap"
+                  >
+                    +1 Chapter Today ({simDailyChapters})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSimExamPct((prev) => (prev > 90 ? 88 : 94))}
+                    className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] whitespace-nowrap"
+                  >
+                    {simExamPct > 90 ? 'Test 88% Score' : 'Simulate 94% Sample Paper'}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* STEP 3: SUBJECT TRACKER */}
+            {currentStep.id === 'tracker' && (
+              <div className="rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] p-4 sm:p-5 space-y-4">
+                <div className="flex items-center justify-between gap-2 pb-2 border-b border-[#DDD6C7] dark:border-[#332E28]">
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-mono text-[#787066] dark:text-[#9C9387]">
+                      Physics 042 · Chapter 01
+                    </p>
+                    <p className="text-sm font-semibold text-[#1E1B18] dark:text-[#F5F2EB] truncate">
+                      Electric Charges and Fields
+                    </p>
+                  </div>
+                  <span className="text-xs font-mono font-bold text-[#3D6B4F] dark:text-[#7AB88F] tabular-nums shrink-0">
+                    {stagePct}% ({stageDoneCount}/4)
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {(
+                    [
+                      {key: 'lecture', label: 'Lecture done'},
+                      {key: 'practice', label: 'Practice done'},
+                      {key: 'ncert', label: 'NCERT done'},
+                      {key: 'pyq', label: 'PYQ done'},
+                    ] as const
+                  ).map((st) => {
+                    const checked = simStages[st.key];
+                    return (
+                      <button
+                        key={st.key}
+                        type="button"
+                        onClick={() => {
+                          const nextVal = !simStages[st.key];
+                          playCheckSound(nextVal);
+                          setSimStages((prev) => ({
+                            ...prev,
+                            [st.key]: nextVal,
+                          }));
+                        }}
+                        className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border text-xs font-medium transition-colors text-left ${
+                          checked
+                            ? 'bg-[#E8F0EA] dark:bg-[#1C2E22] border-[#3D6B4F] dark:border-[#7AB88F] text-[#23422F] dark:text-[#B6DFC3]'
+                            : 'bg-[#F5F2EB] dark:bg-[#24201C] border-[#DDD6C7] dark:border-[#332E28] text-[#1E1B18] dark:text-[#F5F2EB]'
+                        }`}
+                      >
+                        <span
+                          className={`w-4 h-4 rounded-[4px] border flex items-center justify-center shrink-0 ${
+                            checked
+                              ? 'bg-[#3D6B4F] border-[#3D6B4F] text-[#F5F2EB]'
+                              : 'border-[#B8AF9F] dark:border-[#575048]'
                           }`}
                         >
-                          {tile.val}
-                        </div>
-                        <span className="mt-1 block text-[10px] font-mono text-[#787066] dark:text-[#9C9387]">
-                          {tile.lbl}
+                          {checked && <Check className="w-3 h-3" aria-hidden="true" />}
                         </span>
-                      </div>
-                    ))}
-                  </div>
+                        <span className="truncate">{st.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
 
-                  <p className="text-xs text-[#575048] dark:text-[#CBC3B6] flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-[#A64B33] dark:text-[#D4785E] shrink-0" aria-hidden="true" />
-                    <span>Automatically resets to 16 Feb 2028 when 2027 exams begin.</span>
+                {stageDoneCount === 4 ? (
+                  <p className="text-xs font-medium text-[#3D6B4F] dark:text-[#7AB88F] flex items-center gap-1.5 pt-1">
+                    <CheckCircle2 className="w-4 h-4 shrink-0" aria-hidden="true" />
+                    <span>All 4 stages ticked — chapter auto-completes with golden seal!</span>
                   </p>
-                </div>
-              )}
+                ) : (
+                  <p className="text-xs text-[#787066] dark:text-[#9C9387]">
+                    Tap each stage above to hear the native Web Audio synthesizer pop.
+                  </p>
+                )}
+              </div>
+            )}
 
-              {/* STEP 2: ACHIEVEMENTS */}
-              {currentStep.id === 'achievements' && (
-                <div className="rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] p-4 sm:p-5 space-y-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div
-                      className={`rounded-lg border p-3.5 transition-colors ${
-                        simDailyChapters >= 3
-                          ? 'border-[#B7791F] dark:border-[#E6B17A] bg-[#FBF3E4]/60 dark:bg-[#2D2416]/50'
-                          : 'border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C]'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
-                          Quick Learner
-                        </span>
-                        <Zap
-                          className={`w-4 h-4 ${
-                            simDailyChapters >= 3
-                              ? 'text-[#8C5A12] dark:text-[#E6B17A]'
-                              : 'text-[#968E83]'
-                          }`}
-                          aria-hidden="true"
-                        />
-                      </div>
-                      <p className="mt-1 text-[11px] font-mono tabular-nums text-[#575048] dark:text-[#CBC3B6]">
-                        {simDailyChapters >= 3
-                          ? `Unlocked · ${simDailyChapters} chapters today`
-                          : `Today: ${simDailyChapters} / 3 chapters`}
-                      </p>
-                    </div>
-
-                    <div
-                      className={`rounded-lg border p-3.5 transition-colors ${
-                        simExamPct > 90
-                          ? 'border-[#A64B33] dark:border-[#D4785E] bg-[#F7EBE7]/70 dark:bg-[#2F1D19]/60'
-                          : 'border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C]'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-xs font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
-                          Exam Ready
-                        </span>
-                        <Trophy
-                          className={`w-4 h-4 ${
-                            simExamPct > 90
-                              ? 'text-[#A64B33] dark:text-[#D4785E]'
-                              : 'text-[#968E83]'
-                          }`}
-                          aria-hidden="true"
-                        />
-                      </div>
-                      <p className="mt-1 text-[11px] font-mono tabular-nums text-[#575048] dark:text-[#CBC3B6]">
-                        {simExamPct > 90
-                          ? `Unlocked · Scored ${simExamPct}%`
-                          : `Best: ${simExamPct}% · Need >90%`}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setSimDailyChapters((prev) => (prev >= 5 ? 1 : prev + 1))
-                      }
-                      className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] whitespace-nowrap shrink-0"
-                    >
-                      +1 Chapter Today ({simDailyChapters})
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setSimExamPct((prev) => (prev > 90 ? 88 : 94))}
-                      className="px-3 py-1.5 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] whitespace-nowrap shrink-0"
-                    >
-                      {simExamPct > 90 ? 'Test 88% Score' : 'Simulate 94% Sample Paper'}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* STEP 3: SUBJECT TRACKER */}
-              {currentStep.id === 'tracker' && (
-                <div className="rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] p-4 sm:p-5 space-y-4">
-                  <div className="flex items-center justify-between gap-2">
-                    <div>
-                      <p className="text-[11px] font-mono text-[#787066] dark:text-[#9C9387]">
-                        Physics 042 · Chapter 01
-                      </p>
-                      <p className="text-sm font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
-                        Electric Charges and Fields
-                      </p>
-                    </div>
-                    <span className="text-xs font-mono font-semibold text-[#3D6B4F] dark:text-[#7AB88F] tabular-nums">
-                      {stagePct}% ({stageDoneCount}/4)
+            {/* STEP 4: EXAMINATION HALL (v2.5) */}
+            {currentStep.id === 'exam' && (
+              <div className="rounded-xl border border-[#332E28] bg-[#1E1B18] text-[#F5F2EB] p-4 sm:p-5 space-y-3.5">
+                {/* Header with paper title, timer, and tab selector */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-2.5 border-b border-[#332E28]">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <FileCheck2 className="w-4 h-4 text-[#D4785E] shrink-0" aria-hidden="true" />
+                    <span className="text-xs font-semibold truncate">
+                      Physics Blueprint Paper (Code 042)
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2">
-                    {(
-                      [
-                        {key: 'lecture', label: 'Lecture done'},
-                        {key: 'practice', label: 'Practice done'},
-                        {key: 'ncert', label: 'NCERT done'},
-                        {key: 'pyq', label: 'PYQ done'},
-                      ] as const
-                    ).map((st) => {
-                      const checked = simStages[st.key];
-                      return (
-                        <button
-                          key={st.key}
-                          type="button"
-                          onClick={() => {
-                            const nextVal = !simStages[st.key];
-                            playCheckSound(nextVal);
-                            setSimStages((prev) => ({
-                              ...prev,
-                              [st.key]: nextVal,
-                            }));
-                          }}
-                          className={`flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-medium transition-colors whitespace-nowrap ${
-                            checked
-                              ? 'bg-[#E8F0EA] dark:bg-[#1C2E22] border-[#3D6B4F] dark:border-[#7AB88F] text-[#23422F] dark:text-[#B6DFC3]'
-                              : 'bg-[#F5F2EB] dark:bg-[#24201C] border-[#DDD6C7] dark:border-[#332E28] text-[#1E1B18] dark:text-[#F5F2EB]'
-                          }`}
-                        >
-                          <span
-                            className={`w-4 h-4 rounded-[4px] border flex items-center justify-center shrink-0 ${
-                              checked
-                                ? 'bg-[#3D6B4F] border-[#3D6B4F] text-[#F5F2EB]'
-                                : 'border-[#B8AF9F] dark:border-[#575048]'
-                            }`}
-                          >
-                            {checked && <Check className="w-3 h-3" aria-hidden="true" />}
-                          </span>
-                          <span>{st.label}</span>
-                        </button>
-                      );
-                    })}
+                  <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+                    <span className="font-mono text-xs text-[#CBC3B6] tabular-nums bg-[#24201C] px-2 py-0.5 rounded border border-[#332E28]">
+                      ⏱ 02:45:18
+                    </span>
+                    <div className="inline-flex rounded-md p-0.5 bg-[#24201C] border border-[#332E28] text-[11px]">
+                      <button
+                        type="button"
+                        onClick={() => setSimExamTab('secA')}
+                        className={`px-2.5 py-0.5 rounded transition-colors ${
+                          simExamTab === 'secA'
+                            ? 'bg-[#3D6B4F] text-[#F5F2EB] font-semibold'
+                            : 'text-[#CBC3B6] hover:text-white'
+                        }`}
+                      >
+                        Sec A (OMR)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSimExamTab('secBE')}
+                        className={`px-2.5 py-0.5 rounded transition-colors ${
+                          simExamTab === 'secBE'
+                            ? 'bg-[#4F46E5] text-[#F5F2EB] font-semibold'
+                            : 'text-[#CBC3B6] hover:text-white'
+                        }`}
+                      >
+                        Sec B–E (AI Check)
+                      </button>
+                    </div>
                   </div>
-
-                  {stageDoneCount === 4 && (
-                    <p className="text-xs font-medium text-[#3D6B4F] dark:text-[#7AB88F] flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
-                      <span>All 4 stages ticked — chapter auto-completes!</span>
-                    </p>
-                  )}
                 </div>
-              )}
 
-              {/* STEP 4: EXAMINATION HALL */}
-              {currentStep.id === 'exam' && (
-                <div className="rounded-xl border border-[#332E28] bg-[#1E1B18] text-[#F5F2EB] p-4 sm:p-5 space-y-4">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
-                      <FileCheck2 className="w-4 h-4 text-[#D4785E]" aria-hidden="true" />
-                      <span className="text-xs font-semibold">
-                        Physics Original 3-Hour Paper (Code 042)
+                {simExamTab === 'secA' ? (
+                  /* Section A: OMR Bubble Sheet */
+                  <div className="rounded-lg border border-[#332E28] bg-[#24201C] p-3.5 space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                      <span className="text-xs font-mono text-[#D4785E] font-semibold">
+                        Q01 · Section A (MCQ · 1 Mark)
+                      </span>
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-[#3A1E18] border border-[#7A3528] text-[#F09986] self-start sm:self-auto">
+                        <Flame className="w-2.5 h-2.5 shrink-0" />
+                        <span>🔥 Asked 5x in Boards · 2016, 2018, 2020, 2023, 2025</span>
                       </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono text-xs text-[#CBC3B6] tabular-nums">
-                        02:59:42
-                      </span>
-                      <div className="flex rounded-md p-0.5 bg-[#24201C] border border-[#332E28] text-[10px]">
-                        <button
-                          type="button"
-                          onClick={() => setSimExamTab('secA')}
-                          className={`px-2 py-0.5 rounded transition-colors ${
-                            simExamTab === 'secA'
-                              ? 'bg-[#3D6B4F] text-[#F5F2EB] font-semibold'
-                              : 'text-[#CBC3B6] hover:text-white'
-                          }`}
-                        >
-                          Sec A OMR
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setSimExamTab('secBE')}
-                          className={`px-2 py-0.5 rounded transition-colors ${
-                            simExamTab === 'secBE'
-                              ? 'bg-[#4F46E5] text-[#F5F2EB] font-semibold'
-                              : 'text-[#CBC3B6] hover:text-white'
-                          }`}
-                        >
-                          Sec B–E AI Check
-                        </button>
-                      </div>
-                    </div>
-                  </div>
 
-                  {simExamTab === 'secA' ? (
-                    <div className="rounded-lg border border-[#332E28] bg-[#24201C] p-3.5 space-y-3">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-[11px] font-mono text-[#D4785E] font-semibold">
-                          Q01 · Section A (MCQ · 1 Mark)
-                        </span>
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-[#3A1E18] border border-[#7A3528] text-[#F09986]">
-                          <Flame className="w-2.5 h-2.5" />
-                          <span>Asked 5x in Boards · 2016, 2018, 2020, 2023, 2025</span>
-                        </span>
-                      </div>
-                      <p className="text-xs text-[#CBC3B6] leading-relaxed">
-                        Two identical point charges +2q and +2q are separated by distance 2a. Determine the net electrostatic potential at their midpoint:
-                      </p>
-                      <div className="flex items-center gap-2.5">
+                    <p className="text-xs text-[#CBC3B6] leading-relaxed">
+                      Two point charges +2q and +2q are placed at distance 2a. Determine the net electric potential at their midpoint:
+                    </p>
+
+                    {/* OMR Options Row */}
+                    <div className="space-y-2 pt-1">
+                      <div className="flex items-center gap-2">
                         {(['A', 'B', 'C', 'D'] as const).map((opt) => {
                           const selected = simOmrPick === opt;
                           return (
@@ -541,10 +539,10 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
                                 playOmrBubbleSound();
                                 setSimOmrPick(opt);
                               }}
-                              className={`w-9 h-9 rounded-full border font-mono text-xs font-semibold transition-colors ${
+                              className={`w-9 h-9 rounded-full border font-mono text-xs font-bold transition-all ${
                                 selected
                                   ? opt === 'B'
-                                    ? 'bg-[#3D6B4F] border-[#7AB88F] text-[#F5F2EB]'
+                                    ? 'bg-[#3D6B4F] border-[#7AB88F] text-[#F5F2EB] ring-2 ring-[#7AB88F]/40'
                                     : 'bg-[#A64B33] border-[#D4785E] text-[#F5F2EB]'
                                   : 'bg-[#1E1B18] border-[#4A423A] text-[#CBC3B6] hover:border-[#D4785E]'
                               }`}
@@ -553,144 +551,176 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
                             </button>
                           );
                         })}
-                        <span className="ml-2 text-xs font-mono text-[#CBC3B6]">
-                          {simOmrPick === 'B'
-                            ? 'Correct (+1 Mark · Key: B)'
-                            : simOmrPick
-                              ? `Selected ${simOmrPick} · Key is B`
-                              : 'Tap a bubble'}
+                      </div>
+
+                      {/* Clean Feedback Badge on its own line (Zero Overlap) */}
+                      <div className="p-2 rounded bg-[#1E1B18] border border-[#332E28] flex items-center justify-between text-xs font-mono">
+                        <span className="text-[#9C9387]">
+                          Selected: <strong className="text-white">{simOmrPick ?? 'None'}</strong>
+                        </span>
+                        <span className={simOmrPick === 'B' ? 'text-[#7AB88F] font-semibold' : 'text-[#D4785E]'}>
+                          {simOmrPick === 'B' ? '✓ Correct (+1 Mark · Key: B)' : 'Model Key is B'}
                         </span>
                       </div>
                     </div>
-                  ) : (
-                    <div className="rounded-lg border border-[#332E28] bg-[#24201C] p-3.5 space-y-3">
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-[11px] font-mono text-[#A5B4FC] font-semibold">
-                          Q22 · Section C (Derivation / Proof · 3 Marks)
-                        </span>
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-[#3A1E18] border border-[#7A3528] text-[#F09986]">
-                          <Flame className="w-2.5 h-2.5" />
-                          <span>Asked 4x in Boards · High Yield</span>
-                        </span>
-                      </div>
-                      <p className="text-xs text-[#CBC3B6] leading-relaxed">
-                        Derive the expression for magnetic field B at an axial point of a circular current loop using Biot-Savart Law.
-                      </p>
-
-                      <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-[#332E28]">
-                        <button
-                          type="button"
-                          onClick={() => setSimPhotoAttached((prev) => !prev)}
-                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-colors ${
-                            simPhotoAttached
-                              ? 'bg-[#3D6B4F] border-[#7AB88F] text-white'
-                              : 'bg-[#4F46E5] border-[#4F46E5] text-white hover:bg-[#4338CA]'
-                          }`}
-                        >
-                          <Camera className="w-3.5 h-3.5" />
-                          <span>{simPhotoAttached ? '✓ Photo 1 Attached' : 'Simulate Take Photo'}</span>
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setSimAiGraded((prev) => !prev)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#A64B33] bg-[#2F1D19] text-[#D4785E] hover:bg-[#3D231E] text-xs font-medium"
-                        >
-                          <Sparkles className="w-3.5 h-3.5" />
-                          <span>{simAiGraded ? 'Hide AI Grade' : 'Simulate AI Grading'}</span>
-                        </button>
-                      </div>
-
-                      {simAiGraded && (
-                        <div className="mt-2 p-2.5 rounded-md bg-[#1E1B18] border border-[#7AB88F]/40 space-y-1.5 text-xs">
-                          <div className="flex items-center justify-between">
-                            <span className="font-semibold text-[#7AB88F] font-mono">
-                              AI Examiner: 2.5 / 3.0 Marks (Partial - Yellow)
-                            </span>
-                            <span className="text-[10px] text-[#A5B4FC] font-mono">gemini-3.8-flash</span>
-                          </div>
-                          <p className="text-[11px] text-[#CBC3B6]">
-                            ✓ Correct Biot-Savart equation &amp; diagram (+1.5m). Loop integration accurate (+1m). Omitted SI unit in final result (-0.5m).
-                          </p>
-                          <p className="text-[11px] font-mono text-[#D4785E]">
-                            Model Key: B = (μ₀ I R²) / [2(R² + x²)^(3/2)] T
-                          </p>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* STEP 5: 12TH HACKERS */}
-              {currentStep.id === 'hackers' && (
-                <div className="rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] p-4 sm:p-5 space-y-4">
-                  <div className="rounded-lg bg-[#1E1B18] text-[#F5F2EB] p-4 flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <span className="w-9 h-9 rounded-full bg-[#A64B33] flex items-center justify-center shrink-0">
-                        <Play className="w-4 h-4 fill-current" aria-hidden="true" />
+                  </div>
+                ) : (
+                  /* Section B–E: Smart Camera Upload & AI Step-Marking */
+                  <div className="rounded-lg border border-[#332E28] bg-[#24201C] p-3.5 space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                      <span className="text-xs font-mono text-[#A5B4FC] font-semibold">
+                        Q22 · Section C (Derivation · 3 Marks)
                       </span>
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold truncate">
-                          01. Electric Charges &amp; Fields · One-Shot
-                        </p>
-                        <p className="text-[11px] font-mono text-[#CBC3B6]">
-                          Mode: {simEmbedMode}
-                        </p>
-                      </div>
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-[#3A1E18] border border-[#7A3528] text-[#F09986] self-start sm:self-auto">
+                        <Flame className="w-2.5 h-2.5 shrink-0" />
+                        <span>🔥 Asked 4x in Boards · High Yield</span>
+                      </span>
                     </div>
 
-                    <button
-                      type="button"
-                      onClick={() => setSimLectureDone((prev) => !prev)}
-                      className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap shrink-0 ${
-                        simLectureDone
-                          ? 'bg-[#3D6B4F] text-[#F5F2EB]'
-                          : 'bg-[#F5F2EB] text-[#1E1B18]'
-                      }`}
-                    >
-                      {simLectureDone ? '✓ Lecture Synced' : 'Mark Done & Next'}
-                    </button>
+                    <p className="text-xs text-[#CBC3B6] leading-relaxed">
+                      Derive expression for magnetic field B on the axis of a circular current loop using Biot-Savart Law.
+                    </p>
+
+                    {/* Camera & Upload Action Buttons */}
+                    <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-[#332E28]">
+                      <button
+                        type="button"
+                        onClick={() => setSimPhotoAttached((prev) => !prev)}
+                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all ${
+                          simPhotoAttached
+                            ? 'bg-[#3D6B4F] border-[#7AB88F] text-white'
+                            : 'bg-[#312E81] border-[#4338CA] text-[#C7D2FE] hover:bg-[#3730A3]'
+                        }`}
+                      >
+                        <Camera className="w-3.5 h-3.5 shrink-0" />
+                        <span>{simPhotoAttached ? '✓ Photo 1 (IndexedDB)' : '📸 Simulate Take Photo'}</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setSimAiGraded((prev) => !prev)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#A64B33] bg-[#2F1D19] text-[#D4785E] hover:bg-[#3D231E] text-xs font-medium transition-colors"
+                      >
+                        <Sparkles className="w-3.5 h-3.5 shrink-0" />
+                        <span>{simAiGraded ? 'Hide AI Grade' : '✨ Check with AI Examiner'}</span>
+                      </button>
+                    </div>
+
+                    {/* Attached Photo Preview Mockup */}
+                    {simPhotoAttached && (
+                      <div className="p-2 rounded bg-[#1E1B18] border border-[#332E28] flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-2 text-[#CBC3B6] font-mono text-[11px] truncate">
+                          <ImagePlus className="w-3.5 h-3.5 text-[#7AB88F] shrink-0" />
+                          <span className="truncate">Page_1_Derivation.jpg (1024px compressed)</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setSimPhotoAttached(false)}
+                          className="text-[#9C9387] hover:text-[#D4785E] p-0.5"
+                          title="Remove photo"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    )}
+
+                    {/* AI Examiner Step-Marking Evaluation Card */}
+                    {simAiGraded && (
+                      <div className="p-3 rounded-lg bg-[#161412] border border-[#7AB88F]/50 space-y-2 text-xs">
+                        <div className="flex items-center justify-between">
+                          <span className="font-semibold text-[#F59E0B] font-mono text-xs">
+                            Awarded: +2.5 / 3.0 Marks (Partial)
+                          </span>
+                          <span className="text-[10px] text-[#A5B4FC] font-mono bg-[#1E1B18] px-1.5 py-0.5 rounded border border-[#332E28]">
+                            gemini-3.8-flash
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-[#CBC3B6] leading-relaxed">
+                          ✓ Correct Biot-Savart equation &amp; diagram (+1.5m). Accurate loop integration (+1.0m). Omitted final SI unit (Tesla) in conclusion (-0.5m).
+                        </p>
+                        <div className="pt-1 border-t border-[#332E28] text-[11px] font-mono text-[#D4785E]">
+                          Model Answer: B = (μ₀ I R²) / [2(R² + x²)^(3/2)] T
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* STEP 5: 12TH HACKERS */}
+            {currentStep.id === 'hackers' && (
+              <div className="rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] p-4 sm:p-5 space-y-4">
+                <div className="rounded-lg bg-[#1E1B18] text-[#F5F2EB] p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="w-9 h-9 rounded-full bg-[#A64B33] flex items-center justify-center shrink-0">
+                      <Play className="w-4 h-4 fill-current" aria-hidden="true" />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold truncate">
+                        01. Electric Charges &amp; Fields · One-Shot
+                      </p>
+                      <p className="text-[11px] font-mono text-[#CBC3B6]">
+                        Engine: {simEmbedMode}
+                      </p>
+                    </div>
                   </div>
 
+                  <button
+                    type="button"
+                    onClick={() => setSimLectureDone((prev) => !prev)}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap shrink-0 self-start sm:self-auto ${
+                      simLectureDone
+                        ? 'bg-[#3D6B4F] text-[#F5F2EB]'
+                        : 'bg-[#F5F2EB] text-[#1E1B18]'
+                    }`}
+                  >
+                    {simLectureDone ? '✓ Lecture Synced' : 'Mark Done & Next'}
+                  </button>
+                </div>
+
+                <div className="space-y-1.5">
+                  <p className="text-[11px] font-mono text-[#787066] dark:text-[#9C9387]">
+                    Choose YouTube Embed Engine:
+                  </p>
                   <div className="flex flex-wrap items-center gap-2">
                     {(['Standard', 'Pure Embed', 'No-Cookie'] as const).map((mode) => (
                       <button
                         key={mode}
                         type="button"
                         onClick={() => setSimEmbedMode(mode)}
-                        className={`px-2.5 py-1.5 text-xs font-medium rounded-lg border transition-colors whitespace-nowrap shrink-0 ${
+                        className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-colors whitespace-nowrap ${
                           simEmbedMode === mode
-                            ? 'bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] border-transparent'
+                            ? 'bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] border-transparent font-semibold shadow-xs'
                             : 'bg-[#F5F2EB] dark:bg-[#24201C] text-[#575048] dark:text-[#CBC3B6] border-[#DDD6C7] dark:border-[#332E28]'
                         }`}
                       >
-                        Player: {mode}
+                        {mode}
                       </button>
                     ))}
                   </div>
                 </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
+              </div>
+            )}
+          </div>
 
-          <div className="flex items-center justify-between gap-3 pt-2 border-t border-[#DDD6C7] dark:border-[#332E28]">
+          {/* Bottom Step Navigation Bar */}
+          <div className="flex items-center justify-between gap-3 pt-3 border-t border-[#DDD6C7] dark:border-[#332E28]">
             <button
               type="button"
-              onClick={() =>
-                selectStep((stepIdx - 1 + TOUR_STEPS.length) % TOUR_STEPS.length)
-              }
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] whitespace-nowrap"
+              onClick={() => selectStep((stepIdx - 1 + TOUR_STEPS.length) % TOUR_STEPS.length)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] whitespace-nowrap transition-colors"
             >
               <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
               <span>Previous</span>
             </button>
-            <span className="text-xs font-mono tabular-nums text-[#787066] dark:text-[#9C9387]">
-              {stepIdx + 1} / {TOUR_STEPS.length}
+            <span className="text-xs font-mono font-semibold tabular-nums text-[#787066] dark:text-[#9C9387]">
+              Step {stepIdx + 1} of {TOUR_STEPS.length}
             </span>
             <button
               type="button"
               onClick={() => selectStep((stepIdx + 1) % TOUR_STEPS.length)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] whitespace-nowrap transition-colors"
             >
               <span>Next</span>
               <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
@@ -699,43 +729,53 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
         </div>
 
         {/* Right: Clickable Feature Hotspots */}
-        <div className="lg:col-span-5 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#24201C]/70 p-4 sm:p-5 flex flex-col justify-between gap-4">
+        <div className="lg:col-span-5 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#24201C]/70 p-4 sm:p-5 flex flex-col justify-between gap-4 min-h-[460px]">
           <div className="space-y-3">
-            <p className="text-xs font-medium tracking-[0.1em] text-[#A64B33] dark:text-[#D4785E]">
-              Interactive Hotspots · Click to Inspect
-            </p>
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold tracking-wider uppercase text-[#A64B33] dark:text-[#D4785E]">
+                Feature Hotspots
+              </p>
+              <span className="text-[11px] font-mono text-[#787066] dark:text-[#9C9387]">
+                Click to expand
+              </span>
+            </div>
+
             <div className="space-y-2">
               {currentStep.hotspots.map((spot, idx) => {
                 const selected = idx === activeHotspotIdx;
                 return (
-                  <motion.button
+                  <button
                     key={spot.label}
                     type="button"
-                    whileTap={{scale: 0.985}}
-                    transition={APPLE_SPRING}
                     onClick={() => setActiveHotspotIdx(idx)}
-                    className={`w-full text-left p-3 rounded-lg border transition-colors ${
+                    className={`w-full text-left p-3 rounded-lg border transition-all ${
                       selected
-                        ? 'bg-[#F5F2EB] dark:bg-[#1E1B18] border-[#A64B33] dark:border-[#D4785E]'
+                        ? 'bg-[#F5F2EB] dark:bg-[#1E1B18] border-[#A64B33] dark:border-[#D4785E] shadow-xs'
                         : 'bg-transparent border-[#DDD6C7] dark:border-[#332E28] hover:border-[#B8AF9F] dark:hover:border-[#4A423A]'
                     }`}
                   >
-                    <p className="text-xs font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
-                      {spot.label}
-                    </p>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className={`text-xs font-semibold ${selected ? 'text-[#A64B33] dark:text-[#D4785E]' : 'text-[#1E1B18] dark:text-[#F5F2EB]'}`}>
+                        {spot.label}
+                      </p>
+                      {selected && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#A64B33] dark:bg-[#D4785E] shrink-0" />
+                      )}
+                    </div>
                     {selected && (
-                      <p className="mt-1 text-xs text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
+                      <p className="mt-1.5 text-xs text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
                         {spot.detail}
                       </p>
                     )}
-                  </motion.button>
+                  </button>
                 );
               })}
             </div>
           </div>
 
+          {/* Reset Preview Controls */}
           <div className="pt-3 border-t border-[#DDD6C7] dark:border-[#332E28] flex items-center justify-between gap-2 text-xs text-[#787066] dark:text-[#9C9387]">
-            <span className="truncate">{activeHotspot.label}</span>
+            <span className="truncate font-mono">{activeHotspot.label}</span>
             <button
               type="button"
               onClick={() => {
@@ -755,10 +795,10 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
                 setSimPhotoAttached(false);
                 setSimAiGraded(false);
               }}
-              className="inline-flex items-center gap-1 text-[#A64B33] dark:text-[#D4785E] hover:underline whitespace-nowrap shrink-0"
+              className="inline-flex items-center gap-1 text-[#A64B33] dark:text-[#D4785E] hover:underline whitespace-nowrap shrink-0 font-medium"
             >
-              <RotateCcw className="w-3 h-3" aria-hidden="true" />
-              <span>Reset Preview</span>
+              <RotateCcw className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>Reset Sandbox</span>
             </button>
           </div>
         </div>

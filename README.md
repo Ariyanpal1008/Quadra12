@@ -1,11 +1,19 @@
-# Quadra 12
+# Quadra 12 (v2.5)
 
-**Live Website:** [https://ariyanpal1008.github.io/Quadra12/](https://ariyanpal1008.github.io/Quadra12/)  
-**GitHub Repository:** [https://github.com/Ariyanpal1008/Quadra12](https://github.com/Ariyanpal1008/Quadra12)  
-**AI Summary (llms.txt):** [https://ariyanpal1008.github.io/Quadra12/llms.txt](https://ariyanpal1008.github.io/Quadra12/llms.txt)  
-**Full AI Knowledge Base (llms-full.txt):** [https://ariyanpal1008.github.io/Quadra12/llms-full.txt](https://ariyanpal1008.github.io/Quadra12/llms-full.txt)  
-**Creator:** AriYan Pal (Keśava Dāsa) · `ariyanpal090@gmail.com`  
-**Copyright:** © 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)
+[![Release](https://img.shields.io/badge/Release-v2.5-crimson.svg?style=flat-square)](https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.5)
+[![License](https://img.shields.io/badge/License-Independent%20Student%20Workspace-blue.svg?style=flat-square)](#disclaimers-terms--conditions-copyright-privacy--ai-fair-use)
+[![Framework](https://img.shields.io/badge/Stack-React%2019%20%7C%20Vite%20%7C%20Tailwind%20v4-emerald.svg?style=flat-square)](#tech-stack)
+[![AI Engine](https://img.shields.io/badge/AI%20Examiner-Gemini%203.8%20Flash-indigo.svg?style=flat-square)](https://aistudio.google.com/)
+
+> **Quadra 12 v2.5 Active Release:** Upgraded with 100% original copyright-safe PCMB blueprint papers, 10-year board frequency badges, Sections B–E smart camera/photo uploads, dual-storage refresh protection (IndexedDB + localStorage), and rigorous Gemini 3.8 Flash AI step-marking.
+
+- **Current Version:** `v2.5` (Active Release)
+- **Live Website:** [https://ariyanpal1008.github.io/Quadra12/](https://ariyanpal1008.github.io/Quadra12/)  
+- **GitHub Repository:** [https://github.com/Ariyanpal1008/Quadra12](https://github.com/Ariyanpal1008/Quadra12)  
+- **AI Summary (llms.txt):** [https://ariyanpal1008.github.io/Quadra12/llms.txt](https://ariyanpal1008.github.io/Quadra12/llms.txt)  
+- **Full AI Knowledge Base (llms-full.txt):** [https://ariyanpal1008.github.io/Quadra12/llms-full.txt](https://ariyanpal1008.github.io/Quadra12/llms-full.txt)  
+- **Creator:** AriYan Pal (Keśava Dāsa) · `ariyanpal090@gmail.com`  
+- **Copyright:** © 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)
 
 Quadra 12 is a calm, distraction-free Class 12 CBSE PCMB (Physics 042, Chemistry 043, Biology 044, and Mathematics 041) academic preparation workspace. It brings together an Apple StandBy–inspired **Live Board Exam Countdown Clock**, a gamified **My Achievements** milestone system, comprehensive syllabus tracking across all 50 NCERT chapters, copyright-safe original PCMB practice papers with 10-year board frequency badges and AI step-marking in a 3-hour **Examination Hall**, and 50 synced **12th Hackers** one-shot video lectures in one unified web application.
 
