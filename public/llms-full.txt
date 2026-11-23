@@ -1,0 +1,164 @@
+# Quadra 12 — Exhaustive Technical & Syllabus Reference for AI Systems
+
+> This document provides an exhaustive, structured knowledge base for Large Language Models (LLMs), AI assistants, automated search crawlers, and evaluators analyzing the Quadra 12 Class 12 CBSE PCMB Academic Workspace.
+
+- **Canonical URL:** https://ariyanpal1008.github.io/Quadra12/
+- **Repository:** https://github.com/Ariyanpal1008/Quadra12
+- **Summary Document:** https://ariyanpal1008.github.io/Quadra12/llms.txt
+- **Author:** AriYan Pal (Keśava Dāsa) (`ariyanpal090@gmail.com`)
+- **Copyright:** © 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)
+- **Framework & Runtime:** React 19, TypeScript 5, Vite 6, Tailwind CSS v4, Motion (Framer Motion), Native Web Audio API, Firebase Firestore & Authentication.
+
+---
+
+## 1. Complete Syllabus Taxonomy (All 50 Chapters)
+
+### Subject 1: Physics (CBSE Code 042) — 14 Chapters, 70 Marks Theory
+1. `phy-1`: **Electric Charges and Fields** (Electrostatics I: Coulomb's law, electric field lines, Gauss's law and applications)
+2. `phy-2`: **Electrostatic Potential and Capacitance** (Potential difference, equipotential surfaces, dielectrics, parallel plate capacitors)
+3. `phy-3`: **Current Electricity** (Ohm's law, drift velocity, Kirchhoff's rules, Wheatstone bridge, internal resistance)
+4. `phy-4`: **Moving Charges and Magnetism** (Biot-Savart law, Ampere's circuital law, solenoid, Lorentz force, cyclotron)
+5. `phy-5`: **Magnetism and Matter** (Bar magnet, magnetic dipole, Gauss's law in magnetism, magnetic properties of materials)
+6. `phy-6`: **Electromagnetic Induction** (Faraday's laws, Lenz's law, eddy currents, self & mutual inductance)
+7. `phy-7`: **Alternating Current** (AC voltage across LCR series circuits, resonance, power factor, transformers)
+8. `phy-8`: **Electromagnetic Waves** (Displacement current, electromagnetic spectrum, wavelengths and frequencies)
+9. `phy-9`: **Ray Optics and Optical Instruments** (Refraction, total internal reflection, lens maker's formula, compound microscope, telescope)
+10. `phy-10`: **Wave Optics** (Huygens principle, wavefronts, Young's double slit interference, single slit diffraction)
+11. `phy-11`: **Dual Nature of Radiation and Matter** (Photoelectric effect, Einstein's photoelectric equation, de Broglie relation)
+12. `phy-12`: **Atoms** (Rutherford alpha scattering, Bohr model of hydrogen atom, energy level diagrams, spectral lines)
+13. `phy-13`: **Nuclei** (Nuclear composition, mass defect, binding energy per nucleon, nuclear fission and fusion)
+14. `phy-14`: **Semiconductor Electronics: Materials, Devices and Simple Circuits** (Energy bands, p-n junction diode, rectifier circuits)
+
+### Subject 2: Chemistry (CBSE Code 043) — 10 Chapters, 70 Marks Theory
+1. `chem-1`: **Solutions** (Types of solutions, Raoult's law, colligative properties, van 't Hoff factor)
+2. `chem-2`: **Electrochemistry** (Galvanic cells, Nernst equation, conductance, Kohlrausch's law, fuel cells & batteries)
+3. `chem-3`: **Chemical Kinetics** (Rate of reaction, rate law, integrated rate equations, pseudo first-order, Arrhenius equation)
+4. `chem-4`: **d- and f-Block Elements** (Transition elements, lanthanoids, actinoids, catalytic properties, preparation of KMnO4 and K2Cr2O7)
+5. `chem-5`: **Coordination Compounds** (Werner's theory, IUPAC nomenclature, isomerism, Valence Bond Theory, Crystal Field Theory)
+6. `chem-6`: **Haloalkanes and Haloarenes** (Nomenclature, SN1 and SN2 reaction mechanisms, optical isomerism, polyhalogen compounds)
+7. `chem-7`: **Alcohols, Phenols and Ethers** (Hydroboration-oxidation, Reimer-Tiemann reaction, Kolbe's reaction, Williamson ether synthesis)
+8. `chem-8`: **Aldehydes, Ketones and Carboxylic Acids** (Nucleophilic addition, Aldol condensation, Cannizzaro reaction, acidic nature)
+9. `chem-9`: **Amines** (Gabriel phthalimide synthesis, Hoffmann bromamide degradation, carbylamine test, diazonium salts)
+10. `chem-10`: **Biomolecules** (Carbohydrates, glucose, proteins, amino acids, nucleic acids DNA & RNA, vitamins)
+
+### Subject 3: Biology (CBSE Code 044) — 13 Chapters, 70 Marks Theory
+1. `bio-1`: **Sexual Reproduction in Flowering Plants** (Microsporogenesis, megasporogenesis, pollination mechanisms, double fertilization)
+2. `bio-2`: **Human Reproduction** (Male and female reproductive systems, gametogenesis, menstrual cycle, fertilization and implantation)
+3. `bio-3`: **Reproductive Health** (Contraceptive methods, sexually transmitted infections, In Vitro Fertilization / ART techniques)
+4. `bio-4`: **Principles of Inheritance and Variation** (Mendelian genetics, incomplete dominance, linkage and recombination, sex determination)
+5. `bio-5`: **Molecular Basis of Inheritance** (DNA double helix structure, semiconservative replication, transcription, genetic code, operon concept)
+6. `bio-6`: **Evolution** (Origin of life, Darwinian evolution, adaptive radiation, Hardy-Weinberg equilibrium, human ancestry)
+7. `bio-7`: **Human Health and Disease** (Pathogens, malaria, immunity, vaccines, cancer biology, HIV/AIDS structure and transmission)
+8. `bio-8`: **Microbes in Human Welfare** (Household food processing, industrial fermenters, sewage treatment plants, biogas production, biocontrol)
+9. `bio-9`: **Biotechnology: Principles and Processes** (Restriction endonucleases, gel electrophoresis, plasmids, PCR amplification, bioreactors)
+10. `bio-10`: **Biotechnology and Its Applications** (Bt cotton, RNA interference, recombinant insulin, gene therapy, transgenic animals)
+11. `bio-11`: **Organisms and Populations** (Abiotic factors, adaptations, population growth curves, mutualism, parasitism, competition)
+12. `bio-12`: **Ecosystem** (Productivity, decomposition, energy flow 10% law, ecological pyramids)
+13. `bio-13`: **Biodiversity and Conservation** (Species-area relationship, latitudinal gradients, causes of biodiversity loss, in-situ & ex-situ conservation)
+
+### Subject 4: Mathematics (CBSE Code 041) — 13 Chapters, 80 Marks Theory
+1. `math-1`: **Relations and Functions** (Reflexive, symmetric, transitive relations, equivalence classes, one-to-one and onto functions)
+2. `math-2`: **Inverse Trigonometric Functions** (Definition, principal value branches, graphs of inverse trigonometric functions)
+3. `math-3`: **Matrices** (Matrix operations, symmetric and skew-symmetric matrices, elementary row transformations)
+4. `math-4`: **Determinants** (Properties of determinants, minors and cofactors, adjoint and inverse, solving systems of linear equations)
+5. `math-5`: **Continuity and Differentiability** (Chain rule, implicit differentiation, logarithmic differentiation, second order derivatives)
+6. `math-6`: **Application of Derivatives** (Rate of change of quantities, increasing and decreasing functions, maxima and minima problems)
+7. `math-7`: **Integrals** (Integration by substitution, partial fractions, integration by parts, fundamental theorem of calculus, properties of definite integrals)
+8. `math-8`: **Application of Integrals** (Area bounded by curves, parabolas, circles, and straight lines)
+9. `math-9`: **Differential Equations** (Order and degree, variable separable method, homogeneous differential equations, first order linear differential equations)
+10. `math-10`: **Vector Algebra** (Vectors and scalars, direction cosines, dot product, cross product, projection of vectors)
+11. `math-11`: **Three Dimensional Geometry** (Direction ratios, Cartesian and vector equations of lines, angle between lines, shortest distance between skew lines)
+12. `math-12`: **Linear Programming** (Objective function, constraints, graphical feasible region method, corner point method)
+13. `math-13`: **Probability** (Conditional probability, multiplication rule, Bayes' theorem, random variables and probability distributions)
+
+---
+
+## 2. Four-Stage Mastery Model
+
+Every chapter tracks four distinct academic phases:
+1. **Lecture Done (`lecture`):** The student has watched a foundational concept lecture (e.g. 12th Hackers one-shot).
+2. **Practice Done (`practice`):** The student has solved practice problem sets and numerical exercises.
+3. **NCERT Done (`ncert`):** The student has read NCERT theory and answered in-text/back-exercise questions.
+4. **PYQ Done (`pyq`):** The student has solved CBSE Previous Years' Questions (10-year question bank).
+
+When all 4 stages are satisfied, the chapter is automatically logged as complete (`completedChapters[chapterId] = true`), triggering daily velocity updates and milestone evaluations. If any stage is unchecked, the chapter automatically relocks.
+
+---
+
+## 3. Examination Hall Architecture
+
+### Official Sample Question Papers (SQPs)
+- Embedded unmodified official CBSE 2026–27 PDFs.
+- Standard 3-hour duration (`03:00:00`) with audio countdown completion chime.
+- Real-time OMR response capture for Section A questions (Physics 16 MCQs, Chemistry 16 MCQs, Biology 16 MCQs, Mathematics 18 MCQs).
+- Built-in scoring algorithm calculating Section A grade, remaining written questions checklist, and lifetime personal Best Exam Score per subject.
+
+---
+
+## 4. Native Web Audio API Synthesizer Specifications
+
+The sound engine is written entirely with the native browser Web Audio API (`src/utils/soundEffects.ts`) without external asset downloads:
+- **AudioContext Lifecycle:** Instantiated lazily on first user gesture to comply with browser autoplay policies.
+- **Master Gain:** Capped strictly between `0.08` and `0.15` to deliver Apple-style subtle tactile feedback.
+- **Sound Mapping:**
+  - `playCheckSound(true)`: Sine wave at 520 Hz dropping rapidly to 260 Hz over 60 ms.
+  - `playCheckSound(false)`: Softer reverse frequency tick (320 Hz → 420 Hz, 40 ms).
+  - `playThemeSwitchSound()`: Mechanical noise impulse burst (~35 ms) simulating physical toggle switch.
+  - `playOmrBubbleSound()`: Soft damped sine wave (380 Hz with steep exponential decay).
+  - `playAchievementChime()`: Two-note harmonic chime (C5 [523.25 Hz] → G5 [783.99 Hz], 280 ms decay).
+  - `playMasteryChime()`: Three-note chord (C5 → E5 → G5) signifying 100% subject syllabus mastery.
+  - `playExamCompletionChime()`: Resonant bell frequency (440 Hz + 880 Hz overtone) on timer expiration.
+- **Mute Control:** Integrated in sticky top navigation header; state persisted in `localStorage.pcmb_desk_sound_muted_v1`.
+
+---
+
+## 5. Milestone Achievements Engine
+
+9 distinct badges evaluated dynamically with reversible lock/unlock mechanics:
+1. `first-step`: **First Milestone** — Mark 1 chapter stage complete.
+2. `four-stages`: **Four-Stage Purist** — Complete all 4 stages of any 1 chapter.
+3. `quick-learner`: **Quick Learner** — Complete 3 or more chapters within a single calendar day.
+4. `syllabus-sprinter`: **Syllabus Sprinter** — Complete 5 or more chapters within a single calendar day.
+5. `physics-specialist`: **Physics Specialist** — Complete 100% of the Class 12 Physics syllabus.
+6. `chemistry-maestro`: **Chemistry Maestro** — Complete 100% of the Class 12 Chemistry syllabus.
+7. `exam-ready`: **Exam Ready** — Score 90% or higher on any CBSE SQP in Examination Hall mode.
+8. `subject-champion`: **Subject Champion** — Master 2 full subjects to 100% completion.
+9. `quadra-grandmaster`: **Quadra 12 Grandmaster** — Achieve 100% completion across all 50 chapters (200 checkpoints).
+
+---
+
+## 6. Upcoming 2027 Additions
+
+- **Focus:** Quadra 12 is dedicated to core PCMB for 2026–27 board examinations.
+- **Post-Exams Release:** Optional 5th and 6th subjects will be added:
+  - English Core (Code 301)
+  - Physical Education (Code 048)
+  - Computer Science (Python / SQL, Code 083)
+  - Fine Arts / Applied Arts (Code 049)
+
+---
+
+## 7. Storage & Privacy Architecture
+
+All core academic data is saved exclusively in the client's local browser `localStorage`:
+- `pcmb_desk_theme_v1`
+- `pcmb_desk_sound_muted_v1`
+- `pcmb_desk_chapters_v1`
+- `pcmb_desk_chapter_tasks_v1`
+- `pcmb_desk_watched_v1`
+- `pcmb_desk_achievements_v1`
+- `pcmb_desk_daily_velocity_v1`
+- `pcmb_desk_exam_best_scores_v1`
+- `pcmb_desk_custom_board_date_v1`
+
+Cloud Firestore is reserved exclusively for optional, non-mandatory community suggestions in the Suggestion Box.
+
+---
+
+## 8. Verified Creator Attribution
+
+- **Name:** AriYan Pal (Keśava Dāsa)
+- **Role:** Independent Class 12 Student Developer
+- **Email:** `ariyanpal090@gmail.com`
+- **Copyright Statement:** `© 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)`
+- **Terms & Conditions:** Accessible in-app via the dedicated dull blue footer link.

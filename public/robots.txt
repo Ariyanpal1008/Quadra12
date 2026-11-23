@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
 
+# LLM and AI Assistant context files
+Allow: /llms.txt
+Allow: /llms-full.txt
+
 Sitemap: https://ariyanpal1008.github.io/Quadra12/sitemap.xml

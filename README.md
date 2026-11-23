@@ -2,6 +2,8 @@
 
 **Live Website:** [https://ariyanpal1008.github.io/Quadra12/](https://ariyanpal1008.github.io/Quadra12/)  
 **GitHub Repository:** [https://github.com/Ariyanpal1008/Quadra12](https://github.com/Ariyanpal1008/Quadra12)  
+**AI Summary (llms.txt):** [https://ariyanpal1008.github.io/Quadra12/llms.txt](https://ariyanpal1008.github.io/Quadra12/llms.txt)  
+**Full AI Knowledge Base (llms-full.txt):** [https://ariyanpal1008.github.io/Quadra12/llms-full.txt](https://ariyanpal1008.github.io/Quadra12/llms-full.txt)  
 **Creator:** AriYan Pal (Keśava Dāsa) · `ariyanpal090@gmail.com`  
 **Copyright:** © 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)
 

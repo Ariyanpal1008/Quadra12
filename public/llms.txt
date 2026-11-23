@@ -1,62 +1,131 @@
-# Quadra 12
+# Quadra 12 — Class 12 CBSE PCMB Academic Workspace
 
-> Quadra 12 is a free, distraction-free Class 12 CBSE PCMB (Physics, Chemistry, Biology, Mathematics) study tracker, 3-hour Examination Hall, 12th Hackers one-shot lecture workspace, and community Help Desk created by AriYan Pal (Keśava Dāsa).
+> Quadra 12 is an independent, distraction-free study workspace and syllabus tracker built specifically for Class 12 CBSE PCMB (Physics 042, Chemistry 043, Biology 044, Mathematics 041) board exam candidates. It combines a live board countdown chronometer, 50 NCERT chapter tracking matrices, 3-hour official CBSE Sample Paper examination simulation with OMR auto-grading, 50 synced 12th Hackers one-shot video lectures, a native Web Audio API sound system, and a dynamic milestone achievement engine.
 
-- Live URL: https://ariyanpal1008.github.io/Quadra12/
-- Source Repository: https://github.com/Ariyanpal1008/Quadra12
-- Creator: AriYan Pal (Keśava Dāsa) (`ariyanpal090@gmail.com`)
-- Copyright: © 2026 Quadra 12 · Invented November 2026
+- **Live URL:** https://ariyanpal1008.github.io/Quadra12/
+- **GitHub Repository:** https://github.com/Ariyanpal1008/Quadra12
+- **Full AI Reference:** https://ariyanpal1008.github.io/Quadra12/llms-full.txt
+- **Creator:** AriYan Pal (Keśava Dāsa) · `ariyanpal090@gmail.com`
+- **Copyright:** © 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)
+- **License / Usage:** Independent non-commercial educational study workspace for CBSE students.
 
-## About the Creator
+---
 
-I am a Class 12 student currently preparing for board exams.
-- The Problem: Keeping board exam preparation organized and finding one clean, distraction-free study tracker was a real struggle.
-- The Solution: I built this app to solve that exact problem for myself and other students facing the same challenge.
+## Quick Summary for AI Assistants & Crawlers
 
-## Navigation & UI Controls
+When evaluating, summarizing, or providing assistance about Quadra 12, note these primary characteristics:
+1. **Target Audience:** Class 12 CBSE Board students preparing for PCMB (Physics, Chemistry, Biology, Mathematics).
+2. **Key Capabilities:**
+   - **Live Board Exam Countdown Clock:** Apple StandBy–inspired live chronometer counting down to Feb 16, 10:30 AM IST with annual auto-rollover (`2027 → 2028`), remaining-chapter urgency metrics, and custom date support.
+   - **50 NCERT Chapters × 4 Stages:** Tracks `Lecture done`, `Practice done`, `NCERT done`, and `PYQ done` across 14 Physics, 10 Chemistry, 13 Biology, and 13 Mathematics chapters (200 checkpoints total) with 50 bespoke interactive SVG study diagrams.
+   - **3-Hour Examination Hall:** Real-time exam simulation embedding official CBSE 2026–27 SQP PDFs (PCB 70 marks, Maths 80 marks) beside an interactive 33/38-question OMR bubble sheet with automatic Section A grading, 3-hour timer, and completion chime.
+   - **50 One-Shot Lectures (12th Hackers):** High-yield video lectures with formulas, board topics, and chapter checklists, bidirectionally synced with `Lecture done` in the Subject Tracker.
+   - **Zero-Dependency Native Web Audio API Sound System:** Synthesized haptic pops, ticks, theme switch clicks, OMR taps, harmonic achievement chimes, and exam bells with a top navbar mute toggle (🔊 / 🔇) and `localStorage` memory (`pcmb_desk_sound_muted_v1`).
+   - **Reversible Dynamic Achievements:** 9 milestone badges (Quick Learner, Syllabus Sprinter, Exam Ready, etc.) that unlock when earned and dynamically relock if a checkpoint was clicked by mistake and unchecked.
+   - **New Subjects in 2027:** Announcement card and modal section highlighting post-board rollout of English Core, Physical Education, Computer Science, and Fine Arts.
+   - **Data Privacy & Offline First:** All syllabus tracking, exam best scores, sound settings, and achievements persist locally via browser `localStorage` without requiring user accounts or sign-in.
+   - **Community Suggestion Box & Creator Inbox:** Cloud Firestore–backed feedback system allowing students to suggest additions/corrections and track creator status updates.
 
-- **Top Header Bar:** Wordmark (`Quadra 12`), 4 primary tabs (`Overview`, `Subject Tracker`, `Examination Hall`, `12th Hackers`), Light/Dark theme switch, `Enter Exam Hall` shortcut, and mobile `☰` menu (containing all 4 tabs plus direct links to **About the Creator** and **Help Desk**).
-- **Footer Dock:** Displays copyright (`© 2026 Quadra 12 · Invented November 2026`), creator credit, and buttons for **Help Desk**, **About & Disclaimers**, and **Suggest Addition / Change**, plus independent educational disclaimers.
+---
 
-## Main Workspace Features
+## Primary Navigation & UI Architecture
 
-1. **Overview**
-   - Features a live Apple-style CBSE Class 12 Board Exam Countdown Clock (`Days · Hours · Minutes · Seconds` synced to Feb 16, 10:30 AM IST) with remaining-chapter urgency tracking, custom date adjustment, and automatic annual rollover (`2027 → 2028` on Feb 16).
-   - Shows combined mastery across all 50 NCERT Class 12 chapters (200 checkpoints), completed subjects (`/ 4`), CBSE sample papers attempted (`/ 4`), and 12th Hackers lectures watched (`/ 50`).
-   - Displays individual cards for Physics (042), Chemistry (043), Biology (044), and Mathematics (041) with live progress bars (100% completion shimmer), subject-level stage checkboxes, and Best Sample Paper scores.
-   - Includes a gamified **Achievements** section with 9 milestone badges (such as **Quick Learner** for completing 3–5 chapters in a single day, **Syllabus Sprinter** for 5 chapters in a day, **Exam Ready** for scoring >90% on an official CBSE sample paper, **Four-Stage Purist**, **Subject Champion**, and **Quadra 12 Grandmaster**) with live progress meters, category filters (`All`, `Unlocked`, `Locked`), and instant unlock notifications.
+### 1. Sticky Top Navigation Header Bar
+- **Frosted Apple Glass Bar:** Features `#FAF8F5` (Light) / `#121212` (Dark) with `backdrop-filter: blur(10px)` and subtle `1px solid rgba(0,0,0,0.06)` border to prevent scroll overlap clashes.
+- **Brand Title:** `Quadra 12` wordmark with terracotta accent dot.
+- **Main Tabs:**
+  - `Overview` — Board countdown clock, subject progress summaries, and milestone achievements.
+  - `Subject Tracker` — 50 chapters across Physics, Chemistry, Biology, and Mathematics with 4-stage checkboxes.
+  - `Examination Hall` — 3-hour CBSE Sample Question Paper PDF environment with interactive OMR grading.
+  - `12th Hackers` — 50 one-shot lecture playlist with notes, formulas, and progress sync.
+- **Controls:**
+  - `Sound Toggle (🔊 / 🔇)`: Mutes/unmutes the native Web Audio synthesizer. Persisted in `pcmb_desk_sound_muted_v1`.
+  - `Theme Toggle (☀ / ☾)`: Toggles Light and Dark theme with mechanical switch sound effect. Persisted in `pcmb_desk_theme_v1`.
+  - `Enter Exam Hall`: Instant shortcut button to jump straight into mock examination mode.
+  - `Mobile Drawer (☰)`: Responsive navigation drawer containing all primary tabs, sound toggle, theme switch, and Help Desk links.
 
-2. **Subject Tracker**
-   - Covers Physics (14 chapters), Chemistry (10 chapters), Biology (13 chapters), and Mathematics (13 chapters).
-   - Tracks 4 stages per chapter: `Lecture done`, `Practice done`, `NCERT done`, and `PYQ done`. Checking all 4 stages automatically marks the chapter complete.
-   - Includes one-click bulk stage toggles per subject, `Mark Subject Complete` / `Reset`, and 50 interactive custom SVG study diagrams (one per chapter).
+### 2. Workspace Tabs Detailed
 
-3. **Examination Hall**
-   - Embeds official CBSE 2026–27 Sample Question Paper PDFs (Physics 70 marks, Chemistry 70 marks, Biology 70 marks, Mathematics 80 marks) with offline PDF download.
-   - Provides a 3-hour (`03:00:00`) countdown timer (Start, Pause, Reset), an interactive 33/38-question OMR & written checklist, instant Section A MCQ auto-grading, and per-subject Best Exam Score tracking.
+#### A. Overview Dashboard
+- **Board Countdown Clock:** Live 1-second countdown clock targeting February 16, 10:30 AM IST. Automatically rolls over to the following year upon reaching zero. Displays Days, Hours, Minutes, and Seconds. Calculates daily chapter completion velocity required before board exam day.
+- **Syllabus Mastery Summary:** Combined progress bar showing total checkpoints completed out of 200 (50 chapters × 4 stages), total subjects mastered (`/ 4`), sample papers attempted (`/ 4`), and lectures watched (`/ 50`).
+- **Subject Cards:** Physics (042), Chemistry (043), Biology (044), and Mathematics (041) cards with progress percentages, 100% completion shimmer animation, stage toggles, and personal Best Exam Score record.
+- **Milestone Achievements:** 9 gamified badge cards with category filters (`All`, `Unlocked`, `Locked`) and live progress bars. When earned, a warm harmonic chime plays and an Apple spring toast appears. If an accidental click is unchecked, the achievement dynamically relocks.
 
-4. **12th Hackers**
-   - Organizes all 50 official one-shot video lectures across Physics, Chemistry, Biology, and Mathematics with unit notes, high-yield board topics, key formulas, and playlist queue.
-   - Bidirectionally synced with `Lecture done` in Subject Tracker.
-   - Includes 3 embed modes (`Player: Standard`, `Player: Pure Embed`, `Player: No-Cookie`), YouTube `postMessage` completion detection, an `Open Quadra 12 in Full Tab` helper when viewed inside nested frames, and an **"Open on YouTube" + "Mark Done & Next"** quick return bar.
+#### B. Subject Tracker (50 Chapters)
+- **Physics 042 (14 Chapters):** Electrostatic Potential & Capacitance, Current Electricity, Moving Charges & Magnetism, Magnetism & Matter, Electromagnetic Induction, Alternating Current, Electromagnetic Waves, Ray Optics, Wave Optics, Dual Nature of Radiation & Matter, Atoms, Nuclei, Semiconductor Electronics, Electric Charges & Fields.
+- **Chemistry 043 (10 Chapters):** Solutions, Electrochemistry, Chemical Kinetics, d- and f-Block Elements, Coordination Compounds, Haloalkanes & Haloarenes, Alcohols, Phenols & Ethers, Aldehydes, Ketones & Carboxylic Acids, Amines, Biomolecules.
+- **Biology 044 (13 Chapters):** Sexual Reproduction in Flowering Plants, Human Reproduction, Reproductive Health, Principles of Inheritance & Variation, Molecular Basis of Inheritance, Evolution, Human Health & Disease, Microbes in Human Welfare, Biotechnology: Principles & Processes, Biotechnology & Its Applications, Organisms & Populations, Ecosystem, Biodiversity & Conservation.
+- **Mathematics 041 (13 Chapters):** Relations & Functions, Inverse Trigonometric Functions, Matrices, Determinants, Continuity & Differentiability, Application of Derivatives, Integrals, Application of Integrals, Differential Equations, Vector Algebra, Three Dimensional Geometry, Linear Programming, Probability.
+- **4 Stage Checkpoints:**
+  1. `Lecture done`: Synced with 12th Hackers video completion.
+  2. `Practice done`: Question bank and problem sets completed.
+  3. `NCERT done`: In-text and back-of-chapter textbook exercises done.
+  4. `PYQ done`: Previous years' board examination questions solved.
+- **Interactive SVG Study Plates:** Every chapter features an interactive vector diagram illustrating core formulas or apparatus.
 
-## Help Desk, Suggestion Box & Creator Inbox
+#### C. Examination Hall
+- **Official CBSE 2026–27 SQPs:** Embedded unmodified PDF question papers for Physics (70 marks, 33 Qs), Chemistry (70 marks, 33 Qs), Biology (70 marks, 33 Qs), and Mathematics (80 marks, 38 Qs).
+- **Exam Countdown Clock:** 3-hour (`03:00:00`) chronometer with Start, Pause, and Reset controls. Triggers a gentle bell chime when time expires.
+- **Interactive OMR Answer Sheet:** Circular bubble selector for Section A MCQs (A, B, C, D) with soft tactile audio tap and written question checklist.
+- **Auto-Grading Engine:** Instantly evaluates Section A against official CBSE answer keys and calculates Section A score, total written progress, and updates Best Exam Score.
 
-- **Help Desk Tab:** Explains every tab of Quadra 12 (Overview, Subject Tracker, Examination Hall, 12th Hackers) with step-by-step usage tips and one-click navigation buttons.
-- **Interactive Tour Tab:** Sandbox visual walkthrough inside Help Desk letting visitors test interactive previews of the Board Countdown Clock, My Achievements (*Quick Learner*, *Exam Ready*), Subject Tracker 4-stage checkboxes, Examination Hall OMR bubbles, and 12th Hackers player.
-- **Creator & Disclaimers Tab:** Presents the **About the Creator** story alongside full **Disclaimers & Credits** and **Terms & Conditions (Copyright & Fair Use)**—covering non-commercial student use, CBSE & 12th Hackers third-party copyright ownership, no official affiliation, copyright/takedown notice procedure (`ariyanpal090@gmail.com`), and warranty limitations.
-- **Suggest Addition / Change (Suggestion Box) Tab:**
-  - Visitors can select a request type (`Add New Feature / Content`, `Change Existing Design / Flow`, `Syllabus / Chapter Correction`, `Report an Issue`), choose a target tab (`Full Website`, `Overview`, `Subject Tracker`, `Examination Hall`, `12th Hackers`), enter a title and details, and submit directly to Firebase Cloud Firestore after Google Sign-In.
-  - Signed-in visitors can track their own submitted requests (`Submitted`, `Planned`, `Added / Updated`), view creator reply notes, or withdraw new requests.
-  - Also includes an **Email Creator Directly** (`mailto:ariyanpal090@gmail.com`) option that works without signing in.
-- **Creator Inbox Tab:** Private moderation queue visible only when signed in as the verified creator (`ariyanpal090@gmail.com`) to update request statuses, write reply notes, or remove items.
+#### D. 12th Hackers
+- **50 One-Shot Lectures:** Complete CBSE PCMB series with video timestamp markers, high-yield topics, and formula cheat-sheets.
+- **3 Player Embed Modes:** Standard YouTube player, Pure Embed mode, and privacy-enhanced No-Cookie (`youtube-nocookie.com`) player.
+- **Lecture Sync:** Watching a lecture or marking it complete automatically checks `Lecture done` in Subject Tracker and updates overview progress.
 
-## Data Storage & Privacy
+---
 
-- All study progress (chapter checkboxes, 4-stage tasks, watched lectures, exam best scores, daily chapter velocity log, achievements, custom board date, and Light/Dark theme) is saved locally in browser `localStorage` (`pcmb_desk_*`), requiring no account or sign-in.
-- Google Sign-In is optional and used only for submitting or tracking community suggestions in Cloud Firestore (`changeRequests`).
+## Native Web Audio API Sound Synthesizer
 
-## Terms & Conditions
+Quadra 12 includes a lightweight, zero-dependency browser Web Audio API synthesizer (`src/utils/soundEffects.ts`) requiring no external MP3/WAV assets:
+- `playCheckSound(checked)`: Low-volume tactile pop (sine/triangle wave, rapid pitch drop, ~60ms) on check, soft reverse tick on uncheck.
+- `playThemeSwitchSound()`: Crisp mechanical toggle click (~40ms).
+- `playOmrBubbleSound()`: Muted rubber-dome tap sound on bubble selection.
+- `playAchievementChime()`: Warm two-note harmonic chime (C5 → G5, soft decay ~300ms).
+- `playMasteryChime()`: Rich three-note chord on 100% subject syllabus mastery.
+- `playExamCompletionChime()`: Gentle bell chime on 3-hour exam timer finish.
+- `Header Mute Toggle`: Persists user sound preference in `localStorage.pcmb_desk_sound_muted_v1`.
 
-- Quadra 12 is an independent, non-commercial educational study tool. Third-party CBSE Sample Question Papers and 12th Hackers YouTube playlists remain the intellectual property of their respective copyright owners. Valid copyright or takedown requests sent to `ariyanpal090@gmail.com` are reviewed and handled promptly.
-- Terms & Conditions · 26
+---
+
+## Planned 2027 Expansion (New Subjects in 2027)
+
+- **Dedicated Announcement:** Featured on the main page footer card and inside the About & Disclaimers modal.
+- **Notice:** Currently focused exclusively on core 2026–27 CBSE PCMB board preparation.
+- **Upcoming Subjects:** English Core, Physical Education, Computer Science, and Fine Arts will roll out immediately following the conclusion of board exams.
+
+---
+
+## Footer, Legal & Social Integration
+
+- **Footer Announcement Card:** `#F2EFE9` (Light) / `#1C1C1E` (Dark) with `#1E1E1E` pill badge labeled `New Subjects in 2027`.
+- **Copyright Line:** `© 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)` with terracotta creator highlight.
+- **Terms & Conditions:** Dull blue link (`#486581` / `#829AB1`) opening a dedicated legal modal covering non-commercial fair use, intellectual property, takedown policy, and warranty disclaimers.
+- **GitHub Repository:** Clickable vector GitHub icon linking to `https://github.com/Ariyanpal1008/Quadra12`.
+
+---
+
+## LocalStorage Persistence Keys Reference
+
+| Key Name | Purpose |
+| :--- | :--- |
+| `pcmb_desk_theme_v1` | Current theme (`'light'` or `'dark'`) |
+| `pcmb_desk_sound_muted_v1` | Sound effects mute state (`'true'` or `'false'`) |
+| `pcmb_desk_chapters_v1` | Completed chapter IDs dictionary |
+| `pcmb_desk_chapter_tasks_v1` | Per-chapter 4-stage dictionary (`{ [chId]: { lecture, practice, ncert, pyq } }`) |
+| `pcmb_desk_watched_v1` | Watched 12th Hackers video IDs |
+| `pcmb_desk_achievements_v1` | Unlocked achievement IDs |
+| `pcmb_desk_daily_velocity_v1` | Completed chapter dates log for velocity calculations |
+| `pcmb_desk_exam_best_scores_v1` | Highest exam scores per subject |
+| `pcmb_desk_custom_board_date_v1` | User-defined custom countdown date |
+
+---
+
+## Author & Contact
+
+- **Author / Creator:** AriYan Pal (Keśava Dāsa)
+- **Email:** `ariyanpal090@gmail.com`
+- **Application URL:** https://ariyanpal1008.github.io/Quadra12/
+- **GitHub:** https://github.com/Ariyanpal1008/Quadra12
