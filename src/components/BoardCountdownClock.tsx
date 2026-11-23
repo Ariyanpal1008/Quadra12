@@ -11,7 +11,28 @@ import {
 import {APPLE_EASE, APPLE_SPRING} from './FluidPrimitives';
 
 const STORAGE_CUSTOM_BOARD_DATE_KEY = 'pcmb_desk_custom_board_date_v1';
+const STORAGE_URGENCY_DAYS_KEY = 'pcmb_desk_urgency_days_v1';
+const STORAGE_SHOW_PACE_KEY = 'pcmb_desk_show_pace_v1';
 const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+
+function readUrgencyDays(): number {
+  try {
+    const raw = Number(window.localStorage.getItem(STORAGE_URGENCY_DAYS_KEY));
+    if ([15, 30, 60, 90].includes(raw)) return raw;
+  } catch {
+    // Ignore storage read errors
+  }
+  return 30;
+}
+
+function readShowPaceHint(): boolean {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_SHOW_PACE_KEY);
+    return raw !== 'false';
+  } catch {
+    return true;
+  }
+}
 
 interface BoardCountdownClockProps {
   remainingChapters: number;
@@ -144,6 +165,8 @@ export function BoardCountdownClock({
       return null;
     }
   });
+  const [urgencyDays, setUrgencyDays] = useState<number>(() => readUrgencyDays());
+  const [showPaceHint, setShowPaceHint] = useState<boolean>(() => readShowPaceHint());
   const [showDateEditor, setShowDateEditor] = useState(false);
   const [draftDate, setDraftDate] = useState<string>(customDate || '2027-02-16');
 
@@ -151,7 +174,22 @@ export function BoardCountdownClock({
     const tick = window.setInterval(() => {
       setNowMs(Date.now());
     }, 1000);
-    return () => window.clearInterval(tick);
+
+    const handleDateSync = () => {
+      try {
+        setCustomDate(window.localStorage.getItem(STORAGE_CUSTOM_BOARD_DATE_KEY));
+        setUrgencyDays(readUrgencyDays());
+        setShowPaceHint(readShowPaceHint());
+      } catch {
+        // Ignore storage read errors
+      }
+    };
+    window.addEventListener('pcmb-board-date-updated', handleDateSync);
+
+    return () => {
+      window.clearInterval(tick);
+      window.removeEventListener('pcmb-board-date-updated', handleDateSync);
+    };
   }, []);
 
   const targetInfo = useMemo(
@@ -173,8 +211,8 @@ export function BoardCountdownClock({
   );
   const elapsedPercent = Math.round(elapsedFraction * 100);
 
-  const isCritical = days <= 30;
-  const isCrunch = days > 30 && days <= 90;
+  const isCritical = days <= urgencyDays;
+  const isCrunch = days > urgencyDays && days <= Math.max(urgencyDays + 30, 90);
   const customReached = targetInfo.isCustom && rawDiffMs === 0;
 
   // Dial SVG geometry
@@ -257,10 +295,10 @@ export function BoardCountdownClock({
             >
               {customReached
                 ? 'Target exam day reached — switch back to the auto cycle.'
-                : days <= 30
-                  ? 'Final 30 days to Class 12 Boards.'
-                  : days <= 90
-                    ? 'Board exam clock is ticking — final 90-day sprint.'
+                : days <= urgencyDays
+                  ? `Final ${urgencyDays} days alert for Class 12 Boards.`
+                  : days <= Math.max(urgencyDays + 30, 90)
+                    ? 'Board exam clock is ticking — final sprint.'
                     : `Every second toward CBSE Class 12 Boards ${targetInfo.targetYear}.`}
             </h2>
           </div>
@@ -419,7 +457,7 @@ export function BoardCountdownClock({
                       aria-hidden="true"
                     />
                     <span className="text-[#B33A2B] dark:text-[#F09986]">
-                      Final Month Alert
+                      Final {urgencyDays}-Day Alert
                     </span>
                   </>
                 ) : isCrunch ? (
@@ -445,9 +483,11 @@ export function BoardCountdownClock({
                 )}
               </div>
 
-              <p className="text-xs text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
-                {paceHint}
-              </p>
+              {showPaceHint && (
+                <p className="text-xs text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
+                  {paceHint}
+                </p>
+              )}
 
               <p className="text-[11px] font-mono tabular-nums text-[#787066] dark:text-[#9C9387]">
                 {targetInfo.isCustom

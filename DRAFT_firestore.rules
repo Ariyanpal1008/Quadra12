@@ -10,6 +10,10 @@ service cloud.firestore {
       return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
     }
 
+    function isValidSyncCode(code) {
+      return code is string && code.size() == 6 && code.matches('^[0-9]{6}$');
+    }
+
     function incoming() {
       return request.resource.data;
     }
@@ -63,6 +67,53 @@ service cloud.firestore {
       && data.updatedAt is timestamp;
     }
 
+    function isValidSyncSession(data) {
+      return data.keys().hasAll([
+        'syncCode',
+        'completedChapterIds',
+        'chapterTasks',
+        'watchedLectureIds',
+        'bestScores',
+        'dailyChapterLog',
+        'customBoardDate',
+        'theme',
+        'soundMuted',
+        'createdAt',
+        'updatedAt'
+      ])
+      && data.keys().hasOnly([
+        'syncCode',
+        'completedChapterIds',
+        'chapterTasks',
+        'watchedLectureIds',
+        'bestScores',
+        'dailyChapterLog',
+        'customBoardDate',
+        'theme',
+        'soundMuted',
+        'createdAt',
+        'updatedAt'
+      ])
+      && isValidSyncCode(data.syncCode)
+      && data.completedChapterIds is list
+      && data.completedChapterIds.size() <= 60
+      && (data.completedChapterIds.size() == 0 || (data.completedChapterIds[0] is string && data.completedChapterIds[0].size() <= 32))
+      && data.chapterTasks is map
+      && data.chapterTasks.size() <= 60
+      && data.watchedLectureIds is list
+      && data.watchedLectureIds.size() <= 60
+      && (data.watchedLectureIds.size() == 0 || (data.watchedLectureIds[0] is string && data.watchedLectureIds[0].size() <= 32))
+      && data.bestScores is map
+      && data.bestScores.size() <= 6
+      && data.dailyChapterLog is map
+      && data.dailyChapterLog.size() <= 400
+      && data.customBoardDate is string && data.customBoardDate.size() <= 20
+      && data.theme in ['light', 'dark']
+      && data.soundMuted is bool
+      && data.createdAt is timestamp
+      && data.updatedAt is timestamp;
+    }
+
     match /changeRequests/{requestId} {
       allow get: if isSignedIn() && isValidId(requestId) && (
         existing().authorUid == request.auth.uid || isCreatorAdmin()
@@ -105,6 +156,36 @@ service cloud.firestore {
         isCreatorAdmin()
         || (existing().authorUid == request.auth.uid && existing().status == 'new')
       );
+    }
+
+    match /syncSessions/{syncCode} {
+      allow get: if isValidSyncCode(syncCode);
+      allow list: if false;
+
+      allow create: if isValidSyncCode(syncCode)
+        && isValidSyncSession(incoming())
+        && incoming().syncCode == syncCode
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      allow update: if isValidSyncCode(syncCode)
+        && isValidSyncSession(incoming())
+        && incoming().syncCode == existing().syncCode
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'completedChapterIds',
+          'chapterTasks',
+          'watchedLectureIds',
+          'bestScores',
+          'dailyChapterLog',
+          'customBoardDate',
+          'theme',
+          'soundMuted',
+          'updatedAt'
+        ]);
+
+      allow delete: if isCreatorAdmin() && isValidSyncCode(syncCode);
     }
   }
 }

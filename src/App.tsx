@@ -19,6 +19,7 @@ import {
   MessageSquarePlus,
   Moon,
   Play,
+  Settings,
   ShieldCheck,
   Sun,
   Trophy,
@@ -32,9 +33,21 @@ import {
   playCheckSound,
   playMasteryChime,
   playThemeSwitchSound,
+  setSoundMuted,
   toggleSoundMuted,
   unlockAudioContext,
 } from './utils/soundEffects';
+import {
+  STORAGE_CUSTOM_BOARD_DATE_KEY,
+  SyncableWorkspaceState,
+  formatSyncCodeDisplay,
+  getAutoSyncEnabled,
+  getSavedSyncCode,
+  isValidSixDigitCode,
+  pullSyncSession,
+  pushSyncSession,
+  saveLocalSyncCode,
+} from './utils/cloudSync';
 import {
   ChapterTaskState,
   HACKERS_PLAYLIST,
@@ -52,6 +65,8 @@ import {
   NavSection,
 } from './components/HelpDeskModal';
 import {TermsModal} from './components/TermsModal';
+import {SettingsModal, SettingsTab} from './components/SettingsModal';
+import {ThreeLabModal, ThreeSceneId} from './components/ThreeLabModal';
 import {ResilientImage} from './components/ResilientImage';
 import {BoardCountdownClock} from './components/BoardCountdownClock';
 import {
@@ -189,6 +204,11 @@ export default function App() {
   const [helpDeskTab, setHelpDeskTab] = useState<HelpDeskTab>('guide');
   const [achievementsModalOpen, setAchievementsModalOpen] = useState(false);
   const [termsModalOpen, setTermsModalOpen] = useState(false);
+  const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  const [settingsTab, setSettingsTab] = useState<SettingsTab>('sync');
+  const [threeLabOpen, setThreeLabOpen] = useState(false);
+  const [threeLabScene, setThreeLabScene] = useState<ThreeSceneId>('physics');
+  const [syncNoticeToast, setSyncNoticeToast] = useState<string | null>(null);
   const [isMuted, setIsMuted] = useState(isSoundMuted);
 
   useEffect(() => {
@@ -206,6 +226,18 @@ export default function App() {
   const openHelpDesk = (tab: HelpDeskTab) => {
     setHelpDeskTab(tab);
     setHelpDeskOpen(true);
+  };
+
+  const openSettings = (tab: SettingsTab = 'sync') => {
+    setSettingsTab(tab);
+    setSettingsModalOpen(true);
+    setMobileMenuOpen(false);
+  };
+
+  const openThreeLab = (sceneId: ThreeSceneId = 'physics') => {
+    setThreeLabScene(sceneId);
+    setThreeLabOpen(true);
+    setMobileMenuOpen(false);
   };
 
   const handleHelpDeskNavigate = (section: NavSection) => {
@@ -341,6 +373,141 @@ export default function App() {
       // Ignore storage quota errors
     }
   }, [unlockedAchievements]);
+
+  const currentWorkspaceState: SyncableWorkspaceState = useMemo(() => {
+    let customBoardDate = '';
+    try {
+      customBoardDate =
+        window.localStorage.getItem(STORAGE_CUSTOM_BOARD_DATE_KEY) || '';
+    } catch {
+      customBoardDate = '';
+    }
+    return {
+      completedChapters,
+      chapterTasks,
+      watchedLectures,
+      bestScores,
+      dailyChapterLog,
+      customBoardDate,
+      theme,
+      soundMuted: isMuted,
+    };
+  }, [
+    completedChapters,
+    chapterTasks,
+    watchedLectures,
+    bestScores,
+    dailyChapterLog,
+    theme,
+    isMuted,
+  ]);
+
+  const applySyncedWorkspaceState = (nextState: SyncableWorkspaceState) => {
+    setCompletedChapters(nextState.completedChapters);
+    setChapterTasks(nextState.chapterTasks);
+    setWatchedLectures(nextState.watchedLectures);
+    setBestScores(nextState.bestScores);
+    setDailyChapterLog(nextState.dailyChapterLog);
+    setTheme(nextState.theme);
+    setSoundMuted(nextState.soundMuted);
+    setIsMuted(nextState.soundMuted);
+    try {
+      if (nextState.customBoardDate) {
+        window.localStorage.setItem(
+          STORAGE_CUSTOM_BOARD_DATE_KEY,
+          nextState.customBoardDate,
+        );
+      } else {
+        window.localStorage.removeItem(STORAGE_CUSTOM_BOARD_DATE_KEY);
+      }
+      window.dispatchEvent(new Event('pcmb-board-date-updated'));
+    } catch {
+      // Ignore storage errors
+    }
+  };
+
+  // Auto-pair when scanning mobile QR code (?sync=XXXXXX)
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const urlCode = params.get('sync')?.trim() || '';
+      if (!isValidSixDigitCode(urlCode)) return;
+
+      params.delete('sync');
+      const cleanedQuery = params.toString();
+      const nextUrl = `${window.location.pathname}${cleanedQuery ? `?${cleanedQuery}` : ''}${window.location.hash}`;
+      window.history.replaceState({}, '', nextUrl);
+
+      void (async () => {
+        try {
+          const pulled = await pullSyncSession(urlCode);
+          if (pulled) {
+            saveLocalSyncCode(urlCode);
+            applySyncedWorkspaceState(pulled.state);
+            setSyncNoticeToast(
+              `Cloud Sync paired with code ${formatSyncCodeDisplay(urlCode)}`,
+            );
+          } else {
+            setSyncNoticeToast(
+              `Sync code ${formatSyncCodeDisplay(urlCode)} has no cloud snapshot yet.`,
+            );
+          }
+        } catch {
+          setSyncNoticeToast('Could not auto-pair sync session. Check Settings → Sync.');
+        }
+      })();
+    } catch {
+      // Ignore URL parsing errors
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Debounced auto-sync push when user enables Auto-Sync in Settings
+  const skipNextAutoSyncRef = useRef(true);
+  useEffect(() => {
+    if (skipNextAutoSyncRef.current) {
+      skipNextAutoSyncRef.current = false;
+      return;
+    }
+    if (!getAutoSyncEnabled()) return;
+    const savedCode = getSavedSyncCode();
+    if (!savedCode) return;
+
+    const timer = window.setTimeout(() => {
+      void pushSyncSession(savedCode, currentWorkspaceState).catch(() => {
+        // Silent background fallback; user can inspect status in Settings
+      });
+    }, 1800);
+
+    return () => window.clearTimeout(timer);
+  }, [currentWorkspaceState]);
+
+  useEffect(() => {
+    if (!syncNoticeToast) return;
+    const timer = window.setTimeout(() => setSyncNoticeToast(null), 5500);
+    return () => window.clearTimeout(timer);
+  }, [syncNoticeToast]);
+
+  const handleResetAllLocalData = () => {
+    playCheckSound(false);
+    setCompletedChapters({});
+    setChapterTasks({});
+    setWatchedLectures({});
+    setBestScores({});
+    setDailyChapterLog({});
+    setUnlockedAchievements({});
+    try {
+      window.localStorage.removeItem(STORAGE_CUSTOM_BOARD_DATE_KEY);
+      window.localStorage.removeItem('pcmb_desk_urgency_days_v1');
+      window.localStorage.removeItem('pcmb_desk_show_pace_v1');
+      window.localStorage.removeItem('pcmb_desk_embed_mode_v1');
+      window.localStorage.removeItem('pcmb_desk_auto_advance_v1');
+      window.dispatchEvent(new Event('pcmb-board-date-updated'));
+      window.dispatchEvent(new Event('pcmb-player-prefs-updated'));
+    } catch {
+      // Ignore
+    }
+  };
 
   const navigateTo = (view: ActiveView) => {
     setActiveView(view);
@@ -556,6 +723,13 @@ export default function App() {
     });
     setChapterTasks(nextTasks);
     syncEpisodeWatchedFromTasks(nextTasks);
+
+    setBestScores((prev) => {
+      if (!prev[subjectId]) return prev;
+      const next = {...prev};
+      delete next[subjectId];
+      return next;
+    });
   };
 
   const handleSetChapterLectureDone = (chapterId: string, done: boolean) => {
@@ -918,6 +1092,20 @@ export default function App() {
                 )}
               </motion.button>
 
+              {/* Official Settings Trigger (Desktop + Tablet) */}
+              <motion.button
+                type="button"
+                aria-label="Settings"
+                title="Settings"
+                whileHover={{y: -1}}
+                whileTap={{scale: 0.95}}
+                transition={{duration: 0.15}}
+                onClick={() => openSettings('sync')}
+                className="hidden md:inline-flex items-center justify-center w-9 h-9 rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#24201C] text-[#1E1B18] dark:text-[#F5F2EB] hover:bg-[#ECE6D9] dark:hover:bg-[#332E28] transition-colors shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A64B33]"
+              >
+                <Settings className="w-4 h-4 text-[#575048] dark:text-[#CBC3B6]" aria-hidden="true" />
+              </motion.button>
+
               <motion.button
                 type="button"
                 whileHover={{y: -1}}
@@ -974,6 +1162,14 @@ export default function App() {
                 <div className="pt-2 mt-2 border-t border-[#DDD6C7] dark:border-[#332E28] space-y-1">
                   <button
                     type="button"
+                    onClick={() => openSettings('sync')}
+                    className="w-full text-left px-3 py-2.5 text-sm font-medium rounded-lg text-[#1E1B18] dark:text-[#F5F2EB] hover:bg-[#ECE6D9]/60 dark:hover:bg-[#24201C] flex items-center gap-2"
+                  >
+                    <Settings className="w-4 h-4 text-[#A64B33] dark:text-[#D4785E]" aria-hidden="true" />
+                    <span>Settings</span>
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => {
                       setMobileMenuOpen(false);
                       openHelpDesk('about');
@@ -993,26 +1189,6 @@ export default function App() {
                   >
                     <HelpCircle className="w-4 h-4 text-[#A64B33] dark:text-[#D4785E]" aria-hidden="true" />
                     <span>Help Desk</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const nextMuted = toggleSoundMuted();
-                      setIsMuted(nextMuted);
-                    }}
-                    className="w-full text-left px-3 py-2.5 text-sm font-medium rounded-lg text-[#575048] dark:text-[#CBC3B6] hover:bg-[#ECE6D9]/60 dark:hover:bg-[#24201C] flex items-center justify-between"
-                  >
-                    <span className="flex items-center gap-2">
-                      {isMuted ? (
-                        <VolumeX className="w-4 h-4 text-[#787066] dark:text-[#9C9387]" aria-hidden="true" />
-                      ) : (
-                        <Volume2 className="w-4 h-4 text-[#A64B33] dark:text-[#D4785E]" aria-hidden="true" />
-                      )}
-                      <span>Sound Effects</span>
-                    </span>
-                    <span className="text-xs font-mono text-[#787066] dark:text-[#9C9387]">
-                      {isMuted ? 'Muted' : 'Enabled'}
-                    </span>
                   </button>
                 </div>
               </motion.div>
@@ -1519,6 +1695,7 @@ export default function App() {
                   onMarkSubjectComplete={handleMarkSubjectComplete}
                   onResetSubject={handleResetSubject}
                   onEnterExamHallForSubject={handleEnterExamForSubject}
+                  onOpenThreeLab={(subId) => openThreeLab(subId)}
                 />
               </motion.div>
             )}
@@ -1581,8 +1758,19 @@ export default function App() {
                     Class 12 CBSE Syllabus Tracker · Examination Hall · 12th Hackers Playlist
                   </p>
                 </div>
-                {/* Help Desk, Disclaimers & Change Request Dock */}
+                {/* Help Desk, Disclaimers, Settings & Change Request Dock */}
                 <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => openSettings('sync')}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] transition-colors"
+                  >
+                    <Settings
+                      className="w-3.5 h-3.5 text-[#A64B33] dark:text-[#D4785E]"
+                      aria-hidden="true"
+                    />
+                    <span>Settings</span>
+                  </button>
                   <button
                     type="button"
                     onClick={() => openHelpDesk('guide')}
@@ -1685,12 +1873,63 @@ export default function App() {
           stats={achievementStats}
           onClose={() => setAchievementsModalOpen(false)}
           onNavigateTarget={handleAchievementAction}
+          onOpenThreeLab={() => openThreeLab('trophy')}
         />
 
         <TermsModal
           isOpen={termsModalOpen}
           onClose={() => setTermsModalOpen(false)}
         />
+
+        <SettingsModal
+          isOpen={settingsModalOpen}
+          initialTab={settingsTab}
+          theme={theme}
+          isMuted={isMuted}
+          workspaceState={currentWorkspaceState}
+          onClose={() => setSettingsModalOpen(false)}
+          onToggleTheme={(nextTheme) => setTheme(nextTheme)}
+          onToggleMute={() => {
+            const nextMuted = toggleSoundMuted();
+            setIsMuted(nextMuted);
+          }}
+          onApplySyncedState={applySyncedWorkspaceState}
+          onResetSubject={handleResetSubject}
+          onResetAllData={handleResetAllLocalData}
+          onOpenThreeLab={(sceneId) => openThreeLab(sceneId)}
+          onOpenTerms={() => setTermsModalOpen(true)}
+        />
+
+        <ThreeLabModal
+          isOpen={threeLabOpen}
+          initialScene={threeLabScene}
+          onClose={() => setThreeLabOpen(false)}
+        />
+
+        {/* Cloud Sync QR Auto-Pair Notification Toast */}
+        <AnimatePresence>
+          {syncNoticeToast && (
+            <motion.aside
+              role="status"
+              aria-live="polite"
+              initial={{opacity: 0, y: 20, scale: 0.96}}
+              animate={{opacity: 1, y: 0, scale: 1}}
+              exit={{opacity: 0, y: 14, scale: 0.96}}
+              transition={APPLE_SPRING}
+              className="fixed bottom-4 left-4 z-50 w-[min(340px,calc(100vw-2rem))] rounded-xl border border-[#3D6B4F] bg-[#E8F0EA] dark:bg-[#1C2E22] text-[#23422F] dark:text-[#B6DFC3] p-3.5 shadow-lg flex items-center justify-between gap-3 text-xs font-medium"
+            >
+              <span>{syncNoticeToast}</span>
+              <button
+                type="button"
+                onClick={() => setSyncNoticeToast(null)}
+                aria-label="Dismiss sync notice"
+                className="p-1 rounded hover:opacity-75"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </motion.aside>
+          )}
+        </AnimatePresence>
 
         {/* Non-intrusive Live Achievement Unlock Toast */}
         <AnimatePresence>

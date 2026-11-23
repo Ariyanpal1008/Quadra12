@@ -23,6 +23,27 @@ import {ResilientImage} from './ResilientImage';
 import {EmbedPlayerMode, YouTubeSyncPlayer} from './YouTubeSyncPlayer';
 import {APPLE_EASE, APPLE_SPRING, AnimatedNumber} from './FluidPrimitives';
 
+const STORAGE_EMBED_MODE_KEY = 'pcmb_desk_embed_mode_v1';
+const STORAGE_AUTO_ADVANCE_KEY = 'pcmb_desk_auto_advance_v1';
+
+function readStoredEmbedMode(): EmbedPlayerMode {
+  try {
+    const val = window.localStorage.getItem(STORAGE_EMBED_MODE_KEY);
+    if (val === 'standard' || val === 'pure' || val === 'nocookie') return val;
+  } catch {
+    // Ignore storage read errors
+  }
+  return 'standard';
+}
+
+function readStoredAutoAdvance(): boolean {
+  try {
+    return window.localStorage.getItem(STORAGE_AUTO_ADVANCE_KEY) !== 'false';
+  } catch {
+    return true;
+  }
+}
+
 interface HackersPlaylistSectionProps {
   watchedLectures: Record<string, boolean>;
   chapterTasks: Record<string, ChapterTaskState>;
@@ -337,8 +358,12 @@ export function HackersPlaylistSection({
   const [activePlaylistSubject, setActivePlaylistSubject] =
     useState<SubjectConfig | null>(null);
   const [selectedPlaylistIdx, setSelectedPlaylistIdx] = useState(0);
-  const [autoAdvance, setAutoAdvance] = useState(true);
-  const [embedMode, setEmbedMode] = useState<EmbedPlayerMode>('standard');
+  const [autoAdvance, setAutoAdvance] = useState<boolean>(() =>
+    readStoredAutoAdvance(),
+  );
+  const [embedMode, setEmbedMode] = useState<EmbedPlayerMode>(() =>
+    readStoredEmbedMode(),
+  );
   const [isNestedPreview, setIsNestedPreview] = useState(false);
   const [standaloneUrl, setStandaloneUrl] = useState('');
   const [externalOpenedChapter, setExternalOpenedChapter] = useState<{
@@ -349,10 +374,27 @@ export function HackersPlaylistSection({
   const [syncNotice, setSyncNotice] = useState<string | null>(null);
 
   const cycleEmbedMode = () => {
-    setEmbedMode((m) =>
-      m === 'standard' ? 'pure' : m === 'pure' ? 'nocookie' : 'standard',
-    );
+    setEmbedMode((m) => {
+      const next: EmbedPlayerMode =
+        m === 'standard' ? 'pure' : m === 'pure' ? 'nocookie' : 'standard';
+      try {
+        window.localStorage.setItem(STORAGE_EMBED_MODE_KEY, next);
+      } catch {
+        // Ignore
+      }
+      return next;
+    });
   };
+
+  useEffect(() => {
+    const syncPlayerPrefs = () => {
+      setEmbedMode(readStoredEmbedMode());
+      setAutoAdvance(readStoredAutoAdvance());
+    };
+    window.addEventListener('pcmb-player-prefs-updated', syncPlayerPrefs);
+    return () =>
+      window.removeEventListener('pcmb-player-prefs-updated', syncPlayerPrefs);
+  }, []);
 
   const embedModeLabel =
     embedMode === 'standard'
@@ -456,11 +498,11 @@ export function HackersPlaylistSection({
         `Synced: "${item.title}" marked Watched & Lecture done in Subject Tracker.`,
       );
 
-      if (idx >= 0 && idx < episodeVideos.length - 1) {
+      if (autoAdvance && idx >= 0 && idx < episodeVideos.length - 1) {
         setActiveEpisodeVideoIdx(idx + 1);
       }
     },
-    [activeEpisodeVideoIdx, activeLecture, onSetChapterLectureDone],
+    [activeEpisodeVideoIdx, activeLecture, autoAdvance, onSetChapterLectureDone],
   );
 
   const filteredLectures = HACKERS_PLAYLIST.filter((lecture) => {

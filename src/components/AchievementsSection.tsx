@@ -3,6 +3,7 @@ import {AnimatePresence, motion} from 'motion/react';
 import {
   ArrowUpRight,
   Award,
+  Box,
   CheckCircle2,
   Compass,
   Crown,
@@ -173,6 +174,7 @@ interface AchievementsModalProps {
   stats: AchievementStats;
   onClose: () => void;
   onNavigateTarget: (target: AchievementActionTarget) => void;
+  onOpenThreeLab?: () => void;
 }
 
 export function AchievementsModal({
@@ -181,6 +183,7 @@ export function AchievementsModal({
   stats,
   onClose,
   onNavigateTarget,
+  onOpenThreeLab,
 }: AchievementsModalProps) {
   const [filter, setFilter] = useState<BadgeFilter>('all');
 
@@ -261,14 +264,30 @@ export function AchievementsModal({
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={onClose}
-                aria-label="Close achievements interface"
-                className="w-9 h-9 rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] text-[#575048] dark:text-[#CBC3B6] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB] flex items-center justify-center shrink-0 transition-colors"
-              >
-                <X className="w-4 h-4" aria-hidden="true" />
-              </button>
+              <div className="flex items-center gap-2 shrink-0">
+                {onOpenThreeLab && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onClose();
+                      onOpenThreeLab();
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-lg border border-[#B7791F]/50 dark:border-[#E6B17A]/40 bg-[#FBF3E4] dark:bg-[#2D2416] text-[#8C5A12] dark:text-[#E6B17A] hover:opacity-90 transition-opacity"
+                  >
+                    <Box className="w-3.5 h-3.5" aria-hidden="true" />
+                    <span className="hidden sm:inline">Inspect 3D Trophy</span>
+                    <span className="sm:hidden">3D</span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={onClose}
+                  aria-label="Close achievements interface"
+                  className="w-9 h-9 rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] text-[#575048] dark:text-[#CBC3B6] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB] flex items-center justify-center shrink-0 transition-colors"
+                >
+                  <X className="w-4 h-4" aria-hidden="true" />
+                </button>
+              </div>
             </div>
 
             {/* Scrollable Body */}

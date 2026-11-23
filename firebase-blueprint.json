@@ -74,12 +74,88 @@
         "createdAt",
         "updatedAt"
       ]
+    },
+    "SyncSession": {
+      "title": "SyncSession",
+      "description": "Anonymous device-pairing study snapshot keyed by a 6-digit sync code for account-less cross-device cloud sync.",
+      "type": "object",
+      "properties": {
+        "syncCode": {
+          "type": "string",
+          "minLength": 6,
+          "maxLength": 6,
+          "pattern": "^[0-9]{6}$",
+          "description": "6-digit numeric pairing code."
+        },
+        "completedChapterIds": {
+          "type": "array",
+          "description": "List of completed chapter IDs (max 60)."
+        },
+        "chapterTasks": {
+          "type": "object",
+          "description": "Map of per-chapter 4-stage study progress."
+        },
+        "watchedLectureIds": {
+          "type": "array",
+          "description": "List of watched 12th Hackers episode IDs (max 60)."
+        },
+        "bestScores": {
+          "type": "object",
+          "description": "Map of best Examination Hall SQP scores per subject."
+        },
+        "dailyChapterLog": {
+          "type": "object",
+          "description": "Map of local YYYY-MM-DD dates to completed chapter ID arrays."
+        },
+        "customBoardDate": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 20,
+          "description": "Custom ISO date string (YYYY-MM-DD) or empty for automatic Feb 16 rollover."
+        },
+        "theme": {
+          "type": "string",
+          "enum": ["light", "dark"],
+          "description": "User theme mode preference."
+        },
+        "soundMuted": {
+          "type": "boolean",
+          "description": "Audio sound mute preference."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when sync code was first registered."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of the latest cloud sync push."
+        }
+      },
+      "required": [
+        "syncCode",
+        "completedChapterIds",
+        "chapterTasks",
+        "watchedLectureIds",
+        "bestScores",
+        "dailyChapterLog",
+        "customBoardDate",
+        "theme",
+        "soundMuted",
+        "createdAt",
+        "updatedAt"
+      ]
     }
   },
   "firestore": {
     "/changeRequests/{requestId}": {
       "schema": { "$ref": "#/entities/ChangeRequest" },
       "description": "Stores community additions and change requests readable by their author or the Quadra 12 creator admin."
+    },
+    "/syncSessions/{syncCode}": {
+      "schema": { "$ref": "#/entities/SyncSession" },
+      "description": "Stores anonymous 6-digit study progress snapshots for QR and code-based device syncing without sign-in."
     }
   }
 }

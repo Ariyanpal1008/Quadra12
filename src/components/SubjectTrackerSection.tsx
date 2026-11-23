@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import {AnimatePresence, motion} from 'motion/react';
 import {
   ArrowRight,
+  Box,
   Check,
   CheckCircle2,
   Circle,
@@ -31,6 +32,7 @@ interface SubjectTrackerSectionProps {
   onMarkSubjectComplete: (subjectId: SubjectId) => void;
   onResetSubject: (subjectId: SubjectId) => void;
   onEnterExamHallForSubject: (subjectId: SubjectId) => void;
+  onOpenThreeLab?: (sceneId: SubjectId) => void;
 }
 
 export function SubjectTrackerSection({
@@ -42,6 +44,7 @@ export function SubjectTrackerSection({
   onMarkSubjectComplete,
   onResetSubject,
   onEnterExamHallForSubject,
+  onOpenThreeLab,
 }: SubjectTrackerSectionProps) {
   const [activeSubjectId, setActiveSubjectId] = useState<SubjectId>('physics');
   const [searchQuery, setSearchQuery] = useState('');
@@ -412,7 +415,18 @@ export function SubjectTrackerSection({
                 Subject overview diagram shown above · Individual chapter diagrams below
               </p>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                {onOpenThreeLab && (
+                  <motion.button
+                    type="button"
+                    whileTap={{scale: 0.97}}
+                    onClick={() => onOpenThreeLab(activeSubject.id)}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-lg border border-[#A64B33]/50 dark:border-[#D4785E]/50 bg-[#F7EBE7] dark:bg-[#2F1D19] text-[#A64B33] dark:text-[#D4785E] hover:bg-[#A64B33] hover:text-[#FAF8F3] dark:hover:bg-[#D4785E] dark:hover:text-[#161412] transition-colors whitespace-nowrap"
+                  >
+                    <Box className="w-3.5 h-3.5" aria-hidden="true" />
+                    <span>3D Lab Model</span>
+                  </motion.button>
+                )}
                 {!activeStats.isCompleted ? (
                   <motion.button
                     type="button"
@@ -731,7 +745,20 @@ export function SubjectTrackerSection({
                     Weightage ~{previewChapter.marksWeightage} Marks ·{' '}
                     {previewChapter.estimatedHours}h study
                   </span>
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    {onOpenThreeLab && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setPreviewChapter(null);
+                          onOpenThreeLab(activeSubject.id);
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-lg border border-[#A64B33]/50 dark:border-[#D4785E]/50 bg-[#F7EBE7] dark:bg-[#2F1D19] text-[#A64B33] dark:text-[#D4785E] hover:bg-[#A64B33] hover:text-[#FAF8F3] transition-colors whitespace-nowrap"
+                      >
+                        <Box className="w-3.5 h-3.5" aria-hidden="true" />
+                        <span>View 3D Model</span>
+                      </button>
+                    )}
                     <button
                       type="button"
                       onClick={() => onToggleChapter(previewChapter.id)}

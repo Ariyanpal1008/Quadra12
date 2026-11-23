@@ -110,6 +110,16 @@ I am **AriYan Pal (Keśava Dāsa)** (`ariyanpal090@gmail.com`), a Class 12 stude
 - **Header Sound Toggle:** Compact mute/unmute button (🔊 / 🔇) in the sticky navbar directly next to the theme toggle, persisted in `localStorage`.
 - **Subtle Haptics:** Subtle gain levels (0.08–0.15 max) and automatic gesture unlock compliant with browser autoplay policies.
 
+### 9. Official Settings (v2.4), Account-less Cloud Sync & Three.js 3D Study Studio
+- **Clean `☰ → Settings` Entry:** The `☰` three-lines mobile menu contains `Overview`, `Subject Tracker`, `Examination Hall`, `12th Hackers`, **`Settings`**, **`About the Creator`**, and **`Help Desk`**—kept clutter-free with no redundant Sound Effects row inside `☰`. Tapping **Settings** opens all 7 organized panels:
+  1. **Cloud Sync:** Transfer progress between laptops (using a **6-digit numeric Sync Code**) and phones (using a **scannable QR code** `?sync=XXXXXX`) without signing in, plus Auto-Sync and `.json` offline backup export/restore.
+  2. **Audio & Tactile:** Sound mute/unmute toggle, 6 interactive Web Audio micro-sound test buttons, and Light/Dark appearance switch.
+  3. **3D Studio:** Direct launchers for interactive Three.js WebGL study models across **Physics** (Moving-Coil Galvanometer), **Chemistry** (`[ML₆]` Octahedral Complex), **Biology** (DNA Double Helix), **Mathematics** (`a × b` Cross Product & Double Cone), and the **Grandmaster Achievement Trophy** (with OrbitControls, camera presets, and Explode Model slider).
+  4. **Exam & Urgency:** Custom board exam countdown date selector, Official Feb 16 reset, **Urgency Alert Window** (`15 / 30 / 60 / 90 days`), and Daily Chapter Pace Hint toggle.
+  5. **Player & Video:** Persistent default YouTube embed engine (`Standard Sync`, `Pure Embed`, or `Privacy No-Cookie`) and Auto-Advance Next Lecture toggle.
+  6. **Privacy & Reset:** Live `localStorage` **Storage Quota Meter** (`KB / MB` out of `5 MB`), **Reset Single Subject** controls (reset Physics, Chemistry, Biology, or Math individually without affecting other subjects), and **Master Reset (Danger Zone)** protected by a **double-confirmation pop-up**.
+  7. **About & Links:** **Version 2.4** badge, creator stamp (`AriYan Pal / Keśava Dāsa`), and quick launch buttons for **Terms & Conditions · 2026** and the **Official GitHub Repository**.
+
 ---
 
 ## System Architecture
@@ -139,13 +149,16 @@ Quadra12/
 │   │   ├── HelpDeskModal.tsx              # Guide, Tour, Disclaimers & Feedback modal
 │   │   ├── InteractiveTourTab.tsx         # Interactive feature sandbox walkthrough
 │   │   ├── ResilientImage.tsx             # Fault-tolerant image component
+│   │   ├── SettingsModal.tsx              # Official Settings (6-digit + QR Cloud Sync, Audio, Data)
 │   │   ├── SubjectTrackerSection.tsx      # 50-chapter PCMB syllabus tracker
 │   │   ├── TermsModal.tsx                 # Standalone Terms & Conditions dialog
+│   │   ├── ThreeLabModal.tsx              # Interactive Three.js 3D WebGL Study Studio
 │   │   └── YouTubeSyncPlayer.tsx          # Multi-mode synchronized video player
 │   ├── data/
 │   │   ├── achievements.ts                # 9 milestone rules & unlock velocity logic
 │   │   └── pcmbData.ts                    # Canonical CBSE syllabus, SQPs & playlist records
 │   ├── utils/
+│   │   ├── cloudSync.ts                   # Account-less 6-digit + QR Firestore sync & JSON backup
 │   │   └── soundEffects.ts                # Zero-dependency Web Audio API micro-sound synthesizer
 │   ├── App.tsx                            # Root application layout, navigation & footer
 │   ├── firebase.ts                        # Firebase Auth (Google Sign-In) & Firestore integration
@@ -175,11 +188,19 @@ All personal study records, timestamps, and exam scores are preserved locally in
 | `pcmb_desk_daily_chapter_log_v1` | `Record<string, string[]>` | Daily completed chapter history (`YYYY-MM-DD`) for sprint achievements |
 | `pcmb_desk_achievements_v1` | `Partial<Record<AchievementId, UnlockedAchievementRecord>>` | Timestamps and metadata of unlocked milestone seals |
 | `pcmb_desk_custom_board_date_v1` | `string` (`YYYY-MM-DD`) | User-configured exam countdown date override |
+| `pcmb_desk_urgency_days_v1` | `'15' \| '30' \| '60' \| '90'` | Countdown final alert threshold window |
+| `pcmb_desk_show_pace_v1` | `'true' \| 'false'` | Daily chapter pacing summary visibility |
+| `pcmb_desk_embed_mode_v1` | `'standard' \| 'pure' \| 'nocookie'` | Default 12th Hackers YouTube embed player |
+| `pcmb_desk_auto_advance_v1` | `'true' \| 'false'` | Auto-advance next lecture upon completion |
 | `pcmb_desk_sound_muted_v1` | `string` (`'true'` \| `'false'`) | User sound effects mute/unmute preference |
 | `pcmb_desk_theme_v1` | `'light' \| 'dark'` | UI theme preference |
+| `pcmb_desk_sync_code_v1` | `string` (`6 digits`) | Active account-less Cloud Sync pairing code |
+| `pcmb_desk_auto_sync_v1` | `'true' \| 'false'` | Debounced automatic Cloud Sync toggle |
+| `pcmb_desk_last_synced_v1` | `string` (ISO timestamp) | Timestamp of last successful Cloud Sync operation |
 
-### 2. Cloud Firestore (`changeRequests` Collection)
-Used solely for user suggestions and change requests submitted via Google Sign-In:
+### 2. Cloud Firestore (`syncSessions` & `changeRequests` Collections)
+- **`syncSessions/{syncCode}`:** Account-less cross-device synchronization keyed by a 6-digit numeric code (and QR code URL `?sync=XXXXXX`). Collection listing (`allow list: if false`) is strictly blocked so user sync sessions cannot be enumerated or scraped.
+- **`changeRequests`:** Used for user suggestions and change requests submitted via Google Sign-In:
 
 - `authorUid` (`string`) — Submitter's Firebase Auth UID.
 - `authorName` (`string`) — Submitter's display name.
@@ -197,12 +218,23 @@ Used solely for user suggestions and change requests submitted via Google Sign-I
 
 - **Framework:** React 19, TypeScript
 - **Bundler:** Vite 8 (configured with `base: './'` for GitHub Pages)
+- **3D & QR Pairing:** Three.js (`WebGLRenderer`, `OrbitControls`, `RoomEnvironment`) & `qrcode`
 - **Styling:** Tailwind CSS v4 (`@tailwindcss/vite`)
 - **Animations:** Motion (`motion/react`) with custom Apple spring presets
 - **Icons:** Lucide Icons & official Octicons GitHub SVG
 - **Backend / Authentication:** Firebase Authentication (Google Sign-In) & Cloud Firestore
 - **Deployment:** GitHub Pages via GitHub Actions (`.github/workflows/deploy.yml`)
-- **SEO & Discoverability:** Canonical links, OpenGraph, Twitter Cards, Schema.org `WebApplication` JSON-LD, `llms.txt`, `robots.txt`, and `sitemap.xml`
+- **SEO & Discoverability:** Canonical links, OpenGraph, Twitter Cards, Schema.org `WebApplication` JSON-LD, `llms.txt`, `llms-full.txt`, `robots.txt`, and `sitemap.xml`
+
+---
+
+## Release v2.4 Highlights
+
+- **Official Settings (`v2.4`):** Accessible via a clean `Settings` trigger inside `☰`, desktop header, and footer across 7 dedicated panels (**Cloud Sync**, **Audio & Tactile**, **3D Studio**, **Exam & Urgency**, **Player & Video**, **Privacy & Reset**, and **About & Links**).
+- **Account-less Cloud Sync:** Sync study progress between laptops and mobiles without login using a **6-digit numeric Sync Code** or a live scannable **QR Code** (`?sync=XXXXXX`), plus **Auto-Sync** and offline `.json` backup export/restore.
+- **Three.js 3D Study Studio:** Interactive WebGL models for **Physics**, **Chemistry**, **Biology**, **Maths**, and the **Grandmaster Trophy** with orbit/zoom, camera presets, and an Explode Model slider.
+- **Safety & Privacy Controls:** Local storage quota meter (`KB` / `MB` out of `5 MB`), isolated single-subject resets (including clearing that subject's best exam score cleanly), and **Master Reset (Danger Zone)** with a 2-step double-confirmation pop-up.
+- **AI Discoverability & Clean Menu:** Removed redundant `Sound Effects` row from `☰`, kept `About the Creator` distinct from Settings `About & Links`, and synced `README.md`, `index.html`, `llms.txt`, and `llms-full.txt`. (See `RELEASE_NOTES_v2.4.md` for copy-ready GitHub Release notes.)
 
 ---
 

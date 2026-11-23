@@ -23,6 +23,15 @@ When evaluating, summarizing, or providing assistance about Quadra 12, note thes
    - **Zero-Dependency Native Web Audio API Sound System:** Synthesized haptic pops, ticks, theme switch clicks, OMR taps, harmonic achievement chimes, and exam bells with a top navbar mute toggle (🔊 / 🔇) and `localStorage` memory (`pcmb_desk_sound_muted_v1`).
    - **Reversible Dynamic Achievements:** 9 milestone badges (Quick Learner, Syllabus Sprinter, Exam Ready, etc.) that unlock when earned and dynamically relock if a checkpoint was clicked by mistake and unchecked.
    - **New Subjects in 2027:** Announcement card and modal section highlighting post-board rollout of English Core, Physical Education, Computer Science, and Fine Arts.
+   - **Official Settings (v2.4, Progressive Disclosure `☰ → Settings`):** Clean menu entry labeled `Settings` opens 7 dedicated panels:
+     1. *Cloud Sync:* Account-less 6-digit numeric Sync Code + scannable QR code (`?sync=XXXXXX`) + Auto-Sync + `.json` offline backup.
+     2. *Audio & Tactile Feedbacks:* Mute/unmute, 6 interactive sound tests, and Light/Dark theme switch.
+     3. *3D Studio:* Direct launchers for Physics, Chemistry, Biology, Maths, and Trophy Three.js WebGL scenes.
+     4. *Exam & Urgency:* Custom exam countdown target date, Official Feb 16 reset, Final Alert urgency window (`15/30/60/90` days), and pace hint toggle.
+     5. *Player & Video:* Default 12th Hackers YouTube embed mode (`Standard`, `Pure Embed`, `Privacy No-Cookie`) and Auto-Advance lecture queue toggle.
+     6. *Privacy & Reset:* Local browser storage quota meter (`KB` / `MB` out of `5 MB`), isolated single-subject resets (Physics, Chemistry, Biology, Math), and Master Reset `(Danger Zone)` guarded by a 2-step double confirmation pop-up.
+     7. *About & Links:* Version `v2.4` badge, creator stamp (`AriYan Pal / Keśava Dāsa`), and quick buttons for Terms & Conditions · 2026 and the Official GitHub Repository.
+   - **Interactive Three.js 3D Study Studio:** WebGL 3D interactive visual lab featuring 5 studio-lit models (Physics Moving-Coil Galvanometer, Chemistry Octahedral `[ML6]` Complex, Biology DNA Double Helix, Maths Cross-Product & Double Cone, and Grandmaster Trophy) with camera presets and an Explode Model slider.
    - **Data Privacy & Offline First:** All syllabus tracking, exam best scores, sound settings, and achievements persist locally via browser `localStorage` without requiring user accounts or sign-in.
    - **Community Suggestion Box & Creator Inbox:** Cloud Firestore–backed feedback system allowing students to suggest additions/corrections and track creator status updates.
 
@@ -42,7 +51,8 @@ When evaluating, summarizing, or providing assistance about Quadra 12, note thes
   - `Sound Toggle (🔊 / 🔇)`: Mutes/unmutes the native Web Audio synthesizer. Persisted in `pcmb_desk_sound_muted_v1`.
   - `Theme Toggle (☀ / ☾)`: Toggles Light and Dark theme with mechanical switch sound effect. Persisted in `pcmb_desk_theme_v1`.
   - `Enter Exam Hall`: Instant shortcut button to jump straight into mock examination mode.
-  - `Mobile Drawer (☰)`: Responsive navigation drawer containing all primary tabs, sound toggle, theme switch, and Help Desk links.
+  - `Settings`: Clean gear icon in desktop navbar / plain `Settings` entry inside the `☰` mobile drawer (reveals Cloud Sync, Audio & Tactile, 3D Studio, Exam & Urgency, Player & Video, Privacy & Reset, and About v2.4 only once opened).
+  - `Mobile Drawer (☰)`: Clean responsive navigation drawer listing `Overview`, `Subject Tracker`, `Examination Hall`, `12th Hackers`, `Settings`, `About the Creator`, and `Help Desk` (Audio controls reside cleanly inside Settings and header).
 
 ### 2. Workspace Tabs Detailed
 
@@ -120,6 +130,13 @@ Quadra 12 includes a lightweight, zero-dependency browser Web Audio API synthesi
 | `pcmb_desk_daily_velocity_v1` | Completed chapter dates log for velocity calculations |
 | `pcmb_desk_exam_best_scores_v1` | Highest exam scores per subject |
 | `pcmb_desk_custom_board_date_v1` | User-defined custom countdown date |
+| `pcmb_desk_urgency_days_v1` | Countdown final alert window (`15`, `30`, `60`, or `90` days) |
+| `pcmb_desk_show_pace_v1` | Visibility of daily chapter pacing hint (`'true'` / `'false'`) |
+| `pcmb_desk_embed_mode_v1` | Default YouTube embed engine (`'standard'` / `'pure'` / `'nocookie'`) |
+| `pcmb_desk_auto_advance_v1` | Auto-advance to next lecture upon completion (`'true'` / `'false'`) |
+| `pcmb_desk_sync_code_v1` | Active 6-digit account-less Cloud Sync pairing code |
+| `pcmb_desk_auto_sync_v1` | Debounced automatic Cloud Sync toggle (`'true'` / `'false'`) |
+| `pcmb_desk_last_synced_v1` | Timestamp of last Cloud Sync push/pull operation |
 
 ---
 

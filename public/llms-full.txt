@@ -7,7 +7,8 @@
 - **Summary Document:** https://ariyanpal1008.github.io/Quadra12/llms.txt
 - **Author:** AriYan Pal (Keśava Dāsa) (`ariyanpal090@gmail.com`)
 - **Copyright:** © 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)
-- **Framework & Runtime:** React 19, TypeScript 5, Vite 6, Tailwind CSS v4, Motion (Framer Motion), Native Web Audio API, Firebase Firestore & Authentication.
+- **Version:** `v2.4`
+- **Framework & Runtime:** React 19, TypeScript 5, Vite 6, Tailwind CSS v4, Motion (Framer Motion), Three.js (WebGL), QRCode, Native Web Audio API, Firebase Firestore & Authentication.
 
 ---
 
@@ -150,8 +151,35 @@ All core academic data is saved exclusively in the client's local browser `local
 - `pcmb_desk_daily_velocity_v1`
 - `pcmb_desk_exam_best_scores_v1`
 - `pcmb_desk_custom_board_date_v1`
+- `pcmb_desk_urgency_days_v1`
+- `pcmb_desk_show_pace_v1`
+- `pcmb_desk_embed_mode_v1`
+- `pcmb_desk_auto_advance_v1`
+- `pcmb_desk_sync_code_v1`
+- `pcmb_desk_auto_sync_v1`
+- `pcmb_desk_last_synced_v1`
 
-Cloud Firestore is reserved exclusively for optional, non-mandatory community suggestions in the Suggestion Box.
+### Official Settings (`SettingsModal.tsx` — v2.4) & Clean `☰` Menu
+Follows clean progressive disclosure: the `☰` mobile drawer lists only `Overview`, `Subject Tracker`, `Examination Hall`, `12th Hackers`, `Settings`, `About the Creator`, and `Help Desk` (with no redundant Sound Effects badge cluttering `☰`, and no pre-click Settings elaboration). Once `Settings` is tapped, it opens a two-pane Settings hub organized into 7 sections:
+1. **Cloud Sync:** Account-less 6-digit numeric Sync Code + scannable QR code (`?sync=XXXXXX`), Auto-Sync toggle, Push/Pull controls, and offline `.json` export/restore.
+2. **Audio & Tactile:** Native Web Audio API mute/unmute, 6 interactive micro-sound testers, and Light/Dark appearance switch.
+3. **3D Studio:** Interactive Three.js WebGL study models (Physics Galvanometer, Chemistry `[ML6]` Complex, Biology DNA Helix, Maths Cross-Product & Double Cone, and Grandmaster Trophy).
+4. **Exam & Urgency:** Custom board exam target date, Official Feb 16 rollover reset, urgency alert threshold (`15 / 30 / 60 / 90` days), and daily chapter pace hint toggle.
+5. **Player & Video:** Persistent default YouTube embed engine (`standard`, `pure`, `nocookie`) and auto-advance queue preference.
+6. **Privacy & Reset:** Live browser localStorage quota meter (`KB` / `MB` out of `5 MB`), isolated single-subject resets (Physics, Chemistry, Biology, Math), and Master Reset `(Danger Zone)` protected by a 2-step double-confirmation pop-up dialog.
+7. **About & Links:** `Version 2.4` stamp, creator credit (`AriYan Pal / Keśava Dāsa`), and quick launch buttons for **Terms & Conditions · 2026** and the **Official GitHub Repository**.
+
+### Cloud Sync & Firestore Collections
+- **`syncSessions/{syncCode}`**: Account-less device pairing using a strict 6-digit numeric code (`^[0-9]{6}$`) and QR code URL (`?sync=XXXXXX`). Stores synced `completedChapters`, `chapterTasks`, `watchedLectures`, `bestScores`, `dailyChapterLog`, `achievements`, and `customBoardDate`. Collection listing (`allow list: if false`) is strictly blocked in `firestore.rules` to prevent scraping.
+- **`changeRequests`**: Optional community feedback and creator moderation updates.
+
+### Interactive Three.js 3D Study Studio (`ThreeLabModal.tsx`)
+Provides studio-lit procedural WebGL 3D study models with `RoomEnvironment`, `OrbitControls`, preset camera angles, and an Explode Model slider:
+1. `physics`: Moving-Coil Galvanometer (horseshoe magnet, soft-iron core, copper coil, pointer scale).
+2. `chemistry`: `[ML6]` Octahedral Coordination Complex (metal center, 6 ligands, d-orbital lobes).
+3. `biology`: Double-Helix DNA (sugar-phosphate backbones, complementary base-pair rungs).
+4. `maths`: Vector Cross Product (`a × b`) & Double Cone conic sections.
+5. `trophy`: Quadra 12 Grandmaster Medallion 3D trophy.
 
 ---
 
