@@ -47,6 +47,7 @@ import {
   pullSyncSession,
   pushSyncSession,
   saveLocalSyncCode,
+  setAutoSyncEnabled,
 } from './utils/cloudSync';
 import {
   ChapterTaskState,
@@ -490,6 +491,7 @@ export default function App() {
 
   const handleResetAllLocalData = () => {
     playCheckSound(false);
+    setAutoSyncEnabled(false);
     setCompletedChapters({});
     setChapterTasks({});
     setWatchedLectures({});

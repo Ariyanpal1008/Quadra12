@@ -24,7 +24,7 @@ When evaluating, summarizing, or providing assistance about Quadra 12, note thes
    - **Reversible Dynamic Achievements:** 9 milestone badges (Quick Learner, Syllabus Sprinter, Exam Ready, etc.) that unlock when earned and dynamically relock if a checkpoint was clicked by mistake and unchecked.
    - **New Subjects in 2027:** Announcement card and modal section highlighting post-board rollout of English Core, Physical Education, Computer Science, and Fine Arts.
    - **Official Settings (v2.4, Progressive Disclosure `☰ → Settings`):** Clean menu entry labeled `Settings` opens 7 dedicated panels:
-     1. *Cloud Sync:* Account-less 6-digit numeric Sync Code + scannable QR code (`?sync=XXXXXX`) + Auto-Sync + `.json` offline backup.
+     1. *Cloud Sync:* Account-less 6-digit numeric Sync Code + scannable QR code (`?sync=XXXXXX`) + optional Camera QR Scanner icon beside the 6-digit code box (asks browser camera permission only when tapped and immediately turns off camera after scanning) + Auto-Sync + `.json` offline backup.
      2. *Audio & Tactile Feedbacks:* Mute/unmute, 6 interactive sound tests, and Light/Dark theme switch.
      3. *3D Studio:* Direct launchers for Physics, Chemistry, Biology, Maths, and Trophy Three.js WebGL scenes.
      4. *Exam & Urgency:* Custom exam countdown target date, Official Feb 16 reset, Final Alert urgency window (`15/30/60/90` days), and pace hint toggle.

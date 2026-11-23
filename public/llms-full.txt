@@ -8,7 +8,7 @@
 - **Author:** AriYan Pal (Keśava Dāsa) (`ariyanpal090@gmail.com`)
 - **Copyright:** © 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)
 - **Version:** `v2.4`
-- **Framework & Runtime:** React 19, TypeScript 5, Vite 6, Tailwind CSS v4, Motion (Framer Motion), Three.js (WebGL), QRCode, Native Web Audio API, Firebase Firestore & Authentication.
+- **Framework & Runtime:** React 19, TypeScript 5, Vite 6, Tailwind CSS v4, Motion (Framer Motion), Three.js (WebGL), QRCode, jsQR, Native Web Audio API, Firebase Firestore & Authentication.
 
 ---
 
@@ -161,7 +161,7 @@ All core academic data is saved exclusively in the client's local browser `local
 
 ### Official Settings (`SettingsModal.tsx` — v2.4) & Clean `☰` Menu
 Follows clean progressive disclosure: the `☰` mobile drawer lists only `Overview`, `Subject Tracker`, `Examination Hall`, `12th Hackers`, `Settings`, `About the Creator`, and `Help Desk` (with no redundant Sound Effects badge cluttering `☰`, and no pre-click Settings elaboration). Once `Settings` is tapped, it opens a two-pane Settings hub organized into 7 sections:
-1. **Cloud Sync:** Account-less 6-digit numeric Sync Code + scannable QR code (`?sync=XXXXXX`), Auto-Sync toggle, Push/Pull controls, and offline `.json` export/restore.
+1. **Cloud Sync:** Account-less 6-digit numeric Sync Code + scannable QR code (`?sync=XXXXXX`), an optional compact Camera icon beside the 6-digit input box (requests standard browser camera permission only when clicked, decodes QR via `jsQR`, auto-stops camera immediately, and falls back smoothly to manual 6-digit entry on cameraless PCs or if declined), Auto-Sync toggle, Push/Pull controls, and offline `.json` export/restore.
 2. **Audio & Tactile:** Native Web Audio API mute/unmute, 6 interactive micro-sound testers, and Light/Dark appearance switch.
 3. **3D Studio:** Interactive Three.js WebGL study models (Physics Galvanometer, Chemistry `[ML6]` Complex, Biology DNA Helix, Maths Cross-Product & Double Cone, and Grandmaster Trophy).
 4. **Exam & Urgency:** Custom board exam target date, Official Feb 16 rollover reset, urgency alert threshold (`15 / 30 / 60 / 90` days), and daily chapter pace hint toggle.

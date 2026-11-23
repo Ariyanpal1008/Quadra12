@@ -8,7 +8,7 @@
 ### 1. Official Settings (Clean `☰ → Settings` Flow)
 - Streamlined the `☰` three-lines menu (`Overview`, `Subject Tracker`, `Examination Hall`, `12th Hackers`, `Settings`, `About the Creator`, `Help Desk`), removing redundant controls before tapping Settings.
 - Organized Settings into 7 clear panels:
-  1. **Cloud Sync (No Sign-In Needed):** Cross-device pairing between laptops (6-digit numeric Sync Code) and phones (scannable `?sync=XXXXXX` QR Code) powered by Cloud Firestore (`syncSessions/{syncCode}`), plus Auto-Sync toggle and `.json` offline Export/Restore.
+  1. **Cloud Sync (No Sign-In Needed):** Cross-device pairing between laptops (6-digit numeric Sync Code) and phones (scannable `?sync=XXXXXX` QR Code) powered by Cloud Firestore (`syncSessions/{syncCode}`), plus a compact optional **Camera QR Scanner icon** right beside the 6-digit input box (requests browser camera permission only when clicked and shuts off the camera immediately after decoding), Auto-Sync toggle, and `.json` offline Export/Restore.
   2. **Audio & Tactile Feedbacks:** Mute/Unmute toggle, 6 interactive Web Audio micro-sound testers, and Light/Dark workspace theme switcher.
   3. **3D Studio:** Interactive Three.js WebGL models with OrbitControls, camera presets, and an Explode Model slider for Physics, Chemistry, Biology, Mathematics, and the Grandmaster Trophy.
   4. **Exam & Urgency:** Custom board exam countdown target date, Official Feb 16 reset, configurable **Urgency Alert Window** (`15 / 30 / 60 / 90 days`), and Daily Chapter Pace toggle.

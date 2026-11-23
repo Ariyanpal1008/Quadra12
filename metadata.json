@@ -1,6 +1,6 @@
 {
   "name": "Alder Architecture",
   "description": "Architectural design, mass-timber engineering, and residential pavilions in Zurich, Copenhagen, and Portland.",
-  "requestFramePermissions": [],
+  "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

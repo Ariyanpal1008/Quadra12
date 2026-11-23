@@ -1,5 +1,6 @@
-import {ChangeEvent, useEffect, useRef, useState} from 'react';
+import {ChangeEvent, useCallback, useEffect, useRef, useState} from 'react';
 import {AnimatePresence, motion} from 'motion/react';
+import jsQR from 'jsqr';
 import {
   AlertTriangle,
   Atom,
@@ -21,6 +22,7 @@ import {
   PlayCircle,
   RefreshCw,
   RotateCcw,
+  ScanQrCode,
   Settings,
   ShieldAlert,
   Sigma,
@@ -203,6 +205,41 @@ export function SettingsModal({
   const [masterResetAckChecked, setMasterResetAckChecked] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const scanCanvasRef = useRef<HTMLCanvasElement>(null);
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+  const scanRafRef = useRef<number | null>(null);
+
+  const [scannerOpen, setScannerOpen] = useState(false);
+  const [scannerError, setScannerError] = useState<string | null>(null);
+
+  const stopQrScanner = useCallback(() => {
+    if (scanRafRef.current !== null) {
+      window.cancelAnimationFrame(scanRafRef.current);
+      scanRafRef.current = null;
+    }
+    if (mediaStreamRef.current) {
+      mediaStreamRef.current.getTracks().forEach((track) => track.stop());
+      mediaStreamRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    setScannerOpen(false);
+  }, []);
+
+  useEffect(() => {
+    if (!isOpen || activeTab !== 'sync') {
+      stopQrScanner();
+      setScannerError(null);
+    }
+  }, [isOpen, activeTab, stopQrScanner]);
+
+  useEffect(() => {
+    return () => {
+      stopQrScanner();
+    };
+  }, [stopQrScanner]);
 
   useEffect(() => {
     if (isOpen) {
@@ -212,6 +249,7 @@ export function SettingsModal({
       setMasterResetStep(0);
       setMasterResetAckChecked(false);
       setSyncStatus({type: 'idle', message: ''});
+      setAutoSync(getAutoSyncEnabled());
       try {
         const storedUrgency = Number(
           window.localStorage.getItem(STORAGE_URGENCY_DAYS_KEY),
@@ -245,7 +283,9 @@ export function SettingsModal({
     if (!isOpen) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (masterResetStep > 0) {
+        if (scannerOpen) {
+          stopQrScanner();
+        } else if (masterResetStep > 0) {
           setMasterResetStep(0);
           setMasterResetAckChecked(false);
         } else {
@@ -291,41 +331,155 @@ export function SettingsModal({
     }
   };
 
-  const handlePullFromCode = async () => {
-    const clean = pairCodeInput.replace(/\D/g, '');
-    if (!isValidSixDigitCode(clean)) {
-      setSyncStatus({
-        type: 'error',
-        message: 'Please enter a valid 6-digit sync code (e.g. 482917).',
-      });
-      return;
-    }
-    playOmrBubbleSound();
-    setSyncStatus({type: 'loading', message: `Searching cloud for ${clean}...`});
-    try {
-      const pulled = await pullSyncSession(clean);
-      if (!pulled) {
+  const handlePullFromCode = useCallback(
+    async (explicitCode?: string) => {
+      const clean = (explicitCode ?? pairCodeInput).replace(/\D/g, '');
+      if (!isValidSixDigitCode(clean)) {
         setSyncStatus({
           type: 'error',
-          message: `No cloud snapshot found for code ${formatSyncCodeDisplay(clean)}. Push from your first device first.`,
+          message: 'Please enter a valid 6-digit sync code (e.g. 482917).',
         });
         return;
       }
-      saveLocalSyncCode(clean);
-      setSyncCode(clean);
-      setPairCodeInput('');
-      setLastSyncedAt(pulled.updatedAtIso);
-      onApplySyncedState(pulled.state);
-      playAchievementChime();
-      setSyncStatus({
-        type: 'success',
-        message: `Device paired! Loaded study progress from code ${formatSyncCodeDisplay(clean)}.`,
-      });
+      playOmrBubbleSound();
+      setSyncStatus({type: 'loading', message: `Searching cloud for ${clean}...`});
+      try {
+        const pulled = await pullSyncSession(clean);
+        if (!pulled) {
+          setSyncStatus({
+            type: 'error',
+            message: `No cloud snapshot found for code ${formatSyncCodeDisplay(clean)}. Push from your first device first.`,
+          });
+          return;
+        }
+        saveLocalSyncCode(clean);
+        setSyncCode(clean);
+        setPairCodeInput('');
+        setLastSyncedAt(pulled.updatedAtIso);
+        onApplySyncedState(pulled.state);
+        playAchievementChime();
+        setSyncStatus({
+          type: 'success',
+          message: `Device paired! Loaded study progress from code ${formatSyncCodeDisplay(clean)}.`,
+        });
+      } catch {
+        setSyncStatus({
+          type: 'error',
+          message: 'Cloud sync fetch failed. Please check internet connection.',
+        });
+      }
+    },
+    [onApplySyncedState, pairCodeInput],
+  );
+
+  const extractSixDigitCodeFromQr = (rawText: string): string | null => {
+    const trimmed = rawText.trim();
+    if (isValidSixDigitCode(trimmed)) return trimmed;
+    const paramMatch = trimmed.match(/[?&]sync=(\d{6})(?:&|#|$)/i);
+    if (paramMatch?.[1]) return paramMatch[1];
+    try {
+      const url = new URL(trimmed);
+      const q = url.searchParams.get('sync')?.trim() || '';
+      if (isValidSixDigitCode(q)) return q;
     } catch {
-      setSyncStatus({
-        type: 'error',
-        message: 'Cloud sync fetch failed. Please check internet connection.',
+      // Not a URL
+    }
+    return null;
+  };
+
+  const handleOpenQrScanner = async () => {
+    playOmrBubbleSound();
+    if (scannerOpen) {
+      stopQrScanner();
+      return;
+    }
+    setScannerError(null);
+    if (
+      typeof navigator === 'undefined' ||
+      !navigator.mediaDevices ||
+      !navigator.mediaDevices.getUserMedia
+    ) {
+      setScannerError(
+        'Camera is unavailable on this browser or device. Please type the 6-digit code instead.',
+      );
+      return;
+    }
+
+    try {
+      let stream: MediaStream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: {facingMode: {ideal: 'environment'}},
+          audio: false,
+        });
+      } catch {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: true,
+          audio: false,
+        });
+      }
+      mediaStreamRef.current = stream;
+      setScannerOpen(true);
+
+      requestAnimationFrame(() => {
+        const video = videoRef.current;
+        if (!video) return;
+        video.srcObject = stream;
+        void video.play().catch(() => {
+          // Autoplay handled silently via playsInline + muted
+        });
+
+        let lastSampleTs = 0;
+        const scanTick = (ts: number) => {
+          if (!mediaStreamRef.current) return;
+          if (
+            video.readyState >= HTMLMediaElement.HAVE_ENOUGH_DATA &&
+            video.videoWidth > 0 &&
+            ts - lastSampleTs > 130
+          ) {
+            lastSampleTs = ts;
+            const canvas = scanCanvasRef.current;
+            if (canvas) {
+              const w = Math.min(video.videoWidth, 640);
+              const h = Math.round((video.videoHeight / video.videoWidth) * w);
+              if (canvas.width !== w) canvas.width = w;
+              if (canvas.height !== h) canvas.height = h;
+              const ctx = canvas.getContext('2d', {willReadFrequently: true});
+              if (ctx) {
+                ctx.drawImage(video, 0, 0, w, h);
+                const imgData = ctx.getImageData(0, 0, w, h);
+                const decoded = jsQR(imgData.data, w, h, {
+                  inversionAttempts: 'dontInvert',
+                });
+                if (decoded?.data) {
+                  const foundCode = extractSixDigitCodeFromQr(decoded.data);
+                  if (foundCode) {
+                    stopQrScanner();
+                    setPairCodeInput(foundCode);
+                    void handlePullFromCode(foundCode);
+                    return;
+                  }
+                }
+              }
+            }
+          }
+          scanRafRef.current = window.requestAnimationFrame(scanTick);
+        };
+
+        scanRafRef.current = window.requestAnimationFrame(scanTick);
       });
+    } catch (err) {
+      stopQrScanner();
+      const name = err instanceof DOMException ? err.name : '';
+      if (name === 'NotAllowedError' || name === 'PermissionDeniedError') {
+        setScannerError(
+          'Camera permission was declined. Enter the 6-digit code manually or allow camera access when prompted.',
+        );
+      } else {
+        setScannerError(
+          'Could not access a camera on this device. Please type the 6-digit code instead.',
+        );
+      }
     }
   };
 
@@ -765,23 +919,46 @@ export function SettingsModal({
                         camera) to pull its saved progress here.
                       </p>
                       <div className="flex flex-wrap items-center gap-2.5">
-                        <input
-                          type="text"
-                          inputMode="numeric"
-                          maxLength={6}
-                          value={pairCodeInput}
-                          onChange={(e) =>
-                            setPairCodeInput(
-                              e.target.value.replace(/\D/g, '').slice(0, 6),
-                            )
-                          }
-                          placeholder="Enter 6-digit code"
-                          aria-label="Enter 6-digit sync code"
-                          className="w-48 px-3.5 py-2 rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#161412] font-mono text-sm tracking-[0.18em] text-[#1E1B18] dark:text-[#F5F2EB] focus:outline-2 focus:outline-[#A64B33]"
-                        />
+                        <div className="inline-flex items-center gap-1.5">
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            maxLength={6}
+                            value={pairCodeInput}
+                            onChange={(e) =>
+                              setPairCodeInput(
+                                e.target.value.replace(/\D/g, '').slice(0, 6),
+                              )
+                            }
+                            placeholder="Enter 6-digit code"
+                            aria-label="Enter 6-digit sync code"
+                            className="w-44 sm:w-48 px-3.5 py-2 rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#161412] font-mono text-sm tracking-[0.18em] text-[#1E1B18] dark:text-[#F5F2EB] focus:outline-2 focus:outline-[#A64B33]"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => void handleOpenQrScanner()}
+                            aria-label={
+                              scannerOpen
+                                ? 'Close QR Camera Scanner'
+                                : 'Scan QR Code with Camera'
+                            }
+                            title={
+                              scannerOpen
+                                ? 'Close QR Camera Scanner'
+                                : 'Scan QR Code with Camera'
+                            }
+                            className={`inline-flex items-center justify-center w-9 h-9 rounded-lg border transition-colors shrink-0 ${
+                              scannerOpen
+                                ? 'bg-[#A64B33] border-[#A64B33] text-white'
+                                : 'bg-[#F5F2EB] dark:bg-[#24201C] border-[#DDD6C7] dark:border-[#332E28] text-[#575048] dark:text-[#CBC3B6] hover:border-[#A64B33] hover:text-[#A64B33] dark:hover:text-[#D4785E]'
+                            }`}
+                          >
+                            <ScanQrCode className="w-4 h-4" />
+                          </button>
+                        </div>
                         <button
                           type="button"
-                          onClick={handlePullFromCode}
+                          onClick={() => void handlePullFromCode()}
                           disabled={syncStatus.type === 'loading'}
                           className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[#A64B33] hover:bg-[#8E3D27] text-[#FAF8F3] text-xs font-medium transition-colors"
                         >
@@ -789,6 +966,43 @@ export function SettingsModal({
                           <span>Pair &amp; Load Progress</span>
                         </button>
                       </div>
+
+                      {scannerError && (
+                        <p className="text-xs text-[#9E3223] dark:text-[#F29F8F] bg-[#FDF0ED] dark:bg-[#2D1A17] border border-[#D98270] rounded-lg px-3 py-2">
+                          {scannerError}
+                        </p>
+                      )}
+
+                      {scannerOpen && (
+                        <div className="mt-2 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#161412] p-3 space-y-2.5 max-w-sm">
+                          <div className="flex items-center justify-between text-xs text-[#F5F2EB]">
+                            <span className="font-medium">
+                              Point camera at Quadra 12 QR Code
+                            </span>
+                            <button
+                              type="button"
+                              onClick={stopQrScanner}
+                              className="inline-flex items-center gap-1 px-2 py-1 rounded bg-[#24201C] text-[11px] text-[#CBC3B6] hover:text-white"
+                            >
+                              <X className="w-3 h-3" />
+                              <span>Stop</span>
+                            </button>
+                          </div>
+                          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-black">
+                            <video
+                              ref={videoRef}
+                              playsInline
+                              muted
+                              className="w-full h-full object-cover"
+                            />
+                            <div
+                              aria-hidden="true"
+                              className="pointer-events-none absolute inset-6 border-2 border-[#D4785E]/80 rounded-lg"
+                            />
+                          </div>
+                          <canvas ref={scanCanvasRef} className="hidden" />
+                        </div>
+                      )}
                     </div>
 
                     {/* Offline File Backup */}
@@ -1498,6 +1712,7 @@ export function SettingsModal({
                             disabled={!masterResetAckChecked}
                             onClick={() => {
                               onResetAllData();
+                              setAutoSync(false);
                               setCustomDateDraft('2027-02-16');
                               setUrgencyDays(30);
                               setShowPaceHint(true);

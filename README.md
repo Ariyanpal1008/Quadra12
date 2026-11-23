@@ -112,7 +112,7 @@ I am **AriYan Pal (Keśava Dāsa)** (`ariyanpal090@gmail.com`), a Class 12 stude
 
 ### 9. Official Settings (v2.4), Account-less Cloud Sync & Three.js 3D Study Studio
 - **Clean `☰ → Settings` Entry:** The `☰` three-lines mobile menu contains `Overview`, `Subject Tracker`, `Examination Hall`, `12th Hackers`, **`Settings`**, **`About the Creator`**, and **`Help Desk`**—kept clutter-free with no redundant Sound Effects row inside `☰`. Tapping **Settings** opens all 7 organized panels:
-  1. **Cloud Sync:** Transfer progress between laptops (using a **6-digit numeric Sync Code**) and phones (using a **scannable QR code** `?sync=XXXXXX`) without signing in, plus Auto-Sync and `.json` offline backup export/restore.
+  1. **Cloud Sync:** Transfer progress between laptops (using a **6-digit numeric Sync Code**) and phones (using a **scannable QR code** `?sync=XXXXXX`) without signing in. Includes an optional small **Camera QR Scanner icon** right beside the 6-digit code input (requests browser camera permission *"Only this time / While using"* strictly on click, decodes with `jsQR`, and shuts off the camera immediately after pairing), plus Auto-Sync and `.json` offline backup export/restore.
   2. **Audio & Tactile:** Sound mute/unmute toggle, 6 interactive Web Audio micro-sound test buttons, and Light/Dark appearance switch.
   3. **3D Studio:** Direct launchers for interactive Three.js WebGL study models across **Physics** (Moving-Coil Galvanometer), **Chemistry** (`[ML₆]` Octahedral Complex), **Biology** (DNA Double Helix), **Mathematics** (`a × b` Cross Product & Double Cone), and the **Grandmaster Achievement Trophy** (with OrbitControls, camera presets, and Explode Model slider).
   4. **Exam & Urgency:** Custom board exam countdown date selector, Official Feb 16 reset, **Urgency Alert Window** (`15 / 30 / 60 / 90 days`), and Daily Chapter Pace Hint toggle.
@@ -218,7 +218,7 @@ All personal study records, timestamps, and exam scores are preserved locally in
 
 - **Framework:** React 19, TypeScript
 - **Bundler:** Vite 8 (configured with `base: './'` for GitHub Pages)
-- **3D & QR Pairing:** Three.js (`WebGLRenderer`, `OrbitControls`, `RoomEnvironment`) & `qrcode`
+- **3D & QR Pairing:** Three.js (`WebGLRenderer`, `OrbitControls`, `RoomEnvironment`), `qrcode`, & `jsqr` (in-app camera QR scanner)
 - **Styling:** Tailwind CSS v4 (`@tailwindcss/vite`)
 - **Animations:** Motion (`motion/react`) with custom Apple spring presets
 - **Icons:** Lucide Icons & official Octicons GitHub SVG
@@ -231,7 +231,7 @@ All personal study records, timestamps, and exam scores are preserved locally in
 ## Release v2.4 Highlights
 
 - **Official Settings (`v2.4`):** Accessible via a clean `Settings` trigger inside `☰`, desktop header, and footer across 7 dedicated panels (**Cloud Sync**, **Audio & Tactile**, **3D Studio**, **Exam & Urgency**, **Player & Video**, **Privacy & Reset**, and **About & Links**).
-- **Account-less Cloud Sync:** Sync study progress between laptops and mobiles without login using a **6-digit numeric Sync Code** or a live scannable **QR Code** (`?sync=XXXXXX`), plus **Auto-Sync** and offline `.json` backup export/restore.
+- **Account-less Cloud Sync & Optional Camera QR Scanner:** Sync study progress between laptops and mobiles without login using a **6-digit numeric Sync Code**, a live scannable **QR Code** (`?sync=XXXXXX`), or the compact **Camera QR Scanner icon** right beside the 6-digit code box (on-demand browser camera prompt + instant auto-pair), plus **Auto-Sync** and offline `.json` backup export/restore.
 - **Three.js 3D Study Studio:** Interactive WebGL models for **Physics**, **Chemistry**, **Biology**, **Maths**, and the **Grandmaster Trophy** with orbit/zoom, camera presets, and an Explode Model slider.
 - **Safety & Privacy Controls:** Local storage quota meter (`KB` / `MB` out of `5 MB`), isolated single-subject resets (including clearing that subject's best exam score cleanly), and **Master Reset (Danger Zone)** with a 2-step double-confirmation pop-up.
 - **AI Discoverability & Clean Menu:** Removed redundant `Sound Effects` row from `☰`, kept `About the Creator` distinct from Settings `About & Links`, and synced `README.md`, `index.html`, `llms.txt`, and `llms-full.txt`. (See `RELEASE_NOTES_v2.4.md` for copy-ready GitHub Release notes.)
