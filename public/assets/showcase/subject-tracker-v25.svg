@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="440" viewBox="0 0 760 440" role="img" aria-label="Quadra 12 Subject Tracker 50 Chapters and SVG Diagrams Preview">
+  <rect width="760" height="440" rx="16" fill="#F5F2EB"/>
+  <rect x="16" y="16" width="728" height="408" rx="14" fill="#FAF8F3" stroke="#DDD6C7" stroke-width="1.5"/>
+
+  <text x="38" y="48" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="700" letter-spacing="1" fill="#A64B33">SUBJECT TRACKER · 50 NCERT CHAPTERS × 4 STAGES</text>
+  <text x="38" y="76" font-family="Arial, Helvetica, sans-serif" font-size="18.5" font-weight="700" fill="#1E1B18">Physics (042) · Chemistry (043) · Biology (044) · Maths (041)</text>
+
+  <!-- Bulk 4-Stage Bar -->
+  <rect x="38" y="100" width="162" height="38" rx="8" fill="#E8F0EA" stroke="#3D6B4F"/>
+  <text x="119" y="123" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="700" fill="#23422F">✓ Lecture (14/14)</text>
+
+  <rect x="212" y="100" width="162" height="38" rx="8" fill="#F5F2EB" stroke="#DDD6C7"/>
+  <text x="293" y="123" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="700" fill="#1E1B18">Practice (9/14)</text>
+
+  <rect x="386" y="100" width="162" height="38" rx="8" fill="#F5F2EB" stroke="#DDD6C7"/>
+  <text x="467" y="123" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="700" fill="#1E1B18">NCERT (11/14)</text>
+
+  <rect x="560" y="100" width="162" height="38" rx="8" fill="#F5F2EB" stroke="#DDD6C7"/>
+  <text x="641" y="123" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="700" fill="#1E1B18">PYQ Done (7/14)</text>
+
+  <!-- Chapter Card with Bespoke Diagram -->
+  <rect x="38" y="158" width="424" height="238" rx="12" fill="#F5F2EB" stroke="#DDD6C7"/>
+  <text x="58" y="186" font-family="'Courier New', monospace" font-size="10.5" font-weight="700" fill="#787066">CH 01 · ELECTROSTATICS · 8 MARKS</text>
+  <text x="58" y="210" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#1E1B18">Electric Charges and Fields</text>
+
+  <rect x="58" y="232" width="384" height="32" rx="7" fill="#E8F0EA" stroke="#3D6B4F"/>
+  <text x="74" y="252" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700" fill="#23422F">✓  Lecture done · Synced with 12th Hackers</text>
+
+  <rect x="58" y="272" width="384" height="32" rx="7" fill="#E8F0EA" stroke="#3D6B4F"/>
+  <text x="74" y="292" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700" fill="#23422F">✓  Practice done · Numericals verified</text>
+
+  <rect x="58" y="312" width="384" height="32" rx="7" fill="#E8F0EA" stroke="#3D6B4F"/>
+  <text x="74" y="332" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700" fill="#23422F">✓  NCERT + PYQ done · Chapter Complete</text>
+
+  <text x="58" y="376" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700" fill="#A64B33">Complete 3 ch/day → Unlocks Quick Learner ⚡</text>
+
+  <!-- Bespoke Diagram Plate -->
+  <rect x="480" y="158" width="242" height="238" rx="12" fill="#1E1B18" stroke="#332E28"/>
+  <text x="500" y="186" font-family="'Courier New', monospace" font-size="10" font-weight="700" fill="#D4785E">50 CUSTOM SVG PLATES</text>
+  <circle cx="556" cy="264" r="24" fill="none" stroke="#D4785E" stroke-width="2"/>
+  <circle cx="644" cy="264" r="24" fill="none" stroke="#7AB88F" stroke-width="2"/>
+  <path d="M556 264 C585 220, 615 220, 644 264" fill="none" stroke="#F5F2EB" stroke-width="1.8" stroke-dasharray="4 3"/>
+  <path d="M556 264 C585 308, 615 308, 644 264" fill="none" stroke="#F5F2EB" stroke-width="1.8"/>
+  <text x="556" y="269" text-anchor="middle" font-family="'Courier New', monospace" font-size="14" font-weight="700" fill="#D4785E">+q</text>
+  <text x="644" y="269" text-anchor="middle" font-family="'Courier New', monospace" font-size="14" font-weight="700" fill="#7AB88F">-q</text>
+  <rect x="514" y="346" width="174" height="32" rx="8" fill="#F5F2EB"/>
+  <text x="601" y="366" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700" fill="#1E1B18">Try Subject Tracker →</text>
+</svg>

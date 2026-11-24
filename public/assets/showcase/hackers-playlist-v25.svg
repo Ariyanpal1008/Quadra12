@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="440" viewBox="0 0 760 440" role="img" aria-label="Quadra 12 12th Hackers Playlist and Help Desk Suggestion Box Preview">
+  <rect width="760" height="440" rx="16" fill="#F5F2EB"/>
+  <rect x="16" y="16" width="728" height="408" rx="14" fill="#FAF8F3" stroke="#DDD6C7" stroke-width="1.5"/>
+
+  <text x="38" y="48" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="700" letter-spacing="1" fill="#A64B33">12TH HACKERS · 50 ONE-SHOT LECTURES &amp; HELP DESK</text>
+  <text x="38" y="76" font-family="Arial, Helvetica, sans-serif" font-size="18.5" font-weight="700" fill="#1E1B18">One-Shot Revision · 3 Embeds · Suggestion Box</text>
+
+  <!-- Video Player Frame -->
+  <rect x="38" y="102" width="422" height="232" rx="12" fill="#1E1B18" stroke="#332E28"/>
+  <circle cx="249" cy="198" r="30" fill="#A64B33"/>
+  <polygon points="241,184 241,212 265,198" fill="#F5F2EB"/>
+  <text x="249" y="250" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#F5F2EB">Electrostatics One-Shot · Synced to Lecture Done</text>
+  <rect x="54" y="286" width="390" height="32" rx="6" fill="#24201C" stroke="#332E28"/>
+  <text x="249" y="306" text-anchor="middle" font-family="'Courier New', monospace" font-size="9.5" fill="#CBC3B6">Standard | Pure | No-Cookie · Mark Done &amp; Next</text>
+
+  <!-- Playlist & Formulas Column -->
+  <rect x="476" y="102" width="246" height="232" rx="12" fill="#F5F2EB" stroke="#DDD6C7"/>
+  <text x="492" y="128" font-family="'Courier New', monospace" font-size="9.5" font-weight="700" fill="#A64B33">UNIT NOTES &amp; QUEUE (50)</text>
+
+  <rect x="492" y="142" width="214" height="44" rx="8" fill="#FAF8F3" stroke="#A64B33"/>
+  <text x="504" y="162" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700" fill="#1E1B18">01. Electric Charges &amp; Fields</text>
+  <text x="504" y="178" font-family="Arial, Helvetica, sans-serif" font-size="9.5" font-weight="700" fill="#3D6B4F">✓ Synced to Subject Tracker</text>
+
+  <rect x="492" y="196" width="214" height="44" rx="8" fill="#FAF8F3" stroke="#DDD6C7"/>
+  <text x="504" y="216" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700" fill="#1E1B18">02. Potential &amp; Capacitance</text>
+  <text x="504" y="232" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#787066">Gauss Law · Dipole · Energy</text>
+
+  <rect x="492" y="250" width="214" height="68" rx="8" fill="#1E1B18"/>
+  <text x="504" y="272" font-family="Arial, Helvetica, sans-serif" font-size="10.5" font-weight="700" fill="#E6B17A">Help Desk &amp; Suggestion Box</text>
+  <text x="504" y="290" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#CBC3B6">Interactive Tour · Creator Inbox</text>
+  <text x="504" y="305" font-family="Arial, Helvetica, sans-serif" font-size="9.5" fill="#CBC3B6">Cloud Feedback + Email Fallback</text>
+
+  <!-- Footer CTA bar -->
+  <rect x="38" y="350" width="684" height="50" rx="10" fill="#1E1B18"/>
+  <text x="58" y="379" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#F5F2EB">Open Quadra 12 Live — Interactive Guided Tour in Help Desk</text>
+  <rect x="568" y="359" width="138" height="32" rx="7" fill="#A64B33"/>
+  <text x="637" y="379" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700" fill="#F5F2EB">Launch App →</text>
+</svg>

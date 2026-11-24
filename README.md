@@ -25,12 +25,12 @@ Quadra 12 is a calm, distraction-free Class 12 CBSE PCMB (Physics 042, Chemistry
 
 | Overview: Live Board Clock & Achievements | Subject Tracker: 50 Chapters & SVG Plates |
 | :---: | :---: |
-| [![Quadra 12 Live Board Countdown Clock and My Achievements Preview](public/assets/showcase/overview-clock-achievements.svg)](https://ariyanpal1008.github.io/Quadra12/) | [![Quadra 12 Subject Tracker 50 Chapters and SVG Diagrams Preview](public/assets/showcase/subject-tracker.svg)](https://ariyanpal1008.github.io/Quadra12/) |
+| [![Quadra 12 Live Board Countdown Clock and My Achievements Preview](public/assets/showcase/overview-clock-achievements-v25.svg)](https://ariyanpal1008.github.io/Quadra12/) | [![Quadra 12 Subject Tracker 50 Chapters and SVG Diagrams Preview](public/assets/showcase/subject-tracker-v25.svg)](https://ariyanpal1008.github.io/Quadra12/) |
 | **Live 1s Chronometer** (`16 Feb · 10:30 AM IST`, auto `2027 → 2028` rollover) + **My Achievements** (`Quick Learner`, `Exam Ready`). | **50 NCERT Chapters × 4 Stages** (`Lecture`, `Practice`, `NCERT`, `PYQ`) + 50 bespoke interactive vector study plates. |
 
 | Examination Hall: Original Papers, PDFs & AI Examiner | 12th Hackers & Help Desk Interactive Tour |
 | :---: | :---: |
-| [![Quadra 12 Examination Hall v2.5 Original Mock Papers, Synced PDFs, SVG Diagrams and AI Examiner Preview](public/assets/showcase/exam-hall.svg)](https://ariyanpal1008.github.io/Quadra12/) | [![Quadra 12 12th Hackers Playlist and Help Desk Suggestion Box Preview](public/assets/showcase/hackers-playlist.svg)](https://ariyanpal1008.github.io/Quadra12/) |
+| [![Quadra 12 Examination Hall v2.5 Original Mock Papers, Synced PDFs, SVG Diagrams and AI Examiner Preview](public/assets/showcase/exam-hall-v25.svg)](https://ariyanpal1008.github.io/Quadra12/) | [![Quadra 12 12th Hackers Playlist and Help Desk Suggestion Box Preview](public/assets/showcase/hackers-playlist-v25.svg)](https://ariyanpal1008.github.io/Quadra12/) |
 | **Independently Authored PCMB Papers**, **15-Min Reading Timer**, **Synced A4 PDF Downloads**, **Vector SVG Diagrams**, **Smart Camera/Upload Inputs**, and **Gemini 3.8 AI Step-Marking**. | **50 One-Shot Lectures** synced to `Lecture done`, 3 player embed modes, **Interactive Tour**, & Cloud Suggestion Box. |
 
 <details>
@@ -140,11 +140,12 @@ Quadra12/
 ├── .github/workflows/deploy.yml           # Automated GitHub Pages CI/CD workflow (Node 22)
 ├── public/
 │   ├── assets/
-│   │   ├── aistudio/                      # Official CBSE SQP PDFs & vector brand assets
-│   │   └── showcase/                      # Interactive SVG preview cards for README
+│   │   ├── aistudio/                      # Vector brand assets & media resources
+│   │   └── showcase/                      # Zero-overflow v2.5 SVG preview cards for README
 │   ├── favicon.svg                        # Scalable SVG brand emblem
 │   ├── google5e9a994eb74ab809.html        # Google Search Console verification token
 │   ├── llms.txt                           # Structured summary for AI assistants & search indexers
+│   ├── llms-full.txt                      # Full structured knowledge base for LLMs
 │   ├── robots.txt                         # Search engine crawler instructions
 │   └── sitemap.xml                        # XML sitemap for SEO discovery
 ├── src/
@@ -222,6 +223,8 @@ All personal study records, timestamps, and exam scores are preserved locally in
 | `pcmb_desk_sync_code_v1` | `string` (`6 digits`) | Active account-less Cloud Sync pairing code |
 | `pcmb_desk_auto_sync_v1` | `'true' \| 'false'` | Debounced automatic Cloud Sync toggle |
 | `pcmb_desk_last_synced_v1` | `string` (ISO timestamp) | Timestamp of last successful Cloud Sync operation |
+| `sectionBE_text_draft` | `Record<string, string>` | Temporary active exam typed drafts (auto-wiped immediately after AI grading) |
+| `IndexedDB: SectionBE_PhotoStorage` | Compressed JPEG Blobs | Temporary Sections B–E photo uploads (zero server storage, auto-wiped post-grading) |
 
 ### 2. Cloud Firestore (`syncSessions` & `changeRequests` Collections)
 - **`syncSessions/{syncCode}`:** Account-less cross-device synchronization keyed by a 6-digit numeric code (and QR code URL `?sync=XXXXXX`). Collection listing (`allow list: if false`) is strictly blocked so user sync sessions cannot be enumerated or scraped.
