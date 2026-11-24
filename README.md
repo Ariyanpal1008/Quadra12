@@ -137,15 +137,21 @@ I am **AriYan Pal (Keśava Dāsa)** (`ariyanpal090@gmail.com`), a Class 12 stude
 
 ```text
 Quadra12/
-├── .github/workflows/deploy.yml           # Automated GitHub Pages CI/CD workflow (Node 22)
+├── .github/workflows/
+│   ├── android-apk.yml                    # Free Capacitor + Gradle Android APK builder
+│   └── deploy.yml                         # Automated GitHub Pages CI/CD workflow (Node 22)
 ├── public/
 │   ├── assets/
 │   │   ├── aistudio/                      # Vector brand assets & media resources
 │   │   └── showcase/                      # Zero-overflow v2.5 SVG preview cards for README
+│   ├── apple-touch-icon.png               # 180×180 iOS Safari home screen icon
 │   ├── favicon.svg                        # Scalable SVG brand emblem
 │   ├── google5e9a994eb74ab809.html        # Google Search Console verification token
 │   ├── llms.txt                           # Structured summary for AI assistants & search indexers
 │   ├── llms-full.txt                      # Full structured knowledge base for LLMs
+│   ├── pwa-192x192.png                    # Standard 192×192 PWA icon
+│   ├── pwa-512x512.png                    # Standard 512×512 PWA icon
+│   ├── pwa-maskable-512x512.png           # Padded adaptive maskable Android PWA icon
 │   ├── robots.txt                         # Search engine crawler instructions
 │   └── sitemap.xml                        # XML sitemap for SEO discovery
 ├── src/
@@ -251,7 +257,7 @@ All personal study records, timestamps, and exam scores are preserved locally in
 - **Animations:** Motion (`motion/react`) with custom Apple spring presets
 - **Icons:** Lucide Icons & official Octicons GitHub SVG
 - **Backend / Authentication:** Firebase Authentication (Google Sign-In) & Cloud Firestore
-- **Deployment:** GitHub Pages via GitHub Actions (`.github/workflows/deploy.yml`)
+- **Deployment & App Packaging:** GitHub Pages via `.github/workflows/deploy.yml`, Offline PWA via `vite-plugin-pwa`, & Free Android `.apk` via `.github/workflows/android-apk.yml` (Capacitor + Gradle) or PWABuilder
 - **SEO & Discoverability:** Canonical links, OpenGraph, Twitter Cards, Schema.org `WebApplication` JSON-LD, `llms.txt`, `llms-full.txt`, `robots.txt`, and `sitemap.xml`
 
 ---

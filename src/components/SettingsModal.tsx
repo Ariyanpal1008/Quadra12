@@ -63,6 +63,7 @@ import {
 } from '../utils/soundEffects';
 import {SUBJECTS, SubjectId} from '../data/pcmbData';
 import {ThreeSceneId} from './ThreeLabModal';
+import {PWAInstallButton} from './PWAInstallButton';
 import {EmbedPlayerMode} from './YouTubeSyncPlayer';
 
 export type SettingsTab =
@@ -1603,6 +1604,33 @@ export function SettingsModal({
                           />
                           <span>Official GitHub Repository</span>
                           <ExternalLink className="w-3.5 h-3.5 opacity-80" />
+                        </a>
+                      </div>
+                    </div>
+
+                    {/* Install App (PWA) & Free Android APK */}
+                    <div className="rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] p-5 space-y-3">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <h4 className="text-sm font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+                          Install App (Free Offline PWA &amp; Android APK)
+                        </h4>
+                        <span className="px-2 py-0.5 rounded-full bg-[#E8F0EA] dark:bg-[#1C2E22] text-[#23422F] dark:text-[#B6DFC3] text-[10px] font-mono font-semibold">
+                          100% Free ($0)
+                        </span>
+                      </div>
+                      <p className="text-xs text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
+                        Install Quadra 12 straight onto your Home Screen (Android, iPhone/iPad, Windows, Mac) for offline study access—or download a free Android <code className="font-mono">.apk</code> built directly via GitHub Actions or PWABuilder.
+                      </p>
+                      <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                        <PWAInstallButton variant="card" />
+                        <a
+                          href="https://github.com/Ariyanpal1008/Quadra12/actions/workflows/android-apk.yml"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] text-xs font-medium text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] transition-colors"
+                        >
+                          <span>GitHub Android APK Builder</span>
+                          <ExternalLink className="w-3.5 h-3.5 opacity-75" />
                         </a>
                       </div>
                     </div>

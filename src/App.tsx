@@ -68,6 +68,7 @@ import {
 import {TermsModal} from './components/TermsModal';
 import {SettingsModal, SettingsTab} from './components/SettingsModal';
 import {ThreeLabModal, ThreeSceneId} from './components/ThreeLabModal';
+import {OfflineIndicator, PWAInstallButton} from './components/PWAInstallButton';
 import {ResilientImage} from './components/ResilientImage';
 import {BoardCountdownClock} from './components/BoardCountdownClock';
 import {
@@ -1108,6 +1109,8 @@ export default function App() {
                 <Settings className="w-4 h-4 text-[#575048] dark:text-[#CBC3B6]" aria-hidden="true" />
               </motion.button>
 
+              <PWAInstallButton variant="navbar" />
+
               <motion.button
                 type="button"
                 whileHover={{y: -1}}
@@ -1162,6 +1165,10 @@ export default function App() {
                   </button>
                 ))}
                 <div className="pt-2 mt-2 border-t border-[#DDD6C7] dark:border-[#332E28] space-y-1">
+                  <PWAInstallButton
+                    variant="menu"
+                    onInstallSuccess={() => setMobileMenuOpen(false)}
+                  />
                   <button
                     type="button"
                     onClick={() => openSettings('sync')}
@@ -1896,6 +1903,8 @@ export default function App() {
           initialScene={threeLabScene}
           onClose={() => setThreeLabOpen(false)}
         />
+
+        <OfflineIndicator />
 
         {/* Cloud Sync QR Auto-Pair Notification Toast */}
         <AnimatePresence>
