@@ -45,44 +45,46 @@ jobs:
 
       - name: Configure Android permissions, camera intents & native Downloads bridge
         run: |
-          node -e '
+          node << 'NODE_EOF'
           const fs = require("fs");
           const manifestPath = "android/app/src/main/AndroidManifest.xml";
           let manifest = fs.readFileSync(manifestPath, "utf8");
-          const permissionsBlock = `
-    <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
-    <uses-feature android:name="android.hardware.camera" android:required="false" />
-    <queries>
-        <intent>
-            <action android:name="android.media.action.IMAGE_CAPTURE" />
-        </intent>
-        <intent>
-            <action android:name="android.intent.action.GET_CONTENT" />
-        </intent>
-        <intent>
-            <action android:name="android.intent.action.OPEN_DOCUMENT" />
-        </intent>
-        <intent>
-            <action android:name="android.intent.action.VIEW" />
-            <data android:mimeType="application/pdf" />
-        </intent>
-    </queries>`;
-          manifest = manifest.replace("</manifest>", permissionsBlock + "\n</manifest>");
+          const permissionsBlock = [
+            '    <uses-permission android:name="android.permission.CAMERA" />',
+            '    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />',
+            '    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />',
+            '    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />',
+            '    <uses-feature android:name="android.hardware.camera" android:required="false" />',
+            '    <queries>',
+            '        <intent>',
+            '            <action android:name="android.media.action.IMAGE_CAPTURE" />',
+            '        </intent>',
+            '        <intent>',
+            '            <action android:name="android.intent.action.GET_CONTENT" />',
+            '        </intent>',
+            '        <intent>',
+            '            <action android:name="android.intent.action.OPEN_DOCUMENT" />',
+            '        </intent>',
+            '        <intent>',
+            '            <action android:name="android.intent.action.VIEW" />',
+            '            <data android:mimeType="application/pdf" />',
+            '        </intent>',
+            '    </queries>',
+          ].join("\n");
+          manifest = manifest.replace("</manifest>", "\n" + permissionsBlock + "\n</manifest>");
           fs.writeFileSync(manifestPath, manifest, "utf8");
 
           const filePathsPath = "android/app/src/main/res/xml/file_paths.xml";
           if (fs.existsSync(filePathsPath)) {
             let fp = fs.readFileSync(filePathsPath, "utf8");
             if (!fp.includes("external-path")) {
-              fp = fp.replace("</paths>", "    <external-path name=\"external_files\" path=\".\" />\n</paths>");
+              fp = fp.replace("</paths>", '    <external-path name="external_files" path="." />\n</paths>');
               fs.writeFileSync(filePathsPath, fp, "utf8");
             }
           }
-          '
+          NODE_EOF
 
+          mkdir -p android/app/src/main/java/io/github/ariyanpal1008/quadra12
           cat << 'EOF' > android/app/src/main/java/io/github/ariyanpal1008/quadra12/MainActivity.java
           package io.github.ariyanpal1008.quadra12;
 
