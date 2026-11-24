@@ -1273,6 +1273,15 @@ export function ExamHallSection({
                             accept="image/*"
                             capture="environment"
                             disabled={isBusy || isGrading || isReadingTime}
+                            onClick={(e) => {
+                              const bridge = window.QuadraAndroid;
+                              if (bridge?.ensureCameraPermission) {
+                                const granted = bridge.ensureCameraPermission();
+                                if (!granted) {
+                                  e.preventDefault();
+                                }
+                              }
+                            }}
                             onChange={(e) => {
                               void handleAttachImages(q.id, e.target.files);
                               e.target.value = '';
@@ -1752,9 +1761,19 @@ export function ExamHallSection({
                 filename,
                 documentTitle: `Quadra 12 · ${activeSubject.name} (${activeSubject.code}) · Graded Results Report`,
               });
-              setResultsPdfNotice(`Saved ${res.filename} (${res.pageCount} A4 pages)`);
-            } catch {
-              window.print();
+              setResultsPdfNotice(
+                `Saved to ${res.savedTo} (${res.pageCount} A4 pages)`,
+              );
+            } catch (err) {
+              if (window.QuadraAndroid?.saveBase64File) {
+                setResultsPdfNotice(
+                  err instanceof Error
+                    ? err.message
+                    : 'Could not save PDF. Allow file permission and retry.',
+                );
+              } else {
+                window.print();
+              }
             } finally {
               setIsExportingResultsPdf(false);
             }

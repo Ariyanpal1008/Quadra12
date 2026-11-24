@@ -9,6 +9,66 @@ export interface PdfExportOptions {
 export interface PdfExportResult {
   pageCount: number;
   filename: string;
+  savedTo: string;
+  usedNativeBridge: boolean;
+}
+
+export interface QuadraAndroidBridge {
+  saveBase64File?: (
+    base64Data: string,
+    filename: string,
+    mimeType: string,
+  ) => string;
+  ensureCameraPermission?: () => boolean;
+  ensureStoragePermission?: () => boolean;
+}
+
+declare global {
+  interface Window {
+    QuadraAndroid?: QuadraAndroidBridge;
+  }
+}
+
+function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const result = typeof reader.result === 'string' ? reader.result : '';
+      const commaIdx = result.indexOf(',');
+      if (commaIdx === -1) {
+        reject(new Error('Failed to encode PDF binary data.'));
+        return;
+      }
+      resolve(result.slice(commaIdx + 1));
+    };
+    reader.onerror = () => reject(new Error('Failed to read exported file data.'));
+    reader.readAsDataURL(blob);
+  });
+}
+
+export async function saveBlobToDevice(
+  blob: Blob,
+  filename: string,
+  mimeType = 'application/pdf',
+): Promise<{savedTo: string; usedNativeBridge: boolean}> {
+  const androidBridge =
+    typeof window !== 'undefined' ? window.QuadraAndroid : undefined;
+
+  if (androidBridge?.saveBase64File) {
+    const base64Data = await blobToBase64(blob);
+    const result = androidBridge.saveBase64File(base64Data, filename, mimeType);
+    if (typeof result === 'string' && result.startsWith('ERROR:')) {
+      throw new Error(result.slice(6).trim() || 'Could not save file on device.');
+    }
+    const savedPath =
+      typeof result === 'string' && result.startsWith('OK:')
+        ? result.slice(3).trim()
+        : `Downloads/Quadra12/${filename}`;
+    return {savedTo: savedPath, usedNativeBridge: true};
+  }
+
+  triggerBlobDownload(blob, filename);
+  return {savedTo: filename, usedNativeBridge: false};
 }
 
 /**
@@ -271,11 +331,17 @@ export async function exportElementToA4Pdf(
     }
 
     const pdfBlob = pdf.output('blob');
-    triggerBlobDownload(pdfBlob, options.filename);
+    const savedResult = await saveBlobToDevice(
+      pdfBlob,
+      options.filename,
+      'application/pdf',
+    );
 
     return {
       pageCount: totalPages,
       filename: options.filename,
+      savedTo: savedResult.savedTo,
+      usedNativeBridge: savedResult.usedNativeBridge,
     };
   } finally {
     if (stagingRoot.parentNode) {

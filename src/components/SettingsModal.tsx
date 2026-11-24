@@ -62,6 +62,7 @@ import {
   playThemeSwitchSound,
 } from '../utils/soundEffects';
 import {SUBJECTS, SubjectId} from '../data/pcmbData';
+import {saveBlobToDevice} from '../utils/pdfExporter';
 import {ThreeSceneId} from './ThreeLabModal';
 import {PWAInstallButton} from './PWAInstallButton';
 import {EmbedPlayerMode} from './YouTubeSyncPlayer';
@@ -406,6 +407,16 @@ export function SettingsModal({
       return;
     }
 
+    if (window.QuadraAndroid?.ensureCameraPermission) {
+      const granted = window.QuadraAndroid.ensureCameraPermission();
+      if (!granted) {
+        setScannerError(
+          'Please tap Allow on the Android Camera permission prompt, then tap Scan QR again.',
+        );
+        return;
+      }
+    }
+
     try {
       let stream: MediaStream;
       try {
@@ -527,16 +538,26 @@ export function SettingsModal({
     }
   };
 
-  const handleDownloadBackup = () => {
+  const handleDownloadBackup = async () => {
     playCheckSound(true);
     const json = buildOfflineBackupPayload(workspaceState);
     const blob = new Blob([json], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `quadra12-backup-${new Date().toISOString().slice(0, 10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const filename = `quadra12-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    try {
+      const res = await saveBlobToDevice(blob, filename, 'application/json');
+      setSyncStatus({
+        type: 'success',
+        message: `Offline backup saved to ${res.savedTo}`,
+      });
+    } catch (err) {
+      setSyncStatus({
+        type: 'error',
+        message:
+          err instanceof Error
+            ? err.message
+            : 'Could not save backup file. Allow storage permission and retry.',
+      });
+    }
   };
 
   const handleImportBackup = (e: ChangeEvent<HTMLInputElement>) => {

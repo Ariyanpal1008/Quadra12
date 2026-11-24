@@ -191,11 +191,20 @@ export function ExamPdfModal({
                     effectiveMode === 'question_paper' ? 'Question Paper' : 'Marking Scheme'
                   }`,
                 });
-                setPdfFeedback(`Saved ${res.filename} (${res.pageCount} A4 pages)`);
-                window.setTimeout(() => setPdfFeedback(null), 5000);
-              } catch {
-                // Fallback to system print if PDF canvas export encounters a browser block
-                window.print();
+                setPdfFeedback(
+                  `Saved to ${res.savedTo} (${res.pageCount} A4 pages)`,
+                );
+                window.setTimeout(() => setPdfFeedback(null), 6000);
+              } catch (err) {
+                if (window.QuadraAndroid?.saveBase64File) {
+                  setPdfFeedback(
+                    err instanceof Error
+                      ? err.message
+                      : 'Could not save PDF. Please allow storage permission and try again.',
+                  );
+                } else {
+                  window.print();
+                }
               } finally {
                 setIsExportingPdf(false);
               }
