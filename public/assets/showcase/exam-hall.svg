@@ -1,9 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="760" height="440" viewBox="0 0 760 440" role="img" aria-label="Quadra 12 Examination Hall v2.5 Original Blueprint Papers, Board Frequency Badges, Smart Camera &amp; AI Examiner">
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="440" viewBox="0 0 760 440" role="img" aria-label="Quadra 12 Examination Hall v2.5 Original PCMB Mock Papers, Synced PDFs, SVG Diagrams, Smart Camera &amp; AI Examiner">
   <rect width="760" height="440" rx="16" fill="#1E1B18"/>
   <rect x="16" y="16" width="728" height="408" rx="14" fill="#24201C" stroke="#332E28" stroke-width="1.5"/>
 
-  <text x="40" y="52" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600" letter-spacing="1.4" fill="#D4785E">EXAMINATION HALL v2.5 · ORIGINAL BLUEPRINT PAPERS</text>
-  <text x="40" y="78" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#F5F2EB">Board Repeat Badges · Camera Upload · AI Step-Marking</text>
+  <text x="40" y="52" font-family="system-ui, -apple-system, sans-serif" font-size="11" font-weight="600" letter-spacing="1.4" fill="#D4785E">EXAMINATION HALL v2.5 · 15-MIN READING · SYNCED A4 PDFs</text>
+  <text x="40" y="78" font-family="system-ui, -apple-system, sans-serif" font-size="21" font-weight="700" fill="#F5F2EB">SVG Diagrams · Camera Upload · AI Step-Marking</text>
 
   <!-- 3-Hour Timer Badge -->
   <rect x="570" y="38" width="150" height="36" rx="8" fill="#1E1B18" stroke="#D4785E"/>
@@ -13,9 +13,9 @@
   <rect x="40" y="104" width="380" height="292" rx="10" fill="#FAF8F3"/>
   <text x="60" y="130" font-family="ui-monospace, monospace" font-size="11" font-weight="700" fill="#A64B33">PHYSICS (042) · QUESTION 19 (3 MARKS)</text>
   
-  <!-- Board Repeat Frequency Badge -->
-  <rect x="60" y="142" width="220" height="22" rx="6" fill="#FEE2E2" stroke="#FCA5A5"/>
-  <text x="70" y="157" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="700" fill="#B91C1C">🔥 Asked 5x in Boards · 2016, 2018, 2020, 2023, 2025</text>
+  <!-- Concept Trend Badge -->
+  <rect x="60" y="142" width="268" height="22" rx="6" fill="#FEE2E2" stroke="#FCA5A5"/>
+  <text x="70" y="157" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="700" fill="#B91C1C">High-Yield Concept · Dipole Torque (Board Trend)</text>
 
   <text x="60" y="184" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="600" fill="#1E1B18">Derive expression for torque on electric dipole</text>
   <text x="60" y="202" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="#575048">in uniform electric field. Include labeled diagram &amp; SI units.</text>

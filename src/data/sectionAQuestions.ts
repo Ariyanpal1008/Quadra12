@@ -1,4 +1,5 @@
 import type {ExamQuestion} from './pcmbData';
+import {QUESTION_DIAGRAM_SVGS} from './diagramSvgs';
 
 // 100% Copyright-Safe Original Class XII Board-Blueprint Section A Objective Papers
 export const EXAM_QUESTIONS: ExamQuestion[] = [
@@ -21,7 +22,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Electric Charges and Fields',
       years: ['2016', '2018', '2020', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -39,7 +40,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['480 W', '1000 W', '2000 W', '2400 W'],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 4x in Boards',
+      count: 'Core Concept • Current Electricity',
       years: ['2017', '2019', '2022', '2024'],
       importance: 'Core Concept',
     },
@@ -52,8 +53,10 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     questionType: 'MCQ',
     marks: 1,
     chapterTag: 'Ch 06 · Electromagnetic Induction',
+    diagramId: 'phy-q3-solenoid',
+    questionDiagramSvg: QUESTION_DIAGRAM_SVGS['phy-q3-solenoid'],
     prompt:
-      'A thin closed metallic solenoid rests coaxially inside a uniform, time-independent (steady) magnetic field directed parallel to its axis. Viewed along the axis, the induced current in the coil is:',
+      'A thin closed metallic solenoid connected to a galvanometer G rests coaxially inside a uniform, time-independent (steady) magnetic field directed parallel to its axis as shown. Viewed along the axis, the induced current in the coil is:',
     options: [
       'clockwise along the winding',
       'anticlockwise along the winding',
@@ -62,7 +65,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 4x in Boards',
+      count: 'Core Concept • Electromagnetic Induction',
       years: ['2016', '2019', '2021', '2024'],
       importance: 'Core Concept',
     },
@@ -80,7 +83,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['î', '−î', 'k̂', '−k̂'],
     correctIndex: 3,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Electromagnetic Waves',
       years: ['2017', '2019', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -103,7 +106,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 3,
     boardFrequency: {
-      count: 'Asked 4x in Boards',
+      count: 'Core Concept • Wave Optics',
       years: ['2016', '2018', '2022', '2024'],
       importance: 'Core Concept',
     },
@@ -126,7 +129,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 3,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Wave Optics',
       years: ['2016', '2018', '2020', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -139,8 +142,10 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     questionType: 'MCQ',
     marks: 1,
     chapterTag: 'Ch 13 · Nuclei',
+    diagramId: 'phy-q7-binding-energy',
+    questionDiagramSvg: QUESTION_DIAGRAM_SVGS['phy-q7-binding-energy'],
     prompt:
-      'On the standard binding energy per nucleon versus mass number plot, elements clustered around mass numbers A = 56–62 sit at the broad apex (~8.75 MeV/nucleon). This peak indicates that such nuclei:',
+      'On the binding energy per nucleon (BE/A) versus mass number (A) plot shown below, elements clustered around mass numbers A = 56–62 sit at the broad apex (~8.75 MeV/nucleon). This peak indicates that such nuclei:',
     options: [
       'decay almost instantaneously by alpha emission',
       'are the most tightly bound and maximally stable nuclei',
@@ -149,7 +154,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 6x in Boards',
+      count: 'High-Yield Concept • Nuclei',
       years: ['2015', '2017', '2019', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -172,7 +177,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 3,
     boardFrequency: {
-      count: 'Asked 4x in Boards',
+      count: 'Frequent Concept • Magnetism and Matter',
       years: ['2018', '2020', '2023', '2025'],
       importance: 'Frequent',
     },
@@ -186,12 +191,13 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     marks: 1,
     chapterTag: 'Ch 03 · Current Electricity',
     diagramId: 'phy-q9-bridge',
+    questionDiagramSvg: QUESTION_DIAGRAM_SVGS['phy-q9-bridge'],
     prompt:
       'Consider the Wheatstone resistor network shown (top arms 4 Ω and 8 Ω, bottom arms 2 Ω and 4 Ω, central cross-bridge resistor 7 Ω) powered across terminals A and B by a 12 V DC cell of negligible internal resistance. What steady current leaves the battery?',
     options: ['1.5 A', '2.0 A', '3.0 A', '4.5 A'],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 6x in Boards',
+      count: 'High-Yield Concept • Current Electricity',
       years: ['2016', '2018', '2020', '2022', '2024', '2025'],
       importance: 'High Yield',
     },
@@ -205,12 +211,13 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     marks: 1,
     chapterTag: 'Ch 03 · Current Electricity',
     diagramId: 'phy-q10-bulbs',
+    questionDiagramSvg: QUESTION_DIAGRAM_SVGS['phy-q10-bulbs'],
     prompt:
       'Two incandescent lamps L₁ (rated 220 V, 40 W) and L₂ (rated 220 V, 100 W) are wired in series across a 220 V AC mains line as depicted. What is the ratio R₁ : R₂ of their hot rated filament resistances?',
     options: ['2 : 5', '5 : 2', '4 : 25', '25 : 4'],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Current Electricity',
       years: ['2016', '2018', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -228,7 +235,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['3.6 m', '360 m', '3.6 km', '360 km'],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 3x in Boards',
+      count: 'Core Concept • Atoms',
       years: ['2019', '2022', '2025'],
       importance: 'Core Concept',
     },
@@ -242,12 +249,13 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     marks: 1,
     chapterTag: 'Ch 04 · Moving Charges and Magnetism',
     diagramId: 'phy-q12-semicircle',
+    questionDiagramSvg: QUESTION_DIAGRAM_SVGS['phy-q12-semicircle'],
     prompt:
-      'A long straight copper conductor is bent cleanly into a single semicircular arc of radius r = 5 cm while carrying a steady current of 3 A. What is the magnetic flux density magnitude at the geometric centre O of the semicircle?',
+      'A long straight copper conductor is bent cleanly into a single semicircular arc of radius r = 5 cm while carrying a steady current of 3 A as shown in the figure. What is the magnetic flux density magnitude at the geometric centre O of the semicircle?',
     options: ['3π μT', '6π μT', '12π μT', '24π μT'],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 6x in Boards',
+      count: 'High-Yield Concept • Moving Charges and Magnetism',
       years: ['2015', '2017', '2019', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -270,7 +278,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 4x in Boards',
+      count: 'Frequent Concept • Atoms',
       years: ['2017', '2020', '2023', '2025'],
       importance: 'Frequent',
     },
@@ -293,7 +301,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 0,
     boardFrequency: {
-      count: 'Asked 6x in Boards',
+      count: 'High-Yield Concept • Ray Optics',
       years: ['2016', '2018', '2020', '2022', '2024', '2025'],
       importance: 'High Yield',
     },
@@ -316,7 +324,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Wave Optics',
       years: ['2017', '2019', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -339,7 +347,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 0,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Electrostatic Potential',
       years: ['2016', '2018', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -364,7 +372,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 6x in Boards',
+      count: 'High-Yield Concept • Amines',
       years: ['2016', '2018', '2020', '2022', '2024', '2025'],
       importance: 'High Yield',
     },
@@ -382,7 +390,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['[PtCl₄]²⁻', '[Ni(CN)₄]²⁻', '[NiCl₄]²⁻', '[Fe(CN)₆]⁴⁻'],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 6x in Boards',
+      count: 'High-Yield Concept • Coordination Compounds',
       years: ['2015', '2017', '2019', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -400,7 +408,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['2 F', '3 F', '6 F', '12 F'],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Electrochemistry',
       years: ['2016', '2018', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -423,7 +431,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Amines',
       years: ['2016', '2019', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -437,6 +445,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     marks: 1,
     chapterTag: 'Ch 01 · Solutions',
     diagramId: 'chem-q5-piston',
+    questionDiagramSvg: QUESTION_DIAGRAM_SVGS['chem-q5-piston'],
     prompt:
       'A soluble gas sits in dynamic equilibrium over a liquid solvent inside a cylinder with movable piston as shown in Fig. (a). Extra calibrated weights are placed on the piston in Fig. (b), compressing the gas phase. What follows?',
     options: [
@@ -447,7 +456,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 0,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Solutions',
       years: ['2017', '2019', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -470,7 +479,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 3,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Chemical Kinetics',
       years: ['2016', '2018', '2020', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -493,7 +502,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 4x in Boards',
+      count: 'Core Concept • Biomolecules',
       years: ['2017', '2020', '2022', '2025'],
       importance: 'Core Concept',
     },
@@ -511,7 +520,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['(i) and (iii)', '(ii) and (iv)', '(iii) and (iv)', '(i) and (ii)'],
     correctIndex: 3,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Alcohols, Phenols and Ethers',
       years: ['2016', '2019', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -529,7 +538,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['Eu²⁺', 'Yb²⁺', 'Ce⁴⁺', 'La³⁺'],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • d- and f-Block Elements',
       years: ['2016', '2018', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -552,7 +561,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 0,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Haloalkanes and Haloarenes',
       years: ['2016', '2018', '2020', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -565,12 +574,14 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     questionType: 'MCQ',
     marks: 1,
     chapterTag: 'Ch 03 · Chemical Kinetics',
+    diagramId: 'chem-q11-kinetics-graph',
+    questionDiagramSvg: QUESTION_DIAGRAM_SVGS['chem-q11-kinetics-graph'],
     prompt:
-      'A radioactive tracer undergoes first-order decay with a half-life t₁/₂ = 25 minutes. How long does it take for 87.5% of the initial sample to decay?',
+      'Referring to the first-order radioactive decay plot shown below (half-life t₁/₂ = 25 minutes), how long does it take for 87.5% of the initial sample [R]₀ to decay (leaving 0.125 [R]₀)?',
     options: ['50 min', '75 min', '100 min', '125 min'],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 6x in Boards',
+      count: 'High-Yield Concept • Chemical Kinetics',
       years: ['2015', '2017', '2019', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -583,12 +594,14 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     questionType: 'MCQ',
     marks: 1,
     chapterTag: 'Ch 02 · Electrochemistry',
+    diagramId: 'chem-q12-kohlrausch',
+    questionDiagramSvg: QUESTION_DIAGRAM_SVGS['chem-q12-kohlrausch'],
     prompt:
-      'At equal temperature and molarity (0.1 M), which aqueous solution exhibits the highest specific electrical conductivity?',
+      'Based on the Kohlrausch molar conductivity (Λ_m versus √c) trends plotted below at 0.1 M and equal temperature, which aqueous solution exhibits the highest electrical conductivity?',
     options: ['0.1 M Urea', '0.1 M Acetic acid', '0.1 M H₂SO₄', '0.1 M Ammonia solution'],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 4x in Boards',
+      count: 'Core Concept • Electrochemistry',
       years: ['2018', '2020', '2023', '2025'],
       importance: 'Core Concept',
     },
@@ -611,7 +624,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 6x in Boards',
+      count: 'High-Yield Concept • Amines',
       years: ['2016', '2018', '2020', '2022', '2024', '2025'],
       importance: 'High Yield',
     },
@@ -634,7 +647,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 4x in Boards',
+      count: 'Frequent Concept • d- and f-Block Elements',
       years: ['2017', '2020', '2022', '2025'],
       importance: 'Frequent',
     },
@@ -657,7 +670,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 0,
     boardFrequency: {
-      count: 'Asked 4x in Boards',
+      count: 'Core Concept • Alcohols, Phenols and Ethers',
       years: ['2016', '2019', '2022', '2024'],
       importance: 'Core Concept',
     },
@@ -680,7 +693,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 0,
     boardFrequency: {
-      count: 'Asked 6x in Boards',
+      count: 'High-Yield Concept • Coordination Compounds',
       years: ['2016', '2018', '2020', '2022', '2024', '2025'],
       importance: 'High Yield',
     },
@@ -695,17 +708,19 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     questionType: 'MCQ',
     marks: 1,
     chapterTag: 'Ch 01 · Sexual Reproduction in Flowering Plants',
+    diagramId: 'bio-q1-anther',
+    questionDiagramSvg: QUESTION_DIAGRAM_SVGS['bio-q1-anther'],
     prompt:
-      'Botanists studying an angiosperm species notice that across all flowers on a bush, anthers shed viable pollen nearly a week before any stigma becomes receptive (protandry). What does this floral adaptation accomplish?',
+      'Examine the magnified transverse section of a young microsporangium anther wall below showing concentric layers A, B, C, and D surrounding the sporogenous tissue. Identify the innermost layer labeled D along with its specialized role:',
     options: [
-      'Guarantees strict cleistogamous selfing',
-      'Maximises within-plant geitonogamy',
-      'Strictly enforces cross-pollination (xenogamy)',
-      'Promotes triple-fusion sterility',
+      'Epidermis — provides outer mechanical cuticle protection',
+      'Endothecium — aids anther dehiscence via fibrous thickenings',
+      'Middle layers — act as ephemeral outer barrier shells',
+      'Tapetum — nourishes the developing pollen grains',
     ],
-    correctIndex: 2,
+    correctIndex: 3,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Sexual Reproduction in Flowering Plants',
       years: ['2016', '2018', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -728,7 +743,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 4x in Boards',
+      count: 'Core Concept • Reproductive Health',
       years: ['2017', '2019', '2022', '2025'],
       importance: 'Core Concept',
     },
@@ -751,7 +766,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Human Reproduction',
       years: ['2016', '2018', '2020', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -765,6 +780,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     marks: 1,
     chapterTag: 'Ch 06 · Evolution',
     diagramId: 'bio-q4-giraffe',
+    questionDiagramSvg: QUESTION_DIAGRAM_SVGS['bio-q4-giraffe'],
     prompt:
       'During a prolonged drought where only tough, thick-shelled seeds survived, island finches with much deeper, heavier beaks thrived while average/thin-beaked birds declined, shifting the trait distribution curve rightward as plotted. Identify this mode of natural selection:',
     options: [
@@ -775,7 +791,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Evolution',
       years: ['2016', '2019', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -789,6 +805,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     marks: 1,
     chapterTag: 'Ch 05 · Molecular Basis of Inheritance',
     diagramId: 'bio-q5-transcription',
+    questionDiagramSvg: QUESTION_DIAGRAM_SVGS['bio-q5-transcription'],
     prompt:
       'Inspect the schematic of prokaryotic transcription initiation shown below and match labels A, B, C, and D accurately:',
     options: [
@@ -799,7 +816,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 6x in Boards',
+      count: 'High-Yield Concept • Molecular Basis of Inheritance',
       years: ['2015', '2017', '2019', '2022', '2024', '2025'],
       importance: 'High Yield',
     },
@@ -813,8 +830,9 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     marks: 1,
     chapterTag: 'Ch 05 · Molecular Basis of Inheritance',
     diagramId: 'bio-q6-avery',
+    questionDiagramSvg: QUESTION_DIAGRAM_SVGS['bio-q6-avery'],
     prompt:
-      'A biology student recreated the Avery–MacLeod–McCarty transformation assay using purified fractions of heat-killed virulent S-strain Streptococcus pneumoniae mixed with live non-virulent R-strain cells, recording the tube outcomes shown. Which tube outcome contradicts biochemical proof?',
+      'A biology student recreated the Avery–MacLeod–McCarty transformation assay using purified fractions of heat-killed virulent S-strain Streptococcus pneumoniae mixed with live non-virulent R-strain cells, recording the four tube outcomes shown below. Which tube outcome contradicts biochemical proof?',
     options: [
       'Tube A (+ RNase → Transformation observed)',
       'Tube B (+ Protease → No transformation)',
@@ -823,7 +841,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Molecular Basis of Inheritance',
       years: ['2016', '2018', '2020', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -846,7 +864,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 6x in Boards',
+      count: 'High-Yield Concept • Molecular Basis of Inheritance',
       years: ['2015', '2017', '2019', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -860,6 +878,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     marks: 1,
     chapterTag: 'Ch 04 · Principles of Inheritance',
     diagramId: 'bio-q8-pedigree',
+    questionDiagramSvg: QUESTION_DIAGRAM_SVGS['bio-q8-pedigree'],
     prompt:
       'Examine the human family pedigree tree provided (unaffected biological parents give rise to both an affected son and an affected daughter). Which hereditary condition fits this inheritance pattern?',
     options: [
@@ -870,7 +889,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 6x in Boards',
+      count: 'High-Yield Concept • Principles of Inheritance',
       years: ['2016', '2018', '2020', '2022', '2024', '2025'],
       importance: 'High Yield',
     },
@@ -893,7 +912,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Human Health and Disease',
       years: ['2016', '2019', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -916,7 +935,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Molecular Basis of Inheritance',
       years: ['2017', '2019', '2021', '2024', '2025'],
       importance: 'High Yield',
     },
@@ -939,7 +958,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 4x in Boards',
+      count: 'Core Concept • Biotechnology Principles',
       years: ['2018', '2020', '2023', '2025'],
       importance: 'Core Concept',
     },
@@ -962,7 +981,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Microbes in Human Welfare',
       years: ['2016', '2018', '2020', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -985,7 +1004,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 0,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Human Reproduction',
       years: ['2017', '2019', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -1008,7 +1027,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 3,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Principles of Inheritance',
       years: ['2016', '2018', '2020', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -1031,7 +1050,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 0,
     boardFrequency: {
-      count: 'Asked 6x in Boards',
+      count: 'High-Yield Concept • Microbes in Human Welfare',
       years: ['2016', '2018', '2020', '2022', '2024', '2025'],
       importance: 'High Yield',
     },
@@ -1054,7 +1073,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 0,
     boardFrequency: {
-      count: 'Asked 4x in Boards',
+      count: 'Frequent Concept • Biotechnology Applications',
       years: ['2017', '2020', '2022', '2025'],
       importance: 'Frequent',
     },
@@ -1070,12 +1089,13 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     marks: 1,
     chapterTag: 'Ch 02 · Inverse Trigonometric Functions',
     diagramId: 'math-q1-graph',
+    questionDiagramSvg: QUESTION_DIAGRAM_SVGS['math-q1-graph'],
     prompt:
       'Identify the real function represented by the strictly increasing curve shown below on domain [−1, 1] with range [π/2, 3π/2]:',
     options: ['sin⁻¹(x/2)', 'π − sin⁻¹ x', 'π + sin⁻¹ x', 'cos⁻¹ x + π/2'],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 4x in Boards',
+      count: 'Frequent Concept • Inverse Trigonometric Functions',
       years: ['2018', '2020', '2023', '2025'],
       importance: 'Frequent',
     },
@@ -1097,7 +1117,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 3,
     boardFrequency: {
-      count: 'Asked 4x in Boards',
+      count: 'Core Concept • Inverse Trigonometric Functions',
       years: ['2017', '2019', '2022', '2025'],
       importance: 'Core Concept',
     },
@@ -1114,7 +1134,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['π/6', 'π/4', 'π/3', 'π/2'],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Inverse Trigonometric Functions',
       years: ['2016', '2018', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -1132,7 +1152,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['2', '4', '6', '10'],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Matrices',
       years: ['2016', '2018', '2020', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -1150,7 +1170,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['6', '12', '24', '576'],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 6x in Boards',
+      count: 'High-Yield Concept • Determinants',
       years: ['2016', '2018', '2020', '2022', '2024', '2025'],
       importance: 'High Yield',
     },
@@ -1167,7 +1187,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['−1', '0', '1', '2'],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 4x in Boards',
+      count: 'Frequent Concept • Matrices',
       years: ['2017', '2020', '2022', '2025'],
       importance: 'Frequent',
     },
@@ -1185,7 +1205,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['1', '2', '−2', '1/2'],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Differentiation',
       years: ['2016', '2018', '2020', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -1203,7 +1223,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['(1, 2, 0)', '(1, 4, 0)', '(2, 4, 1)', '(4, 1, 0)'],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Continuity & Differentiability',
       years: ['2016', '2019', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -1216,12 +1236,14 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     questionType: 'MCQ',
     marks: 1,
     chapterTag: 'Ch 06 · Application of Derivatives',
+    diagramId: 'math-q9-monotonicity',
+    questionDiagramSvg: QUESTION_DIAGRAM_SVGS['math-q9-monotonicity'],
     prompt:
-      'On [0, π], determine the open interval in which the function f(x) = x + 2 cos x is strictly decreasing:',
+      'From the plotted curve of f(x) = x + 2 cos x on [0, π] shown below, determine the open interval in which f(x) is strictly decreasing:',
     options: ['(0, π/6)', '(π/6, 5π/6)', '(π/3, 2π/3)', '(5π/6, π)'],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Application of Derivatives',
       years: ['2016', '2018', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -1244,7 +1266,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 3x in Boards',
+      count: 'Frequent Concept • Application of Derivatives',
       years: ['2019', '2022', '2025'],
       importance: 'Frequent',
     },
@@ -1262,7 +1284,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['3, 2', '2, 3', '3, 5', '5, 3'],
     correctIndex: 0,
     boardFrequency: {
-      count: 'Asked 7x in Boards',
+      count: 'High-Yield Concept • Differential Equations',
       years: ['2015', '2017', '2019', '2020', '2022', '2024', '2025'],
       importance: 'High Yield',
     },
@@ -1280,7 +1302,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['−1/3', '1/3', '3', '−3'],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 4x in Boards',
+      count: 'Frequent Concept • Integrals',
       years: ['2018', '2020', '2023', '2025'],
       importance: 'Frequent',
     },
@@ -1298,7 +1320,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['±1', '±2', '±√2', '±4'],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 4x in Boards',
+      count: 'Core Concept • Vector Algebra',
       years: ['2017', '2019', '2022', '2025'],
       importance: 'Core Concept',
     },
@@ -1316,7 +1338,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['π/6', 'π/4', 'π/3', 'π/2'],
     correctIndex: 0,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Vector Algebra',
       years: ['2016', '2018', '2020', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -1334,7 +1356,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['î + 2ĵ + k̂', 'î − 2ĵ + k̂', '2î − ĵ − k̂', 'î + ĵ + k̂'],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Vector Algebra',
       years: ['2016', '2018', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -1352,7 +1374,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['3/4', '1/16', '1/64', '3/64'],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 4x in Boards',
+      count: 'Core Concept • Probability',
       years: ['2017', '2020', '2022', '2025'],
       importance: 'Core Concept',
     },
@@ -1370,7 +1392,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['1/6', '1/3', '1/2', '2/3'],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 6x in Boards',
+      count: 'High-Yield Concept • Probability',
       years: ['2015', '2017', '2019', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -1388,7 +1410,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     options: ['1/4', '1/3', '1/2', '3/4'],
     correctIndex: 2,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Probability',
       years: ['2016', '2018', '2020', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -1411,7 +1433,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Definite Integrals',
       years: ['2017', '2019', '2021', '2023', '2025'],
       importance: 'High Yield',
     },
@@ -1434,7 +1456,7 @@ export const EXAM_QUESTIONS: ExamQuestion[] = [
     ],
     correctIndex: 1,
     boardFrequency: {
-      count: 'Asked 5x in Boards',
+      count: 'High-Yield Concept • Matrices',
       years: ['2016', '2018', '2020', '2023', '2025'],
       importance: 'High Yield',
     },

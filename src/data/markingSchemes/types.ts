@@ -10,6 +10,7 @@ export interface MarkingSchemeEntry {
   exactModelAnswer: string;
   stepMarks: StepMarkSplit[];
   finalAnswerValue?: string;
+  diagramSvg?: string;
   examinerCheckpoints: string[];
 }
 

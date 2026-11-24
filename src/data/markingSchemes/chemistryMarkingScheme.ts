@@ -1,4 +1,5 @@
 import {SubjectMarkingSchemeMap} from './types';
+import {MARKING_SCHEME_DIAGRAM_SVGS} from '../diagramSvgs';
 
 export const CHEMISTRY_MARKING_SCHEME: SubjectMarkingSchemeMap = {
   // Section A (Q1 – Q16)
@@ -287,6 +288,7 @@ export const CHEMISTRY_MARKING_SCHEME: SubjectMarkingSchemeMap = {
       {label: 'Identify trans-isomer as optically inactive due to symmetry', marks: 0.5},
     ],
     finalAnswerValue: 'cis (d/l optically active pair); trans (optically inactive)',
+    diagramSvg: MARKING_SCHEME_DIAGRAM_SVGS['chem-ms-25'],
     examinerCheckpoints: ['Octahedral chelate rings drawn accurately', 'trans is optically inactive'],
   },
   'chem-2026-26': {
@@ -389,6 +391,7 @@ export const CHEMISTRY_MARKING_SCHEME: SubjectMarkingSchemeMap = {
       {label: 'Magnetic moments μ = 0 BM ([Fe(CN)₆]⁴⁻) and √35 ≈ 5.92 BM ([FeF₆]³⁻)', marks: 2},
     ],
     finalAnswerValue: 'CFSE d⁴: −1.6 Δ₀ + P (SF), −0.6 Δ₀ (WF); μ = 0 BM & 5.92 BM',
+    diagramSvg: MARKING_SCHEME_DIAGRAM_SVGS['chem-ms-32'],
     examinerCheckpoints: ['t₂g below e_g barycenter', 'Pairing energy P included if Δ₀ > P', 'n = 0 vs n = 5'],
   },
   'chem-2026-33': {
@@ -404,6 +407,7 @@ export const CHEMISTRY_MARKING_SCHEME: SubjectMarkingSchemeMap = {
       {label: 'Δ_r G° = −n F E°_cell = −521.1 kJ mol⁻¹', marks: 1.5},
     ],
     finalAnswerValue: 'E°_cell = 2.70 V; E_cell = 2.67 V; Δ_r G° = −521.1 kJ mol⁻¹',
+    diagramSvg: MARKING_SCHEME_DIAGRAM_SVGS['chem-ms-33'],
     examinerCheckpoints: ['n = 2', 'Q = 10', 'E_cell = 2.67 V', 'Δ_r G° = −521.1 kJ mol⁻¹'],
   },
 };

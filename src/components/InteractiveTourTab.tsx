@@ -119,27 +119,27 @@ const TOUR_STEPS: {
     id: 'exam',
     stepNum: '04',
     label: 'Exam Hall',
-    title: 'Original PCMB Blueprint Papers & AI Board Examiner (v2.5)',
+    title: 'Original PCMB Papers, Synced PDFs & AI Examiner (v2.5)',
     summary:
-      '100% original copyright-safe papers with 10-year board frequency badges, smart camera/upload inputs for Sections B–E, and Gemini 3.8 Flash step-grading.',
+      '100% independently authored papers with visual SVG diagrams, a 15-minute Reading Timer, downloadable Question Paper & Marking Scheme PDFs, smart camera/photo inputs, and Gemini 3.8 Flash step-grading.',
     targetSection: 'exam',
     ctaLabel: 'Enter Examination Hall',
     hotspots: [
       {
-        label: '🔥 10-Year Board Badges',
-        detail: 'Every question displays its historical board frequency (e.g., Asked 5x in Boards · 2016, 2018, 2020, 2023, 2025).',
+        label: '15-Min Reading Timer & Synced PDFs',
+        detail: 'Starts with a cool-off Reading Time timer (with Skip option) and includes 100% synced Question Paper & Marking Scheme A4 PDF downloads.',
+      },
+      {
+        label: 'Concept Trend Tags & Vector SVG Diagrams',
+        detail: 'Questions display syllabus concept & board trend tags (e.g., High-Yield Concept · Board Trend: 2016–2025) alongside crisp vector diagrams.',
       },
       {
         label: 'Smart Camera & Photo Upload',
         detail: 'Direct device camera capture (Take Photo) and gallery picker (Upload Image) for multi-page handwritten answers.',
       },
       {
-        label: 'gemini-3.8-flash Step-Marking',
-        detail: 'Strict CBSE examiner evaluation awarding step-by-step marks, color-coded palette (Green/Yellow/Red), and revealing model answers.',
-      },
-      {
-        label: 'Dual Storage Refresh Shield',
-        detail: 'Typed drafts in localStorage and compressed photos in IndexedDB are auto-restored on reload and wiped only after final results.',
+        label: 'gemini-3.8-flash Step-Marking & Auto-Wipe',
+        detail: 'Evaluates steps against modular marking schemes (Green/Yellow/Red palette), then auto-wipes localStorage & IndexedDB drafts once results render.',
       },
     ],
   },
@@ -260,7 +260,7 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
       {/* Main Split: Interactive Canvas (Left) + Clickable Hotspots (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
         {/* Left: Stable Interactive Screenshot Preview Canvas */}
-        <div className="lg:col-span-7 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#161412] p-4 sm:p-5 flex flex-col justify-between gap-4 min-h-[460px]">
+        <div className="lg:col-span-7 min-w-0 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#161412] p-4 sm:p-5 flex flex-col justify-between gap-4 min-h-[380px] sm:min-h-[460px]">
           <div className="flex items-center justify-between gap-2 pb-2.5 border-b border-[#DDD6C7] dark:border-[#332E28] text-[11px] font-mono text-[#787066] dark:text-[#9C9387]">
             <span>Live Interactive Preview</span>
             <span className="text-[#A64B33] dark:text-[#D4785E]">Tap elements to test</span>
@@ -513,12 +513,12 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
                   /* Section A: OMR Bubble Sheet */
                   <div className="rounded-lg border border-[#332E28] bg-[#24201C] p-3.5 space-y-3">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-                      <span className="text-xs font-mono text-[#D4785E] font-semibold">
+                      <span className="text-xs font-mono text-[#D4785E] font-semibold shrink-0">
                         Q01 · Section A (MCQ · 1 Mark)
                       </span>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-[#3A1E18] border border-[#7A3528] text-[#F09986] self-start sm:self-auto">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-[#3A1E18] border border-[#7A3528] text-[#F09986] self-start sm:self-auto leading-snug">
                         <Flame className="w-2.5 h-2.5 shrink-0" />
-                        <span>🔥 Asked 5x in Boards · 2016, 2018, 2020, 2023, 2025</span>
+                        <span>High-Yield Concept (Board Trend: 2016–2025)</span>
                       </span>
                     </div>
 
@@ -568,12 +568,12 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
                   /* Section B–E: Smart Camera Upload & AI Step-Marking */
                   <div className="rounded-lg border border-[#332E28] bg-[#24201C] p-3.5 space-y-3">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-                      <span className="text-xs font-mono text-[#A5B4FC] font-semibold">
+                      <span className="text-xs font-mono text-[#A5B4FC] font-semibold shrink-0">
                         Q22 · Section C (Derivation · 3 Marks)
                       </span>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-[#3A1E18] border border-[#7A3528] text-[#F09986] self-start sm:self-auto">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-[#3A1E18] border border-[#7A3528] text-[#F09986] self-start sm:self-auto leading-snug">
                         <Flame className="w-2.5 h-2.5 shrink-0" />
-                        <span>🔥 Asked 4x in Boards · High Yield</span>
+                        <span>High-Yield Concept · Moving Charges</span>
                       </span>
                     </div>
 
@@ -729,7 +729,7 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
         </div>
 
         {/* Right: Clickable Feature Hotspots */}
-        <div className="lg:col-span-5 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#24201C]/70 p-4 sm:p-5 flex flex-col justify-between gap-4 min-h-[460px]">
+        <div className="lg:col-span-5 min-w-0 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#24201C]/70 p-4 sm:p-5 flex flex-col justify-between gap-4 min-h-[380px] sm:min-h-[460px]">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <p className="text-xs font-semibold tracking-wider uppercase text-[#A64B33] dark:text-[#D4785E]">

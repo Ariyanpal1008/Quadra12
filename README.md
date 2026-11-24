@@ -5,7 +5,7 @@
 [![Framework](https://img.shields.io/badge/Stack-React%2019%20%7C%20Vite%20%7C%20Tailwind%20v4-emerald.svg?style=flat-square)](#tech-stack)
 [![AI Engine](https://img.shields.io/badge/AI%20Examiner-Gemini%203.8%20Flash-indigo.svg?style=flat-square)](https://aistudio.google.com/)
 
-> **Quadra 12 v2.5 Active Release:** Upgraded with 100% original copyright-safe PCMB blueprint papers, 10-year board frequency badges, Sections B–E smart camera/photo uploads, dual-storage refresh protection (IndexedDB + localStorage), and rigorous Gemini 3.8 Flash AI step-marking.
+> **Quadra 12 v2.5 Active Release:** Features 100% independently authored PCMB mock papers, 27 question &amp; 20 marking scheme vector SVG diagrams, a 15-minute Reading Time timer, 100% synced Question Paper &amp; Marking Scheme A4 PDF downloads, Sections B–E smart camera/photo uploads, zero-trace browser storage (`IndexedDB` + `localStorage`), and `gemini-3.8-flash` AI step-marking.
 
 - **Current Version:** `v2.5` (Active Release)
 - **Live Website:** [https://ariyanpal1008.github.io/Quadra12/](https://ariyanpal1008.github.io/Quadra12/)  
@@ -15,7 +15,7 @@
 - **Creator:** AriYan Pal (Keśava Dāsa) · `ariyanpal090@gmail.com`  
 - **Copyright:** © 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)
 
-Quadra 12 is a calm, distraction-free Class 12 CBSE PCMB (Physics 042, Chemistry 043, Biology 044, and Mathematics 041) academic preparation workspace. It brings together an Apple StandBy–inspired **Live Board Exam Countdown Clock**, a gamified **My Achievements** milestone system, comprehensive syllabus tracking across all 50 NCERT chapters, copyright-safe original PCMB practice papers with 10-year board frequency badges and AI step-marking in a 3-hour **Examination Hall**, and 50 synced **12th Hackers** one-shot video lectures in one unified web application.
+Quadra 12 is a calm, distraction-free Class 12 CBSE PCMB (Physics 042, Chemistry 043, Biology 044, and Mathematics 041) academic preparation workspace. It brings together an Apple StandBy–inspired **Live Board Exam Countdown Clock**, a gamified **My Achievements** milestone system, comprehensive syllabus tracking across all 50 NCERT chapters, independently authored PCMB mock papers with real visual vector diagrams, 15-minute Reading Timer, synced downloadable A4 PDFs, and AI step-marking in a 3-hour **Examination Hall**, plus 50 synced **12th Hackers** one-shot video lectures in one unified web application.
 
 ---
 
@@ -28,21 +28,21 @@ Quadra 12 is a calm, distraction-free Class 12 CBSE PCMB (Physics 042, Chemistry
 | [![Quadra 12 Live Board Countdown Clock and My Achievements Preview](public/assets/showcase/overview-clock-achievements.svg)](https://ariyanpal1008.github.io/Quadra12/) | [![Quadra 12 Subject Tracker 50 Chapters and SVG Diagrams Preview](public/assets/showcase/subject-tracker.svg)](https://ariyanpal1008.github.io/Quadra12/) |
 | **Live 1s Chronometer** (`16 Feb · 10:30 AM IST`, auto `2027 → 2028` rollover) + **My Achievements** (`Quick Learner`, `Exam Ready`). | **50 NCERT Chapters × 4 Stages** (`Lecture`, `Practice`, `NCERT`, `PYQ`) + 50 bespoke interactive vector study plates. |
 
-| Examination Hall: Original Blueprints & AI Examiner | 12th Hackers & Help Desk Interactive Tour |
+| Examination Hall: Original Papers, PDFs & AI Examiner | 12th Hackers & Help Desk Interactive Tour |
 | :---: | :---: |
-| [![Quadra 12 Examination Hall v2.5 Original Blueprint Papers and AI Examiner Preview](public/assets/showcase/exam-hall.svg)](https://ariyanpal1008.github.io/Quadra12/) | [![Quadra 12 12th Hackers Playlist and Help Desk Suggestion Box Preview](public/assets/showcase/hackers-playlist.svg)](https://ariyanpal1008.github.io/Quadra12/) |
-| **Original PCMB Blueprint Papers**, 10-year **Board Frequency Badges**, Sections B–E **Smart Camera/Upload Inputs**, and **Gemini 3.8 AI Step-Marking**. | **50 One-Shot Lectures** synced to `Lecture done`, 3 player embed modes, **Interactive Tour**, & Cloud Suggestion Box. |
+| [![Quadra 12 Examination Hall v2.5 Original Mock Papers, Synced PDFs, SVG Diagrams and AI Examiner Preview](public/assets/showcase/exam-hall.svg)](https://ariyanpal1008.github.io/Quadra12/) | [![Quadra 12 12th Hackers Playlist and Help Desk Suggestion Box Preview](public/assets/showcase/hackers-playlist.svg)](https://ariyanpal1008.github.io/Quadra12/) |
+| **Independently Authored PCMB Papers**, **15-Min Reading Timer**, **Synced A4 PDF Downloads**, **Vector SVG Diagrams**, **Smart Camera/Upload Inputs**, and **Gemini 3.8 AI Step-Marking**. | **50 One-Shot Lectures** synced to `Lecture done`, 3 player embed modes, **Interactive Tour**, & Cloud Suggestion Box. |
 
 <details>
 <summary><strong>Step-by-Step Interactive Guide — How to Use Quadra 12</strong></summary>
 
 1. **Live Board Exam Countdown Clock (`Overview`):** Counts every second down to **16 Feb at 10:30 AM IST**. Features rolling flip-clock digits, pacing urgency badges, and an **Auto: Feb 16 / Custom Date** picker. It automatically rolls over to the next year's exam once the current date passes.
-2. **My Achievements (`Overview`):** Click the compact **My Achievements** card to inspect all **9 Milestone Seals**, including **First Step**, **Quick Learner** (`3–5` chapters in one day), **Syllabus Sprinter** (`5` chapters in a single calendar day), **Four-Stage Purist**, **Subject Champion**, **Hall Debut**, **Exam Ready** (`>90%` score on a CBSE sample paper), **One-Shot Scholar**, and **Quadra 12 Grandmaster** (`50/50` chapters). Live unlock banners notify you from any view.
+2. **My Achievements (`Overview`):** Click the compact **My Achievements** card to inspect all **9 Milestone Seals**, including **First Step**, **Quick Learner** (`3–5` chapters in one day), **Syllabus Sprinter** (`5` chapters in a single calendar day), **Four-Stage Purist**, **Subject Champion**, **Hall Debut**, **Exam Ready** (`>90%` score on a mock paper), **One-Shot Scholar**, and **Quadra 12 Grandmaster** (`50/50` chapters). Live unlock banners notify you from any view.
 3. **Subject Tracker:** Expand Physics (`14`), Chemistry (`10`), Biology (`13`), or Mathematics (`13`) chapters. Check off **Lecture**, **Practice**, **NCERT**, and **PYQ** checkpoints, view subject-level progress percentages, or inspect each chapter's custom interactive SVG illustration.
-4. **Examination Hall:** Select Physics (`042`), Chemistry (`043`), Biology (`044`), or Mathematics (`041`) to solve copyright-safe original papers modeled after the official CBSE blueprint. Features 10-year board frequency badges (`🔥 Asked 5x in Boards`), Section A OMR bubble auto-grading, Sections B–E smart photo upload/camera capture for handwritten derivations & diagrams (stored in IndexedDB), and rigorous `gemini-3.8-flash` AI step-by-step evaluation against 4 modular subject marking scheme files.
+4. **Examination Hall:** Select Physics (`042`), Chemistry (`043`), Biology (`044`), or Mathematics (`041`) to launch a 3-hour timed mock paper (starting with a **15-minute Reading Time** cool-off timer with an instant skip option) or export the **100% synced Question Paper PDF** and **Marking Scheme PDF** directly from each subject card. Includes real SVG diagrams & graphs, syllabus concept trend tags, Section A OMR bubble auto-grading, Sections B–E smart camera/photo uploads (`IndexedDB`) + typed drafts (`localStorage`), and `gemini-3.8-flash` AI step-by-step evaluation against 4 modular marking schemes. Download your Graded Report PDF before refreshing or closing results.
 5. **12th Hackers:** Stream unit-curated one-shot video lectures with key formulas, summaries, and timestamps. Checking off a lecture automatically updates `Lecture done` in the Subject Tracker.
 6. **Help Desk & Interactive Tour:** Access the **Help Desk** to explore the interactive visual tour sandbox, read syllabus notes, submit suggestions or bug reports via Google Sign-In, or access the Creator Inbox.
-7. **Terms & Conditions:** Tap the dull blue **Terms & Conditions · 2026** link in the footer to review the standalone Copyright, Fair Use, and Takedown Policy modal.
+7. **Terms & Conditions:** Tap the dull blue **Terms & Conditions · 2026** link in the footer to review personal educational self-assessment rules, zero-server browser storage privacy, Copyright, Fair Use, and Takedown Policy.
 8. **GitHub Repository:** Click the official bold **GitHub** link in the footer to inspect source code, contribute, or star the repository.
 
 </details>
@@ -87,12 +87,13 @@ I am **AriYan Pal (Keśava Dāsa)** (`ariyanpal090@gmail.com`), a Class 12 stude
 - 50 custom-crafted interactive SVG vector study diagrams providing visual recall for key concepts.
 - 100% completion celebration banner with subtle gold shimmer.
 
-### 4. Examination Hall (Original PCMB Blueprints & AI Board Examiner v2.5)
-- **100% Copyright-Safe Original Papers:** Custom-drafted practice papers across Physics, Chemistry, Biology, and Mathematics adhering to official CBSE chapter-weightage and difficulty blueprints.
-- **10-Year Board Repeat Frequency Badges:** Every question features a `boardFrequency` indicator displaying exact historical appearances (e.g., `🔥 Asked 5x in Boards · 2016, 2018, 2020, 2023, 2025`).
-- **Sections B–E Smart Inputs:** Direct device camera capture (`Take Photo`) and gallery upload (`Upload Image`) for multi-page handwritten derivations, circuits, ray diagrams, and mathematical proofs, alongside an optional notes editor.
-- **Dual Storage Architecture:** Typed notes auto-saved to `localStorage` (`sectionBE_text_draft`); compressed images (max 1024px, JPEG 0.7) securely stored in browser `IndexedDB` (`SectionBE_PhotoStorage`) with accidental refresh recovery and post-evaluation zero-trace auto-wipe.
-- **AI Board Examiner (Gemini 3.8 Flash):** Step-by-step grading anchored strictly to 4 modular marking scheme files (`physicsMarkingScheme.ts`, `chemistryMarkingScheme.ts`, etc.), evaluating formulas, intermediate steps, diagram labels, and SI units with post-grading palette color coding (Green / Yellow / Red / Grey).
+### 4. Examination Hall (Original PCMB Papers, Synced PDFs & AI Board Examiner v2.5)
+- **Independently Authored Original Papers & Visual Vector Diagrams:** 137 fresh, copyright-safe questions across Physics, Chemistry, Biology, and Mathematics paired with **27 crisp embedded SVG question diagrams/graphs** and **20 labeled reference SVG solution diagrams** (rendered cleanly both on screen and in A4 PDF prints).
+- **15-Minute CBSE Reading Time Timer:** Every 3-hour paper opens in authentic cool-off Reading Mode (all answer inputs safely locked) with a one-click **"Skip Reading Time & Start Writing"** button.
+- **100% Synced Question Paper PDF & Marking Scheme PDF:** Each subject card exposes downloadable A4 **Question Paper PDF** and **Marking Scheme PDF** previews generated directly from the exact live question & marking scheme datasets (with the Marking Scheme securely locked during active exams until submission).
+- **Syllabus Concept & Board Trend Tags:** Every question displays a transparent concept importance & board trend tag (e.g., `High-Yield Concept • Electric Charges and Fields (Board Trend: 2016–2025)`).
+- **Sections B–E Smart Inputs & Dual Storage:** Direct device camera capture (`Take Photo`) and gallery upload (`Upload Image`) compressed client-side into browser `IndexedDB` (`SectionBE_PhotoStorage`), plus typed drafts in `localStorage` (`sectionBE_text_draft`) for accidental refresh recovery and **automatic permanent zero-trace wipe** the moment AI grading finishes (zero server storage).
+- **AI Board Examiner (`gemini-3.8-flash`):** Step-by-step grading anchored strictly to 4 modular subject marking schemes, returning color-coded palette feedback (Green / Yellow / Red / Grey), model answers, reference SVG diagrams, and a one-click **Graded Results PDF** export.
 
 ### 5. 12th Hackers One-Shot Video Workspace
 - Curated queue of 50 comprehensive one-shot YouTube lectures aligned with the latest syllabus.
@@ -152,8 +153,9 @@ Quadra12/
 │   │   ├── BoardCountdownClock.tsx        # Apple StandBy live countdown chronometer
 │   │   ├── ChapterIllustrations.tsx       # 50 bespoke chapter SVG illustrations
 │   │   ├── ErrorBoundary.tsx              # Robust fallback boundary for errors
-│   │   ├── ExamDiagrams.tsx               # Examination visual diagram plates
-│   │   ├── ExamHallSection.tsx            # 3-hour PCMB exam hall, smart inputs & AI examiner
+│   │   ├── ExamDiagrams.tsx               # Embedded vector SVG diagram & graph renderer
+│   │   ├── ExamHallSection.tsx            # 3-hr exam hall, 15m reading timer, camera & AI grading
+│   │   ├── ExamPdfModal.tsx               # 100% synced A4 Question Paper & Marking Scheme PDFs
 │   │   ├── FluidPrimitives.tsx            # Apple springs, animated numbers & scroll reveals
 │   │   ├── HackersPlaylistSection.tsx     # 12th Hackers playlist and notes interface
 │   │   ├── HelpDeskModal.tsx              # Guide, Tour, Disclaimers & Feedback modal
@@ -166,18 +168,26 @@ Quadra12/
 │   │   └── YouTubeSyncPlayer.tsx          # Multi-mode synchronized video player
 │   ├── data/
 │   │   ├── achievements.ts                # 9 milestone rules & unlock velocity logic
-│   │   ├── pcmbData.ts                    # Canonical CBSE syllabus, blueprint papers & playlist records
-│   │   ├── physicsMarkingScheme.ts        # Physics marking scheme with step splits & solutions
-│   │   ├── chemistryMarkingScheme.ts      # Chemistry marking scheme with step splits & solutions
-│   │   ├── biologyMarkingScheme.ts        # Biology marking scheme with step splits & solutions
-│   │   └── mathsMarkingScheme.ts          # Mathematics marking scheme with step splits & solutions
+│   │   ├── diagramSvgs.ts                 # Barrel exports for 47 question & marking SVG diagrams
+│   │   ├── diagramSvgsPart1.ts            # 27 PCMB question diagrams & graphs
+│   │   ├── diagramSvgsPart2.ts            # 20 PCMB marking scheme reference diagrams
+│   │   ├── pcmbData.ts                    # Canonical syllabus, chapters, & unified exam exports
+│   │   ├── sectionAQuestions.ts           # 68 original Section A questions with SVG refs
+│   │   ├── subjectiveQuestions.ts         # 69 original Sections B–E questions with SVG refs
+│   │   └── markingSchemes/
+│   │       ├── loadMarkingScheme.ts       # Lazy subject-isolated marking scheme loader
+│   │       ├── physicsMarkingScheme.ts    # Physics marking scheme with step splits & SVGs
+│   │       ├── chemistryMarkingScheme.ts  # Chemistry marking scheme with step splits & SVGs
+│   │       ├── biologyMarkingScheme.ts    # Biology marking scheme with step splits & SVGs
+│   │       └── mathsMarkingScheme.ts      # Mathematics marking scheme with step splits & SVGs
 │   ├── utils/
 │   │   ├── cloudSync.ts                   # Account-less 6-digit + QR Firestore sync & JSON backup
-│   │   ├── photoStorage.ts                # IndexedDB client photo storage & compression engine
+│   │   ├── examStorage.ts                 # Dual browser storage (localStorage + IndexedDB + wipe)
+│   │   ├── pdfExporter.ts                 # Block-aware A4 PDF generator (html2canvas-pro + jsPDF)
 │   │   └── soundEffects.ts                # Zero-dependency Web Audio API micro-sound synthesizer
 │   ├── App.tsx                            # Root application layout, navigation & footer
 │   ├── firebase.ts                        # Firebase Auth (Google Sign-In) & Firestore integration
-│   ├── index.css                          # Tailwind CSS v4 directives & typography tokens
+│   ├── index.css                          # Tailwind CSS v4 & A4 @media print rules
 │   └── main.tsx                           # React entry point with ErrorBoundary
 ├── firebase-applet-config.json            # Public Firebase client config
 ├── firebase-blueprint.json                # Cloud Firestore database schema
@@ -233,7 +243,7 @@ All personal study records, timestamps, and exam scores are preserved locally in
 
 - **Framework:** React 19, TypeScript
 - **Bundler:** Vite 8 (configured with `base: './'` for GitHub Pages)
-- **3D & QR Pairing:** Three.js (`WebGLRenderer`, `OrbitControls`, `RoomEnvironment`), `qrcode`, & `jsqr` (in-app camera QR scanner)
+- **3D, PDF & QR Pairing:** Three.js (`WebGLRenderer`, `OrbitControls`, `RoomEnvironment`), `jsPDF` + `html2canvas-pro` (A4 PDF exports), `qrcode`, & `jsqr` (in-app camera QR scanner)
 - **Styling:** Tailwind CSS v4 (`@tailwindcss/vite`)
 - **Animations:** Motion (`motion/react`) with custom Apple spring presets
 - **Icons:** Lucide Icons & official Octicons GitHub SVG
@@ -245,11 +255,11 @@ All personal study records, timestamps, and exam scores are preserved locally in
 
 ## Release v2.5 Highlights
 
-- **100% Copyright-Safe Original Papers & Board Repeat Frequency Badges (`v2.5`):** All 137 questions across Physics, Chemistry, Biology, and Mathematics rewritten in fresh, original wording with modified numerical values and 10-year board repeat frequency badges (`🔥 Asked Xx in Boards`).
-- **Four Subject-Wise Modular Marking Scheme Files:** Clean marking scheme modules keyed by `questionId` with step-by-step mark splits, loaded dynamically and kept strictly hidden until post-submission.
+- **Independently Authored Original Papers, SVG Diagrams & Concept Trend Tags (`v2.5`):** All 137 questions across Physics, Chemistry, Biology, and Mathematics authored in original wording with unique numerical values, **27 crisp vector SVG question diagrams**, **20 marking scheme reference SVG diagrams**, and transparent **Concept & Board Trend** tags.
+- **15-Minute Reading Timer & 100% Synced A4 PDFs:** Authentic 15-minute CBSE Reading Time cool-off timer (with Skip option) plus downloadable, 100% question-synced **Question Paper PDF** and **Marking Scheme PDF** buttons directly inside each PCMB subject card.
 - **Smart Sections B–E Inputs (Camera + Upload + Text):** Dedicated `questionType` per question with **Take Photo** (`capture="environment"`) and **Upload Image** buttons, multi-page thumbnail previews, and instant refresh recovery.
-- **Dual Storage System & Post-Submission Auto-Wipe:** In-browser image compression (1024px @ 0.7 JPEG). Uses `localStorage` strictly for typed text drafts (`sectionBE_text_draft`) and `IndexedDB` strictly for compressed photos (`SectionBE_PhotoStorage`), wiping both completely and automatically immediately after successful AI grading and rendering of the Results Screen.
-- **gemini-3.8-flash AI Board Examiner & Results Dashboard:** Server-side `gemini-3.8-flash` evaluation against active subject marking scheme checkpoints, returning post-grading palette colors (Green/Yellow/Red/Grey), accuracy analytics, weak areas, improvement tips, and step-by-step model answers. (See `RELEASE_NOTES_v2.5.md` for full release notes.)
+- **Zero-Server Browser Storage & Auto-Wipe:** Uses `localStorage` (`sectionBE_text_draft`) and browser `IndexedDB` (`SectionBE_PhotoStorage`) solely inside the student's browser during the exam, wiping both completely and automatically the moment AI grading renders the Final Results Dashboard. Remember to download your Graded Report / Marking Scheme PDF before refreshing!
+- **`gemini-3.8-flash` AI Board Examiner & Results Dashboard:** Server-side evaluation against active subject marking scheme checkpoints, returning post-grading palette colors (Green/Yellow/Red/Grey), accuracy analytics, weak areas, improvement tips, reference SVG diagrams, and step-by-step model answers. (See `RELEASE_NOTES_v2.5.md` and `RELEASE.md` for full release notes.)
 
 ---
 
@@ -277,10 +287,10 @@ npm run build
 
 ## Disclaimers, Terms &amp; Conditions (Copyright, Privacy &amp; AI Fair Use)
 
-- **Independent Student Initiative:** Quadra 12 is an independent, non-commercial educational study workspace. Students should always cross-reference official circulars and syllabus announcements on [cbse.gov.in](https://cbse.gov.in).
-- **Original Practice Material & Intellectual Property:** All Examination Hall practice papers, case scenarios, numericals, and step marking schemes are 100% original copyright-safe content created for Quadra 12. 12th Hackers YouTube lecture playlists belong to their respective educators and creators.
-- **Dual Storage & Post-Submission Wipe:** Typed drafts are saved in `localStorage` and captured photos in `IndexedDB` for refresh protection. Both are wiped completely and automatically immediately after successful AI grading and rendering of the Results Screen.
-- **AI Board Examiner Disclaimer:** Sections B to E subjective evaluation is performed by `gemini-3.8-flash` as an automated practice examiner for study guidance and self-assessment only.
+- **Independent Student Initiative:** Quadra 12 is an independent, non-commercial educational study workspace. All Class 12 PCMB mock papers, step-by-step marking schemes, and AI evaluations are provided strictly for personal educational self-assessment. Always verify official circulars and syllabus announcements on [cbse.gov.in](https://cbse.gov.in).
+- **Independently Authored Material & Intellectual Property:** All Class 12 PCMB mock papers, questions, case scenarios, numericals, embedded SVG diagrams/graphs, and step marking schemes on Quadra 12 are independently authored copyright-safe content. 12th Hackers YouTube lecture playlists belong to their respective educators and creators.
+- **Privacy, Browser Storage & Save Reminder (Zero Server Storage):** Typed drafts (`localStorage`) and attached photos (`IndexedDB`) stay solely inside the student's own browser during the exam for refresh protection, and are automatically and permanently wiped the moment AI grading finishes (zero server storage). Download your Graded Report / Marking Scheme PDF before refreshing or closing the results screen.
+- **AI Board Examiner Disclaimer:** Sections B to E subjective evaluation is performed by `gemini-3.8-flash` as an automated practice examiner strictly for personal study guidance and self-assessment.
 - **Copyright Claims & Takedown Policy:** If you are a copyright owner or authorized agent and believe any content on Quadra 12 infringes your copyright, please contact `ariyanpal090@gmail.com` for prompt resolution.
 
 ---

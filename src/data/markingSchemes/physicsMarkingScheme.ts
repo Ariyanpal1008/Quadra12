@@ -1,4 +1,5 @@
 import {SubjectMarkingSchemeMap} from './types';
+import {MARKING_SCHEME_DIAGRAM_SVGS} from '../diagramSvgs';
 
 export const PHYSICS_MARKING_SCHEME: SubjectMarkingSchemeMap = {
   // Section A (Q1 – Q16)
@@ -218,6 +219,7 @@ export const PHYSICS_MARKING_SCHEME: SubjectMarkingSchemeMap = {
       {label: 'Verify i = 45° > i_c ≈ 41.8° at both reflecting faces', marks: 1},
     ],
     finalAnswerValue: '180° deviation via two TIR reflections at 45° (> 41.8°)',
+    diagramSvg: MARKING_SCHEME_DIAGRAM_SVGS['phy-ms-20'],
     examinerCheckpoints: ['Arrows shown on rays', 'i_c ≈ 41.8° verified', '180° turn shown clearly'],
   },
   'phy-2026-21': {
@@ -232,6 +234,7 @@ export const PHYSICS_MARKING_SCHEME: SubjectMarkingSchemeMap = {
       {label: 'Final derivation v_d = −(eEτ)/m', marks: 1},
     ],
     finalAnswerValue: 'v_d = eEτ / m (opposite to E)',
+    diagramSvg: MARKING_SCHEME_DIAGRAM_SVGS['phy-ms-21'],
     examinerCheckpoints: ['a = −eE/m', 'Average thermal velocity = 0', 'v_d = −(eE/m)τ'],
   },
 
@@ -248,6 +251,7 @@ export const PHYSICS_MARKING_SCHEME: SubjectMarkingSchemeMap = {
       {label: 'Stable (θ = 0°) and unstable (θ = 180°) equilibrium conditions', marks: 1},
     ],
     finalAnswerValue: 'τ = p × E; Stable θ = 0°, Unstable θ = 180°',
+    diagramSvg: MARKING_SCHEME_DIAGRAM_SVGS['phy-ms-22'],
     examinerCheckpoints: ['Diagram with 2a sin θ arm', 'τ = p × E', 'θ = 0° & θ = 180°'],
   },
   'phy-2026-23': {
@@ -291,6 +295,7 @@ export const PHYSICS_MARKING_SCHEME: SubjectMarkingSchemeMap = {
       {label: 'Input AC and unidirectional full-wave rectified output waveform', marks: 1},
     ],
     finalAnswerValue: 'Center-tap FWR diagram + alternating D₁/D₂ conduction + waveforms',
+    diagramSvg: MARKING_SCHEME_DIAGRAM_SVGS['phy-ms-25'],
     examinerCheckpoints: ['Center tap drawn', 'Unidirectional current arrow through R_L', 'Two-pulse output waveform'],
   },
   'phy-2026-26': {
@@ -305,6 +310,7 @@ export const PHYSICS_MARKING_SCHEME: SubjectMarkingSchemeMap = {
       {label: 'Derivation of sin i / sin r = v₁/v₂ = n₂/n₁', marks: 1},
     ],
     finalAnswerValue: 'sin i / sin r = v₁ / v₂ = n₂ / n₁',
+    diagramSvg: MARKING_SCHEME_DIAGRAM_SVGS['phy-ms-26'],
     examinerCheckpoints: ['Tangential refracted wavefront CD', 'Equal travel time t', 'Snell’s law proven'],
   },
   'phy-2026-27': {
@@ -395,6 +401,7 @@ export const PHYSICS_MARKING_SCHEME: SubjectMarkingSchemeMap = {
       {label: 'Magnification m = 20 and tube length L = 126 cm', marks: 1.5},
     ],
     finalAnswerValue: 'm = f_o/f_e = 20; Tube length L = 126 cm',
+    diagramSvg: MARKING_SCHEME_DIAGRAM_SVGS['phy-ms-32'],
     examinerCheckpoints: ['Arrows on parallel rays entering & exiting', 'F_o = F_e labeled', 'm = 20, L = 126 cm'],
   },
   'phy-2026-33': {
@@ -409,6 +416,7 @@ export const PHYSICS_MARKING_SCHEME: SubjectMarkingSchemeMap = {
       {label: 'Calculation f₀ ≈ 159.15 Hz with unit', marks: 1.5},
     ],
     finalAnswerValue: 'Z = √(R² + (X_L−X_C)²); f₀ = 159.15 Hz',
+    diagramSvg: MARKING_SCHEME_DIAGRAM_SVGS['phy-ms-33'],
     examinerCheckpoints: ['Phasor V_L opposite V_C', 'f₀ formula', 'f₀ ≈ 159.15 Hz'],
   },
 };

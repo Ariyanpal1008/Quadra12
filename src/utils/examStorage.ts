@@ -24,6 +24,8 @@ export interface SectionBETextDraft {
   secondsLeft: number;
   isPaused: boolean;
   activeSectionFilter: 'all' | 'A' | 'B' | 'C' | 'D' | 'E';
+  isReadingTime?: boolean;
+  readingSecondsLeft?: number;
   updatedAt: number;
 }
 

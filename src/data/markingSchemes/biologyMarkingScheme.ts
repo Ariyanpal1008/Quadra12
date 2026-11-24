@@ -1,4 +1,5 @@
 import {SubjectMarkingSchemeMap} from './types';
+import {MARKING_SCHEME_DIAGRAM_SVGS} from '../diagramSvgs';
 
 export const BIOLOGY_MARKING_SCHEME: SubjectMarkingSchemeMap = {
   // Section A (Q1 – Q16, 1 Mark each)
@@ -7,10 +8,10 @@ export const BIOLOGY_MARKING_SCHEME: SubjectMarkingSchemeMap = {
     section: 'Section A · Q1',
     maxMarks: 1,
     exactModelAnswer:
-      'Because anthers shed pollen long before stigmas on every flower of the plant become receptive (protandry across all flowers), both autogamy and geitonogamy are prevented, strictly enforcing cross-pollination (xenogamy).',
-    stepMarks: [{label: 'Temporal separation (dichogamy) enforcing xenogamy', marks: 1}],
-    finalAnswerValue: 'Strictly enforces cross-pollination (xenogamy)',
-    examinerCheckpoints: ['Prevents autogamy & geitonogamy', 'Cross-pollination ensured'],
+      'In the transverse section of a microsporangium, the four anther wall layers from outside to inside are: A = Epidermis (protective outer layer), B = Endothecium (fibrous hygroscopic layer aiding anther dehiscence), C = Middle layers (2–3 ephemeral protective layers), and D = Tapetum (innermost nutritive layer with dense cytoplasm and polyploid/binucleate cells nourishing developing pollen grains).',
+    stepMarks: [{label: 'Identify innermost nutritive layer D as Tapetum', marks: 1}],
+    finalAnswerValue: 'Layer D = Tapetum (nourishes developing pollen grains)',
+    examinerCheckpoints: ['A Epidermis, B Endothecium, C Middle layers, D Tapetum'],
   },
   'bio-2026-2': {
     questionId: 'bio-2026-2',
@@ -215,6 +216,7 @@ export const BIOLOGY_MARKING_SCHEME: SubjectMarkingSchemeMap = {
       {label: 'Identify humoral / B-cell mediated immune response', marks: 0.5},
     ],
     finalAnswerValue: 'H₂L₂ Y-shaped labeled diagram; Humoral immune response',
+    diagramSvg: MARKING_SCHEME_DIAGRAM_SVGS['bio-ms-20'],
     examinerCheckpoints: ['4 chains labeled (2H, 2L)', 'Disulphide bridges & Fab labeled'],
   },
   'bio-2026-21': {
@@ -222,13 +224,14 @@ export const BIOLOGY_MARKING_SCHEME: SubjectMarkingSchemeMap = {
     section: 'Section B · Q21',
     maxMarks: 2,
     exactModelAnswer:
-      'Two key ecological roles of predators: (1) Energy transfer conduits across trophic levels (channeling fixed plant energy to higher carnivores); (2) Keeping prey populations under biological control to prevent explosive overgrazing and maintaining species diversity by reducing interspecific competition among prey (e.g., Pisaster starfish removing competing intertidal invertebrates).',
+      '(a) Curve A (J-shaped exponential curve): dN/dt = rN (occurs when food and space resources are unlimited). Curve B (S-shaped / Sigmoid logistic curve): dN/dt = rN((K − N)/K), where K denotes the environment’s carrying capacity (maximum sustainable population).\n(b) Curve B (Sigmoid / Verhulst–Pearl Logistic Growth) is ecologically more realistic because natural habitats always possess finite, limiting resources.',
     stepMarks: [
-      {label: 'Role 1: Conduit for energy transfer + prey population control', marks: 1},
-      {label: 'Role 2: Maintaining prey community species diversity (e.g., Pisaster)', marks: 1},
+      {label: '(a) Differential equations for Curve A (dN/dt = rN) & Curve B (dN/dt = rN((K−N)/K)) + K meaning', marks: 1},
+      {label: '(b) Identify Curve B as realistic under finite natural resources', marks: 1},
     ],
-    finalAnswerValue: 'Energy conduit + prey control + maintaining species diversity',
-    examinerCheckpoints: ['Energy transfer across trophic levels', 'Competitive exclusion prevented'],
+    finalAnswerValue: 'Curve A: dN/dt = rN; Curve B: dN/dt = rN((K−N)/K); K = Carrying Capacity (Curve B realistic)',
+    diagramSvg: MARKING_SCHEME_DIAGRAM_SVGS['bio-ms-21'],
+    examinerCheckpoints: ['Both differential equations accurate', 'K defined as carrying capacity', 'Curve B realistic justification'],
   },
 
   // Section C (Q22 – Q28, 3 Marks each)
@@ -243,6 +246,7 @@ export const BIOLOGY_MARKING_SCHEME: SubjectMarkingSchemeMap = {
       {label: 'Functions of Acrosome, Middle piece mitochondria, and Tail', marks: 1.5},
     ],
     finalAnswerValue: 'Labeled spermatozoa diagram + acrosome, mitochondria & tail functions',
+    diagramSvg: MARKING_SCHEME_DIAGRAM_SVGS['bio-ms-22'],
     examinerCheckpoints: ['Acrosome hydrolytic enzymes', 'Middle piece mitochondria ATP', 'Tail motility'],
   },
   'bio-2026-23': {
@@ -257,6 +261,7 @@ export const BIOLOGY_MARKING_SCHEME: SubjectMarkingSchemeMap = {
       {label: 'Amplified yield after 3 cycles = 2³ = 8 DNA duplexes', marks: 0.5},
     ],
     finalAnswerValue: 'Denaturation → Annealing → Extension; Thermus aquaticus; 8 copies after 3 cycles',
+    diagramSvg: MARKING_SCHEME_DIAGRAM_SVGS['bio-ms-23'],
     examinerCheckpoints: ['94°C / ~55°C / 72°C temperatures', 'Thermus aquaticus', '2³ = 8 copies'],
   },
   'bio-2026-24': {
@@ -284,6 +289,7 @@ export const BIOLOGY_MARKING_SCHEME: SubjectMarkingSchemeMap = {
       {label: 'Selectable marker selection & insertional inactivation of tet^R explained', marks: 1.5},
     ],
     finalAnswerValue: 'pBR322 vector diagram; ampicillin growth + tetracycline sensitivity identifies recombinants',
+    diagramSvg: MARKING_SCHEME_DIAGRAM_SVGS['bio-ms-25'],
     examinerCheckpoints: ['ori, amp^R, tet^R, BamHI labeled', 'Insertional inactivation selection logic'],
   },
   'bio-2026-26': {
@@ -298,6 +304,7 @@ export const BIOLOGY_MARKING_SCHEME: SubjectMarkingSchemeMap = {
       {label: 'Names/roles of structural genes z, y, a (β-galactosidase, permease, transacetylase)', marks: 1},
     ],
     finalAnswerValue: 'Negative regulation: lactose inducer inactivates repressor allowing z, y, a transcription',
+    diagramSvg: MARKING_SCHEME_DIAGRAM_SVGS['bio-ms-26'],
     examinerCheckpoints: ['Allolactose/lactose binds repressor', 'lacZ, lacY, lacA enzymes'],
   },
   'bio-2026-27': {
@@ -326,6 +333,7 @@ export const BIOLOGY_MARKING_SCHEME: SubjectMarkingSchemeMap = {
       {label: 'Inverted/spindle number pyramid in tree ecosystem', marks: 1},
     ],
     finalAnswerValue: 'Energy always upright; Marine biomass inverted; Single-tree number inverted',
+    diagramSvg: MARKING_SCHEME_DIAGRAM_SVGS['bio-ms-28'],
     examinerCheckpoints: ['Energy never inverted', 'Phytoplankton < zooplankton biomass'],
   },
 
@@ -386,6 +394,7 @@ export const BIOLOGY_MARKING_SCHEME: SubjectMarkingSchemeMap = {
       {label: 'Triple fusion (n + 2n → 3n PEN endosperm) & post-fertilisation significance', marks: 1.5},
     ],
     finalAnswerValue: '7-celled 8-nucleate embryo sac; Syngamy (2n) + Triple Fusion (3n PEN)',
+    diagramSvg: MARKING_SCHEME_DIAGRAM_SVGS['bio-ms-32'],
     examinerCheckpoints: ['Correct chalazal/micropylar poles', 'Filiform apparatus labeled', '3n PEN explicitly stated'],
   },
   'bio-2026-33': {

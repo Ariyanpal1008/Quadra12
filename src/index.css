@@ -171,3 +171,58 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Exam Document Print-to-PDF Styles */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body.exam-pdf-modal-open > *:not(#exam-pdf-modal-portal) {
+    display: none !important;
+  }
+
+  body.exam-pdf-modal-open {
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+
+  .print-page-break {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  .print-avoid-break,
+  figure,
+  img,
+  svg {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .exam-pdf-diagram-wrap img,
+  .exam-pdf-diagram-wrap svg {
+    max-width: 420px !important;
+    height: auto !important;
+  }
+}
+
+/* Force crisp dark-ink diagrams inside white A4 PDF modal even when app dark mode is active */
+.exam-pdf-diagram-wrap > figure,
+.exam-pdf-diagram-wrap > div {
+  background-color: #FAF8F3 !important;
+  border-color: #DDD6C7 !important;
+  color: #1E1B18 !important;
+}
+
+.exam-pdf-diagram-wrap > figure *,
+.exam-pdf-diagram-wrap > div * {
+  color: #1E1B18 !important;
+}
+
+.exam-pdf-diagram-wrap svg {
+  color: #1E1B18 !important;
+}
+
+

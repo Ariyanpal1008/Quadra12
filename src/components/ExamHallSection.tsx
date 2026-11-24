@@ -7,19 +7,22 @@ import {
   Camera,
   CheckCircle2,
   Clock,
+  Download,
   FileCheck2,
+  FileText,
   Flame,
   ImagePlus,
   Loader2,
   Pause,
   Play,
-  Printer,
   RotateCcw,
   ShieldCheck,
   Sparkles,
   Trash2,
   XCircle,
 } from 'lucide-react';
+import {ExamPdfModal} from './ExamPdfModal';
+import {exportElementToA4Pdf} from '../utils/pdfExporter';
 import {
   EXAM_QUESTIONS,
   SUBJECTIVE_QUESTIONS,
@@ -43,7 +46,7 @@ import {
 } from '../utils/examStorage';
 import {ExamDiagram} from './ExamDiagrams';
 import {APPLE_EASE, APPLE_SPRING} from './FluidPrimitives';
-import {playExamCompletionChime, playOmrBubbleSound} from '../utils/soundEffects';
+import {playCheckSound, playExamCompletionChime, playOmrBubbleSound} from '../utils/soundEffects';
 
 interface ExamAttemptSummary {
   score: number;
@@ -82,12 +85,19 @@ type ReviewFilter = 'all' | 'A' | 'BE' | 'lost';
 type PaletteStatus = 'full' | 'partial' | 'zero' | 'unattempted';
 
 const THREE_HOURS_SECONDS = 3 * 60 * 60;
+const FIFTEEN_MINUTES_SECONDS = 15 * 60;
 
 function formatHms(totalSeconds: number): string {
   const hrs = Math.floor(totalSeconds / 3600);
   const mins = Math.floor((totalSeconds % 3600) / 60);
   const secs = totalSeconds % 60;
   return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}
+
+function formatMinutesSeconds(totalSeconds: number): string {
+  const mins = Math.floor(totalSeconds / 60);
+  const secs = totalSeconds % 60;
+  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 }
 
 function formatScoreValue(val: number): string {
@@ -136,7 +146,7 @@ function BoardFrequencyBadge({meta}: {meta: BoardFrequencyMeta}) {
     >
       <Flame className="w-3 h-3 shrink-0" aria-hidden="true" />
       <span>
-        {meta.count} • {meta.years.join(', ')}
+        {meta.count} (Board Trend: {meta.years.join(', ')})
       </span>
     </span>
   );
@@ -151,9 +161,28 @@ export function ExamHallSection({
     useState<SubjectId>(initialSubjectId);
   const [examPhase, setExamPhase] = useState<'lobby' | 'active' | 'review'>('lobby');
   const [secondsLeft, setSecondsLeft] = useState(THREE_HOURS_SECONDS);
+  const [isReadingTime, setIsReadingTime] = useState(false);
+  const [readingSecondsLeft, setReadingSecondsLeft] =
+    useState(FIFTEEN_MINUTES_SECONDS);
   const [isPaused, setIsPaused] = useState(false);
   const [activeSectionFilter, setActiveSectionFilter] =
     useState<SectionFilter>('all');
+
+  // PDF Preview & Print Modal
+  const [pdfModalOpen, setPdfModalOpen] = useState(false);
+  const [pdfSubjectId, setPdfSubjectId] = useState<SubjectId>('physics');
+  const [pdfMode, setPdfMode] = useState<'question_paper' | 'marking_scheme'>(
+    'question_paper',
+  );
+
+  const openPdfModal = (
+    subjectId: SubjectId,
+    mode: 'question_paper' | 'marking_scheme',
+  ) => {
+    setPdfSubjectId(subjectId);
+    setPdfMode(mode);
+    setPdfModalOpen(true);
+  };
 
   // Section A MCQ answers
   const [omrAnswers, setOmrAnswers] = useState<Record<string, number>>({});
@@ -179,11 +208,18 @@ export function ExamHallSection({
   const [storageClearedAfterCheck, setStorageClearedAfterCheck] = useState(false);
   const [savedLobbyDraftSubject, setSavedLobbyDraftSubject] =
     useState<SubjectId | null>(null);
+  const [isExportingResultsPdf, setIsExportingResultsPdf] = useState(false);
+  const [resultsPdfNotice, setResultsPdfNotice] = useState<string | null>(null);
+  const resultsSectionRef = useRef<HTMLElement>(null);
 
   const hasCheckedInitialRestore = useRef(false);
   const autoSubmittedRef = useRef(false);
   const secondsLeftRef = useRef(secondsLeft);
   secondsLeftRef.current = secondsLeft;
+  const isReadingTimeRef = useRef(isReadingTime);
+  isReadingTimeRef.current = isReadingTime;
+  const readingSecondsLeftRef = useRef(readingSecondsLeft);
+  readingSecondsLeftRef.current = readingSecondsLeft;
 
   // Sync subject selector prop ONLY when in lobby and no auto-restored draft overrides it
   useEffect(() => {
@@ -212,6 +248,13 @@ export function ExamHallSection({
         setOmrAnswers(draft.omrAnswers);
         setTextAnswers(draft.textAnswers);
         setSecondsLeft(draft.secondsLeft);
+        if (draft.isReadingTime && (draft.readingSecondsLeft ?? 0) > 0) {
+          setIsReadingTime(true);
+          setReadingSecondsLeft(draft.readingSecondsLeft!);
+        } else {
+          setIsReadingTime(false);
+          setReadingSecondsLeft(0);
+        }
         setIsPaused(draft.isPaused);
         setActiveSectionFilter(draft.activeSectionFilter || 'all');
         setPhotosByQ(restoredPhotos);
@@ -225,6 +268,13 @@ export function ExamHallSection({
         setOmrAnswers(draft.omrAnswers);
         setTextAnswers(draft.textAnswers);
         setSecondsLeft(draft.secondsLeft);
+        if (draft.isReadingTime && (draft.readingSecondsLeft ?? 0) > 0) {
+          setIsReadingTime(true);
+          setReadingSecondsLeft(draft.readingSecondsLeft!);
+        } else {
+          setIsReadingTime(false);
+          setReadingSecondsLeft(0);
+        }
         setIsPaused(draft.isPaused);
         setActiveSectionFilter(draft.activeSectionFilter || 'all');
         setExamPhase('active');
@@ -246,9 +296,19 @@ export function ExamHallSection({
       secondsLeft: secondsLeftRef.current,
       isPaused,
       activeSectionFilter,
+      isReadingTime: isReadingTimeRef.current,
+      readingSecondsLeft: readingSecondsLeftRef.current,
       updatedAt: Date.now(),
     });
-  }, [examPhase, selectedSubjectId, omrAnswers, textAnswers, isPaused, activeSectionFilter]);
+  }, [
+    examPhase,
+    selectedSubjectId,
+    omrAnswers,
+    textAnswers,
+    isPaused,
+    activeSectionFilter,
+    isReadingTime,
+  ]);
 
   // Periodically snapshot remaining seconds to localStorage + on page unload
   useEffect(() => {
@@ -262,6 +322,8 @@ export function ExamHallSection({
         secondsLeft: secondsLeftRef.current,
         isPaused,
         activeSectionFilter,
+        isReadingTime: isReadingTimeRef.current,
+        readingSecondsLeft: readingSecondsLeftRef.current,
         updatedAt: Date.now(),
       });
     };
@@ -274,14 +336,31 @@ export function ExamHallSection({
     };
   }, [examPhase, selectedSubjectId, omrAnswers, textAnswers, isPaused, activeSectionFilter]);
 
-  // Countdown timer
+  // Countdown timer: 15-Minute Reading Time countdown first, then 3-Hour Writing Time
   useEffect(() => {
     if (examPhase !== 'active' || isPaused || isGrading) return;
     const timer = window.setInterval(() => {
-      setSecondsLeft((prev) => (prev <= 1 ? 0 : prev - 1));
+      if (isReadingTimeRef.current) {
+        setReadingSecondsLeft((prev) => {
+          if (prev <= 1) {
+            setIsReadingTime(false);
+            playExamCompletionChime();
+            return 0;
+          }
+          return prev - 1;
+        });
+      } else {
+        setSecondsLeft((prev) => (prev <= 1 ? 0 : prev - 1));
+      }
     }, 1000);
     return () => window.clearInterval(timer);
   }, [examPhase, isPaused, isGrading]);
+
+  const skipReadingTime = () => {
+    setIsReadingTime(false);
+    setReadingSecondsLeft(0);
+    playCheckSound(true);
+  };
 
   // Specification 7: Wipe localStorage ('sectionBE_text_draft') and IndexedDB ('SectionBE_PhotoStorage')
   // ONLY AFTER AI grading succeeds and the Results Screen renders.
@@ -338,6 +417,13 @@ export function ExamHallSection({
       setOmrAnswers(existingDraft.omrAnswers);
       setTextAnswers(existingDraft.textAnswers);
       setSecondsLeft(existingDraft.secondsLeft);
+      if (existingDraft.isReadingTime && (existingDraft.readingSecondsLeft ?? 0) > 0) {
+        setIsReadingTime(true);
+        setReadingSecondsLeft(existingDraft.readingSecondsLeft!);
+      } else {
+        setIsReadingTime(false);
+        setReadingSecondsLeft(0);
+      }
       setIsPaused(existingDraft.isPaused);
       setActiveSectionFilter(existingDraft.activeSectionFilter || 'all');
       setPhotosByQ(restoredPhotos);
@@ -346,10 +432,12 @@ export function ExamHallSection({
       return;
     }
 
-    // Starting a different or fresh paper: wipe stale draft and load ONLY the active subject's marking scheme
+    // Starting a fresh paper: start 15-minute Board Reading Time
     await clearSectionBEStorage();
     const scheme = await loadSubjectMarkingScheme(subjectId);
     setSelectedSubjectId(subjectId);
+    setIsReadingTime(true);
+    setReadingSecondsLeft(FIFTEEN_MINUTES_SECONDS);
     setSecondsLeft(THREE_HOURS_SECONDS);
     setIsPaused(false);
     setActiveSectionFilter('all');
@@ -368,6 +456,8 @@ export function ExamHallSection({
       secondsLeft: THREE_HOURS_SECONDS,
       isPaused: false,
       activeSectionFilter: 'all',
+      isReadingTime: true,
+      readingSecondsLeft: FIFTEEN_MINUTES_SECONDS,
       updatedAt: Date.now(),
     });
   };
@@ -644,6 +734,17 @@ export function ExamHallSection({
     });
   };
 
+  const pdfModalElement = (
+    <ExamPdfModal
+      subjectId={pdfSubjectId}
+      mode={pdfMode}
+      isOpen={pdfModalOpen}
+      canViewMarkingScheme={examPhase !== 'active'}
+      onClose={() => setPdfModalOpen(false)}
+      onSwitchMode={(newMode) => setPdfMode(newMode)}
+    />
+  );
+
   // ======================== 1. LOBBY SCREEN ========================
   if (examPhase === 'lobby') {
     const lobbyDraft = loadTextDraftFromLocalStorage();
@@ -653,6 +754,7 @@ export function ExamHallSection({
       : null;
 
     return (
+      <>
       <section aria-labelledby="exam-hall-heading" className="space-y-8">
         <div className="relative overflow-hidden bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl p-6 sm:p-8 space-y-6 apple-surface">
           <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-6">
@@ -708,13 +810,13 @@ export function ExamHallSection({
             <div>
               <p className="text-xs text-[#787066] dark:text-[#9C9387]">Official Duration</p>
               <p className="mt-1 font-medium text-[#1E1B18] dark:text-[#F5F2EB] font-mono tabular-nums">
-                03:00:00 (Full 3 Hours)
+                03:15:00 (15m Reading + 3h Writing)
               </p>
             </div>
             <div>
               <p className="text-xs text-[#787066] dark:text-[#9C9387]">Question Bank &amp; Yield</p>
               <p className="mt-1 font-medium text-[#1E1B18] dark:text-[#F5F2EB]">
-                100% Original Wording + 10-Yr Board Frequency Tags
+                100% Original Wording + Core Concept Trend Tags
               </p>
             </div>
             <div>
@@ -771,7 +873,7 @@ export function ExamHallSection({
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-[#DDD6C7] dark:border-[#332E28] flex flex-wrap items-center justify-between gap-3">
+                <div className="pt-4 border-t border-[#DDD6C7] dark:border-[#332E28] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="flex items-center gap-2 text-xs text-[#787066] dark:text-[#9C9387]">
                     <ShieldCheck className="w-4 h-4 text-[#3D6B4F] dark:text-[#7AB88F]" aria-hidden="true" />
                     <span>
@@ -780,21 +882,41 @@ export function ExamHallSection({
                     </span>
                   </div>
 
-                  <motion.button
-                    type="button"
-                    whileTap={{scale: 0.97}}
-                    onClick={() => void startThreeHourExam(subject.id)}
-                    className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-[#F5F2EB] dark:text-[#1E1B18] bg-[#1E1B18] hover:bg-[#332E28] dark:bg-[#F5F2EB] dark:hover:bg-[#E8E2D5] rounded-lg transition-colors whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A64B33]"
-                  >
-                    <FileCheck2 className="w-4 h-4" aria-hidden="true" />
-                    <span>Start 3-Hour Paper</span>
-                  </motion.button>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => openPdfModal(subject.id, 'question_paper')}
+                      className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#1E1B18] dark:text-[#F5F2EB] bg-transparent hover:bg-[#F0ECE1] dark:hover:bg-[#2A2621] border border-[#DDD6C7] dark:border-[#332E28] rounded-lg transition-colors whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A64B33]"
+                    >
+                      <FileText className="w-3.5 h-3.5 text-[#A64B33] dark:text-[#D4785E]" aria-hidden="true" />
+                      <span>Question Paper PDF</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => openPdfModal(subject.id, 'marking_scheme')}
+                      className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#1E1B18] dark:text-[#F5F2EB] bg-transparent hover:bg-[#F0ECE1] dark:hover:bg-[#2A2621] border border-[#DDD6C7] dark:border-[#332E28] rounded-lg transition-colors whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A64B33]"
+                    >
+                      <CheckCircle2 className="w-3.5 h-3.5 text-[#3D6B4F] dark:text-[#7AB88F]" aria-hidden="true" />
+                      <span>Marking Scheme PDF</span>
+                    </button>
+                    <motion.button
+                      type="button"
+                      whileTap={{scale: 0.97}}
+                      onClick={() => void startThreeHourExam(subject.id)}
+                      className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-[#F5F2EB] dark:text-[#1E1B18] bg-[#1E1B18] hover:bg-[#332E28] dark:bg-[#F5F2EB] dark:hover:bg-[#E8E2D5] rounded-lg transition-colors whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A64B33]"
+                    >
+                      <FileCheck2 className="w-4 h-4" aria-hidden="true" />
+                      <span>Start 3-Hour Paper</span>
+                    </motion.button>
+                  </div>
                 </div>
               </motion.div>
             );
           })}
         </div>
       </section>
+      {pdfModalElement}
+      </>
     );
   }
 
@@ -834,6 +956,7 @@ export function ExamHallSection({
       .filter((group) => group.items.length > 0);
 
     return (
+      <>
       <section aria-label="3-Hour Examination Hall" className="space-y-5">
         {/* Top Exam Control Bar */}
         <div className="bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl px-5 py-4 flex flex-wrap items-center justify-between gap-4">
@@ -855,17 +978,36 @@ export function ExamHallSection({
               </p>
             </div>
 
-            <div
-              className={`flex items-center gap-2 px-3.5 py-2 rounded-lg border font-mono tabular-nums text-sm font-semibold ${
-                isLowTime
-                  ? 'bg-[#FBF0ED] dark:bg-[#3A1E18] border-[#E0B0A4] dark:border-[#7A3528] text-[#B33A2B] dark:text-[#F09986]'
-                  : 'bg-[#F5F2EB] dark:bg-[#24201C] border-[#DDD6C7] dark:border-[#332E28] text-[#1E1B18] dark:text-[#F5F2EB]'
-              }`}
-              aria-live="off"
+            {isReadingTime ? (
+              <div
+                className="flex items-center gap-2 px-3.5 py-2 rounded-lg border font-mono tabular-nums text-sm font-semibold bg-[#FEF3C7] dark:bg-[#2D2414] border-[#F59E0B]/50 text-[#92400E] dark:text-[#FDE68A]"
+                aria-label={`15-Minute Reading Time: ${formatMinutesSeconds(readingSecondsLeft)} remaining`}
+              >
+                <Clock className="w-4 h-4 text-[#D97706] animate-pulse" aria-hidden="true" />
+                <span>Reading: {formatMinutesSeconds(readingSecondsLeft)}</span>
+              </div>
+            ) : (
+              <div
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-lg border font-mono tabular-nums text-sm font-semibold ${
+                  isLowTime
+                    ? 'bg-[#FBF0ED] dark:bg-[#3A1E18] border-[#E0B0A4] dark:border-[#7A3528] text-[#B33A2B] dark:text-[#F09986]'
+                    : 'bg-[#F5F2EB] dark:bg-[#24201C] border-[#DDD6C7] dark:border-[#332E28] text-[#1E1B18] dark:text-[#F5F2EB]'
+                }`}
+                aria-live="off"
+              >
+                <Clock className="w-4 h-4" aria-hidden="true" />
+                <span>{formatHms(secondsLeft)}</span>
+              </div>
+            )}
+
+            <button
+              type="button"
+              onClick={() => openPdfModal(activeSubject.id, 'question_paper')}
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#1E1B18] dark:text-[#F5F2EB] bg-[#F5F2EB] dark:bg-[#24201C] border border-[#DDD6C7] dark:border-[#332E28] hover:bg-[#ECE6D9] dark:hover:bg-[#332E28] rounded-lg whitespace-nowrap"
             >
-              <Clock className="w-4 h-4" aria-hidden="true" />
-              <span>{formatHms(secondsLeft)}</span>
-            </div>
+              <FileText className="w-3.5 h-3.5 text-[#A64B33] dark:text-[#D4785E]" aria-hidden="true" />
+              <span>Question Paper PDF</span>
+            </button>
 
             <button
               type="button"
@@ -888,9 +1030,10 @@ export function ExamHallSection({
 
             <button
               type="button"
-              disabled={isGrading}
+              disabled={isGrading || isReadingTime}
+              title={isReadingTime ? 'Locked during 15-Minute Board Reading Time' : undefined}
               onClick={() => void submitExamForGrading()}
-              className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-[#F5F2EB] bg-[#3D6B4F] hover:bg-[#315940] rounded-lg transition-colors whitespace-nowrap shrink-0 disabled:opacity-60"
+              className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-[#F5F2EB] bg-[#3D6B4F] hover:bg-[#315940] rounded-lg transition-colors whitespace-nowrap shrink-0 disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isGrading ? (
                 <>
@@ -906,6 +1049,36 @@ export function ExamHallSection({
             </button>
           </div>
         </div>
+
+        {/* 15-Minute Board Reading Time Banner */}
+        {isReadingTime && (
+          <div className="bg-[#FEF3C7] dark:bg-[#2D2414] border border-[#F59E0B]/50 dark:border-[#B45309]/60 rounded-xl px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs sm:text-sm text-[#92400E] dark:text-[#FDE68A] shadow-xs">
+            <div className="flex items-start sm:items-center gap-3">
+              <span className="text-xl shrink-0" aria-hidden="true">
+                📖
+              </span>
+              <div>
+                <p className="font-semibold text-sm text-[#78350F] dark:text-[#FEF3C7]">
+                  15-Minute Board Reading Time — Read all questions carefully before writing begins
+                </p>
+                <p className="text-xs text-[#92400E] dark:text-[#FCD34D] mt-0.5">
+                  All answer inputs are locked during this interval. Answering will unlock automatically in{' '}
+                  <strong className="font-mono tabular-nums">
+                    {formatMinutesSeconds(readingSecondsLeft)}
+                  </strong>.
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={skipReadingTime}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-lg bg-[#92400E] hover:bg-[#78350F] text-white shadow-xs whitespace-nowrap shrink-0 self-start sm:self-auto transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#92400E]"
+            >
+              <span>Skip Reading Time &amp; Start Writing</span>
+              <span aria-hidden="true">→</span>
+            </button>
+          </div>
+        )}
 
         {/* Grading Error Banner (Drafts remain 100% preserved) */}
         {gradingError && (
@@ -1009,7 +1182,9 @@ export function ExamHallSection({
                         {q.prompt}
                       </p>
 
-                      {q.diagramId && <ExamDiagram diagramId={q.diagramId} />}
+                      {(q.diagramId || q.questionDiagramSvg) && (
+                        <ExamDiagram diagramId={q.diagramId} svg={q.questionDiagramSvg} />
+                      )}
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                         {q.options.map((opt, oIdx) => {
@@ -1018,15 +1193,17 @@ export function ExamHallSection({
                             <button
                               key={`${q.id}-opt-${oIdx}`}
                               type="button"
+                              disabled={isReadingTime}
                               aria-pressed={active}
                               onClick={() => {
+                                if (isReadingTime) return;
                                 playOmrBubbleSound();
                                 setOmrAnswers((prev) => ({
                                   ...prev,
                                   [q.id]: active ? -1 : oIdx,
                                 }));
                               }}
-                              className={`text-left px-3.5 py-2.5 rounded-lg border text-sm transition-colors flex items-start gap-2.5 ${
+                              className={`text-left px-3.5 py-2.5 rounded-lg border text-sm transition-colors flex items-start gap-2.5 disabled:opacity-75 disabled:cursor-not-allowed ${
                                 active
                                   ? 'bg-[#EEF2FF] dark:bg-[#23263E] border-[#4F46E5] dark:border-[#818CF8] text-[#1E1B4B] dark:text-[#E0E7FF] font-medium'
                                   : 'bg-[#F5F2EB] dark:bg-[#24201C] border-[#DDD6C7] dark:border-[#332E28] text-[#1E1B18] dark:text-[#F5F2EB] hover:bg-[#ECE6D9] dark:hover:bg-[#332E28]'
@@ -1079,7 +1256,11 @@ export function ExamHallSection({
                       <div className="flex flex-wrap items-center gap-2.5">
                         {/* 1. Take Photo (Direct Device Camera) */}
                         <label
-                          className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border text-xs font-semibold cursor-pointer transition-colors ${
+                          className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border text-xs font-semibold transition-colors ${
+                            isReadingTime
+                              ? 'opacity-55 cursor-not-allowed pointer-events-none'
+                              : 'cursor-pointer'
+                          } ${
                             isVisualOrProof
                               ? 'bg-[#4F46E5] hover:bg-[#4338CA] border-[#4F46E5] text-white'
                               : 'bg-[#F5F2EB] dark:bg-[#24201C] hover:bg-[#ECE6D9] dark:hover:bg-[#332E28] border-[#DDD6C7] dark:border-[#332E28] text-[#1E1B18] dark:text-[#F5F2EB]'
@@ -1091,7 +1272,7 @@ export function ExamHallSection({
                             type="file"
                             accept="image/*"
                             capture="environment"
-                            disabled={isBusy || isGrading}
+                            disabled={isBusy || isGrading || isReadingTime}
                             onChange={(e) => {
                               void handleAttachImages(q.id, e.target.files);
                               e.target.value = '';
@@ -1102,7 +1283,11 @@ export function ExamHallSection({
 
                         {/* 2. Upload Image (Gallery / Multi-Page Files) */}
                         <label
-                          className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border text-xs font-semibold cursor-pointer transition-colors ${
+                          className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border text-xs font-semibold transition-colors ${
+                            isReadingTime
+                              ? 'opacity-55 cursor-not-allowed pointer-events-none'
+                              : 'cursor-pointer'
+                          } ${
                             isVisualOrProof
                               ? 'bg-[#EEF2FF] dark:bg-[#23263E] hover:bg-[#E0E7FF] dark:hover:bg-[#2E3252] border-[#A5B4FC] dark:border-[#4F46E5] text-[#312E81] dark:text-[#E0E7FF]'
                               : 'bg-[#F5F2EB] dark:bg-[#24201C] hover:bg-[#ECE6D9] dark:hover:bg-[#332E28] border-[#DDD6C7] dark:border-[#332E28] text-[#1E1B18] dark:text-[#F5F2EB]'
@@ -1114,7 +1299,7 @@ export function ExamHallSection({
                             type="file"
                             accept="image/*"
                             multiple
-                            disabled={isBusy || isGrading}
+                            disabled={isBusy || isGrading || isReadingTime}
                             onChange={(e) => {
                               void handleAttachImages(q.id, e.target.files);
                               e.target.value = '';
@@ -1159,9 +1344,10 @@ export function ExamHallSection({
                               </div>
                               <button
                                 type="button"
+                                disabled={isReadingTime || isGrading}
                                 aria-label={`Remove photo ${pIdx + 1} for Question ${q.questionNumber}`}
                                 onClick={() => void handleRemovePhoto(q.id, photo.id)}
-                                className="absolute top-1.5 right-1.5 p-1 rounded-md bg-[#1E1B18]/80 hover:bg-[#B33A2B] text-white transition-colors"
+                                className="absolute top-1.5 right-1.5 p-1 rounded-md bg-[#1E1B18]/80 hover:bg-[#B33A2B] text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                               >
                                 <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
                               </button>
@@ -1185,6 +1371,7 @@ export function ExamHallSection({
                       <textarea
                         id={`subj-text-${q.id}`}
                         rows={isVisualOrProof ? 3 : 5}
+                        disabled={isReadingTime || isGrading}
                         value={typedText}
                         onChange={(e) =>
                           setTextAnswers((prev) => ({
@@ -1193,15 +1380,17 @@ export function ExamHallSection({
                           }))
                         }
                         placeholder={
-                          q.questionType === 'numerical'
-                            ? 'State given data, formula, substitution, intermediate steps, and final value with SI unit...'
-                            : q.questionType === 'diagram'
-                              ? 'Optional: list diagram labels or explain construction steps alongside your uploaded photo...'
-                              : q.questionType === 'derivation_or_proof'
-                                ? 'Optional: add key equations or remarks alongside your uploaded proof photo...'
-                                : 'Write concise point-wise board answer with scientific terms / formulas...'
+                          isReadingTime
+                            ? 'Locked during 15-Minute Board Reading Time — Click "Skip Reading Time & Start Writing" above to begin early.'
+                            : q.questionType === 'numerical'
+                              ? 'State given data, formula, substitution, intermediate steps, and final value with SI unit...'
+                              : q.questionType === 'diagram'
+                                ? 'Optional: list diagram labels or explain construction steps alongside your uploaded photo...'
+                                : q.questionType === 'derivation_or_proof'
+                                  ? 'Optional: add key equations or remarks alongside your uploaded proof photo...'
+                                  : 'Write concise point-wise board answer with scientific terms / formulas...'
                         }
-                        className="w-full p-3 text-sm bg-[#F5F2EB] dark:bg-[#161412] border border-[#DDD6C7] dark:border-[#332E28] rounded-lg text-[#1E1B18] dark:text-[#F5F2EB] placeholder:text-[#968E83] dark:placeholder:text-[#787066] focus-visible:outline-2 focus-visible:outline-[#4F46E5]"
+                        className="w-full p-3 text-sm bg-[#F5F2EB] dark:bg-[#161412] border border-[#DDD6C7] dark:border-[#332E28] rounded-lg text-[#1E1B18] dark:text-[#F5F2EB] placeholder:text-[#968E83] dark:placeholder:text-[#787066] focus-visible:outline-2 focus-visible:outline-[#4F46E5] disabled:opacity-65 disabled:cursor-not-allowed"
                       />
                     </div>
                   );
@@ -1255,7 +1444,9 @@ export function ExamHallSection({
                         </div>
                       )}
 
-                      {q.diagramId && <ExamDiagram diagramId={q.diagramId} />}
+                      {(q.diagramId || q.questionDiagramSvg) && (
+                        <ExamDiagram diagramId={q.diagramId} svg={q.questionDiagramSvg} />
+                      )}
 
                       {/* Smart Input Ordering per questionType */}
                       <div className="pt-3 border-t border-[#DDD6C7] dark:border-[#332E28] space-y-3.5">
@@ -1360,9 +1551,10 @@ export function ExamHallSection({
             <div className="pt-3 border-t border-[#DDD6C7] dark:border-[#332E28] space-y-2.5">
               <button
                 type="button"
-                disabled={isGrading}
+                disabled={isGrading || isReadingTime}
+                title={isReadingTime ? 'Locked during 15-Minute Board Reading Time' : undefined}
                 onClick={() => void submitExamForGrading()}
-                className="w-full py-2.5 px-4 text-xs font-semibold text-[#F5F2EB] bg-[#3D6B4F] hover:bg-[#315940] rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
+                className="w-full py-2.5 px-4 text-xs font-semibold text-[#F5F2EB] bg-[#3D6B4F] hover:bg-[#315940] rounded-lg transition-colors flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 {isGrading ? (
                   <>
@@ -1404,12 +1596,14 @@ export function ExamHallSection({
               <p className="text-xs sm:text-sm text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
                 Grading your typed derivations, balanced equations, diagrams, and uploaded photos
                 against the {activeSubject.name} step-by-step marking scheme using{' '}
-                <span className="font-mono">gemini-2.5-flash</span>. Please wait...
+                <span className="font-mono">gemini-3.8-flash</span>. Please wait...
               </p>
             </div>
           </div>
         )}
       </section>
+      {pdfModalElement}
+      </>
     );
   }
 
@@ -1517,11 +1711,16 @@ export function ExamHallSection({
   };
 
   return (
-    <section aria-labelledby="exam-review-heading" className="space-y-8">
+    <>
+    <section
+      ref={resultsSectionRef}
+      aria-labelledby="exam-review-heading"
+      className="space-y-8"
+    >
       {/* Draft Cleared + Review / Save Before Refresh Notice */}
       <div
         role="status"
-        className="bg-[#EEF2FF] dark:bg-[#23263E] border border-[#C7D2FE] dark:border-[#3B3F68] rounded-xl px-5 py-3.5 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm text-[#312E81] dark:text-[#E0E7FF]"
+        className="bg-[#EEF2FF] dark:bg-[#23263E] border border-[#C7D2FE] dark:border-[#3B3F68] rounded-xl px-5 py-3.5 flex flex-wrap items-center justify-between gap-3 text-xs sm:text-sm text-[#312E81] dark:text-[#E0E7FF] print:hidden"
       >
         <div className="flex items-start gap-2.5">
           <ShieldCheck className="w-4 h-4 shrink-0 mt-0.5 text-[#4338CA] dark:text-[#A5B4FC]" aria-hidden="true" />
@@ -1530,22 +1729,54 @@ export function ExamHallSection({
               ? 'Temporary draft storage (IndexedDB photos & localStorage text) has been wiped cleanly. '
               : 'Finalizing storage cleanup... '}
             <strong>
-              Please review or Print / Save your results before refreshing the page.
+              Please download your Graded Report / Marking Scheme PDF before refreshing or closing this screen.
             </strong>
+            {resultsPdfNotice && (
+              <span className="block mt-1 font-mono text-xs text-[#3D6B4F] dark:text-[#7AB88F]">
+                ✓ {resultsPdfNotice}
+              </span>
+            )}
           </p>
         </div>
         <button
           type="button"
-          onClick={() => window.print()}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#3730A3] hover:bg-[#312E81] text-white shrink-0 print:hidden"
+          disabled={isExportingResultsPdf}
+          onClick={async () => {
+            if (!resultsSectionRef.current || isExportingResultsPdf) return;
+            setIsExportingResultsPdf(true);
+            setResultsPdfNotice(null);
+            const safeSubject = activeSubject.name.replace(/[^A-Za-z0-9]+/g, '-');
+            const filename = `Quadra12-${safeSubject}-${activeSubject.code}-Graded-Results.pdf`;
+            try {
+              const res = await exportElementToA4Pdf(resultsSectionRef.current, {
+                filename,
+                documentTitle: `Quadra 12 · ${activeSubject.name} (${activeSubject.code}) · Graded Results Report`,
+              });
+              setResultsPdfNotice(`Saved ${res.filename} (${res.pageCount} A4 pages)`);
+            } catch {
+              window.print();
+            } finally {
+              setIsExportingResultsPdf(false);
+            }
+          }}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg bg-[#3730A3] hover:bg-[#312E81] disabled:opacity-60 text-white shrink-0 print:hidden"
         >
-          <Printer className="w-3.5 h-3.5" aria-hidden="true" />
-          <span>Print / Save Results</span>
+          {isExportingResultsPdf ? (
+            <>
+              <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
+              <span>Generating PDF...</span>
+            </>
+          ) : (
+            <>
+              <Download className="w-3.5 h-3.5" aria-hidden="true" />
+              <span>Print / Save Results</span>
+            </>
+          )}
         </button>
       </div>
 
       {/* Top Performance Summary Header */}
-      <div className="bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl p-6 sm:p-8 space-y-6">
+      <div data-pdf-block className="bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl p-6 sm:p-8 space-y-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div>
             <div className="flex items-center gap-3 text-xs font-medium tracking-[0.12em] text-[#A64B33] dark:text-[#D4785E]">
@@ -1562,7 +1793,23 @@ export function ExamHallSection({
             </h1>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 print:hidden">
+          <div className="flex flex-wrap items-center gap-2.5 print:hidden">
+            <button
+              type="button"
+              onClick={() => openPdfModal(selectedSubjectId, 'question_paper')}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-[#1E1B18] dark:text-[#F5F2EB] bg-transparent hover:bg-[#F0ECE1] dark:hover:bg-[#2A2621] border border-[#DDD6C7] dark:border-[#332E28] rounded-lg transition-colors whitespace-nowrap"
+            >
+              <FileText className="w-3.5 h-3.5 text-[#A64B33] dark:text-[#D4785E]" aria-hidden="true" />
+              <span>Question Paper PDF</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => openPdfModal(selectedSubjectId, 'marking_scheme')}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-[#1E1B18] dark:text-[#F5F2EB] bg-transparent hover:bg-[#F0ECE1] dark:hover:bg-[#2A2621] border border-[#DDD6C7] dark:border-[#332E28] rounded-lg transition-colors whitespace-nowrap"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5 text-[#3D6B4F] dark:text-[#7AB88F]" aria-hidden="true" />
+              <span>Marking Scheme PDF</span>
+            </button>
             <button
               type="button"
               onClick={() => void startThreeHourExam(selectedSubjectId)}
@@ -1670,7 +1917,7 @@ export function ExamHallSection({
       </div>
 
       {/* Post-Grading Palette + AI Weak Topics & Improvement Plan */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div data-pdf-block className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Post-Grading Color-Coded Palette */}
         <div className="lg:col-span-5 bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl p-5 space-y-4">
           <div className="space-y-1">
@@ -1817,6 +2064,7 @@ export function ExamHallSection({
                 <article
                   key={q.id}
                   id={`review-q-${q.questionNumber}`}
+                  data-pdf-block
                   className="scroll-mt-6 bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl p-6 space-y-4"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
@@ -1852,7 +2100,9 @@ export function ExamHallSection({
                     {q.prompt}
                   </p>
 
-                  {q.diagramId && <ExamDiagram diagramId={q.diagramId} />}
+                  {(q.diagramId || q.questionDiagramSvg) && (
+                    <ExamDiagram diagramId={q.diagramId} svg={q.questionDiagramSvg} />
+                  )}
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-sm">
                     {q.options.map((opt, oIdx) => {
@@ -1891,11 +2141,19 @@ export function ExamHallSection({
                   </div>
 
                   {schemeEntry && (
-                    <div className="pt-3 border-t border-[#DDD6C7] dark:border-[#332E28] text-sm text-[#575048] dark:text-[#CBC3B6]">
-                      <span className="font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
-                        Exact Model Answer:{' '}
-                      </span>
-                      {schemeEntry.exactModelAnswer}
+                    <div className="pt-3 border-t border-[#DDD6C7] dark:border-[#332E28] text-sm text-[#575048] dark:text-[#CBC3B6] space-y-2">
+                      <div>
+                        <span className="font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+                          Exact Model Answer:{' '}
+                        </span>
+                        {schemeEntry.exactModelAnswer}
+                      </div>
+                      {schemeEntry.diagramSvg && (
+                        <ExamDiagram
+                          svg={schemeEntry.diagramSvg}
+                          caption={`Official Labeled Reference Diagram — Q${q.questionNumber}`}
+                        />
+                      )}
                     </div>
                   )}
                 </article>
@@ -1938,6 +2196,7 @@ export function ExamHallSection({
                 <article
                   key={q.id}
                   id={`review-q-${q.questionNumber}`}
+                  data-pdf-block
                   className="scroll-mt-6 bg-[#FAF8F3] dark:bg-[#1E1B18] border border-[#DDD6C7] dark:border-[#332E28] rounded-xl p-6 space-y-4"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
@@ -1977,7 +2236,9 @@ export function ExamHallSection({
                     </p>
                   )}
 
-                  {q.diagramId && <ExamDiagram diagramId={q.diagramId} />}
+                  {(q.diagramId || q.questionDiagramSvg) && (
+                    <ExamDiagram diagramId={q.diagramId} svg={q.questionDiagramSvg} />
+                  )}
 
                   {/* Student Submission Preview (if attempted) */}
                   {(studentTyped || studentPhotos.length > 0) && (
@@ -2027,6 +2288,13 @@ export function ExamHallSection({
                       {schemeEntry?.exactModelAnswer ?? grade?.exact_model_answer}
                     </p>
 
+                    {schemeEntry?.diagramSvg && (
+                      <ExamDiagram
+                        svg={schemeEntry.diagramSvg}
+                        caption={`Official Labeled Reference Diagram — Q${q.questionNumber}`}
+                      />
+                    )}
+
                     {schemeEntry?.stepMarks && schemeEntry.stepMarks.length > 0 && (
                       <div className="pt-2 border-t border-[#3D6B4F]/20 dark:border-[#7AB88F]/20 space-y-1.5">
                         <p className="text-[11px] font-semibold uppercase tracking-wider text-[#23422F] dark:text-[#B6DFC3]">
@@ -2053,5 +2321,7 @@ export function ExamHallSection({
             })}
       </div>
     </section>
+    {pdfModalElement}
+    </>
   );
 }

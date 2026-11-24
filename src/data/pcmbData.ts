@@ -66,6 +66,7 @@ export interface ExamQuestion {
   chapterTag: string;
   prompt: string;
   diagramId?: string;
+  questionDiagramSvg?: string;
   options: string[];
   correctIndex: number;
   boardFrequency: BoardFrequencyMeta;

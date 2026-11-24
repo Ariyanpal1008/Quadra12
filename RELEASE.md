@@ -1,57 +1,35 @@
-# Quadra 12 v2.5 — Original PCMB Blueprint Papers, 10-Year Board Frequency Badges, Smart Camera Inputs & Gemini 3.8 Flash AI Board Examiner
+# Quadra 12 v2.5 — Independently Authored PCMB Papers, Vector Diagrams, Synced A4 PDFs, Reading Timer & Gemini 3.8 Flash AI Examiner
 
 **Tag:** `v2.5`  
-**Release Title:** `Quadra 12 v2.5 — Original PCMB Blueprint Papers, Board Badges & Gemini 3.8 AI Examiner`
+**Release Title:** `Quadra 12 v2.5 — Original PCMB Papers, SVG Diagrams, Synced A4 PDFs & Gemini 3.8 AI Examiner`
 
 ---
 
 ## 🚀 What's New in v2.5
 
-### 1. 📝 100% Copyright-Safe Original Papers & Board Repeat Frequency Badges
-* **Zero Verbatim Text:** All **137 questions** across Physics (33 Qs / 70M), Chemistry (33 Qs / 70M), Biology (33 Qs / 70M), and Mathematics (38 Qs / 80M) rewritten in fresh, original phrasing with new case scenarios and modified numerical values (with all exact recalculated solutions).
-* **10-Year Board Appearance Badges:** Every question features a `boardFrequency` badge indicating its 10-year Class 12 board exam appearance record (e.g., `🔥 Asked 5x in Boards • 2016, 2018, 2020, 2023, 2025`).
+### 1. 📝 Independently Authored PCMB Papers, Real SVG Diagrams & Concept Trend Tags
+* **100% Original Content:** All **137 questions** across Physics (33 Qs / 70M), Chemistry (33 Qs / 70M), Biology (33 Qs / 70M), and Mathematics (38 Qs / 80M) are independently authored with fresh case-study passages and unique numerical values strictly for personal educational self-assessment.
+* **47 Embedded Vector SVG Diagrams & Graphs:** Includes **27 high-contrast SVG question diagrams/graphs** (`diagramSvgsPart1.ts`) and **20 labeled reference solution SVG diagrams** (`diagramSvgsPart2.ts`), rendered crisply on screen and inside exported A4 PDFs.
+* **Transparent Syllabus Concept Tags:** Every question displays its concept importance and board trend indicator (e.g., `High-Yield Concept • Electric Charges and Fields (Board Trend: 2016–2025)`).
 
-### 2. 📂 Modular Subject-Wise Marking Scheme Files
-* **Dedicated Subject Marking Files:** Built 4 clean, isolated marking scheme files (`physicsMarkingScheme.ts`, `chemistryMarkingScheme.ts`, `biologyMarkingScheme.ts`, `mathsMarkingScheme.ts`).
-* **Granular Step-Mark Splits:** Map keyed by `questionId` with exact point allocations (Formula 0.5m, Substitution/Steps 1.0m, Diagram/Labels 1.0m, Final Answer with SI Units 0.5m).
-* **Isolated Runtime Loading:** Only loads the active subject's marking scheme into memory upon starting a test, remaining completely hidden until post-submission evaluation.
+### 2. 📄 100% Synced Question Paper PDF & Marking Scheme PDF + 15-Min Reading Timer
+* **Instant Subject Card PDF Buttons:** Each PCMB card provides **Question Paper PDF** and **Marking Scheme PDF** buttons rendered directly from the live active question and marking scheme datasets (with the Marking Scheme locked during an active paper until submission).
+* **Direct A4 PDF Download & Print:** Tapping **Print / Save PDF** exports a paginated, diagram-safe A4 `.pdf` file directly in the browser (plus desktop print dialog support), alongside **Print / Save Results** on the Final Results Dashboard.
+* **15-Minute Reading Timer:** Launching any 3-hour paper opens with an authentic cool-off Reading Time timer (answer inputs locked) and a one-click **Skip Reading Time & Start Writing** control.
 
-### 3. 📸 Smart Inputs for Sections B to E (Camera + File Upload)
-* **Question Categorization:** Every subjective question is assigned a `questionType` (`short`, `numerical`, `diagram`, or `derivation_or_proof`).
-* **Direct Device Camera Capture:** `Take Photo` opens the device camera directly (`capture="environment"`).
-* **Gallery / File Upload:** `Upload Image` allows selecting handwritten sheets from file manager or photo gallery.
-* **Multi-Page Attachments:** Supports multiple photo sheets per question with thumbnail previews, full-view enlargement, and remove actions, accompanied by an optional equations/notes textarea.
+### 3. 📂 Modular Subject-Wise Marking Scheme Files
+* **Dedicated Subject Marking Files:** Four isolated modules (`physicsMarkingScheme.ts`, `chemistryMarkingScheme.ts`, `biologyMarkingScheme.ts`, `mathsMarkingScheme.ts`) keyed by `questionId` with granular step-mark splits and reference SVG diagrams.
+* **Isolated Runtime Loading:** Dynamically loads only the active subject's marking scheme when starting or grading a test, keeping answers concealed until submission.
 
-### 4. 💾 Dual Storage System & Accidental Refresh Protection
-* **In-Browser Image Compression:** Compresses all captured and uploaded photos (max 1024px width, JPEG 0.7) before storage.
-* **Zero LocalStorage Image Clutter:** Text drafts are saved in `localStorage` (`sectionBE_text_draft`), while photos are stored in a dedicated browser `IndexedDB` database (`SectionBE_PhotoStorage`), completely avoiding the 5 MB localStorage ceiling.
-* **Accidental Refresh Recovery:** If the tab or browser accidentally reloads, all typed drafts and attached photos are automatically restored so zero student work is lost.
+### 4. 📸 Smart Sections B–E Inputs & Zero-Server Browser Storage Auto-Wipe
+* **Camera + Gallery Upload + Notes:** **Take Photo** (`capture="environment"`) and **Upload Image** compress handwritten sheets client-side (max 1024px @ 0.7 JPEG) into browser `IndexedDB` (`SectionBE_PhotoStorage`), while typed drafts stay in `localStorage` (`sectionBE_text_draft`).
+* **Zero Server Storage & Auto-Wipe:** Draft text and attached photos remain solely inside the student's browser for refresh protection during the exam and are **automatically and permanently wiped** the exact moment AI grading finishes and results render. Download your Graded Report / Marking Scheme PDF before refreshing or closing!
 
-### 5. 🤖 Neutral In-Progress Palette & Gemini 3.8 Flash AI Step-Marking
-* **Unbiased Question Palette:** Attempted Section B–E subjective questions stay neutral Blue/Purple while the test is active (never green until graded).
-* **Gemini 3.8 Flash Examiner:** Upgraded to `gemini-3.8-flash` with an automated multi-tier resilience fallback pipeline. Bundles student responses, photos, and active subject marking scheme keys into one single structured JSON evaluation.
-* **Strict Board Rubrics:**
-  * **Physics:** Formula, derivation steps, diagram labels, and SI units.
-  * **Chemistry:** Balanced chemical equations, reagents, mechanisms, and key scientific terms.
-  * **Biology:** Point-wise scientific keywords and diagram accuracy.
-  * **Mathematics:** Formula, theorem application, and step-by-step arithmetic marks.
+### 5. 🤖 Gemini 3.8 Flash AI Step-Marking & Results Dashboard
+* **Neutral Active Palette → Color-Coded Results:** Active subjective answers stay neutral until evaluated by `gemini-3.8-flash` against the active marking scheme, then update to 🟢 Green (Full), 🟡 Yellow (Partial), 🔴 Red (Zero), or ⚪ Grey (Unattempted) with analytics, weak areas, improvement tips, and reference diagrams.
 
-### 6. 📊 Post-Grading Palette & Comprehensive Results Dashboard
-* **Dynamic Palette Colors:**
-  * 🟢 **Green** = Full Marks
-  * 🟡 **Yellow** = Partial Marks
-  * 🔴 **Red** = Zero Marks
-  * ⚪ **Grey** = Unattempted
-* **Rich Score Analytics:** Total Score & %, Overall Accuracy %, Section A (MCQ) Accuracy %, Sections B–E (Subjective) Accuracy %, and Attempt Breakdown.
-* **Examiner Diagnostics:** AI-identified Weak Topics, actionable Improvement Tips, and overall Examiner Remarks.
-* **Detailed Question Review:** Step-by-step marks gained/lost, AI examiner commentary, and revealed model answers with mark splits.
-
-### 7. 🧹 Zero-Trace Storage Wipe After Results
-* Immediately after AI grading succeeds and the Results Dashboard is mounted, both `SectionBE_PhotoStorage` (IndexedDB) and `sectionBE_text_draft` (localStorage) are safely purged, accompanied by a reminder banner to review or print/save the score report.
-
-### 8. 🧭 Interactive Tour & README Visual Showcase Updates
-* **In-App Tour Sandbox:** Upgraded Step 4 in the **Help Desk → Interactive Tour** to a live dual-mode sandbox featuring both Section A OMR audio clicks and Section B–E camera photo attachments with simulated AI step-marking.
-* **README & Showcase Sync:** Updated `README.md`, `public/assets/showcase/exam-hall.svg`, and all technical documentation to reflect v2.5 architecture.
+### 6. 🧭 Interactive Tour, Legal Pages & Documentation Sync
+* Updated **Terms & Conditions**, **Creator & Disclaimers**, **Help Desk Guide**, **Interactive Tour**, `README.md`, `llms.txt`, and showcase previews to match all completed `v2.5` Examination Hall capabilities.
 
 ---
 

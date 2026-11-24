@@ -88,29 +88,30 @@ When all 4 stages are satisfied, the chapter is automatically logged as complete
 
 ## 3. Examination Hall Architecture (v2.5)
 
-### 100% Copyright-Safe Original Papers & Board Repeat Badges
-- **Original Blueprint Papers:** 137 questions across Physics 042 (33 Qs, 70 Marks), Chemistry 043 (33 Qs, 70 Marks), Biology 044 (33 Qs, 70 Marks), and Mathematics 041 (38 Qs, 80 Marks), written from scratch with recalculated numerical values and fresh case scenarios. Zero text copied verbatim from official PDFs.
-- **10-Year Board Appearance Badges:** Every question includes a `boardFrequency` indicator displaying historical board exam appearance count, years, and yield status (e.g. `🔥 Asked 5x in Boards · 2016, 2018, 2020, 2023, 2025`).
+### Independently Authored Papers, Embedded SVG Diagrams & Concept Trend Tags
+- **Original Mock Papers:** 137 questions across Physics 042 (33 Qs, 70 Marks), Chemistry 043 (33 Qs, 70 Marks), Biology 044 (33 Qs, 70 Marks), and Mathematics 041 (38 Qs, 80 Marks), independently authored with recalculated numerical values and fresh case scenarios strictly for personal educational self-assessment.
+- **47 Embedded Vector SVG Diagrams:** 27 crisp question SVG diagrams/graphs (`diagramSvgsPart1.ts`) and 20 labeled reference solution SVG diagrams (`diagramSvgsPart2.ts`) rendered cleanly on screen and inside exported A4 PDFs.
+- **Syllabus Concept & Board Trend Tags:** Every question includes a transparent concept tag (e.g., `High-Yield Concept • Electric Charges and Fields (Board Trend: 2016–2025)`).
+- **15-Minute Reading Timer & 100% Synced A4 PDFs:** Exams begin with a 15-minute CBSE Reading Time cool-off timer (answer inputs locked, with a Skip button), and each subject card offers downloadable **Question Paper PDF** and **Marking Scheme PDF** modals powered by block-aware A4 PDF export (`pdfExporter.ts`) + `@media print`.
 
-### Sections B–E Smart Inputs & Dual Storage
+### Sections B–E Smart Inputs & Zero-Server Browser Storage
 - **Direct Camera Capture:** `<input type="file" accept="image/*" capture="environment" />` opens device camera directly.
 - **Gallery File Picker:** `<input type="file" accept="image/*" />` for uploading handwritten derivations, circuits, ray diagrams, and mathematical proofs.
 - **In-Browser Image Compression:** Compresses all captured photos (max width 1024px, JPEG quality 0.7) before storage.
-- **Dual Storage System:**
-  - `localStorage` (`sectionBE_text_draft`): Strictly holds student typed notes/equations.
-  - `IndexedDB` (`SectionBE_PhotoStorage`): Dedicated database storing compressed image blobs (zero images inside localStorage).
-- **Accidental Refresh Recovery:** If the tab reloads before submitting, all typed text and attached photo files are restored seamlessly.
-- **Zero-Trace Auto-Wipe:** Immediately after AI grading succeeds and the Results Dashboard is mounted, both `SectionBE_PhotoStorage` (IndexedDB) and `sectionBE_text_draft` (localStorage) are safely deleted.
+- **Dual Browser Storage (Zero Server Storage):**
+  - `localStorage` (`sectionBE_text_draft`): Strictly holds student typed notes/equations inside the browser.
+  - `IndexedDB` (`SectionBE_PhotoStorage`): Dedicated browser database storing compressed image blobs (zero images inside `localStorage`).
+- **Accidental Refresh Recovery & Auto-Wipe:** Reloading restores saved work during the exam, and both storage areas are automatically and permanently wiped the exact moment AI grading finishes and the Final Results Dashboard renders. Students are reminded to download their Graded Report / Marking Scheme PDF before refreshing or closing results.
 
 ### Modular Marking Schemes & Gemini 3.8 Flash AI Board Examiner
-- **Four Isolated Marking Scheme Files:** `physicsMarkingScheme.ts`, `chemistryMarkingScheme.ts`, `biologyMarkingScheme.ts`, and `mathsMarkingScheme.ts` mapping question IDs to granular step allocations (Formula, Derivation/Steps, Diagram/Labels, Final Answer with SI Units).
+- **Four Isolated Marking Scheme Files:** `physicsMarkingScheme.ts`, `chemistryMarkingScheme.ts`, `biologyMarkingScheme.ts`, and `mathsMarkingScheme.ts` mapping question IDs to granular step allocations (Formula, Derivation/Steps, Diagram/Labels, Final Answer with SI Units) and reference SVG diagrams.
 - **AI Examiner Pipeline:** Server-side route (`POST /api/exam/grade`) using `gemini-3.8-flash` (with automated multi-tier resilience fallback). Evaluates handwritten photos and typed responses strictly against the active subject's marking scheme.
 - **Post-Grading Palette Color System:**
   - 🟢 **Green** = Full Marks
   - 🟡 **Yellow** = Partial Marks
   - 🔴 **Red** = Zero Marks
   - ⚪ **Grey** = Unattempted
-- **Comprehensive Results Dashboard:** Total score & percentage, Overall and Sectional Accuracy %, Attempt breakdown, AI-diagnosed weak areas, improvement tips, examiner remarks, and step-by-step model answers.
+- **Comprehensive Results Dashboard:** Total score & percentage, Overall and Sectional Accuracy %, Attempt breakdown, AI-diagnosed weak areas, improvement tips, examiner remarks, reference SVG diagrams, step-by-step model answers, and one-click Graded Results PDF download.
 
 ---
 

@@ -138,14 +138,14 @@ const GUIDE_SECTIONS: {
   {
     id: 'exam',
     title: 'Examination Hall',
-    tagline: '100% Original CBSE-Blueprint Papers & AI Board Examiner',
+    tagline: 'Original PCMB Papers, Synced A4 PDFs & AI Examiner',
     description:
-      'Practice full PCMB papers featuring original copyright-safe questions with 10-year board frequency badges, smart Section B–E camera/upload/text inputs, and instant AI step-by-step grading.',
+      'Practice full Class 12 PCMB mock papers with a 15-minute Reading Time timer, real visual SVG diagrams & graphs, downloadable Question Paper & Marking Scheme A4 PDFs, smart camera/photo inputs, and Gemini 3.8 Flash AI step-marking.',
     howToUse: [
-      'Pick Physics, Chemistry, Biology, or Mathematics to launch the 3-hour timed exam paper.',
-      'Answer Section A MCQs interactively with automated OMR scoring.',
-      'For Sections B–E, type your text or use Take Photo / Upload Image to attach multi-page handwritten/diagram answers.',
-      'Submit Test to run gemini-3.8-flash AI board examiner evaluation, view color-coded palette grades, AI feedback, and step-by-step model answers.',
+      'Launch a 3-hour timed paper or open the 100% synced Question Paper PDF / Marking Scheme PDF buttons right from any subject card (Marking Scheme locks during an active test until submitted).',
+      'Use the 15-minute cool-off Reading Time timer (with Skip Reading Time option) before writing begins, then solve Section A MCQs with OMR audio taps.',
+      'For Sections B–E, type equations/notes or use Take Photo / Upload Image (stored locally in IndexedDB) for multi-page handwritten answers and diagrams.',
+      'Submit Test for gemini-3.8-flash AI step-marking against the modular marking scheme, review reference SVG diagrams, and download your Graded Report or Marking Scheme PDF before refreshing.',
     ],
     icon: ClipboardCheck,
   },
@@ -1127,19 +1127,19 @@ export function HelpDeskModal({
                       <li className="flex items-start gap-2.5">
                         <span className="text-[#A64B33] dark:text-[#D4785E] font-semibold" aria-hidden="true">–</span>
                         <span>
-                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Original Practice Material &amp; Third-Party Content:</strong> Examination Hall practice papers, case scenarios, modified numericals, and step marking schemes are 100% original copyright-safe content created for Quadra 12. 12th Hackers YouTube lecture playlists belong to their original educators and creators.
+                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Independently Authored Practice Material:</strong> All Class 12 PCMB mock papers, questions, and step-by-step marking schemes on Quadra 12 are independently authored, copyright-safe original materials (including bespoke visual SVG diagrams/graphs and unique numerical values) strictly for personal educational self-assessment. 12th Hackers YouTube lecture playlists belong to their respective educators and creators.
                         </span>
                       </li>
                       <li className="flex items-start gap-2.5">
                         <span className="text-[#A64B33] dark:text-[#D4785E] font-semibold" aria-hidden="true">–</span>
                         <span>
-                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Dual Storage &amp; Post-Submission Wipe:</strong> Typed drafts are saved in <code className="font-mono">localStorage</code> and captured photos in <code className="font-mono">IndexedDB</code> for refresh protection. Both are wiped completely and automatically immediately after successful AI grading and rendering of the Results Screen.
+                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Privacy, Browser Storage &amp; Results PDF Reminder:</strong> Typed answers (<code className="font-mono">localStorage</code>) and attached photos (<code className="font-mono">IndexedDB</code>) remain solely inside your own browser during an active exam for refresh protection, and are automatically and permanently wiped the moment AI grading finishes (zero server storage). Always download your Graded Report or Marking Scheme PDF before refreshing or closing the results screen.
                         </span>
                       </li>
                       <li className="flex items-start gap-2.5">
                         <span className="text-[#A64B33] dark:text-[#D4785E] font-semibold" aria-hidden="true">–</span>
                         <span>
-                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">AI Board Examiner Disclaimer:</strong> Sections B to E subjective evaluation is performed by <code className="font-mono">gemini-3.8-flash</code> as an automated practice examiner for study guidance and self-assessment only.
+                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">AI Board Examiner Disclaimer:</strong> Sections B to E subjective evaluation is performed by <code className="font-mono">gemini-3.8-flash</code> as an automated practice examiner strictly for personal study guidance and self-assessment.
                         </span>
                       </li>
                     </ul>

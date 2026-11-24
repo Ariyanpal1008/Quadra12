@@ -1,4 +1,5 @@
 import {SubjectMarkingSchemeMap} from './types';
+import {MARKING_SCHEME_DIAGRAM_SVGS} from '../diagramSvgs';
 
 export const MATHS_MARKING_SCHEME: SubjectMarkingSchemeMap = {
   // Section A (Q1 – Q20, 1 Mark each)
@@ -353,6 +354,7 @@ export const MATHS_MARKING_SCHEME: SubjectMarkingSchemeMap = {
       {label: 'Unbounded region half-plane check & minimum Z = 5200/3', marks: 1},
     ],
     finalAnswerValue: 'Minimum Z = 5200/3 (≈ 1733.33) at (4/3, 10/3)',
+    diagramSvg: MARKING_SCHEME_DIAGRAM_SVGS['math-ms-31'],
     examinerCheckpoints: ['Corner points (0,6), (4/3, 10/3), (8,0)', 'Unbounded check done'],
   },
 
@@ -399,6 +401,7 @@ export const MATHS_MARKING_SCHEME: SubjectMarkingSchemeMap = {
       {label: 'Integrate and compute exact Area = 9 sq. units', marks: 2},
     ],
     finalAnswerValue: 'Area = 9 sq. units',
+    diagramSvg: MARKING_SCHEME_DIAGRAM_SVGS['math-ms-34'],
     examinerCheckpoints: ['Points (1, −2) and (4, 4)', 'Horizontal strip dy preferred', '9 sq. units'],
   },
   'math-2026-35': {
