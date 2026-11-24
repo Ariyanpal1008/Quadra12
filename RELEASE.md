@@ -31,8 +31,13 @@
 ### 6. 🧭 Interactive Tour, Legal Pages & Documentation Sync
 * Updated **Terms & Conditions**, **Creator & Disclaimers**, **Help Desk Guide**, **Interactive Tour**, `README.md`, `llms.txt`, and showcase previews to match all completed `v2.5` Examination Hall capabilities.
 
+### 7. 📱 Installable Offline PWA App & Free Standalone Android `.apk` (`$0`)
+* **Offline Progressive Web App (PWA):** Install Quadra 12 directly to your Home Screen or Desktop (Android, iOS/iPadOS *Add to Home Screen*, Windows, macOS) via the **Install App** button in the top bar, `☰` menu, or **Settings → About**, with automatic offline caching (`vite-plugin-pwa`) and a live **Offline Mode** banner.
+* **Free Standalone Android APK (`Quadra12-v2.5-Android.apk`):** Built via Capacitor 8 + Gradle in `.github/workflows/android-apk.yml` and attached to this release at **$0 cost** with native Android `CAMERA` & storage permissions plus a built-in `QuadraAndroid` bridge that saves Question Paper, Marking Scheme, Graded Report A4 PDFs, and `.json` backups straight into **`Downloads/Quadra12/`** and opens them in your Android PDF viewer.
+
 ---
 
 **Full Changelog:** `v2.4...v2.5`  
-**Live Application:** [https://ariyanpal1008.github.io/Quadra12/](https://ariyanpal1008.github.io/Quadra12/)  
+**Live Web & Offline PWA App:** [https://ariyanpal1008.github.io/Quadra12/](https://ariyanpal1008.github.io/Quadra12/)  
+**Free Android APK Download:** [GitHub Releases (`Quadra12-v2.5-Android.apk`)](https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.5)  
 **Creator:** AriYan Pal (Keśava Dāsa) · `ariyanpal090@gmail.com`

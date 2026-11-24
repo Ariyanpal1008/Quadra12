@@ -4,11 +4,13 @@
 
 - **Canonical URL:** https://ariyanpal1008.github.io/Quadra12/
 - **Repository:** https://github.com/Ariyanpal1008/Quadra12
+- **Android APK Releases:** https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.5
 - **Summary Document:** https://ariyanpal1008.github.io/Quadra12/llms.txt
 - **Author:** AriYan Pal (Keśava Dāsa) (`ariyanpal090@gmail.com`)
 - **Copyright:** © 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)
 - **Version:** `v2.5`
-- **Framework & Runtime:** React 19, TypeScript 5, Vite 6, Tailwind CSS v4, Motion (Framer Motion), Three.js (WebGL), QRCode, jsQR, Native Web Audio API, Firebase Firestore & Authentication.
+- **Distribution Platforms:** Web Application + Installable Offline PWA (`vite-plugin-pwa`) + Free Standalone Android `.apk` (`Quadra12-v2.5-Android.apk` via Capacitor 8 + Gradle)
+- **Framework & Runtime:** React 19, TypeScript 5, Vite 8, `vite-plugin-pwa` (Workbox), Capacitor 8 (Android APK), Tailwind CSS v4, Motion (`motion/react`), Three.js (WebGL), `jsPDF` + `html2canvas-pro` (A4 PDF export), QRCode, jsQR, Native Web Audio API, Firebase Firestore & Authentication.
 
 ---
 
@@ -209,3 +211,23 @@ Provides studio-lit procedural WebGL 3D study models with `RoomEnvironment`, `Or
 - **Email:** `ariyanpal090@gmail.com`
 - **Copyright Statement:** `© 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)`
 - **Terms & Conditions:** Accessible in-app via the dedicated dull blue footer link.
+
+---
+
+## 9. Multi-Platform App Distribution — Web, Offline PWA & Free Android APK ($0)
+
+Quadra 12 is engineered to run seamlessly across desktop browsers, installable mobile/desktop PWAs, and a free native Android `.apk` package—all at **$0 cost** with zero Google Play or App Store paywalls:
+
+### 1. Progressive Web App (`vite-plugin-pwa`)
+- **Manifest & Icons:** Configured in `vite.config.ts` (`base: './'`, `id: './'`, `start_url: './'`, `scope: './'`, `display: 'standalone'`, `theme_color: '#1E1B18'`, `background_color: '#F5F2EB'`). Uses crisp brand PNG icons generated in `public/`:
+  - `pwa-192x192.png` (192×192, `purpose: 'any'`)
+  - `pwa-512x512.png` (512×512, `purpose: 'any'`)
+  - `pwa-maskable-512x512.png` (420×420 centered safe-zone artwork on `#1D1C17` full-bleed canvas, `purpose: 'maskable'`)
+  - `apple-touch-icon.png` (180×180 iOS Safari Home Screen icon)
+- **Offline Caching & Service Worker:** `registerSW({ immediate: true })` in `src/main.tsx` activates Workbox precaching (up to 6 MiB per asset, excluding `/api/*` from navigation fallback, with `CacheFirst` Google Fonts caching) so the countdown timer, 50-chapter tracker, SVG plates, and local papers remain accessible offline.
+- **In-App Install UI & Offline Status:** `src/hooks/usePWAInstall.ts` + `src/components/PWAInstallButton.tsx` provide native `beforeinstallprompt` installation buttons across the desktop header (`navbar`), mobile `☰` drawer (`menu`), and `Settings → About` (`card`), plus a guided iOS Safari *Share → Add to Home Screen* instruction modal and a live `OfflineIndicator` banner.
+
+### 2. Free Standalone Android `.apk` (`Quadra12-v2.5-Android.apk`)
+- **Automated Zero-Cost CI Pipeline:** `.github/workflows/android-apk.yml` compiles `npm run build`, sets up Capacitor 8 (`@capacitor/core`, `@capacitor/cli`, `@capacitor/android`) using `capacitor.config.json` (`appId: "io.github.ariyanpal1008.quadra12"`, `server.androidScheme: "https"`), builds the release-ready signed debug APK (`Quadra12-v2.5-Android.apk`) via Gradle + `android-actions/setup-android@v4`, uploads the `Quadra12-Android-APK` Actions artifact, and automatically attaches the `.apk` binary to GitHub Releases on `v*` tag pushes.
+- **Native Android Permissions & Camera/File Intents:** Injects `CAMERA`, `READ_MEDIA_IMAGES`, `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE`, `<uses-feature android:name="android.hardware.camera" />`, `<external-path>` in `res/xml/file_paths.xml`, and `<queries>` intents (`IMAGE_CAPTURE`, `GET_CONTENT`, `OPEN_DOCUMENT`, `VIEW` `application/pdf`) into `AndroidManifest.xml`, alongside Quadra 12 mipmap launcher icons (removing `mipmap-anydpi-v26` fallback overrides).
+- **Native `QuadraAndroid` Bridge (`MainActivity.java`):** Extends Capacitor's `BridgeActivity` to request runtime `CAMERA` and storage permissions, trigger native camera authorization via `window.QuadraAndroid.ensureCameraPermission()` before camera capture in Exam Hall / Settings QR Scanner, and route PDFs (`pdfExporter.ts`, `ExamPdfModal.tsx`, `ExamHallSection.tsx`) and JSON backups (`SettingsModal.tsx`) through `window.QuadraAndroid.saveBase64File(...)` directly into `Downloads/Quadra12/` via `MediaStore.Downloads` (Android 10+) or `Environment.DIRECTORY_DOWNLOADS` with toast notification and automatic PDF viewer chooser launch.

@@ -1,21 +1,23 @@
 # Quadra 12 (v2.5)
 
 [![Release](https://img.shields.io/badge/Release-v2.5-crimson.svg?style=flat-square)](https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.5)
+[![Platforms](https://img.shields.io/badge/Platforms-Web%20%7C%20Offline%20PWA%20%7C%20Android%20APK%20(Free)-A64B33.svg?style=flat-square)](#10-installable-offline-pwa--free-standalone-android-apk-app-0)
 [![License](https://img.shields.io/badge/License-Independent%20Student%20Workspace-blue.svg?style=flat-square)](#disclaimers-terms--conditions-copyright-privacy--ai-fair-use)
 [![Framework](https://img.shields.io/badge/Stack-React%2019%20%7C%20Vite%20%7C%20Tailwind%20v4-emerald.svg?style=flat-square)](#tech-stack)
 [![AI Engine](https://img.shields.io/badge/AI%20Examiner-Gemini%203.8%20Flash-indigo.svg?style=flat-square)](https://aistudio.google.com/)
 
-> **Quadra 12 v2.5 Active Release:** Features 100% independently authored PCMB mock papers, 27 question &amp; 20 marking scheme vector SVG diagrams, a 15-minute Reading Time timer, 100% synced Question Paper &amp; Marking Scheme A4 PDF downloads, Sections B–E smart camera/photo uploads, zero-trace browser storage (`IndexedDB` + `localStorage`), and `gemini-3.8-flash` AI step-marking.
+> **Quadra 12 v2.5 Active Release:** Features 100% independently authored PCMB mock papers, 27 question &amp; 20 marking scheme vector SVG diagrams, a 15-minute Reading Time timer, 100% synced Question Paper &amp; Marking Scheme A4 PDF downloads, Sections B–E smart camera/photo uploads, zero-trace browser storage (`IndexedDB` + `localStorage`), `gemini-3.8-flash` AI step-marking, **Installable Offline PWA App**, and a **Free Standalone Android `.apk` App (`Quadra12-v2.5-Android.apk`)**.
 
 - **Current Version:** `v2.5` (Active Release)
-- **Live Website:** [https://ariyanpal1008.github.io/Quadra12/](https://ariyanpal1008.github.io/Quadra12/)  
+- **Live Web & PWA App:** [https://ariyanpal1008.github.io/Quadra12/](https://ariyanpal1008.github.io/Quadra12/) *(Installable offline on Android, iOS/iPadOS, Windows &amp; macOS)*  
+- **Free Android `.apk` Download:** [GitHub Releases (`Quadra12-v2.5-Android.apk`)](https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.5) *(100% Free — `$0`, no Play Store fees)*  
 - **GitHub Repository:** [https://github.com/Ariyanpal1008/Quadra12](https://github.com/Ariyanpal1008/Quadra12)  
 - **AI Summary (llms.txt):** [https://ariyanpal1008.github.io/Quadra12/llms.txt](https://ariyanpal1008.github.io/Quadra12/llms.txt)  
 - **Full AI Knowledge Base (llms-full.txt):** [https://ariyanpal1008.github.io/Quadra12/llms-full.txt](https://ariyanpal1008.github.io/Quadra12/llms-full.txt)  
 - **Creator:** AriYan Pal (Keśava Dāsa) · `ariyanpal090@gmail.com`  
 - **Copyright:** © 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)
 
-Quadra 12 is a calm, distraction-free Class 12 CBSE PCMB (Physics 042, Chemistry 043, Biology 044, and Mathematics 041) academic preparation workspace. It brings together an Apple StandBy–inspired **Live Board Exam Countdown Clock**, a gamified **My Achievements** milestone system, comprehensive syllabus tracking across all 50 NCERT chapters, independently authored PCMB mock papers with real visual vector diagrams, 15-minute Reading Timer, synced downloadable A4 PDFs, and AI step-marking in a 3-hour **Examination Hall**, plus 50 synced **12th Hackers** one-shot video lectures in one unified web application.
+Quadra 12 is a calm, distraction-free Class 12 CBSE PCMB (Physics 042, Chemistry 043, Biology 044, and Mathematics 041) academic preparation workspace available as a **Web App**, an **Installable Offline PWA App**, and a **Free Standalone Android `.apk` App**. It brings together an Apple StandBy–inspired **Live Board Exam Countdown Clock**, a gamified **My Achievements** milestone system, comprehensive syllabus tracking across all 50 NCERT chapters, independently authored PCMB mock papers with real visual vector diagrams, 15-minute Reading Timer, synced downloadable A4 PDFs, and AI step-marking in a 3-hour **Examination Hall**, plus 50 synced **12th Hackers** one-shot video lectures in one unified application.
 
 ---
 
@@ -44,6 +46,7 @@ Quadra 12 is a calm, distraction-free Class 12 CBSE PCMB (Physics 042, Chemistry
 6. **Help Desk & Interactive Tour:** Access the **Help Desk** to explore the interactive visual tour sandbox, read syllabus notes, submit suggestions or bug reports via Google Sign-In, or access the Creator Inbox.
 7. **Terms & Conditions:** Tap the dull blue **Terms & Conditions · 2026** link in the footer to review personal educational self-assessment rules, zero-server browser storage privacy, Copyright, Fair Use, and Takedown Policy.
 8. **GitHub Repository:** Click the official bold **GitHub** link in the footer to inspect source code, contribute, or star the repository.
+9. **Install Offline PWA / Free Android APK:** Tap **Install App** in the top navigation bar, `☰` mobile drawer, or **Settings → About** to install Quadra 12 offline on Android, iPhone/iPad (*Add to Home Screen*), Windows, or macOS — or download `Quadra12-v2.5-Android.apk` from [GitHub Releases](https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.5) (saves A4 PDFs straight into `Downloads/Quadra12/`).
 
 </details>
 
@@ -129,7 +132,12 @@ I am **AriYan Pal (Keśava Dāsa)** (`ariyanpal090@gmail.com`), a Class 12 stude
   4. **Exam & Urgency:** Custom board exam countdown date selector, Official Feb 16 reset, **Urgency Alert Window** (`15 / 30 / 60 / 90 days`), and Daily Chapter Pace Hint toggle.
   5. **Player & Video:** Persistent default YouTube embed engine (`Standard Sync`, `Pure Embed`, or `Privacy No-Cookie`) and Auto-Advance Next Lecture toggle.
   6. **Privacy & Reset:** Live `localStorage` **Storage Quota Meter** (`KB / MB` out of `5 MB`), **Reset Single Subject** controls (reset Physics, Chemistry, Biology, or Math individually without affecting other subjects), and **Master Reset (Danger Zone)** protected by a **double-confirmation pop-up**.
-  7. **About & Links:** **Version 2.5** badge, creator stamp (`AriYan Pal / Keśava Dāsa`), and quick launch buttons for **Terms & Conditions · 2026** and the **Official GitHub Repository**.
+  7. **About & Links:** **Version 2.5** badge, creator stamp (`AriYan Pal / Keśava Dāsa`), dedicated **Install App (Free Offline PWA & Android APK)** card, and quick launch buttons for **Terms & Conditions · 2026** and the **Official GitHub Repository**.
+
+### 10. Installable Offline PWA & Free Standalone Android `.apk` App (`$0`)
+- **Offline Progressive Web App (PWA):** Powered by `vite-plugin-pwa` with automatic service worker updates (`registerSW`), Workbox precaching for offline chapter tracking, countdown timer, SVG plates, and Google Fonts, plus custom `#1D1C17` brand icons (`192×192`, `512×512`, maskable safe-zone icon, and `180×180` Apple Touch Icon).
+- **1-Tap In-App Install & Offline Banner:** Built-in **Install App** trigger in the desktop navbar, `☰` mobile menu, and `Settings → About` (plus an automatic iOS Safari *Share → Add to Home Screen* modal guide and a live **Offline Mode** indicator when disconnected).
+- **Free Standalone Android `.apk` (`Quadra12-v2.5-Android.apk`):** Automatically built at **$0 cost** via Capacitor 8 + Gradle in `.github/workflows/android-apk.yml` and attached to GitHub Releases. Includes native Android `CAMERA`, `READ_MEDIA_IMAGES`, and storage permissions, `<queries>` camera/PDF intents, and a custom `QuadraAndroid` native bridge (`MainActivity.java`) so exported Question Paper, Marking Scheme, Graded Report A4 PDFs, and `.json` backups save straight into Android **`Downloads/Quadra12/`** via `MediaStore.Downloads` and open in your system PDF viewer.
 
 ---
 
@@ -268,7 +276,8 @@ All personal study records, timestamps, and exam scores are preserved locally in
 - **15-Minute Reading Timer & 100% Synced A4 PDFs:** Authentic 15-minute CBSE Reading Time cool-off timer (with Skip option) plus downloadable, 100% question-synced **Question Paper PDF** and **Marking Scheme PDF** buttons directly inside each PCMB subject card.
 - **Smart Sections B–E Inputs (Camera + Upload + Text):** Dedicated `questionType` per question with **Take Photo** (`capture="environment"`) and **Upload Image** buttons, multi-page thumbnail previews, and instant refresh recovery.
 - **Zero-Server Browser Storage & Auto-Wipe:** Uses `localStorage` (`sectionBE_text_draft`) and browser `IndexedDB` (`SectionBE_PhotoStorage`) solely inside the student's browser during the exam, wiping both completely and automatically the moment AI grading renders the Final Results Dashboard. Remember to download your Graded Report / Marking Scheme PDF before refreshing!
-- **`gemini-3.8-flash` AI Board Examiner & Results Dashboard:** Server-side evaluation against active subject marking scheme checkpoints, returning post-grading palette colors (Green/Yellow/Red/Grey), accuracy analytics, weak areas, improvement tips, reference SVG diagrams, and step-by-step model answers. (See `RELEASE_NOTES_v2.5.md` and `RELEASE.md` for full release notes.)
+- **`gemini-3.8-flash` AI Board Examiner & Results Dashboard:** Server-side evaluation against active subject marking scheme checkpoints, returning post-grading palette colors (Green/Yellow/Red/Grey), accuracy analytics, weak areas, improvement tips, reference SVG diagrams, and step-by-step model answers.
+- **Installable Offline PWA App & Free Android `.apk` (`Quadra12-v2.5-Android.apk`):** 1-tap offline PWA installation across Android, iOS/iPadOS, Windows &amp; macOS (`vite-plugin-pwa`, custom PNG/maskable/Apple icons, offline banner) plus a free standalone Android APK with native camera/storage permissions and direct `Downloads/Quadra12/` A4 PDF saving via `MediaStore.Downloads`. (See `RELEASE_NOTES_v2.5.md` and `RELEASE.md` for full release notes.)
 
 ---
 
