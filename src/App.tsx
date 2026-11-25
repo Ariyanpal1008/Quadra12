@@ -283,6 +283,17 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [mobileMenuOpen]);
+
+  useEffect(() => {
     const handleFirstGesture = () => {
       unlockAudioContext();
     };
@@ -1083,6 +1094,10 @@ export default function App() {
               <img
                 src={`${import.meta.env.BASE_URL}src/assets/images/quadra_12_icon_1795347655892.jpg`}
                 alt="Quadra 12 emblem"
+                width={32}
+                height={32}
+                loading="eager"
+                decoding="sync"
                 referrerPolicy="no-referrer"
                 className="w-8 h-8 rounded-lg object-cover border border-[#DDD6C7] dark:border-[#332E28] shrink-0 shadow-xs"
               />
@@ -1211,6 +1226,7 @@ export default function App() {
                 type="button"
                 onClick={() => setMobileMenuOpen((prev) => !prev)}
                 aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-glass-menu"
                 aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
                 className="md:hidden inline-flex items-center justify-center w-10 h-10 rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#24201C] text-[#1E1B18] dark:text-[#F5F2EB]"
               >
@@ -1226,31 +1242,35 @@ export default function App() {
             className="h-[2px] w-full origin-left bg-[#A64B33] dark:bg-[#D4785E]"
           />
 
-          {/* Mobile menu */}
+          {/* Floating Apple Frosted-Glass Mobile Menu (overlays content without expanding header downward) */}
           <AnimatePresence>
             {mobileMenuOpen && (
               <motion.div
-                initial={{opacity: 0, y: -8}}
-                animate={{opacity: 1, y: 0}}
-                exit={{opacity: 0, y: -6}}
-                transition={{duration: 0.18, ease: [0.16, 1, 0.3, 1]}}
-                className="md:hidden border-t border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] px-4 py-3 space-y-1"
+                key="mobile-glass-menu"
+                id="mobile-glass-menu"
+                role="dialog"
+                aria-label="Mobile Navigation"
+                initial={{opacity: 0, y: -8, scale: 0.97}}
+                animate={{opacity: 1, y: 0, scale: 1}}
+                exit={{opacity: 0, y: -6, scale: 0.97}}
+                transition={{duration: 0.2, ease: [0.22, 1, 0.36, 1]}}
+                className="md:hidden absolute left-3 right-3 top-[calc(100%+8px)] z-50 rounded-2xl border border-[#DDD6C7]/85 dark:border-[#3D3630]/85 apple-glass-menu p-2.5 space-y-1 origin-top"
               >
                 {navItems.map((item) => (
                   <button
                     key={item.id}
                     type="button"
                     onClick={() => navigateTo(item.id)}
-                    className={`w-full text-left px-3 py-2.5 text-sm font-medium rounded-lg ${
+                    className={`w-full text-left px-3.5 py-2.5 text-sm font-medium rounded-xl transition-colors ${
                       activeView === item.id
-                        ? 'bg-[#ECE6D9] dark:bg-[#2D2621] text-[#A64B33] dark:text-[#D4785E]'
-                        : 'text-[#1E1B18] dark:text-[#F5F2EB] hover:bg-[#ECE6D9]/60 dark:hover:bg-[#24201C]'
+                        ? 'bg-[#A64B33]/12 dark:bg-[#D4785E]/18 text-[#A64B33] dark:text-[#D4785E]'
+                        : 'text-[#1E1B18] dark:text-[#F5F2EB] hover:bg-[#1E1B18]/6 dark:hover:bg-white/8'
                     }`}
                   >
                     {item.label}
                   </button>
                 ))}
-                <div className="pt-2 mt-2 border-t border-[#DDD6C7] dark:border-[#332E28] space-y-1">
+                <div className="pt-2 mt-1.5 border-t border-[#1E1B18]/10 dark:border-white/10 space-y-1">
                   <PWAInstallButton
                     variant="menu"
                     onInstallSuccess={() => setMobileMenuOpen(false)}
@@ -1258,7 +1278,7 @@ export default function App() {
                   <button
                     type="button"
                     onClick={() => openSettings('sync')}
-                    className="w-full text-left px-3 py-2.5 text-sm font-medium rounded-lg text-[#1E1B18] dark:text-[#F5F2EB] hover:bg-[#ECE6D9]/60 dark:hover:bg-[#24201C] flex items-center gap-2"
+                    className="w-full text-left px-3.5 py-2.5 text-sm font-medium rounded-xl text-[#1E1B18] dark:text-[#F5F2EB] hover:bg-[#1E1B18]/6 dark:hover:bg-white/8 transition-colors flex items-center gap-2.5"
                   >
                     <Settings className="w-4 h-4 text-[#A64B33] dark:text-[#D4785E]" aria-hidden="true" />
                     <span>Settings</span>
@@ -1269,7 +1289,7 @@ export default function App() {
                       setMobileMenuOpen(false);
                       openHelpDesk('about');
                     }}
-                    className="w-full text-left px-3 py-2.5 text-sm font-medium rounded-lg text-[#1E1B18] dark:text-[#F5F2EB] hover:bg-[#ECE6D9]/60 dark:hover:bg-[#24201C] flex items-center gap-2"
+                    className="w-full text-left px-3.5 py-2.5 text-sm font-medium rounded-xl text-[#1E1B18] dark:text-[#F5F2EB] hover:bg-[#1E1B18]/6 dark:hover:bg-white/8 transition-colors flex items-center gap-2.5"
                   >
                     <ShieldCheck className="w-4 h-4 text-[#A64B33] dark:text-[#D4785E]" aria-hidden="true" />
                     <span>About the Creator</span>
@@ -1280,7 +1300,7 @@ export default function App() {
                       setMobileMenuOpen(false);
                       openHelpDesk('guide');
                     }}
-                    className="w-full text-left px-3 py-2.5 text-sm font-medium rounded-lg text-[#575048] dark:text-[#CBC3B6] hover:bg-[#ECE6D9]/60 dark:hover:bg-[#24201C] flex items-center gap-2"
+                    className="w-full text-left px-3.5 py-2.5 text-sm font-medium rounded-xl text-[#575048] dark:text-[#CBC3B6] hover:bg-[#1E1B18]/6 dark:hover:bg-white/8 transition-colors flex items-center gap-2.5"
                   >
                     <HelpCircle className="w-4 h-4 text-[#A64B33] dark:text-[#D4785E]" aria-hidden="true" />
                     <span>Help Desk</span>
@@ -1290,6 +1310,21 @@ export default function App() {
             )}
           </AnimatePresence>
         </header>
+
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              key="mobile-glass-backdrop"
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
+              transition={{duration: 0.2, ease: [0.22, 1, 0.36, 1]}}
+              onClick={() => setMobileMenuOpen(false)}
+              aria-hidden="true"
+              className="md:hidden fixed inset-0 top-16 z-30 bg-[#F5F2EB]/40 dark:bg-[#12100E]/55 backdrop-blur-[6px] supports-[backdrop-filter]:bg-[#F5F2EB]/32 dark:supports-[backdrop-filter]:bg-[#12100E]/45"
+            />
+          )}
+        </AnimatePresence>
 
         <main className="flex-1 max-w-[1200px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-10 lg:py-12 apple-hydrate-main">
           <AnimatePresence mode="wait" initial={false}>
