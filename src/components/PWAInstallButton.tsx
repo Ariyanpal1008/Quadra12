@@ -234,7 +234,7 @@ export function PWAInstallButton({
         onClick={() => void handleInstallClick()}
         title="Install Quadra 12 App (Free Offline PWA)"
         aria-label="Install Quadra 12 App"
-        className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-2 text-xs font-semibold rounded-lg bg-[#3D6B4F] hover:bg-[#315940] text-white shadow-xs transition-colors whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3D6B4F]"
+        className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-2 text-xs font-semibold rounded-lg border border-transparent bg-[#3D6B4F] hover:bg-[#315940] text-white shadow-xs transition-colors whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3D6B4F]"
       >
         <Download className="w-4 h-4 sm:w-3.5 sm:h-3.5 shrink-0" aria-hidden="true" />
         <span className="hidden sm:inline">Install App</span>
@@ -267,7 +267,7 @@ export function PWAInstallButton({
         onClick={() => setShowBrowserGuide(true)}
         title="Install Quadra 12 App (Free Offline PWA)"
         aria-label="Install Quadra 12 App"
-        className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-2 text-xs font-semibold rounded-lg bg-[#3D6B4F] hover:bg-[#315940] text-white shadow-xs transition-colors whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3D6B4F]"
+        className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-2 text-xs font-semibold rounded-lg border border-transparent bg-[#3D6B4F] hover:bg-[#315940] text-white shadow-xs transition-colors whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3D6B4F]"
       >
         <Download className="w-4 h-4 sm:w-3.5 sm:h-3.5 shrink-0" aria-hidden="true" />
         <span className="hidden sm:inline">Install App</span>

@@ -204,13 +204,11 @@ function HeroPreviewQuadrant({
           key={subject.id}
           type="button"
           onClick={() => onSelectSubject(subject.id)}
-          initial={{opacity: 0, y: 18, scale: 0.96}}
-          animate={{opacity: 1, y: 0, scale: 1}}
+          initial={false}
           style={{y: idx % 2 === 0 ? colOneY : colTwoY}}
           whileHover={{y: -4, scale: 1.02}}
           whileTap={{scale: 0.97}}
           transition={{
-            opacity: {duration: 0.45, delay: 0.08 + idx * 0.05, ease: APPLE_EASE},
             scale: APPLE_SPRING,
             y: APPLE_SPRING,
           }}
@@ -1065,7 +1063,7 @@ export default function App() {
     <MotionConfig reducedMotion="user">
       <div className="min-h-dvh flex flex-col bg-[#F5F2EB] dark:bg-[#161412] text-[#1E1B18] dark:text-[#F5F2EB] transition-colors duration-200">
         <header className="sticky top-0 z-40 bg-[#FAF8F5] dark:bg-[#121212] supports-[backdrop-filter]:bg-[#FAF8F5]/96 dark:supports-[backdrop-filter]:bg-[#121212]/96 apple-glass-bar border-b border-[rgba(0,0,0,0.06)] dark:border-[#2C2C2E] transition-colors duration-300">
-          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-8">
+          <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3 sm:gap-8">
             {/* Zone 1: Brand icon + wordmark */}
             <motion.button
               type="button"
@@ -1288,11 +1286,11 @@ export default function App() {
         </header>
 
         <main className="flex-1 max-w-[1200px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-10 lg:py-12">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" initial={false}>
             {activeView === 'overview' && (
               <motion.div
                 key="overview"
-                initial={{opacity: 0, y: 14, scale: 0.992}}
+                initial={false}
                 animate={{opacity: 1, y: 0, scale: 1}}
                 exit={{opacity: 0, y: -10, scale: 0.992}}
                 transition={{duration: 0.3, ease: APPLE_EASE}}
@@ -1313,23 +1311,15 @@ export default function App() {
                   <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8 lg:gap-10 items-stretch">
                     <div className="lg:col-span-7 flex flex-col justify-between">
                       <div>
-                        <motion.div
-                          initial={{opacity: 0, y: 10}}
-                          animate={{opacity: 1, y: 0}}
-                          transition={{duration: 0.45, ease: APPLE_EASE}}
-                          className="flex items-start gap-3 text-xs font-medium tracking-[0.1em] sm:tracking-[0.14em] leading-snug text-[#A64B33] dark:text-[#D4785E]"
-                        >
+                        <div className="flex items-start gap-3 text-xs font-medium tracking-[0.1em] sm:tracking-[0.14em] leading-snug text-[#A64B33] dark:text-[#D4785E]">
                           <span
                             className="w-6 h-px mt-[0.55em] bg-[#A64B33] dark:bg-[#D4785E] shrink-0"
                             aria-hidden="true"
                           />
                           <span>Quadra 12 · CBSE Class 12 PCMB · Created by Ariyan Pal (Keśava Dāsa)</span>
-                        </motion.div>
+                        </div>
 
-                        <motion.h1
-                          initial={{opacity: 0, y: 14}}
-                          animate={{opacity: 1, y: 0}}
-                          transition={{duration: 0.52, delay: 0.06, ease: APPLE_EASE}}
+                        <h1
                           className="mt-3 sm:mt-4 font-semibold tracking-tight text-[#1E1B18] dark:text-[#F5F2EB] leading-[1.06]"
                           style={{
                             fontSize: 'clamp(2rem, 4.1vw, 3.5rem)',
@@ -1341,29 +1331,19 @@ export default function App() {
                             deliberately
                           </em>{' '}
                           paced.
-                        </motion.h1>
+                        </h1>
 
-                        <motion.div
-                          initial={{opacity: 0, y: 12}}
-                          animate={{opacity: 1, y: 0}}
-                          transition={{duration: 0.52, delay: 0.12, ease: APPLE_EASE}}
-                          className="mt-4 pt-4 sm:mt-6 sm:pt-6 border-t border-[#DDD6C7] dark:border-[#332E28]"
-                        >
+                        <div className="mt-4 pt-4 sm:mt-6 sm:pt-6 border-t border-[#DDD6C7] dark:border-[#332E28]">
                           <p className="text-[15px] sm:text-base leading-relaxed text-[#575048] dark:text-[#CBC3B6] max-w-[58ch]">
                             Track every NCERT chapter across Physics, Chemistry, Biology,
                             and Mathematics, write official CBSE 2026–27 sample papers
                             inside the 3-hour Examination Hall, and revise with the 12th
                             Hackers one-shot series.
                           </p>
-                        </motion.div>
+                        </div>
                       </div>
 
-                      <motion.div
-                        initial={{opacity: 0, y: 12}}
-                        animate={{opacity: 1, y: 0}}
-                        transition={{duration: 0.5, delay: 0.18, ease: APPLE_EASE}}
-                        className="mt-5 sm:mt-8 flex flex-wrap items-center gap-3.5 sm:gap-4"
-                      >
+                      <div className="mt-5 sm:mt-8 flex flex-wrap items-center gap-3.5 sm:gap-4">
                         <motion.button
                           type="button"
                           whileHover={{y: -2, scale: 1.015}}
@@ -1389,7 +1369,7 @@ export default function App() {
                             <ArrowDown className="w-3.5 h-3.5" aria-hidden="true" />
                           </span>
                         </motion.button>
-                      </motion.div>
+                      </div>
                     </div>
 
                     {/* 4-Quadrant PCMB Preview Grid with Live Scroll Parallax */}

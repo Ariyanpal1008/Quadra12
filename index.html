@@ -140,6 +140,7 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=IBM+Plex+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=IBM+Plex+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap" rel="stylesheet" />
     <script>
       (function () {
@@ -160,49 +161,68 @@
   <body class="bg-[#F5F2EB] dark:bg-[#161412] text-[#1E1B18] dark:text-[#F5F2EB] antialiased selection:bg-[#A64B33] selection:text-[#F5F2EB] transition-colors duration-200">
     <div id="root">
       <style>
-        .q12-shell{--q-bg:#F5F2EB;--q-nav:#FAF8F5;--q-card:#FAF8F3;--q-btn:#FAF8F3;--q-ink:#1E1B18;--q-muted:#575048;--q-soft:#787066;--q-accent:#A64B33;--q-border:#DDD6C7;--q-nav-b:rgba(0,0,0,.06);--q-green:#3D6B4F;min-height:100dvh;display:flex;flex-direction:column;background:var(--q-bg);color:var(--q-ink);font-family:"DM Sans",ui-sans-serif,system-ui,sans-serif}
-        html.dark .q12-shell{--q-bg:#161412;--q-nav:#121212;--q-card:#1E1B18;--q-btn:#24201C;--q-ink:#F5F2EB;--q-muted:#CBC3B6;--q-soft:#9C9387;--q-accent:#D4785E;--q-border:#332E28;--q-nav-b:rgba(255,255,255,.08)}
-        .q12-hdr{position:sticky;top:0;z-index:40;height:64px;background:var(--q-nav);border-bottom:1px solid var(--q-nav-b)}
-        .q12-hdr-in{max-width:1200px;height:100%;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;box-sizing:border-box}
-        .q12-brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--q-ink);font-family:"Playfair Display",Georgia,serif;font-weight:600;font-size:18px;letter-spacing:-0.01em;white-space:nowrap}
-        .q12-brand img{width:32px;height:32px;border-radius:8px;border:1px solid var(--q-border);object-fit:cover}
-        .q12-nav{display:none;gap:28px;font-size:14px;font-weight:500}
-        .q12-nav a{text-decoration:none;color:var(--q-muted);white-space:nowrap}
+        .q12-shell{--q-bg:#F5F2EB;--q-nav:rgba(250,248,245,.96);--q-card:#FAF8F3;--q-btn:#FAF8F3;--q-ink:#1E1B18;--q-muted:#575048;--q-soft:#787066;--q-accent:#A64B33;--q-border:#DDD6C7;--q-nav-b:rgba(0,0,0,.06);--q-green:#3D6B4F;min-height:100dvh;display:flex;flex-direction:column;background:var(--q-bg);color:var(--q-ink);font-family:"DM Sans",ui-sans-serif,system-ui,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+        .q12-shell *,.q12-shell *::before,.q12-shell *::after{box-sizing:border-box}
+        .q12-shell svg{display:block;flex-shrink:0}
+        html.dark .q12-shell{--q-bg:#161412;--q-nav:rgba(18,18,18,.96);--q-card:#1E1B18;--q-btn:#24201C;--q-ink:#F5F2EB;--q-muted:#CBC3B6;--q-soft:#9C9387;--q-accent:#D4785E;--q-border:#332E28;--q-nav-b:rgba(255,255,255,.08)}
+        .q12-hdr{position:sticky;top:0;z-index:40;background:var(--q-nav);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--q-nav-b)}
+        .q12-hdr-in{max-width:1200px;height:64px;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+        .q12-brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--q-ink);font-family:"Playfair Display",Georgia,Cambria,"Times New Roman",Times,serif;font-weight:600;font-size:1.125rem;line-height:1.75rem;letter-spacing:-0.025em;white-space:nowrap;flex-shrink:0}
+        .q12-brand img{width:32px;height:32px;border-radius:8px;border:1px solid var(--q-border);object-fit:cover;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+        .q12-nav{display:none;align-items:center;gap:28px;font-size:.875rem;line-height:1.25rem;font-weight:500}
+        .q12-nav a{position:relative;padding:8px 0;text-decoration:none;color:var(--q-muted);white-space:nowrap;flex-shrink:0}
         .q12-nav a.q12-act{color:var(--q-accent)}
+        .q12-nav a.q12-act::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;border-radius:9999px;background:var(--q-accent)}
         .q12-hdr-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
-        .q12-icon-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 10px;border-radius:8px;border:1px solid var(--q-border);background:var(--q-btn);color:var(--q-ink);text-decoration:none;font-size:12px;font-weight:500;box-sizing:border-box}
-        .q12-install-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:36px;padding:0 10px;border-radius:8px;background:var(--q-green);color:#fff;text-decoration:none;font-size:12px;font-weight:600;box-sizing:border-box}
-        .q12-menu-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;border:1px solid var(--q-border);background:var(--q-btn);color:var(--q-ink);box-sizing:border-box}
+        .q12-icon-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 10px;border-radius:8px;border:1px solid var(--q-border);background:var(--q-btn);color:var(--q-ink);text-decoration:none;font-size:.75rem;line-height:1rem;font-weight:500;white-space:nowrap;flex-shrink:0}
+        .q12-sun{display:none}
+        html.dark .q12-moon{display:none}
+        html.dark .q12-sun{display:inline-flex}
+        .q12-sound-lbl{display:none;font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;font-size:11px;line-height:1rem}
+        .q12-settings-btn{display:none;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;border:1px solid var(--q-border);background:var(--q-btn);color:var(--q-muted);flex-shrink:0}
+        .q12-install-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 10px;border-radius:8px;border:1px solid transparent;background:var(--q-green);color:#fff;text-decoration:none;font-size:.75rem;line-height:1rem;font-weight:600;white-space:nowrap;flex-shrink:0;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+        .q12-install-btn svg{width:16px;height:16px}
+        .q12-exam-btn{display:none;align-items:center;justify-content:center;padding:8px 16px;border-radius:8px;background:var(--q-ink);color:var(--q-bg);text-decoration:none;font-size:.75rem;line-height:1rem;font-weight:500;white-space:nowrap;flex-shrink:0}
+        .q12-menu-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;border:1px solid var(--q-border);background:var(--q-btn);color:var(--q-ink);flex-shrink:0}
         .q12-btn-lbl{display:none}
-        .q12-main{flex:1;max-width:1200px;width:100%;margin:0 auto;padding:16px;box-sizing:border-box}
-        .q12-hero{background:var(--q-card);border:1px solid var(--q-border);border-radius:12px;padding:16px;box-shadow:0 8px 24px -12px rgba(30,27,24,.08)}
+        .q12-scroll-bar{height:2px;width:100%}
+        .q12-main{flex:1;max-width:1200px;width:100%;margin:0 auto;padding:16px}
+        .q12-hero{background:var(--q-card);border:1px solid var(--q-border);border-radius:12px;padding:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 1px 2px rgba(30,27,24,.04),0 8px 24px -12px rgba(30,27,24,.08)}
+        html.dark .q12-hero{box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 2px 6px rgba(0,0,0,.28),0 14px 32px -16px rgba(0,0,0,.48)}
         .q12-grid{display:grid;grid-template-columns:1fr;gap:20px;align-items:stretch}
-        .q12-eyebrow{display:flex;align-items:flex-start;gap:12px;font-size:12px;font-weight:500;letter-spacing:0.1em;line-height:1.35;text-transform:none;color:var(--q-accent);margin:0}
-        .q12-line{width:24px;height:1px;margin-top:0.55em;background:var(--q-accent);flex-shrink:0}
-        .q12-h1{margin:12px 0 0;font-family:"Playfair Display",Georgia,serif;font-weight:600;line-height:1.06;letter-spacing:-0.02em;font-size:clamp(2rem,4.1vw,3.5rem);color:var(--q-ink)}
+        .q12-copy-col{display:flex;flex-direction:column;justify-content:space-between}
+        .q12-eyebrow{display:flex;align-items:flex-start;gap:12px;font-family:"DM Sans",ui-sans-serif,system-ui,sans-serif;font-size:.75rem;line-height:1.375;font-weight:500;letter-spacing:.1em;text-transform:none;color:var(--q-accent);margin:0}
+        .q12-line{width:24px;height:1px;margin-top:.55em;background:var(--q-accent);flex-shrink:0}
+        .q12-h1{margin:12px 0 0;font-family:"Playfair Display",Georgia,Cambria,"Times New Roman",Times,serif;font-weight:600;line-height:1.06;letter-spacing:-0.025em;font-size:clamp(2rem,4.1vw,3.5rem);text-wrap:balance;color:var(--q-ink)}
         .q12-h1 em{font-style:italic;font-weight:500;color:var(--q-accent)}
-        .q12-sub{margin:16px 0 0;padding-top:16px;border-top:1px solid var(--q-border);font-size:15px;line-height:1.625;color:var(--q-muted);max-width:58ch}
+        .q12-sub{margin:16px 0 0;padding-top:16px;border-top:1px solid var(--q-border);font-family:"DM Sans",ui-sans-serif,system-ui,sans-serif;font-size:.9375rem;line-height:1.625;color:var(--q-muted);max-width:58ch}
         .q12-ctas{margin-top:20px;display:flex;flex-wrap:wrap;align-items:center;gap:14px}
-        .q12-cta{display:inline-flex;align-items:center;gap:10px;padding:10px 20px;border-radius:8px;background:var(--q-ink);color:var(--q-bg);text-decoration:none;font-size:14px;font-weight:500;white-space:nowrap}
-        .q12-explore{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--q-ink);font-size:14px;font-weight:500;white-space:nowrap}
+        .q12-cta{display:inline-flex;align-items:center;gap:10px;padding:10px 20px;border-radius:8px;background:var(--q-ink);color:var(--q-bg);text-decoration:none;font-family:"DM Sans",ui-sans-serif,system-ui,sans-serif;font-size:.875rem;line-height:1.25rem;font-weight:500;white-space:nowrap;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+        .q12-explore{display:inline-flex;align-items:center;gap:8px;text-decoration:none;color:var(--q-ink);font-family:"DM Sans",ui-sans-serif,system-ui,sans-serif;font-size:.875rem;line-height:1.25rem;font-weight:500;white-space:nowrap}
         .q12-explore-ring{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:9999px;border:1px solid #C9C1B2}
         html.dark .q12-explore-ring{border-color:#4A423A}
         .q12-quad{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-        .q12-qcard{display:block;overflow:hidden;border-radius:12px;border:1px solid var(--q-border);background:var(--q-card);text-decoration:none;color:var(--q-ink)}
+        .q12-qcard{display:block;overflow:hidden;border-radius:12px;border:1px solid var(--q-border);background:var(--q-card);text-decoration:none;color:var(--q-ink);box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 1px 2px rgba(30,27,24,.04),0 8px 24px -12px rgba(30,27,24,.08)}
+        html.dark .q12-qcard{box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 2px 6px rgba(0,0,0,.28),0 14px 32px -16px rgba(0,0,0,.48)}
         .q12-qthumb{overflow:hidden;border-bottom:1px solid var(--q-border);height:88px;background:var(--q-bg)}
         .q12-qthumb img{width:100%;height:100%;object-fit:cover;display:block}
         .q12-qmeta{padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:8px}
-        .q12-qname{font-family:"Playfair Display",Georgia,serif;font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-        .q12-qnum{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;color:var(--q-soft)}
-        @media(min-width:640px){.q12-hdr-in,.q12-main{padding-left:24px;padding-right:24px}.q12-main{padding-top:40px;padding-bottom:40px}.q12-hero{padding:32px}.q12-btn-lbl{display:inline}.q12-eyebrow{letter-spacing:0.14em}.q12-h1{margin-top:16px}.q12-sub{margin-top:24px;padding-top:24px;font-size:16px}.q12-ctas{margin-top:32px;gap:16px}.q12-qthumb{height:112px}}
-        @media(min-width:768px){.q12-nav{display:flex}.q12-menu-btn{display:none}}
-        @media(min-width:1024px){.q12-hdr-in,.q12-main{padding-left:32px;padding-right:32px}.q12-main{padding-top:48px;padding-bottom:48px}.q12-hero{padding:48px}.q12-grid{grid-template-columns:7fr 5fr;gap:40px}}
+        .q12-qname{font-family:"Playfair Display",Georgia,Cambria,"Times New Roman",Times,serif;font-weight:600;font-size:.75rem;line-height:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .q12-qnum{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;font-variant-numeric:tabular-nums;font-size:11px;line-height:1rem;color:var(--q-soft)}
+        .q12-metrics{margin-top:40px;padding-top:32px;border-top:1px solid var(--q-border);display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+        .q12-m-lbl{margin:0;font-size:.75rem;line-height:1rem;color:var(--q-soft)}
+        .q12-m-val{margin:4px 0 0;font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;font-variant-numeric:tabular-nums;font-size:1.5rem;line-height:2rem;font-weight:600;color:var(--q-ink)}
+        .q12-m-sub{margin:2px 0 0;font-size:.75rem;line-height:1rem;color:var(--q-soft)}
+        .q12-m-sub.q12-mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;font-variant-numeric:tabular-nums}
+        @media(min-width:640px){.q12-hdr-in{gap:32px}.q12-hdr-in,.q12-main{padding-left:24px;padding-right:24px}.q12-main{padding-top:40px;padding-bottom:40px}.q12-hero{padding:32px}.q12-grid{gap:32px}.q12-btn-lbl,.q12-sound-lbl{display:inline}.q12-install-btn{padding:8px 12px}.q12-install-btn svg{width:14px;height:14px}.q12-exam-btn{display:inline-flex}.q12-eyebrow{letter-spacing:.14em}.q12-h1{margin-top:16px}.q12-sub{margin-top:24px;padding-top:24px;font-size:1rem}.q12-ctas{margin-top:32px;gap:16px}.q12-qthumb{height:112px}.q12-m-val{font-size:1.875rem;line-height:2.25rem}}
+        @media(min-width:768px){.q12-nav{display:flex}.q12-settings-btn{display:inline-flex}.q12-menu-btn{display:none}}
+        @media(min-width:1024px){.q12-hdr-in,.q12-main{padding-left:32px;padding-right:32px}.q12-main{padding-top:48px;padding-bottom:48px}.q12-hero{padding:48px}.q12-grid{grid-template-columns:7fr 5fr;gap:40px}.q12-metrics{grid-template-columns:repeat(4,minmax(0,1fr))}}
       </style>
       <div class="q12-shell">
         <header class="q12-hdr">
           <div class="q12-hdr-in">
             <a href="#/overview" class="q12-brand">
-              <img src="./pwa-192x192.png" alt="Quadra 12 emblem" width="32" height="32" />
+              <img src="./src/assets/images/quadra_12_icon_1795347655892.jpg" alt="Quadra 12 emblem" width="32" height="32" />
               <span>Quadra 12</span>
             </a>
             <nav class="q12-nav" aria-label="Primary Navigation">
@@ -213,40 +233,54 @@
             </nav>
             <div class="q12-hdr-actions">
               <span class="q12-icon-btn" aria-hidden="true">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-                <span class="q12-btn-lbl">Dark</span>
+                <svg class="q12-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#575048" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                <svg class="q12-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E6B17A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                <span class="q12-btn-lbl q12-moon">Dark</span>
+                <span class="q12-btn-lbl q12-sun">Light</span>
               </span>
               <span class="q12-icon-btn" aria-hidden="true">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A64B33" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-                <span class="q12-btn-lbl">Sound</span>
+                <span class="q12-sound-lbl">Sound</span>
+              </span>
+              <span class="q12-settings-btn" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>
               </span>
               <a href="#/overview" class="q12-install-btn" aria-label="Install Quadra 12 App">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
                 <span class="q12-btn-lbl">Install App</span>
               </a>
+              <a href="#/exam-hall" class="q12-exam-btn">Enter Exam Hall</a>
               <span class="q12-menu-btn" aria-hidden="true">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
               </span>
             </div>
           </div>
+          <div class="q12-scroll-bar" aria-hidden="true"></div>
         </header>
         <main class="q12-main">
           <section class="q12-hero" aria-label="Quadra 12 Overview">
             <div class="q12-grid">
-              <div>
-                <p class="q12-eyebrow">
-                  <span class="q12-line" aria-hidden="true"></span>
-                  <span>Quadra 12 · CBSE Class 12 PCMB · Created by Ariyan Pal (Keśava Dāsa)</span>
-                </p>
-                <h1 class="q12-h1">Board mastery, <em>deliberately</em> paced.</h1>
-                <p class="q12-sub">
-                  Track every NCERT chapter across Physics, Chemistry, Biology, and Mathematics, write official CBSE 2026–27 sample papers inside the 3-hour Examination Hall, and revise with the 12th Hackers one-shot series.
-                </p>
+              <div class="q12-copy-col">
+                <div>
+                  <p class="q12-eyebrow">
+                    <span class="q12-line" aria-hidden="true"></span>
+                    <span>Quadra 12 · CBSE Class 12 PCMB · Created by Ariyan Pal (Keśava Dāsa)</span>
+                  </p>
+                  <h1 class="q12-h1">Board mastery, <em>deliberately</em> paced.</h1>
+                  <p class="q12-sub">
+                    Track every NCERT chapter across Physics, Chemistry, Biology, and Mathematics, write official CBSE 2026–27 sample papers inside the 3-hour Examination Hall, and revise with the 12th Hackers one-shot series.
+                  </p>
+                </div>
                 <div class="q12-ctas">
-                  <a href="#/physics" class="q12-cta">Open Subject Tracker →</a>
+                  <a href="#/physics" class="q12-cta">
+                    <span>Open Subject Tracker</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                  </a>
                   <a href="#/physics" class="q12-explore">
                     <span>Explore subjects</span>
-                    <span class="q12-explore-ring" aria-hidden="true">↓</span>
+                    <span class="q12-explore-ring" aria-hidden="true">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="m19 12-7 7-7-7"/></svg>
+                    </span>
                   </a>
                 </div>
               </div>
@@ -287,6 +321,28 @@
                     <span class="q12-qnum">04</span>
                   </div>
                 </a>
+              </div>
+            </div>
+            <div class="q12-metrics">
+              <div>
+                <p class="q12-m-lbl">Overall Syllabus</p>
+                <p class="q12-m-val">0%</p>
+                <p class="q12-m-sub q12-mono">0/50 chapters</p>
+              </div>
+              <div>
+                <p class="q12-m-lbl">Subjects Completed</p>
+                <p class="q12-m-val">0 / 4</p>
+                <p class="q12-m-sub">Auto-completed at 100%</p>
+              </div>
+              <div>
+                <p class="q12-m-lbl">CBSE Sample Papers</p>
+                <p class="q12-m-val">0 / 4</p>
+                <p class="q12-m-sub">Full 3-hour CBSE PDFs</p>
+              </div>
+              <div>
+                <p class="q12-m-lbl">12th Hackers Watched</p>
+                <p class="q12-m-val">0 / 50</p>
+                <p class="q12-m-sub">Auto-synced with Lecture done</p>
               </div>
             </div>
           </section>
