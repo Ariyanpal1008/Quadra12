@@ -1661,7 +1661,7 @@ export function SettingsModal({
                           <p className="mt-1 text-xs text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
                             © 2026 Quadra 12 · Creator:{' '}
                             <strong className="text-[#A64B33] dark:text-[#D4785E]">
-                              AriYan Pal (Keśava Dāsa)
+                              Ariyan Pal (Keśava Dāsa)
                             </strong>{' '}
                             · <span className="font-mono">ariyanpal090@gmail.com</span>
                           </p>

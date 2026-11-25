@@ -114,7 +114,7 @@ export function TermsModal({isOpen, onClose}: TermsModalProps) {
                   Terms &amp; Conditions · Privacy &amp; AI Fair Use Policy
                 </span>
                 <span className="font-mono text-[#575048] dark:text-[#CBC3B6]">
-                  © 2026 Quadra 12 · <span className="font-semibold text-[#A64B33] dark:text-[#D4785E]">Creator: AriYan Pal (Keśava Dāsa)</span>
+                  © 2026 Quadra 12 · <span className="font-semibold text-[#A64B33] dark:text-[#D4785E]">Creator: Ariyan Pal (Keśava Dāsa)</span>
                 </span>
               </div>
             </div>

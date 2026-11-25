@@ -6,8 +6,8 @@
 - **Repository:** https://github.com/Ariyanpal1008/Quadra12
 - **Android APK Releases:** https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.5
 - **Summary Document:** https://ariyanpal1008.github.io/Quadra12/llms.txt
-- **Author:** AriYan Pal (Keśava Dāsa) (`ariyanpal090@gmail.com`)
-- **Copyright:** © 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)
+- **Author:** Ariyan Pal (Keśava Dāsa) (`ariyanpal090@gmail.com`)
+- **Copyright:** © 2026 Quadra 12 · Creator: Ariyan Pal (Keśava Dāsa)
 - **Version:** `v2.5`
 - **Distribution Platforms:** Web Application + Installable Offline PWA (`vite-plugin-pwa`) + Free Standalone Android `.apk` (`Quadra12-v2.5-Android.apk` via Capacitor 8 + Gradle)
 - **Framework & Runtime:** React 19, TypeScript 5, Vite 8, `vite-plugin-pwa` (Workbox), Capacitor 8 (Android APK), Tailwind CSS v4, Motion (`motion/react`), Three.js (WebGL), `jsPDF` + `html2canvas-pro` (A4 PDF export), QRCode, jsQR, Native Web Audio API, Firebase Firestore & Authentication.
@@ -188,7 +188,7 @@ Follows clean progressive disclosure: the `☰` mobile drawer lists only `Overvi
 4. **Exam & Urgency:** Custom board exam target date, Official Feb 16 rollover reset, urgency alert threshold (`15 / 30 / 60 / 90` days), and daily chapter pace hint toggle.
 5. **Player & Video:** Persistent default YouTube embed engine (`standard`, `pure`, `nocookie`) and auto-advance queue preference.
 6. **Privacy & Reset:** Live browser localStorage quota meter (`KB` / `MB` out of `5 MB`), isolated single-subject resets (Physics, Chemistry, Biology, Math), and Master Reset `(Danger Zone)` protected by a 2-step double-confirmation pop-up dialog.
-7. **About & Links:** `Version 2.5` stamp, creator credit (`AriYan Pal / Keśava Dāsa`), and quick launch buttons for **Terms & Conditions · 2026** and the **Official GitHub Repository**.
+7. **About & Links:** `Version 2.5` stamp, creator credit (`Ariyan Pal / Keśava Dāsa`), and quick launch buttons for **Terms & Conditions · 2026** and the **Official GitHub Repository**.
 
 ### Cloud Sync & Firestore Collections
 - **`syncSessions/{syncCode}`**: Account-less device pairing using a strict 6-digit numeric code (`^[0-9]{6}$`) and QR code URL (`?sync=XXXXXX`). Stores synced `completedChapters`, `chapterTasks`, `watchedLectures`, `bestScores`, `dailyChapterLog`, `achievements`, and `customBoardDate`. Collection listing (`allow list: if false`) is strictly blocked in `firestore.rules` to prevent scraping.
@@ -206,10 +206,10 @@ Provides studio-lit procedural WebGL 3D study models with `RoomEnvironment`, `Or
 
 ## 8. Verified Creator Attribution
 
-- **Name:** AriYan Pal (Keśava Dāsa)
+- **Name:** Ariyan Pal (Keśava Dāsa)
 - **Role:** Independent Class 12 Student Developer
 - **Email:** `ariyanpal090@gmail.com`
-- **Copyright Statement:** `© 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)`
+- **Copyright Statement:** `© 2026 Quadra 12 · Creator: Ariyan Pal (Keśava Dāsa)`
 - **Terms & Conditions:** Accessible in-app via the dedicated dull blue footer link.
 
 ---

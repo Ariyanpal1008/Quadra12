@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-labelledby="chem-plate-title chem-plate-desc">
+  <title id="chem-plate-title">CBSE Class 12 Chemistry Scientific Plate</title>
+  <desc id="chem-plate-desc">Schematic of a Daniell Galvanic Cell, Arrhenius reaction energy profile, and octahedral coordination complex.</desc>
+
+  <defs>
+    <pattern id="chem-grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#DDD6C7" stroke-width="0.7" opacity="0.75" />
+    </pattern>
+    <marker id="arrow-ink" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#1E1B18" />
+    </marker>
+    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#0284C7" />
+    </marker>
+    <marker id="arrow-copper" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#A64B33" />
+    </marker>
+  </defs>
+
+  <!-- Warm paper blueprint backdrop -->
+  <rect width="640" height="400" fill="#FAF8F3" />
+  <rect width="640" height="400" fill="url(#chem-grid)" />
+
+  <!-- Outer technical plate border & center divider -->
+  <rect x="14" y="14" width="612" height="372" rx="6" fill="none" stroke="#C9C1B2" stroke-width="1.2" />
+  <line x1="325" y1="24" x2="325" y2="376" stroke="#C9C1B2" stroke-width="1" stroke-dasharray="4 4" />
+
+  <!-- ================= LEFT PANEL: DANIELL GALVANIC CELL (CH 02 ELECTROCHEMISTRY) ================= -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="#1E1B18">
+    <text x="28" y="38" font-size="10.5" font-weight="700" letter-spacing="0.06em" fill="#0284C7">FIG 2.1 · GALVANIC CELL (E° = 1.10 V)</text>
+    <text x="28" y="54" font-size="9.5" fill="#575048">Zn(s) | Zn²⁺(aq) || Cu²⁺(aq) | Cu(s)</text>
+
+    <!-- Voltmeter -->
+    <circle cx="170" cy="96" r="19" fill="#FAF8F3" stroke="#1E1B18" stroke-width="1.8" />
+    <text x="170" y="94" font-size="11" font-weight="700" text-anchor="middle">V</text>
+    <text x="170" y="106" font-size="8" font-weight="600" text-anchor="middle" fill="#3D6B4F">1.10V</text>
+
+    <!-- External wire + electron flow -->
+    <polyline points="92,185 92,96 151,96" fill="none" stroke="#1E1B18" stroke-width="1.7" />
+    <polyline points="189,96 248,96 248,185" fill="none" stroke="#1E1B18" stroke-width="1.7" />
+    <line x1="106" y1="84" x2="136" y2="84" stroke="#0284C7" stroke-width="1.6" marker-end="url(#arrow-blue)" />
+    <text x="121" y="77" font-size="9.5" font-weight="700" text-anchor="middle" fill="#0284C7">e⁻ flow</text>
+    <line x1="204" y1="84" x2="234" y2="84" stroke="#0284C7" stroke-width="1.6" marker-end="url(#arrow-blue)" />
+
+    <!-- Left Beaker (Anode: Zn / ZnSO4) -->
+    <path d="M 46 218 L 46 334 Q 46 340 52 340 L 136 340 Q 142 340 142 334 L 142 218" fill="#E8F0EA" fill-opacity="0.55" stroke="#1E1B18" stroke-width="1.8" />
+    <line x1="46" y1="242" x2="142" y2="242" stroke="#3D6B4F" stroke-width="1.2" stroke-dasharray="3 2" />
+    <!-- Zn Electrode -->
+    <rect x="82" y="180" width="20" height="128" rx="2" fill="#8C96A0" stroke="#1E1B18" stroke-width="1.4" />
+    <text x="92" y="172" font-size="9.5" font-weight="700" text-anchor="middle">Zn (−)</text>
+    <text x="94" y="328" font-size="9" font-weight="600" text-anchor="middle" fill="#23422F">ZnSO₄(aq)</text>
+
+    <!-- Right Beaker (Cathode: Cu / CuSO4) -->
+    <path d="M 198 218 L 198 334 Q 198 340 204 340 L 288 340 Q 294 340 294 334 L 294 218" fill="#BAE6FD" fill-opacity="0.5" stroke="#1E1B18" stroke-width="1.8" />
+    <line x1="198" y1="242" x2="294" y2="242" stroke="#0284C7" stroke-width="1.2" stroke-dasharray="3 2" />
+    <!-- Cu Electrode -->
+    <rect x="238" y="180" width="20" height="128" rx="2" fill="#C46B48" stroke="#1E1B18" stroke-width="1.4" />
+    <text x="248" y="172" font-size="9.5" font-weight="700" text-anchor="middle">Cu (+)</text>
+    <text x="246" y="328" font-size="9" font-weight="600" text-anchor="middle" fill="#0369A1">CuSO₄(aq)</text>
+
+    <!-- Salt Bridge -->
+    <path d="M 122 276 L 122 152 Q 122 132 142 132 L 198 132 Q 218 132 218 152 L 218 276" fill="none" stroke="#1E1B18" stroke-width="14" stroke-linecap="round" />
+    <path d="M 122 276 L 122 152 Q 122 132 142 132 L 198 132 Q 218 132 218 152 L 218 276" fill="none" stroke="#FAF8F3" stroke-width="10" stroke-linecap="round" />
+    <text x="170" y="150" font-size="8.5" font-weight="700" text-anchor="middle" fill="#A64B33">SALT BRIDGE (KCl)</text>
+
+    <!-- Anode / Cathode captions -->
+    <text x="94" y="362" font-size="9" font-weight="700" text-anchor="middle">ANODE · OXIDATION</text>
+    <text x="246" y="362" font-size="9" font-weight="700" text-anchor="middle">CATHODE · REDUCTION</text>
+  </g>
+
+  <!-- ================= RIGHT TOP: REACTION ENERGY PROFILE (CH 03 KINETICS) ================= -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="#1E1B18">
+    <text x="344" y="38" font-size="10.5" font-weight="700" letter-spacing="0.06em" fill="#A64B33">FIG 3.2 · ACTIVATION ENERGY (Eₐ)</text>
+
+    <!-- Axes -->
+    <line x1="364" y1="194" x2="364" y2="62" stroke="#1E1B18" stroke-width="1.6" marker-end="url(#arrow-ink)" />
+    <line x1="364" y1="194" x2="606" y2="194" stroke="#1E1B18" stroke-width="1.6" marker-end="url(#arrow-ink)" />
+    <text x="354" y="130" font-size="8.5" text-anchor="middle" transform="rotate(-90 354 130)" fill="#575048">Potential Energy</text>
+    <text x="488" y="210" font-size="8.5" text-anchor="middle" fill="#575048">Reaction Coordinate</text>
+
+    <!-- Reaction Curve -->
+    <path d="M 374 138 L 408 138 C 436 138, 444 74, 474 74 C 504 74, 514 172, 548 172 L 594 172" fill="none" stroke="#1E1B18" stroke-width="2.2" />
+    <!-- Catalyzed dashed curve -->
+    <path d="M 408 138 C 438 138, 448 102, 474 102 C 500 102, 514 172, 548 172" fill="none" stroke="#3D6B4F" stroke-width="1.6" stroke-dasharray="4 3" />
+
+    <!-- Dashed levels & Ea arrow -->
+    <line x1="408" y1="138" x2="540" y2="138" stroke="#787066" stroke-width="1" stroke-dasharray="3 3" />
+    <line x1="474" y1="74" x2="474" y2="138" stroke="#A64B33" stroke-width="1.4" marker-start="url(#arrow-copper)" marker-end="url(#arrow-copper)" />
+    <text x="480" y="114" font-size="9.5" font-weight="700" fill="#A64B33">Eₐ</text>
+    <text x="474" y="64" font-size="8.5" font-weight="700" text-anchor="middle">Transition State ‡</text>
+    <text x="392" y="131" font-size="8.5" font-weight="600" text-anchor="middle">R</text>
+    <text x="572" y="165" font-size="8.5" font-weight="600" text-anchor="middle">P</text>
+    <text x="556" y="158" font-size="8.5" font-weight="700" fill="#0284C7">ΔH &lt; 0</text>
+  </g>
+
+  <!-- ================= RIGHT BOTTOM: COORDINATION COMPLEX [ML6] (CH 05) ================= -->
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="#1E1B18">
+    <line x1="340" y1="226" x2="612" y2="226" stroke="#C9C1B2" stroke-width="1" stroke-dasharray="4 4" />
+    <text x="344" y="246" font-size="10.5" font-weight="700" letter-spacing="0.06em" fill="#3D6B4F">FIG 5.1 · OCTAHEDRAL [ML₆] &amp; Δ₀</text>
+
+    <!-- Octahedron geometry -->
+    <polygon points="424,264 374,312 424,360 474,312" fill="#0284C7" fill-opacity="0.08" stroke="#94A3B8" stroke-width="1" />
+    <polygon points="424,264 396,326 452,326" fill="none" stroke="#94A3B8" stroke-width="1" stroke-dasharray="2 2" />
+    <!-- Bonds from central M -->
+    <line x1="424" y1="312" x2="424" y2="266" stroke="#1E1B18" stroke-width="1.6" />
+    <line x1="424" y1="312" x2="424" y2="358" stroke="#1E1B18" stroke-width="1.6" />
+    <line x1="424" y1="312" x2="376" y2="312" stroke="#1E1B18" stroke-width="1.6" />
+    <line x1="424" y1="312" x2="472" y2="312" stroke="#1E1B18" stroke-width="1.6" />
+    <line x1="424" y1="312" x2="394" y2="332" stroke="#1E1B18" stroke-width="1.6" />
+    <line x1="424" y1="312" x2="454" y2="292" stroke="#1E1B18" stroke-width="1.6" />
+
+    <!-- Central Metal M & 6 Ligands L -->
+    <circle cx="424" cy="312" r="10" fill="#A64B33" stroke="#1E1B18" stroke-width="1.4" />
+    <text x="424" y="315.5" font-size="9.5" font-weight="700" text-anchor="middle" fill="#FAF8F3">M</text>
+
+    <circle cx="424" cy="264" r="6" fill="#0284C7" stroke="#1E1B18" stroke-width="1.2" />
+    <circle cx="424" cy="360" r="6" fill="#0284C7" stroke="#1E1B18" stroke-width="1.2" />
+    <circle cx="374" cy="312" r="6" fill="#0284C7" stroke="#1E1B18" stroke-width="1.2" />
+    <circle cx="474" cy="312" r="6" fill="#0284C7" stroke="#1E1B18" stroke-width="1.2" />
+    <circle cx="394" cy="332" r="6" fill="#0284C7" stroke="#1E1B18" stroke-width="1.2" />
+    <circle cx="454" cy="292" r="6" fill="#0284C7" stroke="#1E1B18" stroke-width="1.2" />
+
+    <!-- Crystal Field Splitting Diagram -->
+    <text x="548" y="274" font-size="9" font-weight="700" text-anchor="middle" fill="#A64B33">e_g (+0.6Δ₀)</text>
+    <line x1="518" y1="284" x2="538" y2="284" stroke="#1E1B18" stroke-width="2" />
+    <line x1="546" y1="284" x2="566" y2="284" stroke="#1E1B18" stroke-width="2" />
+    <line x1="504" y1="312" x2="584" y2="312" stroke="#787066" stroke-width="1" stroke-dasharray="3 3" />
+    <text x="598" y="315" font-size="9.5" font-weight="700" text-anchor="middle" fill="#0284C7">Δ₀</text>
+    <line x1="506" y1="344" x2="524" y2="344" stroke="#1E1B18" stroke-width="2" />
+    <line x1="532" y1="344" x2="550" y2="344" stroke="#1E1B18" stroke-width="2" />
+    <line x1="558" y1="344" x2="576" y2="344" stroke="#1E1B18" stroke-width="2" />
+    <text x="544" y="362" font-size="9" font-weight="700" text-anchor="middle" fill="#3D6B4F">t₂g (−0.4Δ₀)</text>
+  </g>
+</svg>

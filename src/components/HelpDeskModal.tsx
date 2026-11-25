@@ -322,7 +322,7 @@ export function HelpDeskModal({
     if (!user || !user.emailVerified) {
       setSubmitMessage({
         type: 'error',
-        text: 'Please sign in with Google first (or use the Email Creator button below) so your suggestion is saved for AriYan Pal (Keśava Dāsa).',
+        text: 'Please sign in with Google first (or use the Email Creator button below) so your suggestion is saved for Ariyan Pal (Keśava Dāsa).',
       });
       return;
     }
@@ -366,7 +366,7 @@ export function HelpDeskModal({
       setDetails('');
       setSubmitMessage({
         type: 'success',
-        text: 'Suggestion saved! AriYan Pal (Keśava Dāsa) can now review your addition or change request in the Creator Inbox.',
+        text: 'Suggestion saved! Ariyan Pal (Keśava Dāsa) can now review your addition or change request in the Creator Inbox.',
       });
     } catch (error) {
       setSubmitMessage({
@@ -444,7 +444,7 @@ export function HelpDeskModal({
             <div className="px-5 sm:px-7 py-4 border-b border-[#DDD6C7] dark:border-[#332E28] flex flex-wrap items-center justify-between gap-4 shrink-0">
               <div>
                 <p className="text-xs font-medium tracking-[0.1em] text-[#A64B33] dark:text-[#D4785E]">
-                  Quadra 12 Support · Creator: AriYan Pal (Keśava Dāsa)
+                  Quadra 12 Support · Creator: Ariyan Pal (Keśava Dāsa)
                 </p>
                 <h2
                   id="helpdesk-modal-title"
@@ -707,7 +707,7 @@ export function HelpDeskModal({
                         Propose an Addition or Change
                       </h3>
                       <p className="mt-1 text-xs text-[#575048] dark:text-[#CBC3B6]">
-                        Anyone visiting Quadra 12 can submit ideas, corrections, or feature requests directly to AriYan Pal (Keśava Dāsa).
+                        Anyone visiting Quadra 12 can submit ideas, corrections, or feature requests directly to Ariyan Pal (Keśava Dāsa).
                       </p>
                     </div>
 
@@ -871,7 +871,7 @@ export function HelpDeskModal({
 
                     {!user ? (
                       <div className="p-5 rounded-xl border border-dashed border-[#DDD6C7] dark:border-[#332E28] text-xs text-[#787066] dark:text-[#9C9387] leading-relaxed">
-                        Sign in with Google on the left to submit cloud-synced requests and see status updates (<span className="font-medium">Submitted</span>, <span className="font-medium">Planned</span>, <span className="font-medium">Added</span>) from AriYan Pal (Keśava Dāsa).
+                        Sign in with Google on the left to submit cloud-synced requests and see status updates (<span className="font-medium">Submitted</span>, <span className="font-medium">Planned</span>, <span className="font-medium">Added</span>) from Ariyan Pal (Keśava Dāsa).
                       </div>
                     ) : myRequests.length === 0 ? (
                       <div className="p-5 rounded-xl border border-dashed border-[#DDD6C7] dark:border-[#332E28] text-xs text-[#787066] dark:text-[#9C9387]">
@@ -1052,7 +1052,7 @@ export function HelpDeskModal({
                             About the Creator
                           </h3>
                           <p className="text-xs text-[#787066] dark:text-[#9C9387]">
-                            AriYan Pal (Keśava Dāsa) · Invented November 2026
+                            Ariyan Pal (Keśava Dāsa) · Invented November 2026
                           </p>
                         </div>
                       </div>

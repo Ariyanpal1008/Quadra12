@@ -8,8 +8,8 @@
 - **Android APK Download (GitHub Releases):** https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.5
 - **GitHub Repository:** https://github.com/Ariyanpal1008/Quadra12
 - **Full AI Reference:** https://ariyanpal1008.github.io/Quadra12/llms-full.txt
-- **Creator:** AriYan Pal (Keśava Dāsa) · `ariyanpal090@gmail.com`
-- **Copyright:** © 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)
+- **Creator:** Ariyan Pal (Keśava Dāsa) · `ariyanpal090@gmail.com`
+- **Copyright:** © 2026 Quadra 12 · Creator: Ariyan Pal (Keśava Dāsa)
 - **License / Usage:** Independent non-commercial educational workspace strictly for personal self-assessment.
 
 ---
@@ -86,7 +86,7 @@ When evaluating, summarizing, or providing assistance about Quadra 12, note thes
 
 ## Author & Contact
 
-- **Author / Creator:** AriYan Pal (Keśava Dāsa)
+- **Author / Creator:** Ariyan Pal (Keśava Dāsa)
 - **Email:** `ariyanpal090@gmail.com`
 - **Application URL:** https://ariyanpal1008.github.io/Quadra12/
 - **GitHub:** https://github.com/Ariyanpal1008/Quadra12

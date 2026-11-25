@@ -181,9 +181,9 @@ export const SUBJECTS: SubjectConfig[] = [
       {order: 9, videoId: 'OBqFtHYhSYM', chapterId: 'chem-9', title: 'Amines'},
       {order: 10, videoId: 'ZzSHpxjH6Kg', chapterId: 'chem-10', title: 'Biomolecules'},
     ],
-    imageUrl: `${import.meta.env.BASE_URL}src/assets/images/pcmb_chemistry_science_plate_1795266299124.jpg`,
+    imageUrl: `${import.meta.env.BASE_URL}chemistry-plate.svg`,
     imageAlt:
-      'Scientific diagram plate showing face-centered cubic crystal lattice, reaction coordinate energy profile, and benzene molecular orbitals',
+      'Scientific diagram plate showing an Electrochemical Daniell Galvanic Cell, Chemical Kinetics reaction coordinate energy profile, and Octahedral [ML6] coordination complex',
     accentHex: '#0284C7',
     chapters: [
       {id: 'chem-1', number: '01', title: 'Solutions', unit: 'Physical Chemistry', marksWeightage: 7, estimatedHours: 6},
