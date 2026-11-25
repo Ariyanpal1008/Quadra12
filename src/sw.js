@@ -18,7 +18,7 @@ function computeManifestHash(entries) {
   return (hash >>> 0).toString(36);
 }
 
-const CACHE_NAME = `quadra12-v2.5-${computeManifestHash(WB_MANIFEST)}`;
+const CACHE_NAME = `quadra12-v2.6-${computeManifestHash(WB_MANIFEST)}`;
 const CORE_FALLBACK_URLS = ['./', './index.html', './chemistry-plate.svg'];
 
 self.addEventListener('install', (event) => {

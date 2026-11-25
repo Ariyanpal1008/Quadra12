@@ -211,7 +211,7 @@ export function PWAInstallButton({
             <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Add to Home screen</strong> in your browser menu.
           </li>
           <li>
-            Or open <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Menu → Settings → About</strong> to download the standalone Android APK (v2.5).
+            Or open <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Menu → Settings → About</strong> to download the standalone Android APK (v2.6).
           </li>
         </ol>
 

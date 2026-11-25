@@ -119,7 +119,7 @@ const TOUR_STEPS: {
     id: 'exam',
     stepNum: '04',
     label: 'Exam Hall',
-    title: 'Original PCMB Papers, Synced PDFs & AI Examiner (v2.5)',
+    title: 'Original PCMB Papers, Synced PDFs & AI Examiner (v2.6)',
     summary:
       '100% independently authored papers with visual SVG diagrams, a 15-minute Reading Timer, downloadable Question Paper & Marking Scheme PDFs, smart camera/photo inputs, and Gemini 3.8 Flash step-grading.',
     targetSection: 'exam',
@@ -208,7 +208,7 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
         <div>
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-[#A64B33]/10 text-[#A64B33] dark:text-[#D4785E] border border-[#A64B33]/20">
-              Interactive Tour v2.5
+              Interactive Tour v2.6
             </span>
             <span className="text-xs text-[#787066] dark:text-[#9C9387]">Safe Sandbox Mode</span>
           </div>
@@ -466,7 +466,7 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
               </div>
             )}
 
-            {/* STEP 4: EXAMINATION HALL (v2.5) */}
+            {/* STEP 4: EXAMINATION HALL (v2.6) */}
             {currentStep.id === 'exam' && (
               <div className="rounded-xl border border-[#332E28] bg-[#1E1B18] text-[#F5F2EB] p-4 sm:p-5 space-y-3.5">
                 {/* Header with paper title, timer, and tab selector */}
