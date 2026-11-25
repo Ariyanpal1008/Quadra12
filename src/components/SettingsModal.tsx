@@ -24,6 +24,7 @@ import {
   RotateCcw,
   ScanQrCode,
   Settings,
+  Share2,
   ShieldAlert,
   Sigma,
   Smartphone,
@@ -205,6 +206,50 @@ export function SettingsModal({
   );
   const [masterResetStep, setMasterResetStep] = useState<0 | 1 | 2>(0);
   const [masterResetAckChecked, setMasterResetAckChecked] = useState(false);
+
+  // Share & App Update check state
+  const [checkingUpdate, setCheckingUpdate] = useState(false);
+  const [updateMsg, setUpdateMsg] = useState<string | null>(null);
+  const [updateLink, setUpdateLink] = useState<string | null>(null);
+
+  const handleShareApp = async () => {
+    const shareData = {
+      title: 'Quadra 12 — Class 12 CBSE PCMB Workspace',
+      text: 'Check out Quadra 12: free Class 12 CBSE PCMB syllabus tracker, sample papers, A4 PDFs, and 12th Hackers lectures!',
+      url: 'https://ariyanpal1008.github.io/Quadra12/',
+    };
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch {
+        // Fallback
+      }
+    }
+    const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareData.text + ' ' + shareData.url)}`;
+    window.open(waUrl, '_blank');
+  };
+
+  const handleCheckUpdates = async () => {
+    setCheckingUpdate(true);
+    setUpdateMsg(null);
+    setUpdateLink(null);
+    try {
+      const res = await fetch('https://api.github.com/repos/ariyanpal1008/Quadra12/releases/latest');
+      if (!res.ok) throw new Error('Release fetch failed');
+      const data = await res.json();
+      const tagName = data.tag_name || 'v2.5';
+      const apkAsset = data.assets?.find((a: any) => a.name?.endsWith('.apk'));
+      const dlUrl = apkAsset ? apkAsset.browser_download_url : (data.html_url || 'https://github.com/Ariyanpal1008/Quadra12/releases/latest');
+      setUpdateLink(dlUrl);
+      setUpdateMsg(`Latest version (${tagName}) is available! Tap below to download and update over your app without losing progress.`);
+    } catch {
+      setUpdateMsg('You are up to date or offline. Check GitHub Releases for the latest APK.');
+      setUpdateLink('https://github.com/Ariyanpal1008/Quadra12/releases/latest');
+    } finally {
+      setCheckingUpdate(false);
+    }
+  };
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -1644,6 +1689,23 @@ export function SettingsModal({
                       </p>
                       <div className="flex flex-wrap items-center gap-2.5 pt-1">
                         <PWAInstallButton variant="card" />
+                        <button
+                          type="button"
+                          onClick={() => void handleShareApp()}
+                          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] text-xs font-medium text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] transition-colors"
+                        >
+                          <Share2 className="w-3.5 h-3.5 text-[#A64B33] dark:text-[#D4785E]" />
+                          <span>Share with Classmates</span>
+                        </button>
+                        <button
+                          type="button"
+                          disabled={checkingUpdate}
+                          onClick={() => void handleCheckUpdates()}
+                          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] text-xs font-medium text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] transition-colors disabled:opacity-50"
+                        >
+                          <RefreshCw className={`w-3.5 h-3.5 text-[#3D6B4F] dark:text-[#7AB88F] ${checkingUpdate ? 'animate-spin' : ''}`} />
+                          <span>{checkingUpdate ? 'Checking...' : 'Check for App Updates'}</span>
+                        </button>
                         <a
                           href="https://github.com/Ariyanpal1008/Quadra12/actions/workflows/android-apk.yml"
                           target="_blank"
@@ -1654,6 +1716,23 @@ export function SettingsModal({
                           <ExternalLink className="w-3.5 h-3.5 opacity-75" />
                         </a>
                       </div>
+
+                      {updateMsg && (
+                        <div className="p-3 rounded-lg bg-[#E8F0EA] dark:bg-[#1C2E22] border border-[#B8D0BF] dark:border-[#2F4D39] text-xs space-y-2 mt-2">
+                          <p className="text-[#23422F] dark:text-[#B6DFC3] font-medium">{updateMsg}</p>
+                          {updateLink && (
+                            <a
+                              href={updateLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] text-xs font-semibold hover:opacity-95"
+                            >
+                              <Download className="w-3.5 h-3.5" />
+                              <span>Download Latest APK to Update</span>
+                            </a>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}

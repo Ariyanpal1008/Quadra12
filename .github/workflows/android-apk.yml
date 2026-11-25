@@ -43,6 +43,20 @@ jobs:
           rm -rf android
           npx cap add android
 
+      - name: Configure Android applicationId & dynamic versionCode for seamless in-place updates
+        run: |
+          node -e '
+          const fs = require("fs");
+          const gradlePath = "android/app/build.gradle";
+          if (fs.existsSync(gradlePath)) {
+            let content = fs.readFileSync(gradlePath, "utf8");
+            content = content.replace(/applicationId\s+"[^"]+"/, "applicationId \"io.github.ariyanpal1008.quadra12\"");
+            content = content.replace(/versionCode\s+\d+/, "versionCode ${{ github.run_number }}");
+            content = content.replace(/versionName\s+"[^"]+"/, "versionName \"2.5\"");
+            fs.writeFileSync(gradlePath, content, "utf8");
+          }
+          '
+
       - name: Configure Android permissions, camera intents & native Downloads bridge
         run: |
           node << 'NODE_EOF'
