@@ -32,51 +32,110 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Quadra 12",
-        "alternateName": ["Quadra 12 CBSE", "Quadra 12 PCMB"],
-        "url": "https://ariyanpal1008.github.io/Quadra12/"
-      }
-    </script>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        "name": "Quadra 12",
-        "url": "https://ariyanpal1008.github.io/Quadra12/",
-        "image": "https://ariyanpal1008.github.io/Quadra12/src/assets/images/quadra_12_icon_1795347655892.jpg",
-        "applicationCategory": "EducationalApplication",
-        "applicationSubCategory": "CBSE Board Exam Workspace, Offline PWA & Android App",
-        "softwareVersion": "2.5",
-        "operatingSystem": "Web, Android, iOS, Windows, macOS",
-        "installUrl": "https://ariyanpal1008.github.io/Quadra12/",
-        "downloadUrl": "https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.5",
-        "description": "Class 12 CBSE PCMB syllabus tracker, installable offline PWA app, and free standalone Android APK app (Quadra12-v2.5-Android.apk) featuring a 3-hour Examination Hall with independently authored mock papers, vector SVG diagrams, 15-minute Reading Timer, synced A4 PDFs, native Downloads/Quadra12/ saving & camera permissions, Gemini 3.8 AI step-marking, 12th Hackers lecture workspace, and Web Audio API feedback by AriYan Pal (Keśava Dāsa).",
-        "author": {
-          "@type": "Person",
-          "name": "AriYan Pal (Keśava Dāsa)",
-          "email": "ariyanpal090@gmail.com"
-        },
-        "featureList": [
-          "Installable Offline Progressive Web App (PWA) for Android, iOS/iPadOS, Windows, and macOS with Workbox offline caching, Install App buttons, iOS Add to Home Screen guide, and live Offline Mode indicator",
-          "Free Standalone Android APK App (Quadra12-v2.5-Android.apk) built via Capacitor 8 + Gradle with native CAMERA/storage permissions and QuadraAndroid MediaStore bridge saving A4 PDFs & JSON backups directly to Downloads/Quadra12/",
-          "Live Apple-style CBSE Class 12 Board Exam Countdown Clock (Feb 16, 10:30 AM IST with automatic annual 2027->2028 rollover)",
-          "50 NCERT Chapters 4-Stage Progress Tracking (Lecture, Practice, NCERT, PYQ)",
-          "3-Hour Examination Hall with independently authored PCMB mock papers, 15-minute Reading Timer, 47 vector SVG diagrams, synced Question Paper & Marking Scheme A4 PDFs, Sections B-E camera uploads (IndexedDB + localStorage auto-wipe), and Gemini 3.8 AI step-marking",
-          "50 Synced 12th Hackers One-Shot YouTube Video Lectures with Board Notes and Formulas",
-          "Official Settings v2.5 (accessed cleanly via ☰ -> Settings): Cloud Sync (6-Digit Code + Scannable QR Code + On-Demand In-App Camera QR Scanner + Offline JSON Backup), Audio & Tactile Feedbacks, Three.js 3D Studio, Exam Countdown & Urgency Alerts, Video Player Preferences, Privacy & Reset (Storage Quota Meter, Single-Subject Reset, Double-Confirmed Danger Zone Master Reset), and About & Install App",
-          "Interactive Three.js WebGL 3D Study Studio for Physics, Chemistry, Biology, Mathematics, and Grandmaster Trophy",
-          "Zero-dependency Native Web Audio API Tactile Sound System with Header Mute/Unmute Toggle",
-          "9 Milestone Achievement Badges with dynamic unlocking and relocking",
-          "Community Suggestion Box and Creator Moderation Inbox powered by Firebase Firestore",
-          "Complete local browser persistence (localStorage) for zero-account student privacy",
-          "Upcoming 2027 additions: English Core, Physical Education, Computer Science, and Fine Arts"
-        ],
-        "offers": {
-          "@type": "Offer",
-          "price": "0",
-          "priceCurrency": "INR"
-        }
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://ariyanpal1008.github.io/Quadra12/#website",
+            "name": "Quadra 12",
+            "alternateName": ["Quadra 12 CBSE", "Quadra 12 PCMB", "Quadra 12 Tracker"],
+            "url": "https://ariyanpal1008.github.io/Quadra12/",
+            "inLanguage": "en-IN"
+          },
+          {
+            "@type": "EducationalApplication",
+            "@id": "https://ariyanpal1008.github.io/Quadra12/#app",
+            "name": "Quadra 12",
+            "url": "https://ariyanpal1008.github.io/Quadra12/",
+            "image": "https://ariyanpal1008.github.io/Quadra12/src/assets/images/quadra_12_icon_1795347655892.jpg",
+            "applicationCategory": "EducationalApplication",
+            "applicationSubCategory": "CBSE Class 12 PCMB Syllabus Tracker, Sample Papers, Offline PWA & Android APK",
+            "softwareVersion": "2.5",
+            "operatingSystem": "Web, Android, iOS, Windows, macOS",
+            "installUrl": "https://ariyanpal1008.github.io/Quadra12/",
+            "downloadUrl": "https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.5",
+            "about": [
+              "CBSE Class 12 Physics (042)",
+              "CBSE Class 12 Chemistry (043)",
+              "CBSE Class 12 Biology (044)",
+              "CBSE Class 12 Mathematics (041)"
+            ],
+            "description": "Free Class 12 CBSE PCMB study workspace covering Physics (042), Chemistry (043), Biology (044), and Mathematics (041) with a 50-chapter NCERT Syllabus Tracker, 2026–27 Sample Papers, 3-Hour Examination Hall with Section A OMR Grading, 12th Hackers One-Shot Series, Live Board Exam Countdown Clock, Offline PWA, and Standalone Android APK (v2.5) created by AriYan Pal (Keśava Dāsa).",
+            "author": {
+              "@type": "Person",
+              "name": "AriYan Pal (Keśava Dāsa)",
+              "email": "ariyanpal090@gmail.com"
+            },
+            "featureList": [
+              "50-Chapter NCERT Syllabus Tracker across Physics (042), Chemistry (043), Biology (044), and Mathematics (041)",
+              "2026-27 Sample Papers & 3-Hour Examination Hall with Section A OMR Grading, 15-minute Reading Timer, and A4 PDF Export",
+              "Gemini 3.8 Flash AI Step-Marking & Subjective Evaluation with Local IndexedDB Auto-Wipe",
+              "50 Synced 12th Hackers One-Shot Video Lectures with Notes & Formulas",
+              "Live Apple-Style CBSE Board Exam Countdown Clock (Feb 16, 10:30 AM IST)",
+              "Installable Offline Progressive Web App (PWA) for Android, iOS, Windows & macOS",
+              "Free Standalone Android APK (Quadra12-v2.5-Android.apk, v2.5) with Native Camera Permissions & Downloads/Quadra12/ PDF Export"
+            ],
+            "hasPart": [
+              {
+                "@type": "WebPage",
+                "name": "Overview — Quadra 12 Home",
+                "url": "https://ariyanpal1008.github.io/Quadra12/#/overview",
+                "description": "Main Overview dashboard with Board mastery hero, Live Board Exam Countdown Clock, and PCMB summary."
+              },
+              {
+                "@type": "WebPage",
+                "name": "Physics (042) NCERT Syllabus Tracker",
+                "url": "https://ariyanpal1008.github.io/Quadra12/#/physics",
+                "description": "Track all 14 CBSE Class 12 Physics NCERT chapters across Lecture, Practice, NCERT, and PYQ stages."
+              },
+              {
+                "@type": "WebPage",
+                "name": "Chemistry (043) NCERT Syllabus Tracker",
+                "url": "https://ariyanpal1008.github.io/Quadra12/#/chemistry",
+                "description": "Track all 10 CBSE Class 12 Chemistry NCERT chapters with SVG plates and 4-stage mastery."
+              },
+              {
+                "@type": "WebPage",
+                "name": "Biology (044) NCERT Syllabus Tracker",
+                "url": "https://ariyanpal1008.github.io/Quadra12/#/biology",
+                "description": "Track all 13 CBSE Class 12 Biology NCERT chapters across Lecture, Practice, NCERT, and PYQ stages."
+              },
+              {
+                "@type": "WebPage",
+                "name": "Mathematics (041) NCERT Syllabus Tracker",
+                "url": "https://ariyanpal1008.github.io/Quadra12/#/mathematics",
+                "description": "Track all 13 CBSE Class 12 Mathematics NCERT chapters and formulas."
+              },
+              {
+                "@type": "WebPage",
+                "name": "3-Hour Examination Hall (PCMB Mock Papers & OMR)",
+                "url": "https://ariyanpal1008.github.io/Quadra12/#/exam-hall",
+                "description": "Full 3-hour CBSE PCMB Examination Hall with 15-min Reading Timer, Section A OMR grading, and AI examiner."
+              },
+              {
+                "@type": "WebPage",
+                "name": "2026-27 CBSE PCMB Sample Papers & Marking Schemes",
+                "url": "https://ariyanpal1008.github.io/Quadra12/#/sample-papers",
+                "description": "Downloadable A4 Question Paper PDFs and Marking Scheme PDFs for Physics, Chemistry, Biology, and Mathematics."
+              },
+              {
+                "@type": "WebPage",
+                "name": "12th Hackers One-Shot Video Lecture Series",
+                "url": "https://ariyanpal1008.github.io/Quadra12/#/12th-hackers",
+                "description": "50 NCERT chapter one-shot YouTube lectures synced directly with Subject Tracker progress."
+              }
+            ],
+            "potentialAction": {
+              "@type": "ViewAction",
+              "name": "Open Subject Tracker",
+              "target": "https://ariyanpal1008.github.io/Quadra12/#/physics"
+            },
+            "offers": {
+              "@type": "Offer",
+              "price": "0",
+              "priceCurrency": "INR"
+            }
+          }
+        ]
       }
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -99,7 +158,59 @@
     </script>
   </head>
   <body class="bg-[#F5F2EB] dark:bg-[#161412] text-[#1E1B18] dark:text-[#F5F2EB] antialiased selection:bg-[#A64B33] selection:text-[#F5F2EB] transition-colors duration-200">
-    <div id="root"></div>
+    <div id="root">
+      <style>
+        .q12-shell{--q-bg:#F5F2EB;--q-nav:#FAF8F5;--q-card:#FAF8F3;--q-ink:#1E1B18;--q-muted:#575048;--q-accent:#A64B33;--q-border:#DDD6C7;--q-nav-b:rgba(0,0,0,.06);min-height:100vh;display:flex;flex-direction:column;background:var(--q-bg);color:var(--q-ink);font-family:"DM Sans",ui-sans-serif,system-ui,sans-serif}
+        html.dark .q12-shell{--q-bg:#161412;--q-nav:#121212;--q-card:#1E1B18;--q-ink:#F5F2EB;--q-muted:#CBC3B6;--q-accent:#D4785E;--q-border:#332E28;--q-nav-b:rgba(255,255,255,.08)}
+        .q12-hdr{position:sticky;top:0;z-index:40;height:64px;background:var(--q-nav);border-bottom:1px solid var(--q-nav-b)}
+        .q12-hdr-in{max-width:1200px;height:100%;margin:0 auto;padding:0 16px;display:flex;align-items:center;justify-content:space-between;gap:16px}
+        .q12-brand{display:inline-flex;align-items:center;gap:10px;text-decoration:none;color:var(--q-ink);font-family:"Playfair Display",Georgia,serif;font-weight:600;font-size:18px;letter-spacing:-0.01em}
+        .q12-brand img{width:32px;height:32px;border-radius:8px;border:1px solid var(--q-border);object-fit:cover}
+        .q12-nav{display:none;gap:28px;font-size:14px;font-weight:500}
+        .q12-nav a{text-decoration:none;color:var(--q-muted)}
+        .q12-nav a.q12-act{color:var(--q-accent)}
+        .q12-main{flex:1;max-width:1200px;width:100%;margin:0 auto;padding:32px 16px;box-sizing:border-box}
+        .q12-hero{background:var(--q-card);border:1px solid var(--q-border);border-radius:12px;padding:24px;box-shadow:0 8px 24px -12px rgba(30,27,24,.08)}
+        .q12-eyebrow{display:flex;align-items:center;gap:12px;font-size:12px;font-weight:500;letter-spacing:0.14em;color:var(--q-accent);margin:0}
+        .q12-line{width:24px;height:1px;background:var(--q-accent);flex-shrink:0}
+        .q12-h1{margin:16px 0 0;font-family:"Playfair Display",Georgia,serif;font-weight:600;line-height:1.06;letter-spacing:-0.02em;font-size:clamp(2.25rem,4.1vw,3.5rem);color:var(--q-ink)}
+        .q12-h1 em{font-style:italic;font-weight:500;color:var(--q-accent)}
+        .q12-sub{margin:24px 0 0;padding-top:24px;border-top:1px solid var(--q-border);font-size:16px;line-height:1.625;color:var(--q-muted);max-width:58ch}
+        .q12-cta{margin-top:32px;display:inline-flex;align-items:center;gap:10px;padding:10px 20px;border-radius:8px;background:var(--q-ink);color:var(--q-bg);text-decoration:none;font-size:14px;font-weight:500}
+        @media(min-width:640px){.q12-hdr-in,.q12-main{padding-left:24px;padding-right:24px}.q12-main{padding-top:48px;padding-bottom:48px}.q12-hero{padding:32px}}
+        @media(min-width:768px){.q12-nav{display:flex}}
+        @media(min-width:1024px){.q12-hdr-in,.q12-main{padding-left:32px;padding-right:32px}.q12-hero{padding:48px}}
+      </style>
+      <div class="q12-shell">
+        <header class="q12-hdr">
+          <div class="q12-hdr-in">
+            <a href="#/overview" class="q12-brand">
+              <img src="./pwa-192x192.png" alt="Quadra 12 emblem" width="32" height="32" />
+              <span>Quadra 12</span>
+            </a>
+            <nav class="q12-nav" aria-label="Primary Navigation">
+              <a href="#/overview" class="q12-act">Overview</a>
+              <a href="#/physics">Subject Tracker</a>
+              <a href="#/exam-hall">Examination Hall</a>
+              <a href="#/12th-hackers">12th Hackers</a>
+            </nav>
+          </div>
+        </header>
+        <main class="q12-main">
+          <section class="q12-hero" aria-label="Quadra 12 Overview">
+            <p class="q12-eyebrow">
+              <span class="q12-line" aria-hidden="true"></span>
+              <span>QUADRA 12 · CBSE CLASS 12 PCMB · CREATED BY ARIYAN PAL (KEŚAVA DĀSA)</span>
+            </p>
+            <h1 class="q12-h1">Board mastery, <em>deliberately</em> paced.</h1>
+            <p class="q12-sub">
+              Track every NCERT chapter across Physics, Chemistry, Biology, and Mathematics, write official CBSE 2026–27 sample papers inside the 3-hour Examination Hall, and revise with the 12th Hackers one-shot series.
+            </p>
+            <a href="#/physics" class="q12-cta">Open Subject Tracker →</a>
+          </section>
+        </main>
+      </div>
+    </div>
     <noscript>
       <p style="padding:1rem;font-family:sans-serif;">
         Please enable JavaScript to use the interactive Quadra 12 Class 12 CBSE PCMB workspace.

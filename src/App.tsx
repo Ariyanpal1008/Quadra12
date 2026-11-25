@@ -93,6 +93,50 @@ import {
 
 type ActiveView = 'overview' | 'tracker' | 'exam-hall' | 'hackers';
 
+interface ResolvedHashRoute {
+  view: ActiveView;
+  trackerSubject: SubjectId;
+}
+
+function resolveHashRoute(rawHash: string): ResolvedHashRoute {
+  const normalized = rawHash
+    .replace(/^#\/?/, '')
+    .trim()
+    .toLowerCase();
+
+  switch (normalized) {
+    case 'physics':
+      return {view: 'tracker', trackerSubject: 'physics'};
+    case 'chemistry':
+      return {view: 'tracker', trackerSubject: 'chemistry'};
+    case 'biology':
+      return {view: 'tracker', trackerSubject: 'biology'};
+    case 'mathematics':
+    case 'maths':
+    case 'tracker':
+    case 'subjects':
+      return {view: 'tracker', trackerSubject: 'maths' === normalized || 'mathematics' === normalized ? 'maths' : 'physics'};
+    case 'exam-hall':
+    case 'sample-papers':
+      return {view: 'exam-hall', trackerSubject: 'physics'};
+    case '12th-hackers':
+    case 'hackers':
+      return {view: 'hackers', trackerSubject: 'physics'};
+    case 'overview':
+    default:
+      return {view: 'overview', trackerSubject: 'physics'};
+  }
+}
+
+function toCanonicalHash(view: ActiveView, subjectId: SubjectId): string {
+  if (view === 'tracker') {
+    return subjectId === 'maths' ? '#/mathematics' : `#/${subjectId}`;
+  }
+  if (view === 'exam-hall') return '#/exam-hall';
+  if (view === 'hackers') return '#/12th-hackers';
+  return '#/overview';
+}
+
 interface ExamAttemptSummary {
   score: number;
   totalMarks: number;
@@ -198,7 +242,16 @@ function HeroPreviewQuadrant({
 }
 
 export default function App() {
-  const [activeView, setActiveView] = useState<ActiveView>('overview');
+  const [activeView, setActiveView] = useState<ActiveView>(() =>
+    typeof window !== 'undefined'
+      ? resolveHashRoute(window.location.hash).view
+      : 'overview',
+  );
+  const [trackerSubject, setTrackerSubject] = useState<SubjectId>(() =>
+    typeof window !== 'undefined'
+      ? resolveHashRoute(window.location.hash).trackerSubject
+      : 'physics',
+  );
   const [examTargetSubject, setExamTargetSubject] = useState<SubjectId>('physics');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
@@ -212,6 +265,18 @@ export default function App() {
   const [threeLabScene, setThreeLabScene] = useState<ThreeSceneId>('physics');
   const [syncNoticeToast, setSyncNoticeToast] = useState<string | null>(null);
   const [isMuted, setIsMuted] = useState(isSoundMuted);
+
+  useEffect(() => {
+    const onHashChange = () => {
+      const next = resolveHashRoute(window.location.hash);
+      setActiveView(next.view);
+      if (next.view === 'tracker') {
+        setTrackerSubject(next.trackerSubject);
+      }
+    };
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
 
   useEffect(() => {
     const handleFirstGesture = () => {
@@ -512,9 +577,26 @@ export default function App() {
     }
   };
 
-  const navigateTo = (view: ActiveView) => {
+  const syncHashUrl = (view: ActiveView, subjectId: SubjectId) => {
+    try {
+      const nextHash = toCanonicalHash(view, subjectId);
+      if (window.location.hash !== nextHash) {
+        const nextUrl = `${window.location.pathname}${window.location.search}${nextHash}`;
+        window.history.replaceState(null, '', nextUrl);
+      }
+    } catch {
+      // Ignore history API restrictions
+    }
+  };
+
+  const navigateTo = (view: ActiveView, subjectId?: SubjectId) => {
+    const resolvedSubject = subjectId ?? trackerSubject;
+    if (subjectId) {
+      setTrackerSubject(subjectId);
+    }
     setActiveView(view);
     setMobileMenuOpen(false);
+    syncHashUrl(view, resolvedSubject);
     window.scrollTo({top: 0, behavior: 'smooth'});
   };
 
@@ -1312,7 +1394,9 @@ export default function App() {
 
                     {/* 4-Quadrant PCMB Preview Grid with Live Scroll Parallax */}
                     <HeroPreviewQuadrant
-                      onSelectSubject={() => navigateTo('tracker')}
+                      onSelectSubject={(subjectId) =>
+                        navigateTo('tracker', subjectId)
+                      }
                     />
                   </div>
 
@@ -1696,6 +1780,11 @@ export default function App() {
                 transition={{duration: 0.28, ease: APPLE_EASE}}
               >
                 <SubjectTrackerSection
+                  selectedSubjectId={trackerSubject}
+                  onSelectSubject={(subId) => {
+                    setTrackerSubject(subId);
+                    syncHashUrl('tracker', subId);
+                  }}
                   completedChapters={completedChapters}
                   chapterTasks={chapterTasks}
                   onToggleChapter={handleToggleChapter}

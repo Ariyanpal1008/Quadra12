@@ -1,7 +1,24 @@
-User-agent: *
+# Quadra 12 — Search Engine & AI Crawler Permissions
+User-agent: Googlebot
 Allow: /
 
-# LLM and AI Assistant context files
+User-agent: Google-Extended
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: *
+Allow: /
 Allow: /llms.txt
 Allow: /llms-full.txt
 

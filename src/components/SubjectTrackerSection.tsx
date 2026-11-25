@@ -24,6 +24,8 @@ import {ChapterIllustration} from './ChapterIllustrations';
 import {APPLE_EASE, APPLE_SPRING, AnimatedNumber} from './FluidPrimitives';
 
 interface SubjectTrackerSectionProps {
+  selectedSubjectId?: SubjectId;
+  onSelectSubject?: (subjectId: SubjectId) => void;
   completedChapters: Record<string, boolean>;
   chapterTasks: Record<string, ChapterTaskState>;
   onToggleChapter: (chapterId: string) => void;
@@ -36,6 +38,8 @@ interface SubjectTrackerSectionProps {
 }
 
 export function SubjectTrackerSection({
+  selectedSubjectId,
+  onSelectSubject,
   completedChapters,
   chapterTasks,
   onToggleChapter,
@@ -46,9 +50,17 @@ export function SubjectTrackerSection({
   onEnterExamHallForSubject,
   onOpenThreeLab,
 }: SubjectTrackerSectionProps) {
-  const [activeSubjectId, setActiveSubjectId] = useState<SubjectId>('physics');
+  const [activeSubjectId, setActiveSubjectId] = useState<SubjectId>(
+    selectedSubjectId ?? 'physics',
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const [previewChapter, setPreviewChapter] = useState<ChapterItem | null>(null);
+
+  useEffect(() => {
+    if (selectedSubjectId) {
+      setActiveSubjectId(selectedSubjectId);
+    }
+  }, [selectedSubjectId]);
 
   useEffect(() => {
     if (!previewChapter) return;
@@ -171,6 +183,7 @@ export function SubjectTrackerSection({
                 onClick={() => {
                   setActiveSubjectId(subject.id);
                   setSearchQuery('');
+                  onSelectSubject?.(subject.id);
                 }}
                 aria-pressed={isSelected}
                 className={`relative text-left p-4 rounded-xl border transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#A64B33] ${
