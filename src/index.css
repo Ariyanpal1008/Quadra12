@@ -160,6 +160,34 @@
   );
 }
 
+html.is-deep-link #root > * {
+  opacity: 0;
+  transform: translate3d(0, 6px, 0);
+}
+
+.apple-hydrate-root {
+  transition:
+    opacity 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.24s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+@keyframes apple-hydrate-in {
+  from {
+    opacity: 0.92;
+    transform: translate3d(0, 3px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.apple-hydrate-main {
+  animation: apple-hydrate-in 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

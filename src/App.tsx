@@ -265,6 +265,9 @@ export default function App() {
   const [isMuted, setIsMuted] = useState(isSoundMuted);
 
   useEffect(() => {
+    const raf = window.requestAnimationFrame(() => {
+      document.documentElement.classList.remove('is-deep-link');
+    });
     const onHashChange = () => {
       const next = resolveHashRoute(window.location.hash);
       setActiveView(next.view);
@@ -273,7 +276,10 @@ export default function App() {
       }
     };
     window.addEventListener('hashchange', onHashChange);
-    return () => window.removeEventListener('hashchange', onHashChange);
+    return () => {
+      window.cancelAnimationFrame(raf);
+      window.removeEventListener('hashchange', onHashChange);
+    };
   }, []);
 
   useEffect(() => {
@@ -1061,7 +1067,7 @@ export default function App() {
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="min-h-dvh flex flex-col bg-[#F5F2EB] dark:bg-[#161412] text-[#1E1B18] dark:text-[#F5F2EB] transition-colors duration-200">
+      <div className="min-h-dvh flex flex-col bg-[#F5F2EB] dark:bg-[#161412] text-[#1E1B18] dark:text-[#F5F2EB] transition-colors duration-200 apple-hydrate-root">
         <header className="sticky top-0 z-40 bg-[#FAF8F5] dark:bg-[#121212] supports-[backdrop-filter]:bg-[#FAF8F5]/96 dark:supports-[backdrop-filter]:bg-[#121212]/96 apple-glass-bar border-b border-[rgba(0,0,0,0.06)] dark:border-[#2C2C2E] transition-colors duration-300">
           <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3 sm:gap-8">
             {/* Zone 1: Brand icon + wordmark */}
@@ -1285,7 +1291,7 @@ export default function App() {
           </AnimatePresence>
         </header>
 
-        <main className="flex-1 max-w-[1200px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-10 lg:py-12">
+        <main className="flex-1 max-w-[1200px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-10 lg:py-12 apple-hydrate-main">
           <AnimatePresence mode="wait" initial={false}>
             {activeView === 'overview' && (
               <motion.div
