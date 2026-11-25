@@ -137,7 +137,7 @@ I am **AriYan Pal (Keśava Dāsa)** (`ariyanpal090@gmail.com`), a Class 12 stude
 ### 10. Installable Offline PWA & Free Standalone Android `.apk` App (`$0`)
 - **Offline Progressive Web App (PWA):** Powered by `vite-plugin-pwa` (`injectManifest` via `src/sw.js`) enforcing Network-First HTML/JS/CSS updates with offline precaching for chapter tracking, countdown timer, SVG plates, and Google Fonts, plus custom `#1D1C17` brand icons (`192×192`, `512×512`, maskable safe-zone icon, and `180×180` Apple Touch Icon).
 - **1-Tap In-App Install & Offline Banner:** Built-in **Install App** trigger in the desktop navbar, `☰` mobile menu, and `Settings → About` (plus an automatic iOS Safari *Share → Add to Home Screen* modal guide and a live **Offline Mode** indicator when disconnected).
-- **Free Standalone Android `.apk` (`Quadra12-v2.6-Android.apk`):** Automatically built at **$0 cost** via Capacitor 8 + Gradle in `.github/workflows/android-apk.yml` and attached to GitHub Releases. Includes native Android `CAMERA`, `READ_MEDIA_IMAGES`, and storage permissions, `<queries>` camera/PDF intents, and a custom `QuadraAndroid` native bridge (`MainActivity.java`) so exported Question Paper, Marking Scheme, Graded Report A4 PDFs, and `.json` backups save straight into Android **`Downloads/Quadra12/`** via `MediaStore.Downloads` and open in your system PDF viewer.
+- **Free Standalone Android `.apk` (`Quadra12-v2.6.0-Android.apk`):** Automatically built, permanently signed with Quadra 12's release keystore, and verified via `apksigner` in `.github/workflows/android-release.yml` on `main` pushes and `v*` releases. Includes native Android `CAMERA`, `READ_MEDIA_IMAGES`, `REQUEST_INSTALL_PACKAGES`, and storage permissions, `<queries>` camera/PDF/installer intents, plus a `QuadraAndroid` bridge (`MainActivity.java`) for `Downloads/Quadra12/` A4 PDF saving and in-app GitHub Releases APK update downloads.
 
 ---
 
@@ -146,7 +146,7 @@ I am **AriYan Pal (Keśava Dāsa)** (`ariyanpal090@gmail.com`), a Class 12 stude
 ```text
 Quadra12/
 ├── .github/workflows/
-│   ├── android-apk.yml                    # Free Capacitor + Gradle Android APK builder
+│   ├── android-release.yml                # Signed Capacitor + Gradle Android APK CI & Release
 │   └── deploy.yml                         # Automated GitHub Pages CI/CD workflow (Node 22)
 ├── public/
 │   ├── assets/
@@ -265,7 +265,7 @@ All personal study records, timestamps, and exam scores are preserved locally in
 - **Animations:** Motion (`motion/react`) with custom Apple spring presets
 - **Icons:** Lucide Icons & official Octicons GitHub SVG
 - **Backend / Authentication:** Firebase Authentication (Google Sign-In) & Cloud Firestore
-- **Deployment & App Packaging:** GitHub Pages via `.github/workflows/deploy.yml`, Offline PWA via `vite-plugin-pwa`, & Free Android `.apk` via `.github/workflows/android-apk.yml` (Capacitor + Gradle) or PWABuilder
+- **Deployment & App Packaging:** GitHub Pages via `.github/workflows/deploy.yml`, Offline PWA via `vite-plugin-pwa`, & Permanently Signed Android `.apk` via `.github/workflows/android-release.yml` (Capacitor + Gradle)
 - **SEO & Discoverability:** Canonical links, OpenGraph, Twitter Cards, Schema.org `WebApplication` JSON-LD, `llms.txt`, `llms-full.txt`, `robots.txt`, and `sitemap.xml`
 
 ---

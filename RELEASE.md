@@ -22,13 +22,14 @@
 * **`injectManifest` (`src/sw.js`):** Network-First HTML/JS/CSS updates (`quadra12-v2.6-*` cache) with offline fallback and automatic cleanup of old caches.
 * **Chemistry Card Artwork (`chemistry-plate.svg`):** Syllabus-aligned Daniell Cell, Arrhenius Profile, and Octahedral `[ML6]` vector plate.
 
-### 5. Standalone Android APK & Core Examination Hall Features
-* **Free Android APK (`Quadra12-v2.6-Android.apk`):** Built via Capacitor 8 + Gradle in `.github/workflows/android-apk.yml` with `versionName "2.6"` and native `Downloads/Quadra12/` A4 PDF saving.
+### 5. Permanently Signed Android APK, Release CI & In-App Update Checker
+* **Signed Android APK (`Quadra12-v2.6.0-Android.apk`):** Built via Capacitor 8 + Gradle in `.github/workflows/android-release.yml`, permanently signed using Quadra 12's release keystore (`quadra12-release.jks`), verified via `apksigner`, and published automatically to GitHub Releases on `v*` tags.
+* **In-App GitHub Releases Updater:** Compares installed version (`versionName` & `versionCode`) against GitHub Releases API, displays release notes and update notifications, downloads the signed APK with real progress via native `DownloadManager`, and launches Android's system installer confirmation dialog.
 * **Complete PCMB Examination Hall:** 137 independently authored questions, 47 vector SVG diagrams, 15-minute Reading Timer, synced A4 PDFs, Sections B–E smart camera/photo uploads with post-grading wipe, and `gemini-3.8-flash` AI step-marking.
 
 ---
 
-**Full Changelog:** `v2.5...v2.6`  
+**Full Changelog:** `v2.5...v2.6.0`  
 **Live Web & Offline PWA App:** [https://ariyanpal1008.github.io/Quadra12/](https://ariyanpal1008.github.io/Quadra12/)  
-**Free Android APK Download:** [GitHub Releases (`Quadra12-v2.6-Android.apk`)](https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.6)  
+**Free Signed Android APK Download:** [GitHub Releases](https://github.com/Ariyanpal1008/Quadra12/releases/latest)  
 **Creator:** Ariyan Pal (Keśava Dāsa) · `ariyanpal090@gmail.com`

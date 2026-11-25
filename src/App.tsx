@@ -13,6 +13,7 @@ import {
   ArrowUpRight,
   Check,
   CheckCircle2,
+  Download,
   FileCheck2,
   HelpCircle,
   Menu,
@@ -69,6 +70,12 @@ import {TermsModal} from './components/TermsModal';
 import {SettingsModal, SettingsTab} from './components/SettingsModal';
 import {ThreeLabModal, ThreeSceneId} from './components/ThreeLabModal';
 import {OfflineIndicator, PWAInstallButton} from './components/PWAInstallButton';
+import {
+  ReleaseUpdateInfo,
+  checkLatestGitHubRelease,
+  dismissUpdateBannerForSession,
+  isUpdateBannerDismissed,
+} from './utils/appUpdater';
 import {ResilientImage} from './components/ResilientImage';
 import {BoardCountdownClock} from './components/BoardCountdownClock';
 import {
@@ -262,6 +269,8 @@ export default function App() {
   const [threeLabOpen, setThreeLabOpen] = useState(false);
   const [threeLabScene, setThreeLabScene] = useState<ThreeSceneId>('physics');
   const [syncNoticeToast, setSyncNoticeToast] = useState<string | null>(null);
+  const [availableUpdate, setAvailableUpdate] = useState<ReleaseUpdateInfo | null>(null);
+  const [showUpdateNotification, setShowUpdateNotification] = useState(false);
   const [isMuted, setIsMuted] = useState(isSoundMuted);
 
   useEffect(() => {
@@ -569,6 +578,27 @@ export default function App() {
     const timer = window.setTimeout(() => setSyncNoticeToast(null), 5500);
     return () => window.clearTimeout(timer);
   }, [syncNoticeToast]);
+
+  // Background check against actual GitHub Releases API after initial paint settles
+  useEffect(() => {
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      void checkLatestGitHubRelease().then((outcome) => {
+        if (cancelled) return;
+        if (outcome.status === 'update-available') {
+          setAvailableUpdate(outcome.info);
+          if (!isUpdateBannerDismissed(outcome.info.latestVersion)) {
+            setShowUpdateNotification(true);
+          }
+        }
+      });
+    }, 2400);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, []);
 
   const handleResetAllLocalData = () => {
     playCheckSound(false);
@@ -1992,6 +2022,7 @@ export default function App() {
         <SettingsModal
           isOpen={settingsModalOpen}
           initialTab={settingsTab}
+          initialReleaseInfo={availableUpdate}
           theme={theme}
           isMuted={isMuted}
           workspaceState={currentWorkspaceState}
@@ -2091,6 +2122,71 @@ export default function App() {
                   type="button"
                   onClick={() => setRecentUnlockToast(null)}
                   aria-label="Dismiss achievement notification"
+                  className="text-[#787066] dark:text-[#9C9387] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB] p-1 rounded-md shrink-0"
+                >
+                  <X className="w-4 h-4" aria-hidden="true" />
+                </button>
+              </div>
+            </motion.aside>
+          )}
+        </AnimatePresence>
+
+        {/* Update Available Notification Toast */}
+        <AnimatePresence>
+          {showUpdateNotification && availableUpdate && !settingsModalOpen && (
+            <motion.aside
+              role="status"
+              aria-live="polite"
+              initial={{opacity: 0, y: 20, scale: 0.96}}
+              animate={{opacity: 1, y: 0, scale: 1}}
+              exit={{opacity: 0, y: 14, scale: 0.96}}
+              transition={APPLE_SPRING}
+              className="fixed bottom-4 left-4 z-50 w-[min(360px,calc(100vw-2rem))] rounded-xl border border-[#3D6B4F] dark:border-[#7AB88F] bg-[#FAF8F3] dark:bg-[#1E1B18] p-4 shadow-xl"
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-full border border-[#3D6B4F] dark:border-[#7AB88F] bg-[#E8F0EA] dark:bg-[#1C2E22] text-[#23422F] dark:text-[#B6DFC3] flex items-center justify-center shrink-0">
+                  <Download className="w-4 h-4" aria-hidden="true" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] font-mono text-[#3D6B4F] dark:text-[#7AB88F] font-semibold">
+                    Update Available · {availableUpdate.tagName}
+                  </p>
+                  <p className="mt-0.5 text-sm font-semibold text-[#1E1B18] dark:text-[#F5F2EB] truncate">
+                    {availableUpdate.releaseTitle}
+                  </p>
+                  <p className="mt-0.5 text-xs text-[#575048] dark:text-[#CBC3B6]">
+                    Installed: v{availableUpdate.installed.versionName} → Latest: v{availableUpdate.latestVersion}
+                  </p>
+                  <div className="mt-2.5 flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowUpdateNotification(false);
+                        openSettings('about');
+                      }}
+                      className="text-xs font-semibold text-[#3D6B4F] dark:text-[#7AB88F] hover:underline whitespace-nowrap"
+                    >
+                      View &amp; Download →
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        dismissUpdateBannerForSession(availableUpdate.latestVersion);
+                        setShowUpdateNotification(false);
+                      }}
+                      className="text-xs text-[#787066] dark:text-[#9C9387] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB] whitespace-nowrap"
+                    >
+                      Later
+                    </button>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    dismissUpdateBannerForSession(availableUpdate.latestVersion);
+                    setShowUpdateNotification(false);
+                  }}
+                  aria-label="Dismiss update notification"
                   className="text-[#787066] dark:text-[#9C9387] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB] p-1 rounded-md shrink-0"
                 >
                   <X className="w-4 h-4" aria-hidden="true" />

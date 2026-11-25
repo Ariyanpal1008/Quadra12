@@ -67,6 +67,23 @@ import {saveBlobToDevice} from '../utils/pdfExporter';
 import {ThreeSceneId} from './ThreeLabModal';
 import {PWAInstallButton} from './PWAInstallButton';
 import {EmbedPlayerMode} from './YouTubeSyncPlayer';
+import {
+  APP_VERSION,
+  GITHUB_RELEASES_PAGE_URL,
+  GITHUB_REPO_URL,
+  getInstalledAppInfo,
+} from '../constants/version';
+import {
+  ReleaseUpdateInfo,
+  UpdateCheckOutcome,
+  checkLatestGitHubRelease,
+  formatBytes,
+  hasNativeApkUpdater,
+  openNativeInstallPermissionSettings,
+  pollNativeApkDownload,
+  startNativeApkDownload,
+  triggerNativeApkInstall,
+} from '../utils/appUpdater';
 
 export type SettingsTab =
   | 'sync'
@@ -86,6 +103,7 @@ const LOCAL_QUOTA_BYTES = 5 * 1024 * 1024; // 5 MB standard browser localStorage
 interface SettingsModalProps {
   isOpen: boolean;
   initialTab?: SettingsTab;
+  initialReleaseInfo?: ReleaseUpdateInfo | null;
   theme: 'light' | 'dark';
   isMuted: boolean;
   workspaceState: SyncableWorkspaceState;
@@ -135,6 +153,7 @@ function measureLocalStorageQuota(): {
 export function SettingsModal({
   isOpen,
   initialTab = 'sync',
+  initialReleaseInfo = null,
   theme,
   isMuted,
   workspaceState,
@@ -208,9 +227,56 @@ export function SettingsModal({
   const [masterResetAckChecked, setMasterResetAckChecked] = useState(false);
 
   // Share & App Update check state
-  const [checkingUpdate, setCheckingUpdate] = useState(false);
-  const [updateMsg, setUpdateMsg] = useState<string | null>(null);
-  const [updateLink, setUpdateLink] = useState<string | null>(null);
+  const installedAppInfo = getInstalledAppInfo();
+  const [updateCheckState, setUpdateCheckState] = useState<
+    | {status: 'idle'}
+    | {status: 'checking'}
+    | UpdateCheckOutcome
+  >(() =>
+    initialReleaseInfo
+      ? {
+          status: initialReleaseInfo.hasUpdate ? 'update-available' : 'up-to-date',
+          info: initialReleaseInfo,
+        }
+      : {status: 'idle'},
+  );
+  const [apkDownloadState, setApkDownloadState] = useState<{
+    phase: 'idle' | 'downloading' | 'downloaded' | 'needs-permission' | 'error';
+    progress: number;
+    bytesDownloaded: number;
+    totalBytes: number;
+    downloadId: number | null;
+    error?: string;
+  }>({
+    phase: 'idle',
+    progress: 0,
+    bytesDownloaded: 0,
+    totalBytes: 0,
+    downloadId: null,
+  });
+  const downloadPollTimerRef = useRef<number | null>(null);
+
+  const clearDownloadPollTimer = useCallback(() => {
+    if (downloadPollTimerRef.current !== null) {
+      window.clearInterval(downloadPollTimerRef.current);
+      downloadPollTimerRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    if (initialReleaseInfo) {
+      setUpdateCheckState({
+        status: initialReleaseInfo.hasUpdate ? 'update-available' : 'up-to-date',
+        info: initialReleaseInfo,
+      });
+    }
+  }, [initialReleaseInfo]);
+
+  useEffect(() => {
+    return () => {
+      clearDownloadPollTimer();
+    };
+  }, [clearDownloadPollTimer]);
 
   const handleShareApp = async () => {
     const shareData = {
@@ -230,50 +296,130 @@ export function SettingsModal({
     window.open(waUrl, '_blank');
   };
 
-  const parseVersion = (vStr: string): number[] => {
-    const clean = vStr.replace(/^v/i, '').trim();
-    const parts = clean.split('.').map((p) => parseInt(p, 10) || 0);
-    while (parts.length < 3) parts.push(0);
-    return parts;
-  };
-
-  const isVersionNewer = (remoteVer: string, localVer: string): boolean => {
-    const r = parseVersion(remoteVer);
-    const l = parseVersion(localVer);
-    // Compare major and minor version numbers (e.g. 2.6 > 2.5). Ignore patch bumps (like 2.5.1 vs 2.5)
-    if (r[0] > l[0]) return true;
-    if (r[0] < l[0]) return false;
-    if (r[1] > l[1]) return true;
-    if (r[1] < l[1]) return false;
-    return false;
-  };
-
   const handleCheckUpdates = async () => {
-    setCheckingUpdate(true);
-    setUpdateMsg(null);
-    setUpdateLink(null);
-    try {
-      const res = await fetch('https://api.github.com/repos/ariyanpal1008/Quadra12/releases/latest');
-      if (!res.ok) throw new Error('Release fetch failed');
-      const data = await res.json();
-      const tagName = data.tag_name || 'v2.6';
-      const remoteClean = tagName.replace(/^v/i, '').trim();
-      const localClean = '2.6';
+    playOmrBubbleSound();
+    setUpdateCheckState({status: 'checking'});
+    const outcome = await checkLatestGitHubRelease();
+    setUpdateCheckState(outcome);
+    if (outcome.status === 'update-available') {
+      playAchievementChime();
+    } else if (outcome.status === 'up-to-date') {
+      playCheckSound(true);
+    }
+  };
 
-      const newer = isVersionNewer(remoteClean, localClean);
-      const apkAsset = data.assets?.find((a: any) => a.name?.endsWith('.apk'));
-      const dlUrl = apkAsset ? apkAsset.browser_download_url : (data.html_url || 'https://github.com/Ariyanpal1008/Quadra12/releases/latest');
+  const handleDownloadSignedApk = (info: ReleaseUpdateInfo) => {
+    if (!info.apkAsset) {
+      window.open(info.releasePageUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
 
-      if (newer) {
-        setUpdateLink(dlUrl);
-        setUpdateMsg(`New Update Available (v${remoteClean})!`);
-      } else {
-        setUpdateMsg(`Up to date (v${localClean}) — You are on the latest version.`);
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+      setApkDownloadState({
+        phase: 'error',
+        progress: 0,
+        bytesDownloaded: 0,
+        totalBytes: info.apkAsset.sizeBytes,
+        downloadId: null,
+        error: 'Internet connection unavailable. Connect to Wi-Fi or mobile data and try again.',
+      });
+      return;
+    }
+
+    playOmrBubbleSound();
+
+    if (hasNativeApkUpdater()) {
+      clearDownloadPollTimer();
+      const started = startNativeApkDownload(
+        info.apkAsset.downloadUrl,
+        info.apkAsset.name,
+      );
+      if (!started.ok) {
+        setApkDownloadState({
+          phase: 'error',
+          progress: 0,
+          bytesDownloaded: 0,
+          totalBytes: info.apkAsset.sizeBytes,
+          downloadId: null,
+          error: started.error,
+        });
+        return;
       }
-    } catch {
-      setUpdateMsg(`Up to date (v2.6) — You are on the latest version.`);
-    } finally {
-      setCheckingUpdate(false);
+
+      const activeId = started.downloadId;
+      setApkDownloadState({
+        phase: 'downloading',
+        progress: 2,
+        bytesDownloaded: 0,
+        totalBytes: info.apkAsset.sizeBytes,
+        downloadId: activeId,
+      });
+
+      downloadPollTimerRef.current = window.setInterval(() => {
+        const snapshot = pollNativeApkDownload(activeId);
+        if (snapshot.status === 'successful') {
+          clearDownloadPollTimer();
+          playCheckSound(true);
+          setApkDownloadState({
+            phase: 'downloaded',
+            progress: 100,
+            bytesDownloaded: snapshot.totalBytes || info.apkAsset!.sizeBytes,
+            totalBytes: snapshot.totalBytes || info.apkAsset!.sizeBytes,
+            downloadId: activeId,
+          });
+        } else if (snapshot.status === 'failed') {
+          clearDownloadPollTimer();
+          setApkDownloadState({
+            phase: 'error',
+            progress: 0,
+            bytesDownloaded: snapshot.bytesDownloaded,
+            totalBytes: snapshot.totalBytes || info.apkAsset!.sizeBytes,
+            downloadId: null,
+            error:
+              snapshot.error ||
+              'APK download failed. Check your connection and try again.',
+          });
+        } else {
+          setApkDownloadState({
+            phase: 'downloading',
+            progress: Math.max(2, snapshot.progress),
+            bytesDownloaded: snapshot.bytesDownloaded,
+            totalBytes: snapshot.totalBytes || info.apkAsset!.sizeBytes,
+            downloadId: activeId,
+          });
+        }
+      }, 400);
+      return;
+    }
+
+    // Browser / PWA fallback: trigger direct download from GitHub Release asset URL
+    const anchor = document.createElement('a');
+    anchor.href = info.apkAsset.downloadUrl;
+    anchor.download = info.apkAsset.name;
+    anchor.rel = 'noopener noreferrer';
+    anchor.target = '_blank';
+    document.body.appendChild(anchor);
+    anchor.click();
+    document.body.removeChild(anchor);
+  };
+
+  const handleInstallDownloadedApk = () => {
+    if (!apkDownloadState.downloadId) return;
+    playOmrBubbleSound();
+    const res = triggerNativeApkInstall(apkDownloadState.downloadId);
+    if (res === 'NEEDS_PERMISSION') {
+      setApkDownloadState((prev) => ({
+        ...prev,
+        phase: 'needs-permission',
+        error:
+          "Allow 'Install unknown apps' for Quadra 12 in Android Settings, then return and tap Install Update.",
+      }));
+    } else if (typeof res === 'string' && res.startsWith('ERROR:')) {
+      setApkDownloadState((prev) => ({
+        ...prev,
+        phase: 'error',
+        error: res.slice(6).trim() || 'Could not launch Android installer.',
+      }));
     }
   };
 
@@ -772,7 +918,7 @@ export function SettingsModal({
                       Settings
                     </h2>
                     <span className="px-2 py-0.5 rounded-full bg-[#ECE6D9] dark:bg-[#2C2722] text-[10px] font-mono text-[#787066] dark:text-[#9C9387]">
-                      v2.6
+                      v{installedAppInfo.versionName}
                     </span>
                   </div>
                 </div>
@@ -1652,9 +1798,16 @@ export function SettingsModal({
                     <div className="rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] p-5 space-y-4">
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div>
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] text-[11px] font-mono font-semibold">
-                            Version 2.6
-                          </span>
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] text-[11px] font-mono font-semibold">
+                              Version {installedAppInfo.versionName}
+                            </span>
+                            {installedAppInfo.versionCode !== null && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-[#ECE6D9] dark:bg-[#24201C] text-[#575048] dark:text-[#CBC3B6] text-[10px] font-mono">
+                                Android Build #{installedAppInfo.versionCode}
+                              </span>
+                            )}
+                          </div>
                           <h3 className="mt-2 text-lg font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
                             Quadra 12 — Class 12 CBSE PCMB Workspace
                           </h3>
@@ -1683,7 +1836,7 @@ export function SettingsModal({
                         </button>
 
                         <a
-                          href="https://github.com/Ariyanpal1008/Quadra12"
+                          href={GITHUB_REPO_URL}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] text-xs font-semibold hover:opacity-90 transition-opacity"
@@ -1700,19 +1853,44 @@ export function SettingsModal({
                       </div>
                     </div>
 
-                    {/* Install App (PWA) & Free Android APK */}
-                    <div className="rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] p-5 space-y-3">
+                    {/* Install App (PWA) & In-App Signed Android APK Updater */}
+                    <div className="rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] p-5 space-y-3.5">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <h4 className="text-sm font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
-                          Install App (Free Offline PWA &amp; Android APK)
+                          App Updates &amp; Install (Offline PWA + Signed Android APK)
                         </h4>
                         <span className="px-2 py-0.5 rounded-full bg-[#E8F0EA] dark:bg-[#1C2E22] text-[#23422F] dark:text-[#B6DFC3] text-[10px] font-mono font-semibold">
                           100% Free ($0)
                         </span>
                       </div>
                       <p className="text-xs text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
-                        Install Quadra 12 straight onto your Home Screen (Android, iPhone/iPad, Windows, Mac) for offline study access—or download a free Android <code className="font-mono">.apk</code> built directly via GitHub Actions or PWABuilder.
+                        Install Quadra 12 straight onto your Home Screen (Android, iPhone/iPad, Windows, Mac) or check GitHub Releases for the permanently signed Android <code className="font-mono">.apk</code> release.
                       </p>
+
+                      {/* Version Comparison Strip */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 text-xs">
+                        <div className="rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#161412] px-3 py-2 flex items-center justify-between">
+                          <span className="text-[#787066] dark:text-[#9C9387]">Installed Version</span>
+                          <span className="font-mono font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+                            v{installedAppInfo.versionName}
+                            {installedAppInfo.versionCode !== null
+                              ? ` (#${installedAppInfo.versionCode})`
+                              : ` (${APP_VERSION})`}
+                          </span>
+                        </div>
+                        <div className="rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#161412] px-3 py-2 flex items-center justify-between">
+                          <span className="text-[#787066] dark:text-[#9C9387]">Latest GitHub Release</span>
+                          <span className="font-mono font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+                            {updateCheckState.status === 'checking'
+                              ? 'Checking…'
+                              : updateCheckState.status === 'update-available' ||
+                                  updateCheckState.status === 'up-to-date'
+                                ? `v${updateCheckState.info.latestVersion}`
+                                : 'Tap Check Below'}
+                          </span>
+                        </div>
+                      </div>
+
                       <div className="flex flex-wrap items-center gap-2.5 pt-1">
                         <PWAInstallButton variant="card" />
                         <button
@@ -1725,42 +1903,210 @@ export function SettingsModal({
                         </button>
                         <button
                           type="button"
-                          disabled={checkingUpdate}
+                          disabled={updateCheckState.status === 'checking'}
                           onClick={() => void handleCheckUpdates()}
                           className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] text-xs font-medium text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] transition-colors disabled:opacity-50"
                         >
-                          <RefreshCw className={`w-3.5 h-3.5 text-[#3D6B4F] dark:text-[#7AB88F] ${checkingUpdate ? 'animate-spin' : ''}`} />
-                          <span>{checkingUpdate ? 'Checking...' : 'Check for App Updates'}</span>
+                          <RefreshCw
+                            className={`w-3.5 h-3.5 text-[#3D6B4F] dark:text-[#7AB88F] ${
+                              updateCheckState.status === 'checking' ? 'animate-spin' : ''
+                            }`}
+                          />
+                          <span>
+                            {updateCheckState.status === 'checking'
+                              ? 'Checking GitHub Releases…'
+                              : 'Check for App Updates'}
+                          </span>
                         </button>
                         <a
-                          href="https://github.com/Ariyanpal1008/Quadra12/actions/workflows/android-apk.yml"
+                          href={`${GITHUB_REPO_URL}/actions/workflows/android-release.yml`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] text-xs font-medium text-[#1E1B18] dark:text-[#F5F2EB] hover:border-[#A64B33] transition-colors"
                         >
-                          <span>GitHub Android APK Builder</span>
+                          <span>GitHub Android Release CI</span>
                           <ExternalLink className="w-3.5 h-3.5 opacity-75" />
                         </a>
                       </div>
 
-                      {updateMsg && (
-                        <div className={`p-3 rounded-lg border text-xs space-y-2 mt-2 ${
-                          updateMsg.includes('New Update Available')
-                            ? 'bg-[#E8F0EA] dark:bg-[#1C2E22] border-[#B8D0BF] dark:border-[#2F4D39] text-[#23422F] dark:text-[#B6DFC3]'
-                            : 'bg-[#ECE6D9] dark:bg-[#24201C] border-[#DDD6C7] dark:border-[#332E28] text-[#575048] dark:text-[#CBC3B6]'
-                        }`}>
-                          <p className="font-medium">{updateMsg}</p>
-                          {updateLink && updateMsg.includes('New Update Available') && (
+                      {/* Update Available Panel */}
+                      {updateCheckState.status === 'update-available' && (
+                        <div className="p-4 rounded-xl border border-[#3D6B4F] dark:border-[#7AB88F] bg-[#E8F0EA] dark:bg-[#1C2E22] text-[#23422F] dark:text-[#B6DFC3] space-y-3">
+                          <div className="flex flex-wrap items-start justify-between gap-2">
+                            <div>
+                              <p className="text-[11px] font-mono uppercase tracking-wider font-semibold">
+                                Update Available · {updateCheckState.info.tagName}
+                              </p>
+                              <h5 className="text-sm font-semibold mt-0.5">
+                                {updateCheckState.info.releaseTitle}
+                              </h5>
+                              {updateCheckState.info.publishedAt && (
+                                <p className="text-[11px] opacity-80 font-mono mt-0.5">
+                                  Published {new Date(updateCheckState.info.publishedAt).toLocaleDateString()}
+                                  {updateCheckState.info.apkAsset?.sizeBytes
+                                    ? ` · APK Size: ${formatBytes(updateCheckState.info.apkAsset.sizeBytes)}`
+                                    : ''}
+                                </p>
+                              )}
+                            </div>
                             <a
-                              href={updateLink}
+                              href={updateCheckState.info.releasePageUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] text-xs font-semibold hover:opacity-95"
+                              className="inline-flex items-center gap-1 text-[11px] font-mono underline underline-offset-2 opacity-90 hover:opacity-100"
                             >
-                              <Download className="w-3.5 h-3.5" />
-                              <span>Download &amp; Update APK</span>
+                              <span>Release Page</span>
+                              <ExternalLink className="w-3 h-3" />
                             </a>
+                          </div>
+
+                          {updateCheckState.info.releaseNotes && (
+                            <div className="rounded-lg border border-[#B8D0BF] dark:border-[#2F4D39] bg-[#FAF8F3]/85 dark:bg-[#161412]/70 p-3 text-[#1E1B18] dark:text-[#F5F2EB] text-xs max-h-44 overflow-y-auto whitespace-pre-wrap leading-relaxed">
+                              {updateCheckState.info.releaseNotes}
+                            </div>
                           )}
+
+                          {/* Download Progress Bar (Native Android DownloadManager) */}
+                          {apkDownloadState.phase === 'downloading' && (
+                            <div className="space-y-1.5">
+                              <div className="flex items-center justify-between text-[11px] font-mono">
+                                <span>Downloading signed APK…</span>
+                                <span>
+                                  {apkDownloadState.progress}%
+                                  {apkDownloadState.totalBytes > 0
+                                    ? ` (${formatBytes(apkDownloadState.bytesDownloaded)} / ${formatBytes(apkDownloadState.totalBytes)})`
+                                    : ''}
+                                </span>
+                              </div>
+                              <div className="h-2 rounded-full bg-[#B8D0BF] dark:bg-[#2F4D39] overflow-hidden">
+                                <div
+                                  className="h-full bg-[#23422F] dark:bg-[#7AB88F] transition-all duration-300"
+                                  style={{width: `${apkDownloadState.progress}%`}}
+                                />
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Download / Install Error */}
+                          {(apkDownloadState.phase === 'error' ||
+                            apkDownloadState.phase === 'needs-permission') &&
+                            apkDownloadState.error && (
+                              <div className="p-2.5 rounded-lg border border-[#D98270] bg-[#FDF0ED] dark:bg-[#2D1A17] text-[#9E3223] dark:text-[#F29F8F] text-xs space-y-2">
+                                <p>{apkDownloadState.error}</p>
+                                {apkDownloadState.phase === 'needs-permission' && (
+                                  <button
+                                    type="button"
+                                    onClick={openNativeInstallPermissionSettings}
+                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#9E3223] text-white text-xs font-semibold hover:opacity-90"
+                                  >
+                                    <span>Open Android Install Permission Settings</span>
+                                  </button>
+                                )}
+                              </div>
+                            )}
+
+                          <div className="flex flex-wrap items-center gap-2.5">
+                            {apkDownloadState.phase === 'downloaded' ||
+                            apkDownloadState.phase === 'needs-permission' ? (
+                              <button
+                                type="button"
+                                onClick={handleInstallDownloadedApk}
+                                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] text-xs font-semibold hover:opacity-95"
+                              >
+                                <Download className="w-3.5 h-3.5" />
+                                <span>Install Update (System Confirmation)</span>
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                disabled={apkDownloadState.phase === 'downloading'}
+                                onClick={() => handleDownloadSignedApk(updateCheckState.info)}
+                                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] text-xs font-semibold hover:opacity-95 disabled:opacity-50"
+                              >
+                                <Download className="w-3.5 h-3.5" />
+                                <span>
+                                  {apkDownloadState.phase === 'downloading'
+                                    ? 'Downloading Signed APK…'
+                                    : updateCheckState.info.apkAsset
+                                      ? `Download Signed APK (${formatBytes(updateCheckState.info.apkAsset.sizeBytes)})`
+                                      : 'Open GitHub Release'}
+                                </span>
+                              </button>
+                            )}
+
+                            {updateCheckState.info.apkAsset && (
+                              <a
+                                href={updateCheckState.info.apkAsset.downloadUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-[#3D6B4F]/50 dark:border-[#7AB88F]/50 text-xs font-medium hover:opacity-85"
+                              >
+                                <span>Direct Browser Link</span>
+                                <ExternalLink className="w-3 h-3" />
+                              </a>
+                            )}
+                          </div>
+
+                          <p className="text-[11px] opacity-90 leading-relaxed">
+                            Android security requires granting install permission for unknown apps and tapping confirm on the Android system installer prompt—silent background updates are not permitted on Android.
+                          </p>
+                        </div>
+                      )}
+
+                      {/* Up to Date Panel */}
+                      {updateCheckState.status === 'up-to-date' && (
+                        <div className="p-3.5 rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#ECE6D9] dark:bg-[#24201C] text-[#1E1B18] dark:text-[#F5F2EB] text-xs space-y-2">
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <p className="font-semibold">
+                              You are up to date (Installed v{updateCheckState.info.installed.versionName} · Latest GitHub Release {updateCheckState.info.tagName})
+                            </p>
+                            <a
+                              href={updateCheckState.info.releasePageUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 font-mono text-[11px] text-[#A64B33] dark:text-[#D4785E] hover:underline"
+                            >
+                              <span>View Release</span>
+                              <ExternalLink className="w-3 h-3" />
+                            </a>
+                          </div>
+                          {updateCheckState.info.releaseNotes && (
+                            <details className="text-[11px] text-[#575048] dark:text-[#CBC3B6]">
+                              <summary className="cursor-pointer font-medium hover:text-[#1E1B18] dark:hover:text-[#F5F2EB]">
+                                Show {updateCheckState.info.tagName} Release Notes
+                              </summary>
+                              <div className="mt-2 rounded border border-[#DDD6C7] dark:border-[#332E28] bg-[#FAF8F3] dark:bg-[#1E1B18] p-2.5 max-h-36 overflow-y-auto whitespace-pre-wrap leading-relaxed">
+                                {updateCheckState.info.releaseNotes}
+                              </div>
+                            </details>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Offline / Error Panel */}
+                      {(updateCheckState.status === 'offline' ||
+                        updateCheckState.status === 'error') && (
+                        <div className="p-3.5 rounded-lg border border-[#D98270] bg-[#FDF0ED] dark:bg-[#2D1A17] text-[#9E3223] dark:text-[#F29F8F] text-xs space-y-2">
+                          <p className="font-medium">{updateCheckState.message}</p>
+                          <div className="flex flex-wrap items-center gap-2.5">
+                            <button
+                              type="button"
+                              onClick={() => void handleCheckUpdates()}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#9E3223] text-white text-xs font-semibold hover:opacity-90"
+                            >
+                              <RefreshCw className="w-3 h-3" />
+                              <span>Retry Check</span>
+                            </button>
+                            <a
+                              href={GITHUB_RELEASES_PAGE_URL}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-xs underline underline-offset-2"
+                            >
+                              <span>Open GitHub Releases</span>
+                              <ExternalLink className="w-3 h-3" />
+                            </a>
+                          </div>
                         </div>
                       )}
                     </div>

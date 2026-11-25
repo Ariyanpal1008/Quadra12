@@ -21,6 +21,12 @@ export interface QuadraAndroidBridge {
   ) => string;
   ensureCameraPermission?: () => boolean;
   ensureStoragePermission?: () => boolean;
+  getInstalledVersion?: () => string;
+  canRequestPackageInstalls?: () => boolean;
+  openInstallPermissionSettings?: () => void;
+  downloadApkUpdate?: (apkUrl: string, filename: string) => string;
+  getApkDownloadStatus?: (downloadId: number) => string;
+  openDownloadedApk?: (downloadId: number) => string;
 }
 
 declare global {

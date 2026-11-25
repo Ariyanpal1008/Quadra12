@@ -1,0 +1,203 @@
+name: Quadra 12 Android Signed Release
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      publish_release:
+        description: 'Publish signed APK to GitHub Releases'
+        required: false
+        type: boolean
+        default: false
+      release_tag:
+        description: 'Tag name for GitHub Release (e.g. v2.6.0). Leave blank to use v<package.json version>.'
+        required: false
+        type: string
+        default: ''
+
+permissions:
+  contents: write
+
+concurrency:
+  group: android-release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-sign-apk:
+    name: Build, Sign & Verify Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify permanent Android signing secrets are configured
+        env:
+          CHECK_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          CHECK_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          CHECK_STORE_PW: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          CHECK_KEY_PW: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -z "$CHECK_B64" ] || [ -z "$CHECK_ALIAS" ] || [ -z "$CHECK_STORE_PW" ] || [ -z "$CHECK_KEY_PW" ]; then
+            echo "::error::Missing one or more required signing secrets (ANDROID_KEYSTORE_BASE64, ANDROID_KEY_ALIAS, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_PASSWORD). Refusing to build or publish an unsigned APK."
+            exit 1
+          fi
+          echo "All four permanent Android signing secrets are present."
+
+      - name: Resolve versionName and monotonic versionCode
+        env:
+          INPUT_RELEASE_TAG: ${{ inputs.release_tag }}
+        run: |
+          PKG_VERSION=$(node -e 'console.log(require("./package.json").version)')
+          RAW_TAG=""
+          if [[ "${GITHUB_REF}" == refs/tags/v* ]]; then
+            RAW_TAG="${GITHUB_REF#refs/tags/}"
+          elif [ -n "$INPUT_RELEASE_TAG" ]; then
+            RAW_TAG="$INPUT_RELEASE_TAG"
+          else
+            RAW_TAG="v${PKG_VERSION}"
+          fi
+          VERSION_NAME="${RAW_TAG#v}"
+          if [ -z "$VERSION_NAME" ]; then
+            VERSION_NAME="$PKG_VERSION"
+          fi
+          RELEASE_TAG="v${VERSION_NAME}"
+          VERSION_CODE=$((1000 + GITHUB_RUN_NUMBER))
+          APK_FILENAME="Quadra12-v${VERSION_NAME}-Android.apk"
+
+          echo "VERSION_NAME=${VERSION_NAME}" >> "$GITHUB_ENV"
+          echo "RELEASE_TAG=${RELEASE_TAG}" >> "$GITHUB_ENV"
+          echo "VERSION_CODE=${VERSION_CODE}" >> "$GITHUB_ENV"
+          echo "APK_FILENAME=${APK_FILENAME}" >> "$GITHUB_ENV"
+          echo "Resolved release target: tag=${RELEASE_TAG}, versionName=${VERSION_NAME}, versionCode=${VERSION_CODE}"
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          accept-android-sdk-licenses: 'true'
+
+      - name: Install dependencies & build web application
+        run: |
+          npm ci --legacy-peer-deps || npm install --legacy-peer-deps
+          npm run build
+
+      - name: Initialize & configure Capacitor Android project
+        env:
+          QUADRA_VERSION_NAME: ${{ env.VERSION_NAME }}
+          QUADRA_VERSION_CODE: ${{ env.VERSION_CODE }}
+          QUADRA_ENABLE_RELEASE_SIGNING: 'true'
+        run: |
+          rm -rf android
+          npx cap add android
+          node scripts/configure-android.mjs
+
+      - name: Generate Quadra 12 launcher icons & sync Capacitor assets
+        run: |
+          if ! command -v convert >/dev/null 2>&1; then
+            sudo apt-get update && sudo apt-get install -y imagemagick
+          fi
+          rm -rf android/app/src/main/res/mipmap-anydpi-v26
+          for dir_size in "mipmap-mdpi:48" "mipmap-hdpi:72" "mipmap-xhdpi:96" "mipmap-xxhdpi:144" "mipmap-xxxhdpi:192"; do
+            DIR="${dir_size%%:*}"
+            SIZE="${dir_size##*:}"
+            mkdir -p "android/app/src/main/res/$DIR"
+            convert public/pwa-512x512.png -resize "${SIZE}x${SIZE}" -strip "android/app/src/main/res/$DIR/ic_launcher.png"
+            convert public/pwa-maskable-512x512.png -resize "${SIZE}x${SIZE}" -strip "android/app/src/main/res/$DIR/ic_launcher_round.png"
+            convert public/pwa-maskable-512x512.png -resize "${SIZE}x${SIZE}" -strip "android/app/src/main/res/$DIR/ic_launcher_foreground.png"
+          done
+          npx cap sync android
+
+      - name: Decode permanent release keystore & inspect certificate fingerprint
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          echo "$ANDROID_KEYSTORE_BASE64" | tr -d '\r\n' | base64 --decode > android/app/quadra12-release.jks
+          if [ ! -s android/app/quadra12-release.jks ]; then
+            echo "::error::Decoded keystore android/app/quadra12-release.jks is empty."
+            exit 1
+          fi
+          KEYTOOL_OUT=$(keytool -list -v -keystore android/app/quadra12-release.jks -alias "$ANDROID_KEY_ALIAS" -storepass:env ANDROID_KEYSTORE_PASSWORD)
+          EXPECTED_SHA256=$(echo "$KEYTOOL_OUT" | awk -F'SHA256:' '/SHA256:/ {gsub(/[^0-9A-Fa-f]/, "", $2); print toupper($2); exit}')
+          if [ -z "$EXPECTED_SHA256" ]; then
+            echo "::error::Could not extract SHA-256 certificate fingerprint for alias '$ANDROID_KEY_ALIAS'."
+            exit 1
+          fi
+          echo "EXPECTED_CERT_SHA256=${EXPECTED_SHA256}" >> "$GITHUB_ENV"
+          echo "Permanent keystore certificate verified cleanly (SHA-256: ${EXPECTED_SHA256:0:12}...)."
+
+      - name: Build permanently signed release APK
+        working-directory: android
+        env:
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon
+          RELEASE_APK="app/build/outputs/apk/release/app-release.apk"
+          if [ ! -s "$RELEASE_APK" ]; then
+            echo "::error::Signed release APK not found at android/$RELEASE_APK"
+            exit 1
+          fi
+          cp "$RELEASE_APK" "../${APK_FILENAME}"
+
+      - name: Verify APK exists, is signed & matches permanent keystore certificate
+        run: |
+          if [ ! -s "$APK_FILENAME" ]; then
+            echo "::error::Output APK '$APK_FILENAME' is missing or empty."
+            exit 1
+          fi
+          APKSIGNER=$(find "$ANDROID_HOME/build-tools" -name apksigner -type f | sort -V | tail -n 1)
+          if [ -z "$APKSIGNER" ]; then
+            echo "::error::apksigner utility not found in ANDROID_HOME/build-tools."
+            exit 1
+          fi
+          VERIFY_OUT=$("$APKSIGNER" verify --verbose --print-certs "$APK_FILENAME")
+          echo "$VERIFY_OUT"
+          ACTUAL_SHA256=$(echo "$VERIFY_OUT" | awk -F'SHA-256 digest:' '/SHA-256 digest:/ {gsub(/[^0-9A-Fa-f]/, "", $2); print toupper($2); exit}')
+          if [ -z "$ACTUAL_SHA256" ] || [ "$ACTUAL_SHA256" != "$EXPECTED_CERT_SHA256" ]; then
+            echo "::error::APK signing certificate SHA-256 ($ACTUAL_SHA256) does not match keystore certificate SHA-256 ($EXPECTED_CERT_SHA256)."
+            exit 1
+          fi
+          echo "APK signature verified and matched permanent keystore certificate."
+
+      - name: Clean up decoded keystore from runner workspace
+        if: always()
+        run: |
+          rm -f android/app/quadra12-release.jks
+
+      - name: Upload signed APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Quadra12-v${{ env.VERSION_NAME }}-Android-APK
+          path: ${{ env.APK_FILENAME }}
+          retention-days: 90
+
+      - name: Publish signed APK to GitHub Releases
+        if: startsWith(github.ref, 'refs/tags/v') || (github.event_name == 'workflow_dispatch' && inputs.publish_release)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: Quadra 12 ${{ env.RELEASE_TAG }} — Android APK
+          body_path: RELEASE.md
+          generate_release_notes: true
+          draft: false
+          prerelease: false
+          files: ${{ env.APK_FILENAME }}

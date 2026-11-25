@@ -6,3 +6,18 @@ coverage/
 *.log
 .env*
 !.env.example
+
+# Capacitor generated native project & Gradle artifacts
+android/
+.gradle/
+capacitor.build.gradle
+
+# Android signing keystores, credentials & build outputs (NEVER commit)
+*.jks
+*.keystore
+*.p12
+*.pem
+keystore*.txt
+keystore.properties
+*.apk
+*.aab
