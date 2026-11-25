@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import http from 'http';
 import express from 'express';
 import path from 'path';
 import {fileURLToPath} from 'url';
@@ -323,10 +324,15 @@ async function createServer() {
     res.status(404).json({error: 'API endpoint not found.'});
   });
 
+  const httpServer = http.createServer(app);
+
   if (!IS_PROD) {
     const {createServer: createViteServer} = await import('vite');
     const vite = await createViteServer({
-      server: {middlewareMode: true},
+      server: {
+        middlewareMode: true,
+        hmr: process.env.DISABLE_HMR === 'true' ? false : {server: httpServer},
+      },
       appType: 'spa',
     });
     app.use(vite.middlewares);
@@ -338,7 +344,7 @@ async function createServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  httpServer.listen(PORT, '0.0.0.0', () => {
     console.log(`Quadra 12 server running on http://0.0.0.0:${PORT}`);
   });
 }
