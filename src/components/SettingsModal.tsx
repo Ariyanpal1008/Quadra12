@@ -240,10 +240,11 @@ export function SettingsModal({
   const isVersionNewer = (remoteVer: string, localVer: string): boolean => {
     const r = parseVersion(remoteVer);
     const l = parseVersion(localVer);
-    for (let i = 0; i < 3; i++) {
-      if (r[i] > l[i]) return true;
-      if (r[i] < l[i]) return false;
-    }
+    // Compare major and minor version numbers (e.g. 2.6 > 2.5). Ignore patch bumps (like 2.5.1 vs 2.5)
+    if (r[0] > l[0]) return true;
+    if (r[0] < l[0]) return false;
+    if (r[1] > l[1]) return true;
+    if (r[1] < l[1]) return false;
     return false;
   };
 
