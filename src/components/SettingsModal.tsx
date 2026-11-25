@@ -230,6 +230,23 @@ export function SettingsModal({
     window.open(waUrl, '_blank');
   };
 
+  const parseVersion = (vStr: string): number[] => {
+    const clean = vStr.replace(/^v/i, '').trim();
+    const parts = clean.split('.').map((p) => parseInt(p, 10) || 0);
+    while (parts.length < 3) parts.push(0);
+    return parts;
+  };
+
+  const isVersionNewer = (remoteVer: string, localVer: string): boolean => {
+    const r = parseVersion(remoteVer);
+    const l = parseVersion(localVer);
+    for (let i = 0; i < 3; i++) {
+      if (r[i] > l[i]) return true;
+      if (r[i] < l[i]) return false;
+    }
+    return false;
+  };
+
   const handleCheckUpdates = async () => {
     setCheckingUpdate(true);
     setUpdateMsg(null);
@@ -239,13 +256,21 @@ export function SettingsModal({
       if (!res.ok) throw new Error('Release fetch failed');
       const data = await res.json();
       const tagName = data.tag_name || 'v2.5';
+      const remoteClean = tagName.replace(/^v/i, '').trim();
+      const localClean = '2.5';
+
+      const newer = isVersionNewer(remoteClean, localClean);
       const apkAsset = data.assets?.find((a: any) => a.name?.endsWith('.apk'));
       const dlUrl = apkAsset ? apkAsset.browser_download_url : (data.html_url || 'https://github.com/Ariyanpal1008/Quadra12/releases/latest');
-      setUpdateLink(dlUrl);
-      setUpdateMsg(`Latest version (${tagName}) is available! Tap below to download and update over your app without losing progress.`);
+
+      if (newer) {
+        setUpdateLink(dlUrl);
+        setUpdateMsg(`New Update Available (v${remoteClean})!`);
+      } else {
+        setUpdateMsg(`Up to date (v${localClean}) — You are on the latest version.`);
+      }
     } catch {
-      setUpdateMsg('You are up to date or offline. Check GitHub Releases for the latest APK.');
-      setUpdateLink('https://github.com/Ariyanpal1008/Quadra12/releases/latest');
+      setUpdateMsg(`Up to date (v2.5) — You are on the latest version.`);
     } finally {
       setCheckingUpdate(false);
     }
@@ -1718,9 +1743,13 @@ export function SettingsModal({
                       </div>
 
                       {updateMsg && (
-                        <div className="p-3 rounded-lg bg-[#E8F0EA] dark:bg-[#1C2E22] border border-[#B8D0BF] dark:border-[#2F4D39] text-xs space-y-2 mt-2">
-                          <p className="text-[#23422F] dark:text-[#B6DFC3] font-medium">{updateMsg}</p>
-                          {updateLink && (
+                        <div className={`p-3 rounded-lg border text-xs space-y-2 mt-2 ${
+                          updateMsg.includes('New Update Available')
+                            ? 'bg-[#E8F0EA] dark:bg-[#1C2E22] border-[#B8D0BF] dark:border-[#2F4D39] text-[#23422F] dark:text-[#B6DFC3]'
+                            : 'bg-[#ECE6D9] dark:bg-[#24201C] border-[#DDD6C7] dark:border-[#332E28] text-[#575048] dark:text-[#CBC3B6]'
+                        }`}>
+                          <p className="font-medium">{updateMsg}</p>
+                          {updateLink && updateMsg.includes('New Update Available') && (
                             <a
                               href={updateLink}
                               target="_blank"
@@ -1728,7 +1757,7 @@ export function SettingsModal({
                               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] text-xs font-semibold hover:opacity-95"
                             >
                               <Download className="w-3.5 h-3.5" />
-                              <span>Download Latest APK to Update</span>
+                              <span>Download &amp; Update APK</span>
                             </a>
                           )}
                         </div>
