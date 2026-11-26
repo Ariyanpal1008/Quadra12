@@ -74,11 +74,17 @@ interface QuestionGradeItem {
 function isGibberishText(text: string): boolean {
   const trimmed = text.trim();
   if (!trimmed) return false;
-  const hasMathOrScienceSymbols = /[=+\-*/∫∑√πθφΔΩ^<>]|\d/.test(trimmed);
-  if (hasMathOrScienceSymbols && trimmed.length >= 2) {
-    return false;
+
+  // Catch symbol/punctuation spam like +_**(*&"&&"& or ??? or ***
+  if (/[_*&"$#@!~`\\|]{3,}|[+*_(&"]{4,}|([!@#$%^&*_+=~`|\\?])\1{2,}/.test(trimmed)) {
+    return true;
   }
-  const words = trimmed.split(/\s+/).filter(Boolean);
+
+  // Split on spaces & punctuation to inspect letter tokens regardless of attached symbols
+  const tokens = trimmed
+    .split(/[\s,=+*/()[\]{}_&^%$#@!~`"';:<>|\\?-]+/)
+    .filter(Boolean);
+
   const lower = trimmed.toLowerCase();
   const trivialFillers = new Set([
     'hi', 'hello', 'hey', 'ok', 'okay', 'idk', 'na', 'nil', 'none', 'nothing',
@@ -86,9 +92,10 @@ function isGibberishText(text: string): boolean {
     'pass', 'skip', 'lol', 'bro', 'sir', 'mam', 'please', 'sorry', 'check',
   ]);
   if (
-    words.length === 1 &&
+    tokens.length === 1 &&
     (trivialFillers.has(lower) ||
-      (trimmed.length <= 4 &&
+      (/^[a-zA-Z]+$/.test(trimmed) &&
+        trimmed.length <= 4 &&
         !/^(yes|no|dna|rna|atp|adp|emf|ohm|amp|mol|ph|cft|vbt|sn1|sn2|hiv|pcr)$/i.test(
           trimmed,
         )))
@@ -97,18 +104,29 @@ function isGibberishText(text: string): boolean {
   }
   if (/^(.)\1{2,}$/i.test(lower)) return true;
 
+  // Check individual alpha tokens for vowel-less keyboard mash (e.g. Hhybxgz, kfkfjf)
+  const alphaTokens = tokens.filter((t) => /^[a-zA-Z]+$/.test(t));
   let weirdWords = 0;
-  for (const w of words) {
-    const clean = w.replace(/[^a-z]/gi, '');
-    if (clean.length >= 5 && !/[aeiou]/i.test(clean)) {
+  let shortConsonantFragments = 0;
+  for (const w of alphaTokens) {
+    if (w.length >= 5 && !/[aeiou]/i.test(w)) {
       weirdWords++;
-    } else if (/[bcdfghjklmnpqrstvwxz]{5,}/i.test(clean)) {
+    } else if (/[bcdfghjklmnpqrstvwxz]{5,}/i.test(w)) {
       weirdWords++;
-    } else if (clean.length >= 4 && /^(asdf|qwer|zxcv|hjkl|uiop|hhyb)/i.test(clean)) {
+    } else if (w.length >= 4 && /^(asdf|qwer|zxcv|hjkl|uiop|hhyb|kfkf)/i.test(w)) {
       weirdWords++;
+    } else if (w.length <= 2 && !/[aeiou]/i.test(w)) {
+      shortConsonantFragments++;
     }
   }
-  if (weirdWords > 0 && weirdWords >= Math.ceil(words.length / 2)) {
+  if (weirdWords > 0 && weirdWords >= Math.ceil(alphaTokens.length / 2)) {
+    return true;
+  }
+  if (
+    alphaTokens.length >= 3 &&
+    shortConsonantFragments + weirdWords >= Math.ceil(alphaTokens.length * 0.7) &&
+    !/=/.test(trimmed)
+  ) {
     return true;
   }
   return false;
@@ -730,6 +748,7 @@ export function ExamHallSection({
 
       let payload: GradingResponse | null = null;
       const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
+      let allowSelfCheckFallback = !isOnline;
 
       if (bundleQuestions.length === 0) {
         // 0 API calls needed if all questions are unattempted or caught locally as invalid
@@ -767,12 +786,25 @@ export function ExamHallSection({
             if (parsed && Array.isArray(parsed.questionGrades)) {
               payload = parsed;
             }
+          } else if (response.status === 429 || response.status === 503) {
+            allowSelfCheckFallback = true;
           } else if (response.status === 404 || !contentType.includes('application/json')) {
             // Running on static host (GitHub Pages PWA or Capacitor APK) without backend server
             proxyMissingOnStaticHost = true;
+          } else {
+            const errJson = contentType.includes('application/json')
+              ? ((await response.json().catch(() => ({}))) as {error?: string})
+              : {};
+            throw new Error(
+              errJson.error || `Grading service returned status ${response.status}.`,
+            );
           }
-        } catch {
-          proxyMissingOnStaticHost = true;
+        } catch (err) {
+          if (err instanceof TypeError || /network|failed to fetch|abort/i.test(String(err))) {
+            proxyMissingOnStaticHost = true;
+          } else if (!proxyMissingOnStaticHost && !allowSelfCheckFallback) {
+            throw err;
+          }
         }
 
         // Static PWA / Android APK 5-key pool direct Gemini fallback when no Express backend is present
@@ -782,7 +814,9 @@ export function ExamHallSection({
             .map((k: string) => k.trim())
             .filter(Boolean);
 
-          if (rawKeys.length > 0) {
+          if (rawKeys.length === 0) {
+            allowSelfCheckFallback = true;
+          } else {
             const systemInstruction = `
 You are a strict, uncompromising Class 12 PCMB Examiner inside the Quadra 12 Examination Hall evaluating a batch of subjective answers across Sections B, C, D, and E (for 33-question PCB or 38-question Mathematics sample papers). For every submitted question, you are given the Question Number, Question Text, Max Marks, the Official Marking Scheme extracted from Quadra 12's Marking Scheme PDF, and the student's answer photo and/or typed response.
 
@@ -831,6 +865,7 @@ Return ONLY valid JSON matching { questionGrades: [{ questionId, status, marks_a
 
             const startIdx = Math.floor(Math.random() * rawKeys.length);
             const models = ['gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-4-hydrogen'];
+            let sawRateLimitOrBusy = false;
             outer: for (const modelName of models) {
               for (let i = 0; i < rawKeys.length; i++) {
                 const key = rawKeys[(startIdx + i) % rawKeys.length];
@@ -853,6 +888,10 @@ Return ONLY valid JSON matching { questionGrades: [{ questionId, status, marks_a
                       }),
                     },
                   );
+                  if (res.status === 429 || res.status === 503) {
+                    sawRateLimitOrBusy = true;
+                    continue;
+                  }
                   if (!res.ok) continue;
                   const json = (await res.json()) as {
                     candidates?: Array<{content?: {parts?: Array<{text?: string}>}}>;
@@ -866,15 +905,24 @@ Return ONLY valid JSON matching { questionGrades: [{ questionId, status, marks_a
                     }
                   }
                 } catch {
-                  // Try next key in pool silently
+                  sawRateLimitOrBusy = true;
                 }
               }
+            }
+            if (!payload && sawRateLimitOrBusy) {
+              allowSelfCheckFallback = true;
             }
           }
         }
       }
 
-      // Interactive Marking Scheme Self-Check Mode fallback (offline or all 5 keys hit peak rate limit)
+      if (!payload && !allowSelfCheckFallback) {
+        throw new Error(
+          'Unable to reach Gemini AI Examiner. Please check your connection and click Retry Submission.',
+        );
+      }
+
+      // Interactive Marking Scheme Self-Check Mode fallback (strictly when offline OR all 5 keys hit rate limit/503)
       if (!payload || !Array.isArray(payload.questionGrades)) {
         payload = {
           isSelfCheckMode: true,
@@ -905,7 +953,9 @@ Return ONLY valid JSON matching { questionGrades: [{ questionId, status, marks_a
               marks_awarded: 0,
               max_marks: q.marks,
               feedback: hasAttempt
-                ? 'Marking Scheme Self-Check Mode (Offline / Peak Limit Fallback): Compare your submitted response side-by-side with the Marking Scheme below and select Green, Yellow, or Red.'
+                ? !isOnline
+                  ? 'Offline Self-Check Mode: No internet connection detected. Compare your response side-by-side with the Marking Scheme below and select Green, Yellow, or Red.'
+                  : 'Peak Rate-Limit Self-Check Mode: All 5 Gemini API keys reached temporary quota limits. Compare your response side-by-side with the Marking Scheme below and select Green, Yellow, or Red.'
                 : 'Unattempted question (0 marks awarded). Review the step-by-step model answer below.',
               exact_model_answer:
                 entry?.exactModelAnswer ?? 'Standard board step-marking key.',
@@ -919,8 +969,9 @@ Return ONLY valid JSON matching { questionGrades: [{ questionId, status, marks_a
               'Use Full Marks (Green), Partial Marks (Yellow), and Incorrect (Red) buttons on each attempted question to compute your score.',
               'Always state core formulas, balanced equations, and SI units clearly.',
             ],
-            examinerRemarks:
-              'Marking Scheme Self-Check Mode active (Offline / Peak Rate Limit fallback). Review your uploaded photos side-by-side with official model answers and tap Green / Yellow / Red to finalize marks.',
+            examinerRemarks: !isOnline
+              ? 'Offline Mode active: Review your answers side-by-side with the Marking Scheme PDF and tap Green / Yellow / Red.'
+              : 'Peak Rate-Limit Fallback active: All 5 Gemini keys reached quota limits. Review your answers side-by-side with the Marking Scheme PDF and tap Green / Yellow / Red.',
           },
         };
       } else {

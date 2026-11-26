@@ -17,11 +17,11 @@
 * **Single Batch Request:** Valid photos are compressed (max 800px width, 0.75 JPEG quality) and sent together in ONE single structured JSON batch request mapping each image to its question number and official marking scheme steps.
 
 ### 3. 5-Key Gemini Pool & Interactive Self-Check Fallback
-* **Round-Robin Key & Model Rotation:** Picks a starting key at random per submission and automatically retries silently across the 5-key pool using active Gemini Vision models (`gemini-3.1-flash-lite`, `gemini-3.8-flash`, `gemini-4-hydrogen`).
-* **Interactive Self-Check Mode:** When offline or at peak rate limits, switches to interactive Marking Scheme Self-Check Mode (`0` default marks — never auto-awarding partial credit) with side-by-side **Full Marks (Green)**, **Partial Marks (Yellow)**, and **Incorrect (Red)** buttons.
+* **Round-Robin Key & Model Rotation:** Picks a starting key at random per submission and automatically fails over (10s timeout) across the 5-key pool using active Gemini Vision models (`gemini-3.1-flash-lite`, `gemini-3.8-flash`, `gemini-4-hydrogen`).
+* **Strict Offline / Rate-Limit Self-Check Mode:** Activates **only** when offline or when all 5 API keys reach `429`/`503` rate limits—never during normal online AI grading. Starts valid pending answers at `0` marks with side-by-side **Full Marks (Green)**, **Partial Marks (Yellow)**, and **Incorrect (Red)** buttons.
 
 ### 4. Strict Examiner System Prompt & Gatekeeper (`temperature: 0.0` + JSON)
-* **Pattern, Texture & Gibberish Gatekeeper:** Instantly disqualifies decorative patterns, textures, cloth/bedsheets, invalid objects, hazy/unreadable handwriting, and gibberish/nonsense text at `0 Marks (Red)`.
+* **Pattern, Texture & Symbol-Spam Gatekeeper:** Instantly disqualifies decorative patterns, textures, cloth/bedsheets, invalid objects, hazy/unreadable handwriting, and symbol-spam/gibberish text at `0 Marks (Red)` (locked out of Self-Check credit).
 * **Precise Step-Marking:** Enforces strict partial marking ("yellow") only when steps match the official Marking Scheme PDF steps 100% legibly.
 
 ---

@@ -270,13 +270,12 @@ All personal study records, timestamps, and exam scores are preserved locally in
 
 ---
 
-## Release v2.6 Highlights
+## Release v2.6.2 Highlights
 
-- **Zero-Flicker Static Overview Shell & Deep-Link Flash Guard (`v2.6`):** Pixel-identical `<div id="root">` static Overview HTML with Google Font preloads, synchronous Dark Mode + deep-link flash protection before first paint, and locked navbar/icon geometry matching `lucide-react` v0.546.0 paths.
-- **AI Search & Deep-Link Routing (`v2.6`):** Explicit `Allow: /` rules in `public/robots.txt` for AI assistants (`GPTBot`, `OAI-SearchBot`, `ClaudeBot`, `PerplexityBot`, `Google-Extended`), comprehensive Schema.org `@graph` JSON-LD, and clean hash routing (`#/overview`, `#/physics`, `#/chemistry`, `#/biology`, `#/mathematics`, `#/exam-hall`, `#/sample-papers`, `#/12th-hackers`).
-- **Floating Apple Frosted-Glass Mobile Menu (`v2.6`):** Tapping `☰` opens a translucent Apple frosted-glass sheet over a softly hazy backdrop without expanding the sticky header downward.
-- **Network-First PWA Cache & Syllabus Chemistry Plate (`v2.6`):** Custom `injectManifest` Service Worker (`src/sw.js`) preventing stale cached asset mismatches, plus a syllabus-aligned Chemistry SVG plate (`chemistry-plate.svg`).
-- **Independently Authored Original Papers, SVG Diagrams & AI Examiner:** All 137 PCMB questions, 47 vector SVG diagrams, 15-minute Reading Timer, synced A4 PDFs, zero-server browser auto-wipe, `gemini-3.8-flash` AI step-marking, and free standalone Android APK (`Quadra12-v2.6-Android.apk`). (See `RELEASE_NOTES_v2.6.md` and `RELEASE.md` for full release notes.)
+- **Examination Hall PCMB Grading Engine (`v2.6.2`):** Upgraded 1-call batch grading for both 33-question PCB and 38-question Mathematics papers using a 5-key Gemini API pool (`VITE_GEMINI_API_KEYS` in git-ignored `.env`) with automatic 10s failover across active Gemini Vision models (`gemini-3.1-flash-lite`, `gemini-3.8-flash`, `gemini-4-hydrogen`).
+- **Pattern, Texture & Symbol-Spam Gatekeeper (`v2.6.2`):** Local HTML5 Canvas blank/blur pre-filter + strict AI Examiner gatekeeper (`temperature: 0.0`) immediately disqualifies decorative patterns, textures, cloth/bedsheets, invalid objects, hazy photos, and symbol-spam/gibberish text at `0 Marks (Red)`.
+- **Offline & Peak Rate-Limit Self-Check Mode (`v2.6.2`):** Interactive **Full Marks (Green)**, **Partial Marks (Yellow)**, and **Incorrect (Red)** self-check buttons activate strictly when offline or when all 5 keys hit rate limits (starting valid pending answers at `0`, never fake partial credit).
+- **Zero-Flicker Static Overview Shell, AI SEO & Frosted Glass Menu (`v2.6`–`v2.6.1`):** Clean header polish with installation relocated to **Settings → About**, `robots.txt` AI crawler permissions, Schema.org `@graph` JSON-LD, hash deep linking, network-first PWA Service Worker (`src/sw.js`), and free standalone Android APK (`Quadra12-v2.6.2-Android.apk`). (See `RELEASE_NOTES_v2.6.2.md` and `RELEASE.md` for full release notes.)
 
 ---
 
@@ -307,7 +306,7 @@ npm run build
 - **Independent Student Initiative:** Quadra 12 is an independent, non-commercial educational study workspace. All Class 12 PCMB mock papers, step-by-step marking schemes, and AI evaluations are provided strictly for personal educational self-assessment. Always verify official circulars and syllabus announcements on [cbse.gov.in](https://cbse.gov.in).
 - **Independently Authored Material & Intellectual Property:** All Class 12 PCMB mock papers, questions, case scenarios, numericals, embedded SVG diagrams/graphs, and step marking schemes on Quadra 12 are independently authored copyright-safe content. 12th Hackers YouTube lecture playlists belong to their respective educators and creators.
 - **Privacy, Browser Storage & Save Reminder (Zero Server Storage):** Typed drafts (`localStorage`) and attached photos (`IndexedDB`) stay solely inside the student's own browser during the exam for refresh protection, and are automatically and permanently wiped the moment AI grading finishes (zero server storage). Download your Graded Report / Marking Scheme PDF before refreshing or closing the results screen.
-- **AI Board Examiner Disclaimer:** Sections B to E subjective evaluation is performed by `gemini-3.8-flash` as an automated practice examiner strictly for personal study guidance and self-assessment.
+- **AI Board Examiner Disclaimer:** Sections B to E subjective evaluation is performed by Gemini AI Vision (`gemini-3.1-flash-lite` / `gemini-3.8-flash` / `gemini-4-hydrogen`) as an automated practice examiner strictly for personal study guidance and self-assessment.
 - **Copyright Claims & Takedown Policy:** If you are a copyright owner or authorized agent and believe any content on Quadra 12 infringes your copyright, please contact `ariyanpal090@gmail.com` for prompt resolution.
 
 ---

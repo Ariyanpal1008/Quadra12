@@ -110,34 +110,60 @@ Return ONLY valid JSON containing an array of graded results matching Quadra 12'
       function isGibberishText(text: string): boolean {
         const trimmed = text.trim();
         if (!trimmed) return false;
-        const hasMathOrScienceSymbols = /[=+\-*/∫∑√πθφΔΩ^<>]|\d/.test(trimmed);
-        if (hasMathOrScienceSymbols && trimmed.length >= 2) {
-          return false;
+
+        // Catch symbol/punctuation spam like +_**(*&"&&"& or ??? or ***
+        if (/[_*&"$#@!~`\\|]{3,}|[+*_(&"]{4,}|([!@#$%^&*_+=~`|\\?])\1{2,}/.test(trimmed)) {
+          return true;
         }
-        const words = trimmed.split(/\s+/).filter(Boolean);
+
+        // Split on spaces & punctuation to inspect letter tokens regardless of attached symbols
+        const tokens = trimmed
+          .split(/[\s,=+*/()[\]{}_&^%$#@!~`"';:<>|\\?-]+/)
+          .filter(Boolean);
+
         const lower = trimmed.toLowerCase();
         const trivialFillers = new Set([
           'hi', 'hello', 'hey', 'ok', 'okay', 'idk', 'na', 'nil', 'none', 'nothing',
           'null', 'test', 'testing', 'abc', 'xyz', 'asdf', 'qwer', 'qwerty', 'zxcv',
           'pass', 'skip', 'lol', 'bro', 'sir', 'mam', 'please', 'sorry', 'check',
         ]);
-        if (words.length === 1 && (trivialFillers.has(lower) || (trimmed.length <= 4 && !/^(yes|no|dna|rna|atp|adp|emf|ohm|amp|mol|ph|cft|vbt|sn1|sn2|hiv|pcr)$/i.test(trimmed)))) {
+        if (
+          tokens.length === 1 &&
+          (trivialFillers.has(lower) ||
+            (/^[a-zA-Z]+$/.test(trimmed) &&
+              trimmed.length <= 4 &&
+              !/^(yes|no|dna|rna|atp|adp|emf|ohm|amp|mol|ph|cft|vbt|sn1|sn2|hiv|pcr)$/i.test(
+                trimmed,
+              )))
+        ) {
           return true;
         }
         if (/^(.)\1{2,}$/i.test(lower)) return true;
-        // Check if words look like keyboard mash / consonant clusters without normal vowels
+
+        // Check individual alpha tokens for vowel-less keyboard mash (e.g. Hhybxgz, kfkfjf)
+        const alphaTokens = tokens.filter((t) => /^[a-zA-Z]+$/.test(t));
         let weirdWords = 0;
-        for (const w of words) {
-          const clean = w.replace(/[^a-z]/gi, '');
-          if (clean.length >= 5 && !/[aeiou]/i.test(clean)) {
+        let shortConsonantFragments = 0;
+        for (const w of alphaTokens) {
+          if (w.length >= 5 && !/[aeiou]/i.test(w)) {
             weirdWords++;
-          } else if (/[bcdfghjklmnpqrstvwxz]{5,}/i.test(clean)) {
+          } else if (/[bcdfghjklmnpqrstvwxz]{5,}/i.test(w)) {
             weirdWords++;
-          } else if (clean.length >= 4 && /^(asdf|qwer|zxcv|hjkl|uiop|hhyb)/i.test(clean)) {
+          } else if (w.length >= 4 && /^(asdf|qwer|zxcv|hjkl|uiop|hhyb|kfkf)/i.test(w)) {
             weirdWords++;
+          } else if (w.length <= 2 && !/[aeiou]/i.test(w)) {
+            shortConsonantFragments++;
           }
         }
-        if (weirdWords > 0 && weirdWords >= Math.ceil(words.length / 2)) {
+        if (weirdWords > 0 && weirdWords >= Math.ceil(alphaTokens.length / 2)) {
+          return true;
+        }
+        // Catch strings like "Fx,f,f,fk,kfkfjf..." where most fragments are meaningless consonant clusters
+        if (
+          alphaTokens.length >= 3 &&
+          shortConsonantFragments + weirdWords >= Math.ceil(alphaTokens.length * 0.7) &&
+          !/=/.test(trimmed)
+        ) {
           return true;
         }
         return false;
@@ -294,7 +320,7 @@ Return ONLY valid JSON containing an array of graded results matching Quadra 12'
                   config: configObj,
                 }),
                 new Promise((_, reject) =>
-                  setTimeout(() => reject(new Error('Gemini request timed out')), 25000),
+                  setTimeout(() => reject(new Error('Gemini request timed out')), 10000),
                 ),
               ]);
               if (response && response.text) {
@@ -313,7 +339,8 @@ Return ONLY valid JSON containing an array of graded results matching Quadra 12'
         if (!response || !response.text) {
           const errMsg = lastError instanceof Error ? lastError.message : 'High demand on Gemini AI examiners';
           res.status(503).json({
-            error: `AI Examiner models are temporarily busy (${errMsg}). Your answers and photos are safely preserved.`,
+            rateLimited: true,
+            error: `AI Examiner models are temporarily busy (${errMsg}).`,
           });
           return;
         }

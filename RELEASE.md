@@ -17,11 +17,11 @@
 * **Single Batch Request:** Valid images are compressed to 800px width and sent in ONE single JSON batch request per exam.
 
 ### 3. 5-Key Gemini Pool & Interactive Self-Check Fallback
-* **Automatic Failover:** Random starting key with automatic silent retry across the 5-key pool and active Gemini Vision models (`gemini-3.1-flash-lite`, `gemini-3.8-flash`, `gemini-4-hydrogen`).
-* **Interactive Self-Check Mode:** When offline or at peak limits, starts pending items at `0` marks (never awarding fake partial marks) and provides side-by-side **Full Marks (Green)**, **Partial Marks (Yellow)**, and **Incorrect (Red)** buttons.
+* **Automatic Failover:** Random starting key with 10s per-key failover across the 5-key pool and active Gemini Vision models (`gemini-3.1-flash-lite`, `gemini-3.8-flash`, `gemini-4-hydrogen`).
+* **Strict Offline / Rate-Limit Self-Check Mode:** Triggers **only** when the device is offline or all 5 API keys exceed rate limits (`429`/`503`)—never during normal online AI grading. Starts valid pending answers at `0` marks with side-by-side **Full Marks (Green)**, **Partial Marks (Yellow)**, and **Incorrect (Red)** buttons.
 
 ### 4. Strict Examiner System Prompt & Gatekeeper (`temperature: 0.0` + JSON)
-* **Zero Hallucination / Pattern & Gibberish Gatekeeper:** Instantly disqualifies patterns, textures, cloth/bedsheets, invalid objects, hazy photos, and gibberish/nonsense text at `0 Marks (Red)`.
+* **Pattern, Texture & Symbol-Spam Gatekeeper:** Instantly disqualifies patterns, textures, cloth/bedsheets, invalid objects, hazy photos, and symbol-spam/gibberish text at `0 Marks (Red)` (never eligible for Self-Check credit).
 * **Strict Step-Marking:** Enforces exact step-marking against the official Marking Scheme PDF data.
 
 ---
