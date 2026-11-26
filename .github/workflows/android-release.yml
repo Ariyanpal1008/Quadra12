@@ -35,6 +35,10 @@ jobs:
       ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
       ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
       ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      CHECK_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      CHECK_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      CHECK_STORE_PW: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      CHECK_KEY_PW: ${{ secrets.ANDROID_KEY_PASSWORD }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -83,7 +87,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: 'npm'
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
 
       - name: Setup Java 21
         uses: actions/setup-java@v4
@@ -96,10 +104,10 @@ jobs:
         with:
           accept-android-sdk-licenses: 'true'
 
-      - name: Install dependencies & build web application
+      - name: Install dependencies & build web application with Bun
         run: |
-          npm ci --legacy-peer-deps || npm install --legacy-peer-deps
-          npm run build
+          bun install --frozen-lockfile
+          bun run build
 
       - name: Initialize & configure Capacitor Android project
         env:
