@@ -60,6 +60,55 @@ async function createServer() {
   const app = express();
   app.use(express.json({limit: '25mb'}));
 
+  const extraOrigins = (process.env.ALLOWED_ORIGINS || '')
+    .split(',')
+    .map((origin) => origin.trim().replace(/\/$/, ''))
+    .filter(Boolean);
+  const appUrlOrigin = (() => {
+    const raw = (process.env.APP_URL || '').trim();
+    if (!raw) return '';
+    try {
+      return new URL(raw).origin;
+    } catch {
+      return '';
+    }
+  })();
+
+  const allowedOrigins = new Set<string>([
+    'https://localhost',
+    'http://localhost',
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'capacitor://localhost',
+    'https://ariyanpal1008.github.io',
+    ...(appUrlOrigin ? [appUrlOrigin] : []),
+    ...extraOrigins,
+  ]);
+
+  app.use('/api', (req, res, next) => {
+    const originHeader =
+      typeof req.headers.origin === 'string'
+        ? req.headers.origin.trim().replace(/\/$/, '')
+        : '';
+
+    if (originHeader && allowedOrigins.has(originHeader)) {
+      res.setHeader('Access-Control-Allow-Origin', originHeader);
+      res.setHeader('Vary', 'Origin');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    }
+
+    if (req.method === 'OPTIONS') {
+      res.status(originHeader && !allowedOrigins.has(originHeader) ? 403 : 204).end();
+      return;
+    }
+    next();
+  });
+
+  app.get('/api/health', (_req, res) => {
+    res.json({ok: true, service: 'quadra12-grading-proxy'});
+  });
+
   app.post('/api/exam/grade', async (req, res) => {
     try {
       const apiKeysStr =

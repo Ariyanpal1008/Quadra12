@@ -29,6 +29,8 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
       - name: Build Quadra 12
+        env:
+          VITE_PROXY_URL: ${{ secrets.VITE_PROXY_URL || vars.VITE_PROXY_URL }}
         run: npm run build
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
