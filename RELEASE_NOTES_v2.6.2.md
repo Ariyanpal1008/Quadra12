@@ -16,12 +16,12 @@
 * **HTML5 Canvas Pre-Filter:** Automatically detects blank or extremely blurry subjective photos in Sections B–E and flags them as "red" (0 marks) with exact rejection feedback: `"Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer."`
 * **Single Batch Request:** Valid photos are compressed (max 800px width, 0.75 JPEG quality) and sent together in ONE single structured JSON batch request mapping each image to its question number and official marking scheme steps.
 
-### 3. 5-Key Gemini Pool & Unlimited Peak Fallback
-* **Round-Robin Key Rotation:** Picks a starting key at random per submission and automatically retries silently across the 5-key pool on HTTP 429 rate limits or temporary errors.
-* **Self-Check Fallback Mode:** If all keys hit peak rate limits or the device is offline, switches seamlessly to Marking Scheme Self-Check Mode with side-by-side grading buttons.
+### 3. 5-Key Gemini Pool & Interactive Self-Check Fallback
+* **Round-Robin Key & Model Rotation:** Picks a starting key at random per submission and automatically retries silently across the 5-key pool using active Gemini Vision models (`gemini-3.1-flash-lite`, `gemini-3.8-flash`, `gemini-4-hydrogen`).
+* **Interactive Self-Check Mode:** When offline or at peak rate limits, switches to interactive Marking Scheme Self-Check Mode (`0` default marks — never auto-awarding partial credit) with side-by-side **Full Marks (Green)**, **Partial Marks (Yellow)**, and **Incorrect (Red)** buttons.
 
-### 4. Strict Examiner System Prompt (`temperature: 0.0` + JSON)
-* **Zero Guessing & Strict Image Gatekeeper:** Instantly disqualifies invalid objects (phone screens, hands, walls) and hazy/unreadable handwriting (`0 marks`).
+### 4. Strict Examiner System Prompt & Gatekeeper (`temperature: 0.0` + JSON)
+* **Pattern, Texture & Gibberish Gatekeeper:** Instantly disqualifies decorative patterns, textures, cloth/bedsheets, invalid objects, hazy/unreadable handwriting, and gibberish/nonsense text at `0 Marks (Red)`.
 * **Precise Step-Marking:** Enforces strict partial marking ("yellow") only when steps match the official Marking Scheme PDF steps 100% legibly.
 
 ---

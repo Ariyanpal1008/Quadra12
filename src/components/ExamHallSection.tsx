@@ -68,6 +68,50 @@ interface QuestionGradeItem {
   feedback: string;
   exact_model_answer: string;
   status?: 'grey' | 'red' | 'yellow' | 'green';
+  disqualified?: boolean;
+}
+
+function isGibberishText(text: string): boolean {
+  const trimmed = text.trim();
+  if (!trimmed) return false;
+  const hasMathOrScienceSymbols = /[=+\-*/∫∑√πθφΔΩ^<>]|\d/.test(trimmed);
+  if (hasMathOrScienceSymbols && trimmed.length >= 2) {
+    return false;
+  }
+  const words = trimmed.split(/\s+/).filter(Boolean);
+  const lower = trimmed.toLowerCase();
+  const trivialFillers = new Set([
+    'hi', 'hello', 'hey', 'ok', 'okay', 'idk', 'na', 'nil', 'none', 'nothing',
+    'null', 'test', 'testing', 'abc', 'xyz', 'asdf', 'qwer', 'qwerty', 'zxcv',
+    'pass', 'skip', 'lol', 'bro', 'sir', 'mam', 'please', 'sorry', 'check',
+  ]);
+  if (
+    words.length === 1 &&
+    (trivialFillers.has(lower) ||
+      (trimmed.length <= 4 &&
+        !/^(yes|no|dna|rna|atp|adp|emf|ohm|amp|mol|ph|cft|vbt|sn1|sn2|hiv|pcr)$/i.test(
+          trimmed,
+        )))
+  ) {
+    return true;
+  }
+  if (/^(.)\1{2,}$/i.test(lower)) return true;
+
+  let weirdWords = 0;
+  for (const w of words) {
+    const clean = w.replace(/[^a-z]/gi, '');
+    if (clean.length >= 5 && !/[aeiou]/i.test(clean)) {
+      weirdWords++;
+    } else if (/[bcdfghjklmnpqrstvwxz]{5,}/i.test(clean)) {
+      weirdWords++;
+    } else if (clean.length >= 4 && /^(asdf|qwer|zxcv|hjkl|uiop|hhyb)/i.test(clean)) {
+      weirdWords++;
+    }
+  }
+  if (weirdWords > 0 && weirdWords >= Math.ceil(words.length / 2)) {
+    return true;
+  }
+  return false;
 }
 
 async function prefilterImageQuality(dataUrl: string): Promise<{isValid: boolean; reason?: string}> {
@@ -91,37 +135,55 @@ async function prefilterImageQuality(dataUrl: string): Promise<{isValid: boolean
       let rSum = 0, gSum = 0, bSum = 0;
       let rSqSum = 0, gSqSum = 0, bSqSum = 0;
       const totalPixels = w * h;
+      const lum = new Float32Array(totalPixels);
 
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i], g = data[i+1], b = data[i+2];
+      for (let i = 0, p = 0; i < data.length; i += 4, p += 1) {
+        const r = data[i], g = data[i + 1], b = data[i + 2];
         rSum += r; gSum += g; bSum += b;
-        rSqSum += r*r; gSqSum += g*g; bSqSum += b*b;
+        rSqSum += r * r; gSqSum += g * g; bSqSum += b * b;
+        lum[p] = 0.299 * r + 0.587 * g + 0.114 * b;
       }
 
       const rMean = rSum / totalPixels;
       const gMean = gSum / totalPixels;
       const bMean = bSum / totalPixels;
 
-      const rVar = (rSqSum / totalPixels) - (rMean * rMean);
-      const gVar = (gSqSum / totalPixels) - (gMean * gMean);
-      const bVar = (bSqSum / totalPixels) - (bMean * bMean);
-
+      const rVar = rSqSum / totalPixels - rMean * rMean;
+      const gVar = gSqSum / totalPixels - gMean * gMean;
+      const bVar = bSqSum / totalPixels - bMean * bMean;
       const avgVariance = (rVar + gVar + bVar) / 3;
 
-      if (avgVariance < 20) {
+      // Edge sharpness check (adjacent luminance gradient)
+      let gradSum = 0;
+      let gradCount = 0;
+      for (let y = 0; y < h - 1; y += 1) {
+        for (let x = 0; x < w - 1; x += 1) {
+          const idx = y * w + x;
+          gradSum +=
+            Math.abs(lum[idx] - lum[idx + 1]) +
+            Math.abs(lum[idx] - lum[idx + w]);
+          gradCount += 2;
+        }
+      }
+      const avgGradient = gradCount > 0 ? gradSum / gradCount : 0;
+
+      if (avgVariance < 18 || avgGradient < 1.4) {
         resolve({
           isValid: false,
-          reason: 'Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer.',
+          reason:
+            'Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer.',
         });
         return;
       }
 
       resolve({isValid: true});
     };
-    img.onerror = () => resolve({
-      isValid: false,
-      reason: 'Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer.',
-    });
+    img.onerror = () =>
+      resolve({
+        isValid: false,
+        reason:
+          'Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer.',
+      });
     img.src = dataUrl;
   });
 }
@@ -135,6 +197,7 @@ interface ExamAiSummary {
 interface GradingResponse {
   questionGrades: QuestionGradeItem[];
   examSummary: ExamAiSummary;
+  isSelfCheckMode?: boolean;
 }
 
 type SectionFilter = 'all' | 'A' | 'B' | 'C' | 'D' | 'E';
@@ -609,18 +672,34 @@ export function ExamHallSection({
         }
       });
 
-      // Pre-filter check for blurry / blank photos
+      // Pre-filter check for blurry / blank photos & gibberish text
       const prefilterResults: Record<string, {isValid: boolean; reason?: string}> = {};
       for (const q of subjectiveQuestions) {
         const photos = photosByQ[q.id] ?? [];
+        const typed = textAnswers[q.id] ?? '';
         if (photos.length > 0) {
-          // Check last attached photo or any photo
           const check = await prefilterImageQuality(photos[photos.length - 1].dataUrl);
           prefilterResults[q.id] = check;
+        } else if (typed.trim().length > 0 && isGibberishText(typed)) {
+          prefilterResults[q.id] = {
+            isValid: false,
+            reason:
+              'Submission Disqualified (0 Marks): Response was gibberish, irrelevant, or did not show a valid written answer.',
+          };
         }
       }
 
-      const bundleQuestions = subjectiveQuestions.map((q) => {
+      const attemptedValidQuestions = subjectiveQuestions.filter((q) => {
+        const photos = photosByQ[q.id] ?? [];
+        const typed = (textAnswers[q.id] ?? '').trim();
+        const hasAttempt = typed.length > 0 || photos.length > 0;
+        if (!hasAttempt) return false;
+        const preCheck = prefilterResults[q.id];
+        if (preCheck && !preCheck.isValid) return false;
+        return true;
+      });
+
+      const bundleQuestions = attemptedValidQuestions.map((q) => {
         const entry = scheme[q.id];
         const attachedPhotos = photosByQ[q.id] ?? [];
         return {
@@ -649,12 +728,30 @@ export function ExamHallSection({
         };
       });
 
-      let response: Response | null = null;
+      let payload: GradingResponse | null = null;
       const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
 
-      if (isOnline) {
+      if (bundleQuestions.length === 0) {
+        // 0 API calls needed if all questions are unattempted or caught locally as invalid
+        payload = {
+          questionGrades: [],
+          examSummary: {
+            weakTopics: ['Review unattempted and disqualified questions carefully'],
+            improvementTips: [
+              'Upload clear, legible handwritten answer sheets on plain/ruled paper.',
+              'Write complete step-by-step solutions matching the marking scheme.',
+            ],
+            examinerRemarks:
+              'Local pre-check complete. Unattempted or disqualified responses received 0 marks without consuming API quota.',
+          },
+        };
+      } else if (isOnline) {
+        const proxyBase = (import.meta.env.VITE_PROXY_URL || '').trim().replace(/\/$/, '');
+        const apiUrl = proxyBase ? `${proxyBase}/api/exam/grade` : '/api/exam/grade';
+        let proxyMissingOnStaticHost = false;
+
         try {
-          response = await fetch('/api/exam/grade', {
+          const response = await fetch(apiUrl, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -664,31 +761,127 @@ export function ExamHallSection({
               questions: bundleQuestions,
             }),
           });
-        } catch (netErr) {
-          console.warn('Network error reaching /api/exam/grade, activating Marking Scheme Self-Check Mode fallback.', netErr);
-          response = null;
-        }
-      }
-
-      let payload: GradingResponse | null = null;
-      if (response && response.ok) {
-        try {
-          const text = await response.text();
-          if (text && text.trim().startsWith('{')) {
-            payload = JSON.parse(text) as GradingResponse;
+          const contentType = response.headers.get('content-type') || '';
+          if (response.ok && contentType.includes('application/json')) {
+            const parsed = (await response.json()) as GradingResponse;
+            if (parsed && Array.isArray(parsed.questionGrades)) {
+              payload = parsed;
+            }
+          } else if (response.status === 404 || !contentType.includes('application/json')) {
+            // Running on static host (GitHub Pages PWA or Capacitor APK) without backend server
+            proxyMissingOnStaticHost = true;
           }
         } catch {
-          payload = null;
+          proxyMissingOnStaticHost = true;
+        }
+
+        // Static PWA / Android APK 5-key pool direct Gemini fallback when no Express backend is present
+        if (!payload && proxyMissingOnStaticHost) {
+          const rawKeys = (import.meta.env.VITE_GEMINI_API_KEYS || '')
+            .split(',')
+            .map((k: string) => k.trim())
+            .filter(Boolean);
+
+          if (rawKeys.length > 0) {
+            const systemInstruction = `
+You are a strict, uncompromising Class 12 PCMB Examiner inside the Quadra 12 Examination Hall evaluating a batch of subjective answers across Sections B, C, D, and E (for 33-question PCB or 38-question Mathematics sample papers). For every submitted question, you are given the Question Number, Question Text, Max Marks, the Official Marking Scheme extracted from Quadra 12's Marking Scheme PDF, and the student's answer photo and/or typed response.
+
+RULE 1: STRICT IMAGE & TEXT GATEKEEPER ("red" / 0 MARKS) — ZERO GUESSING
+- Invalid Objects: Carefully inspect every image. If a photo shows decorative patterns, textures, wallpaper, cloth prints, fabric, bedsheet, clothes, floor, wall, desk, phone screen, hand, face, random object, or anything other than a handwritten/typed PCMB answer, IMMEDIATELY set status to "red", marks_awarded to 0, and feedback to: "Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer."
+- Hazy / Unreadable Handwriting: If a photo is blurry, hazy, dark, cut off, or equations/text cannot be read with 100% certainty, DO NOT guess. Set status to "red", marks_awarded to 0, and feedback to: "Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer."
+- Gibberish / Nonsense Text: If typed text is random keystrokes, nonsense, or irrelevant filler, set status to "red", marks_awarded to 0, and feedback to: "Submission Disqualified (0 Marks): Response was gibberish, irrelevant, or did not show a valid written answer."
+- Wrong Core Concept: If formula/proof/concept contradicts the Marking Scheme PDF, set status to "red" and award 0 marks.
+
+RULE 2: STRICT STEP-MARKING AGAINST THE MARKING SCHEME PDF ("yellow" vs "green")
+- "yellow" (Partial Marks): Only when legible AND at least one explicit value point in the Marking Scheme PDF is accurately completed.
+- "green" (Full Marks): Only when legible AND every step, value point, final answer, and SI unit matches completely.
+
+Return ONLY valid JSON matching { questionGrades: [{ questionId, status, marks_awarded, max_marks, feedback, exact_model_answer }], examSummary: { weakTopics, improvementTips, examinerRemarks } }.
+`.trim();
+
+            const manifest = bundleQuestions.map((q) => ({
+              questionId: q.questionId,
+              questionNumber: q.questionNumber,
+              section: q.section,
+              max_marks: q.marks,
+              prompt: q.prompt,
+              internalChoiceOR: q.orPrompt ?? null,
+              caseContext: q.caseContext ?? null,
+              studentTypedAnswer: q.studentText.trim() || null,
+              markingKey: q.markingKey,
+            }));
+
+            const restParts: Array<
+              {text: string} | {inlineData: {mimeType: string; data: string}}
+            > = [
+              {
+                text: `Grade Sections B to E for ${activeSubject.name} (${activeSubject.code}).\n${JSON.stringify(manifest, null, 2)}`,
+              },
+            ];
+            for (const q of bundleQuestions) {
+              q.photos.forEach((p, idx) => {
+                restParts.push({
+                  text: `Attached Photo ${idx + 1} for questionId="${q.questionId}" (Q${q.questionNumber}):`,
+                });
+                restParts.push({
+                  inlineData: {mimeType: p.mimeType, data: p.base64Data},
+                });
+              });
+            }
+
+            const startIdx = Math.floor(Math.random() * rawKeys.length);
+            const models = ['gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-4-hydrogen'];
+            outer: for (const modelName of models) {
+              for (let i = 0; i < rawKeys.length; i++) {
+                const key = rawKeys[(startIdx + i) % rawKeys.length];
+                try {
+                  const genConfig: Record<string, unknown> = {
+                    responseMimeType: 'application/json',
+                  };
+                  if (modelName !== 'gemini-4-hydrogen') {
+                    genConfig.temperature = 0.0;
+                  }
+                  const res = await fetch(
+                    `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(key)}`,
+                    {
+                      method: 'POST',
+                      headers: {'Content-Type': 'application/json'},
+                      body: JSON.stringify({
+                        systemInstruction: {parts: [{text: systemInstruction}]},
+                        contents: [{parts: restParts}],
+                        generationConfig: genConfig,
+                      }),
+                    },
+                  );
+                  if (!res.ok) continue;
+                  const json = (await res.json()) as {
+                    candidates?: Array<{content?: {parts?: Array<{text?: string}>}}>;
+                  };
+                  const rawText = json.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+                  if (rawText) {
+                    const parsed = JSON.parse(rawText) as GradingResponse;
+                    if (parsed && Array.isArray(parsed.questionGrades)) {
+                      payload = parsed;
+                      break outer;
+                    }
+                  }
+                } catch {
+                  // Try next key in pool silently
+                }
+              }
+            }
+          }
         }
       }
 
-      // Marking Scheme Self-Check Mode fallback (offline or API key peak / network failure)
+      // Interactive Marking Scheme Self-Check Mode fallback (offline or all 5 keys hit peak rate limit)
       if (!payload || !Array.isArray(payload.questionGrades)) {
         payload = {
+          isSelfCheckMode: true,
           questionGrades: subjectiveQuestions.map((q) => {
-            const hasAttempt =
-              (textAnswers[q.id] ?? '').trim().length > 0 ||
-              (photosByQ[q.id]?.length ?? 0) > 0;
+            const typed = textAnswers[q.id] ?? '';
+            const photos = photosByQ[q.id] ?? [];
+            const hasAttempt = typed.trim().length > 0 || photos.length > 0;
             const entry = scheme[q.id];
             const preCheck = prefilterResults[q.id];
 
@@ -696,21 +889,23 @@ export function ExamHallSection({
               return {
                 questionId: q.id,
                 status: 'red',
+                disqualified: true,
                 marks_awarded: 0,
                 max_marks: q.marks,
-                feedback: preCheck.reason || 'Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer.',
+                feedback:
+                  preCheck.reason ||
+                  'Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer.',
                 exact_model_answer: entry?.exactModelAnswer ?? 'Standard board step-marking key.',
               };
             }
 
-            const awarded = hasAttempt ? Math.round(q.marks * 0.85 * 2) / 2 : 0;
             return {
               questionId: q.id,
-              status: hasAttempt ? 'yellow' : 'grey',
-              marks_awarded: Math.min(q.marks, Math.max(0, awarded)),
+              status: 'grey',
+              marks_awarded: 0,
               max_marks: q.marks,
               feedback: hasAttempt
-                ? 'Marking Scheme Self-Check Mode: Evaluated against the active subject CBSE marking scheme checkpoints.'
+                ? 'Marking Scheme Self-Check Mode (Offline / Peak Limit Fallback): Compare your submitted response side-by-side with the Marking Scheme below and select Green, Yellow, or Red.'
                 : 'Unattempted question (0 marks awarded). Review the step-by-step model answer below.',
               exact_model_answer:
                 entry?.exactModelAnswer ?? 'Standard board step-marking key.',
@@ -718,32 +913,81 @@ export function ExamHallSection({
           }),
           examSummary: {
             weakTopics: [
-              'Calculus, Organic Mechanisms & Ray Optics derivations',
-              'Numerical unit conversions and formula drafting',
+              'Self-check your attempted subjective answers against the CBSE Marking Scheme PDF below',
             ],
             improvementTips: [
-              'Always state core formulas and SI units clearly before substitution.',
-              'Practice step-by-step intermediate derivations for Sections B to E.',
+              'Use Full Marks (Green), Partial Marks (Yellow), and Incorrect (Red) buttons on each attempted question to compute your score.',
+              'Always state core formulas, balanced equations, and SI units clearly.',
             ],
             examinerRemarks:
-              'Marking Scheme Self-Check Mode active (Offline / Peak Rate Limit fallback). Review your answers side-by-side with official model answers.',
+              'Marking Scheme Self-Check Mode active (Offline / Peak Rate Limit fallback). Review your uploaded photos side-by-side with official model answers and tap Green / Yellow / Red to finalize marks.',
           },
         };
-      }
+      } else {
+        // Merge AI results for attempted questions with local unattempted ('grey') & pre-filter disqualified ('red')
+        const aiGradeMap = new Map<string, QuestionGradeItem>();
+        payload.questionGrades.forEach((g) => {
+          if (g?.questionId) aiGradeMap.set(g.questionId, g);
+        });
 
-      // Enforce pre-filter disqualification status ('red') and exact message
-      payload.questionGrades = payload.questionGrades.map((g) => {
-        const preCheck = prefilterResults[g.questionId];
-        if (preCheck && !preCheck.isValid) {
+        payload.questionGrades = subjectiveQuestions.map((q) => {
+          const typed = textAnswers[q.id] ?? '';
+          const photos = photosByQ[q.id] ?? [];
+          const hasAttempt = typed.trim().length > 0 || photos.length > 0;
+          const entry = scheme[q.id];
+          const preCheck = prefilterResults[q.id];
+
+          if (!hasAttempt) {
+            return {
+              questionId: q.id,
+              status: 'grey',
+              marks_awarded: 0,
+              max_marks: q.marks,
+              feedback:
+                'Unattempted question (0 marks awarded). Review the step-by-step model answer below.',
+              exact_model_answer: entry?.exactModelAnswer ?? 'Standard board step-marking key.',
+            };
+          }
+
+          if (preCheck && !preCheck.isValid) {
+            return {
+              questionId: q.id,
+              status: 'red',
+              disqualified: true,
+              marks_awarded: 0,
+              max_marks: q.marks,
+              feedback:
+                preCheck.reason ||
+                'Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer.',
+              exact_model_answer: entry?.exactModelAnswer ?? 'Standard board step-marking key.',
+            };
+          }
+
+          const aiGrade = aiGradeMap.get(q.id);
+          const rawAwarded =
+            aiGrade && Number.isFinite(aiGrade.marks_awarded) ? aiGrade.marks_awarded : 0;
+          const clampedAwarded =
+            Math.round(Math.max(0, Math.min(q.marks, rawAwarded)) * 2) / 2;
+          const status: 'green' | 'yellow' | 'red' =
+            clampedAwarded >= q.marks ? 'green' : clampedAwarded > 0 ? 'yellow' : 'red';
+
           return {
-            ...g,
-            status: 'red',
-            marks_awarded: 0,
-            feedback: preCheck.reason || 'Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer.',
+            questionId: q.id,
+            status,
+            marks_awarded: clampedAwarded,
+            max_marks: q.marks,
+            feedback:
+              aiGrade?.feedback?.trim() ||
+              (clampedAwarded === 0 && photos.length > 0
+                ? 'Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer.'
+                : 'Evaluated strictly against the official Marking Scheme PDF.'),
+            exact_model_answer:
+              aiGrade?.exact_model_answer?.trim() ||
+              entry?.exactModelAnswer ||
+              'Standard board step-marking key.',
           };
-        }
-        return g;
-      });
+        });
+      }
 
       // Compute combined metrics across Section A + Sections B–E
       const gradeMap = new Map<string, QuestionGradeItem>();
@@ -1713,7 +1957,7 @@ export function ExamHallSection({
               <p className="text-xs sm:text-sm text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
                 Grading your typed derivations, balanced equations, diagrams, and uploaded photos
                 against the {activeSubject.name} step-by-step marking scheme using{' '}
-                <span className="font-mono">gemini-3.8-flash</span>. Please wait...
+                <span className="font-mono">Gemini AI Examiner</span>. Please wait...
               </p>
             </div>
           </div>
@@ -2394,7 +2638,7 @@ export function ExamHallSection({
                   )}
 
                   {/* 2. AI Examiner Feedback */}
-                  <div className="p-4 rounded-lg bg-[#EEF2FF]/70 dark:bg-[#23263E]/60 border border-[#C7D2FE] dark:border-[#3B3F68] space-y-1.5">
+                  <div className="p-4 rounded-lg bg-[#EEF2FF]/70 dark:bg-[#23263E]/60 border border-[#C7D2FE] dark:border-[#3B3F68] space-y-2.5">
                     <p className="text-xs font-semibold text-[#312E81] dark:text-[#E0E7FF]">
                       AI Board Examiner Feedback
                     </p>
@@ -2402,6 +2646,89 @@ export function ExamHallSection({
                       {grade?.feedback ??
                         'Evaluated against the active subject CBSE marking scheme.'}
                     </p>
+
+                    {gradingResult?.isSelfCheckMode &&
+                      !grade?.disqualified &&
+                      (studentTyped.length > 0 || studentPhotos.length > 0) && (
+                        <div className="pt-2 border-t border-[#C7D2FE]/60 dark:border-[#3B3F68]/60 flex flex-wrap items-center gap-2 print:hidden">
+                          <span className="text-[11px] font-semibold text-[#312E81] dark:text-[#C7D2FE] mr-1">
+                            Self-Check Marks:
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setGradingResult((prev) => {
+                                if (!prev) return prev;
+                                const updated = prev.questionGrades.map((item) =>
+                                  item.questionId === q.id
+                                    ? {
+                                        ...item,
+                                        status: 'green' as const,
+                                        marks_awarded: q.marks,
+                                        feedback: `Self-Checked: Full Marks (${q.marks}/${q.marks}) matching the Marking Scheme PDF.`,
+                                      }
+                                    : item,
+                                );
+                                return {...prev, questionGrades: updated};
+                              });
+                            }}
+                            className="px-2.5 py-1 rounded-md text-xs font-semibold bg-[#3D6B4F] hover:bg-[#315940] text-white transition-colors"
+                          >
+                            Full Marks (Green)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const partial = Math.max(
+                                0.5,
+                                Math.round((q.marks / 2) * 2) / 2,
+                              );
+                              setGradingResult((prev) => {
+                                if (!prev) return prev;
+                                const updated = prev.questionGrades.map((item) =>
+                                  item.questionId === q.id
+                                    ? {
+                                        ...item,
+                                        status: 'yellow' as const,
+                                        marks_awarded: partial,
+                                        feedback: `Self-Checked: Partial Step Marks (${partial}/${q.marks}) per Marking Scheme checkpoints.`,
+                                      }
+                                    : item,
+                                );
+                                return {...prev, questionGrades: updated};
+                              });
+                            }}
+                            className="px-2.5 py-1 rounded-md text-xs font-semibold bg-[#D97706] hover:bg-[#B45309] text-white transition-colors"
+                          >
+                            Partial Marks (Yellow)
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setGradingResult((prev) => {
+                                if (!prev) return prev;
+                                const updated = prev.questionGrades.map((item) =>
+                                  item.questionId === q.id
+                                    ? {
+                                        ...item,
+                                        status: 'red' as const,
+                                        marks_awarded: 0,
+                                        feedback:
+                                          'Self-Checked: Incorrect / Zero Marks (0/' +
+                                          q.marks +
+                                          ').',
+                                      }
+                                    : item,
+                                );
+                                return {...prev, questionGrades: updated};
+                              });
+                            }}
+                            className="px-2.5 py-1 rounded-md text-xs font-semibold bg-[#B33A2B] hover:bg-[#962D20] text-white transition-colors"
+                          >
+                            Incorrect (Red)
+                          </button>
+                        </div>
+                      )}
                   </div>
 
                   {/* 3. Exact Model Answer & Step-by-Step Mark Splits */}

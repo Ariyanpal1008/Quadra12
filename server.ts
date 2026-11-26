@@ -92,90 +92,150 @@ async function createServer() {
       }
 
       const systemInstruction = `
-You are a strict, uncompromising Class 12 PCMB Examiner inside the Quadra 12 Examination Hall evaluating a batch of subjective answers across Sections B, C, D, and E (for 33-question PCB or 38-question Mathematics sample papers). For every submitted question, you are given the Question Number, Question Text, Max Marks, the Official Marking Scheme extracted from Quadra 12's Marking Scheme PDF, and the student's answer photo.
+You are a strict, uncompromising Class 12 PCMB Examiner inside the Quadra 12 Examination Hall evaluating a batch of subjective answers across Sections B, C, D, and E (for 33-question PCB or 38-question Mathematics sample papers). For every submitted question, you are given the Question Number, Question Text, Max Marks, the Official Marking Scheme extracted from Quadra 12's Marking Scheme PDF, and the student's answer photo and/or typed response.
 
-RULE 1: STRICT IMAGE GATEKEEPER ("red" / 0 MARKS) — ZERO GUESSING
-- Invalid Objects: If a photo shows a phone screen, hand, face, wall, desk, or anything other than a handwritten/typed PCMB answer, immediately set that question's status to "red" and marks_awarded to 0.
-- Hazy / Unreadable Handwriting: If a photo is blurry, hazy, dark, cut off, or the equations/text cannot be read with 100% certainty, DO NOT guess or hallucinate what the student meant. Treat hazy text as unreadable, set status to "red", and award 0 marks.
+RULE 1: STRICT IMAGE & TEXT GATEKEEPER ("red" / 0 MARKS) — ZERO GUESSING
+- Invalid Objects: Carefully inspect every image. If a photo shows decorative patterns, textures, wallpaper, cloth prints, fabric, bedsheet, clothes, floor, wall, desk, ceiling, phone screen, hand, face, random object, meme, or anything other than a genuine handwritten/typed Class 12 PCMB answer sheet, IMMEDIATELY set that question's status to "red", marks_awarded to 0, and feedback to: "Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer."
+- Hazy / Unreadable Handwriting: If a photo is blurry, hazy, dark, cut off, blank, or the equations/text cannot be read with 100% certainty, DO NOT guess or hallucinate what the student meant. Treat hazy text as unreadable, set status to "red", marks_awarded to 0, and feedback to: "Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer."
+- Gibberish / Nonsense / Irrelevant Text: If the student's typed text is random keystrokes (like "Hhybxgz", "asdf", "qwerty"), meaningless filler words, copied question text, or unrelated nonsense, IMMEDIATELY set status to "red", marks_awarded to 0, and feedback to: "Submission Disqualified (0 Marks): Response was gibberish, irrelevant, or did not show a valid written answer."
 - Wrong Core Concept: If the student's formula, step-by-step proof, chemical equation, or biological concept contradicts the provided Marking Scheme PDF, set status to "red" and award 0 marks—even if they wrote paragraphs or copied the question.
 
 RULE 2: STRICT STEP-MARKING AGAINST THE MARKING SCHEME PDF ("yellow" vs "green")
-- "yellow" (Partial Marks): Award partial step marks ONLY when the photo is 100% legible AND the student has accurately completed at least one explicit value point / step shown in the provided Marking Scheme PDF (e.g., exact formula + substitution, valid integration/differentiation step, balanced equation, or labeled diagram) while missing later steps or the final answer. Never give "yellow" for random keywords or vague guesses.
-- "green" (Full Marks): Award full marks ONLY when the photo is 100% legible AND every step, value point, final numerical/conceptual answer, and SI unit (where applicable) matches the provided Marking Scheme PDF completely.
+- "yellow" (Partial Marks): Award partial step marks ONLY when the photo/text is 100% legible AND the student has accurately completed at least one explicit value point / step shown in the provided Marking Scheme PDF (e.g., exact formula + substitution, valid integration/differentiation step, balanced equation, or labeled diagram) while missing later steps or the final answer. Never give "yellow" for random keywords, gibberish, or vague guesses.
+- "green" (Full Marks): Award full marks ONLY when the photo/text is 100% legible AND every step, value point, final numerical/conceptual answer, and SI unit (where applicable) matches the provided Marking Scheme PDF completely.
 
 Return ONLY valid JSON containing an array of graded results matching Quadra 12's grading schema, setting each question's palette color strictly to "grey", "red", "yellow", or "green".
 `.trim();
 
-      const parts: Array<
-        | {text: string}
-        | {inlineData: {mimeType: string; data: string}}
-      > = [];
-
-      const structuredManifest = body.questions.map((q) => ({
-        questionId: q.questionId,
-        questionNumber: q.questionNumber,
-        section: q.section,
-        questionType: q.questionType,
-        max_marks: q.marks,
-        chapterTag: q.chapterTag,
-        prompt: q.prompt,
-        internalChoiceOR: q.orPrompt ?? null,
-        caseContext: q.caseContext ?? null,
-        studentTypedAnswer: q.studentText.trim() || null,
-        attachedPhotoCount: Array.isArray(q.photos) ? q.photos.length : 0,
-        markingKey: q.markingKey,
-      }));
-
-      parts.push({
-        text:
-          `Grade Sections B to E for ${body.subjectName} (${body.subjectCode}).\n` +
-          `Below is the complete structured exam bundle (questions, marking keys, and typed answers):\n` +
-          JSON.stringify(structuredManifest, null, 2),
-      });
-
-      for (const q of body.questions) {
-        if (!Array.isArray(q.photos) || q.photos.length === 0) continue;
-        q.photos.forEach((photo, idx) => {
-          if (photo?.base64Data && typeof photo.base64Data === 'string') {
-            parts.push({
-              text: `Attached Photo ${idx + 1} of ${q.photos.length} for questionId="${q.questionId}" (${q.section}, ${q.questionType}):`,
-            });
-            parts.push({
-              inlineData: {
-                mimeType: photo.mimeType || 'image/jpeg',
-                data: photo.base64Data,
-              },
-            });
+      function isGibberishText(text: string): boolean {
+        const trimmed = text.trim();
+        if (!trimmed) return false;
+        const hasMathOrScienceSymbols = /[=+\-*/∫∑√πθφΔΩ^<>]|\d/.test(trimmed);
+        if (hasMathOrScienceSymbols && trimmed.length >= 2) {
+          return false;
+        }
+        const words = trimmed.split(/\s+/).filter(Boolean);
+        const lower = trimmed.toLowerCase();
+        const trivialFillers = new Set([
+          'hi', 'hello', 'hey', 'ok', 'okay', 'idk', 'na', 'nil', 'none', 'nothing',
+          'null', 'test', 'testing', 'abc', 'xyz', 'asdf', 'qwer', 'qwerty', 'zxcv',
+          'pass', 'skip', 'lol', 'bro', 'sir', 'mam', 'please', 'sorry', 'check',
+        ]);
+        if (words.length === 1 && (trivialFillers.has(lower) || (trimmed.length <= 4 && !/^(yes|no|dna|rna|atp|adp|emf|ohm|amp|mol|ph|cft|vbt|sn1|sn2|hiv|pcr)$/i.test(trimmed)))) {
+          return true;
+        }
+        if (/^(.)\1{2,}$/i.test(lower)) return true;
+        // Check if words look like keyboard mash / consonant clusters without normal vowels
+        let weirdWords = 0;
+        for (const w of words) {
+          const clean = w.replace(/[^a-z]/gi, '');
+          if (clean.length >= 5 && !/[aeiou]/i.test(clean)) {
+            weirdWords++;
+          } else if (/[bcdfghjklmnpqrstvwxz]{5,}/i.test(clean)) {
+            weirdWords++;
+          } else if (clean.length >= 4 && /^(asdf|qwer|zxcv|hjkl|uiop|hhyb)/i.test(clean)) {
+            weirdWords++;
           }
-        });
+        }
+        if (weirdWords > 0 && weirdWords >= Math.ceil(words.length / 2)) {
+          return true;
+        }
+        return false;
       }
 
-      const candidateModels = [
-        'gemini-2.5-flash',
-        'gemini-3.8-flash',
-        'gemini-2.5-pro',
-        'gemini-1.5-flash',
-      ];
+      // Dynamically collect ONLY valid attempted questions for 1-call batch grading
+      const attemptedQuestions = body.questions.filter((q) => {
+        const hasText = q.studentText.trim().length > 0;
+        const hasPhotos = Array.isArray(q.photos) && q.photos.length > 0;
+        if (!hasText && !hasPhotos) return false;
+        if (!hasPhotos && isGibberishText(q.studentText)) return false;
+        return true;
+      });
 
-      const startIndex = Math.floor(Math.random() * apiKeys.length);
-      let response: any = null;
-      let lastError: any = null;
+      const gradeMap = new Map<
+        string,
+        {
+          questionId: string;
+          status?: string;
+          marks_awarded: number;
+          max_marks: number;
+          feedback: string;
+          exact_model_answer: string;
+        }
+      >();
+      let parsedSummary: {
+        weakTopics?: string[];
+        improvementTips?: string[];
+        examinerRemarks?: string;
+      } | undefined;
 
-      for (let i = 0; i < apiKeys.length; i++) {
-        const keyIdx = (startIndex + i) % apiKeys.length;
-        const currentKey = apiKeys[keyIdx];
-        const ai = new GoogleGenAI({
-          apiKey: currentKey,
-          httpOptions: {headers: {'User-Agent': 'aistudio-build'}},
+      if (attemptedQuestions.length > 0) {
+        const parts: Array<
+          | {text: string}
+          | {inlineData: {mimeType: string; data: string}}
+        > = [];
+
+        const structuredManifest = attemptedQuestions.map((q) => ({
+          questionId: q.questionId,
+          questionNumber: q.questionNumber,
+          section: q.section,
+          questionType: q.questionType,
+          max_marks: q.marks,
+          chapterTag: q.chapterTag,
+          prompt: q.prompt,
+          internalChoiceOR: q.orPrompt ?? null,
+          caseContext: q.caseContext ?? null,
+          studentTypedAnswer: q.studentText.trim() || null,
+          attachedPhotoCount: Array.isArray(q.photos) ? q.photos.length : 0,
+          markingKey: q.markingKey,
+        }));
+
+        parts.push({
+          text:
+            `Grade the attempted Sections B to E questions for ${body.subjectName} (${body.subjectCode}).\n` +
+            `${getSubjectRubric(body.subjectId)}\n` +
+            `Below is the structured exam bundle (questions, marking scheme steps, and student answers):\n` +
+            JSON.stringify(structuredManifest, null, 2),
         });
 
+        for (const q of attemptedQuestions) {
+          if (!Array.isArray(q.photos) || q.photos.length === 0) continue;
+          q.photos.forEach((photo, idx) => {
+            if (photo?.base64Data && typeof photo.base64Data === 'string') {
+              parts.push({
+                text: `Attached Photo ${idx + 1} of ${q.photos.length} for questionId="${q.questionId}" (Q${q.questionNumber}, ${q.section}, ${q.questionType}):`,
+              });
+              parts.push({
+                inlineData: {
+                  mimeType: photo.mimeType || 'image/jpeg',
+                  data: photo.base64Data,
+                },
+              });
+            }
+          });
+        }
+
+        const candidateModels = [
+          'gemini-3.1-flash-lite',
+          'gemini-3.8-flash',
+          'gemini-4-hydrogen',
+        ];
+
+        const startIndex = Math.floor(Math.random() * apiKeys.length);
+        let response: any = null;
+        let lastError: any = null;
+
         for (const modelName of candidateModels) {
-          try {
-            response = await ai.models.generateContent({
-              model: modelName,
-              contents: {parts},
-              config: {
-                temperature: 0.0,
+          for (let i = 0; i < apiKeys.length; i++) {
+            const keyIdx = (startIndex + i) % apiKeys.length;
+            const currentKey = apiKeys[keyIdx];
+            const ai = new GoogleGenAI({
+              apiKey: currentKey,
+              httpOptions: {headers: {'User-Agent': 'aistudio-build'}},
+            });
+
+            try {
+              const configObj: any = {
                 systemInstruction,
                 responseMimeType: 'application/json',
                 responseSchema: {
@@ -221,89 +281,125 @@ Return ONLY valid JSON containing an array of graded results matching Quadra 12'
                   },
                   required: ['questionGrades', 'examSummary'],
                 },
-              },
-            });
-            if (response && response.text) {
-              break;
+              };
+
+              if (modelName !== 'gemini-4-hydrogen') {
+                configObj.temperature = 0.0;
+              }
+
+              response = await Promise.race([
+                ai.models.generateContent({
+                  model: modelName,
+                  contents: {parts},
+                  config: configObj,
+                }),
+                new Promise((_, reject) =>
+                  setTimeout(() => reject(new Error('Gemini request timed out')), 25000),
+                ),
+              ]);
+              if (response && response.text) {
+                break;
+              }
+            } catch (err: any) {
+              lastError = err;
+              console.warn(`Model ${modelName} / key idx ${keyIdx} failed:`, err?.message || err);
             }
-          } catch (err: any) {
-            lastError = err;
-            console.warn(`Key idx ${keyIdx} on model ${modelName} failed:`, err?.message || err);
+          }
+          if (response && response.text) {
+            break;
           }
         }
-        if (response && response.text) {
-          break;
+
+        if (!response || !response.text) {
+          const errMsg = lastError instanceof Error ? lastError.message : 'High demand on Gemini AI examiners';
+          res.status(503).json({
+            error: `AI Examiner models are temporarily busy (${errMsg}). Your answers and photos are safely preserved.`,
+          });
+          return;
         }
-      }
 
-      if (!response || !response.text) {
-        const errMsg = lastError instanceof Error ? lastError.message : 'High demand on Gemini AI examiners';
-        res.status(503).json({
-          error: `AI Examiner models are temporarily busy (${errMsg}). Your answers and photos are safely preserved — please click Retry Submission.`,
-        });
-        return;
-      }
+        const rawText = (response.text ?? '').trim();
+        if (!rawText) {
+          res.status(502).json({
+            error: 'Empty grading response received from Gemini examiner.',
+          });
+          return;
+        }
 
-      const rawText = (response.text ?? '').trim();
-      if (!rawText) {
-        res.status(502).json({
-          error: 'Empty grading response received from Gemini examiner.',
-        });
-        return;
-      }
-
-      const parsed = JSON.parse(rawText) as {
-        questionGrades?: Array<{
-          questionId: string;
-          marks_awarded: number;
-          max_marks: number;
-          feedback: string;
-          exact_model_answer: string;
-        }>;
-        examSummary?: {
-          weakTopics?: string[];
-          improvementTips?: string[];
-          examinerRemarks?: string;
+        const parsed = JSON.parse(rawText) as {
+          questionGrades?: Array<{
+            questionId: string;
+            status?: string;
+            marks_awarded: number;
+            max_marks: number;
+            feedback: string;
+            exact_model_answer: string;
+          }>;
+          examSummary?: {
+            weakTopics?: string[];
+            improvementTips?: string[];
+            examinerRemarks?: string;
+          };
         };
-      };
 
-      const gradeMap = new Map<
-        string,
-        {
-          questionId: string;
-          marks_awarded: number;
-          max_marks: number;
-          feedback: string;
-          exact_model_answer: string;
+        for (const item of parsed.questionGrades ?? []) {
+          if (item?.questionId) {
+            gradeMap.set(item.questionId, item);
+          }
         }
-      >();
-      for (const item of parsed.questionGrades ?? []) {
-        if (item?.questionId) {
-          gradeMap.set(item.questionId, item);
-        }
+        parsedSummary = parsed.examSummary;
       }
 
-      // Normalize and enforce exact bounds + unattempted zero safeguard
+      // Normalize and enforce exact bounds + unattempted zero + gibberish safeguard
       const normalizedGrades = body.questions.map((q) => {
-        const hasAttempt =
-          q.studentText.trim().length > 0 || (q.photos && q.photos.length > 0);
+        const hasText = q.studentText.trim().length > 0;
+        const hasPhotos = Array.isArray(q.photos) && q.photos.length > 0;
+        const hasAttempt = hasText || hasPhotos;
+
+        if (!hasAttempt) {
+          return {
+            questionId: q.questionId,
+            status: 'grey',
+            marks_awarded: 0,
+            max_marks: q.marks,
+            feedback: 'Unattempted question (0 marks awarded). Review the step-by-step model answer below.',
+            exact_model_answer: q.markingKey.exactModelAnswer,
+          };
+        }
+
+        if (!hasPhotos && isGibberishText(q.studentText)) {
+          return {
+            questionId: q.questionId,
+            status: 'red',
+            marks_awarded: 0,
+            max_marks: q.marks,
+            feedback: 'Submission Disqualified (0 Marks): Response was gibberish, irrelevant, or did not show a valid written answer.',
+            exact_model_answer: q.markingKey.exactModelAnswer,
+          };
+        }
+
         const aiGrade = gradeMap.get(q.questionId);
         const rawAwarded =
-          hasAttempt && aiGrade && Number.isFinite(aiGrade.marks_awarded)
+          aiGrade && Number.isFinite(aiGrade.marks_awarded)
             ? aiGrade.marks_awarded
             : 0;
         const clampedAwarded = Math.round(
           Math.max(0, Math.min(q.marks, rawAwarded)) * 2,
         ) / 2;
 
+        const computedStatus =
+          clampedAwarded >= q.marks ? 'green' : clampedAwarded > 0 ? 'yellow' : 'red';
+
         return {
           questionId: q.questionId,
+          status: computedStatus,
           marks_awarded: clampedAwarded,
           max_marks: q.marks,
-          feedback: !hasAttempt
-            ? 'Unattempted question (0 marks awarded). Review the step-by-step model answer below.'
-            : aiGrade?.feedback?.trim() ||
-              'Evaluated against the subject marking scheme checkpoints.',
+          feedback:
+            aiGrade?.feedback?.trim() ||
+            (clampedAwarded === 0 && hasPhotos
+              ? 'Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer.'
+              : 'Evaluated strictly against the official CBSE marking scheme PDF checkpoints.'),
           exact_model_answer:
             aiGrade?.exact_model_answer?.trim() || q.markingKey.exactModelAnswer,
         };
@@ -311,20 +407,20 @@ Return ONLY valid JSON containing an array of graded results matching Quadra 12'
 
       const examSummary = {
         weakTopics:
-          Array.isArray(parsed.examSummary?.weakTopics) &&
-          parsed.examSummary.weakTopics.length > 0
-            ? parsed.examSummary.weakTopics
-            : ['Review unattempted and partial-credit chapters carefully'],
+          Array.isArray(parsedSummary?.weakTopics) &&
+          parsedSummary.weakTopics.length > 0
+            ? parsedSummary.weakTopics
+            : ['Review unattempted and disqualified chapters carefully'],
         improvementTips:
-          Array.isArray(parsed.examSummary?.improvementTips) &&
-          parsed.examSummary.improvementTips.length > 0
-            ? parsed.examSummary.improvementTips
+          Array.isArray(parsedSummary?.improvementTips) &&
+          parsedSummary.improvementTips.length > 0
+            ? parsedSummary.improvementTips
             : [
                 'Always write core formulas, balanced equations, and SI units clearly before substitution.',
               ],
         examinerRemarks:
-          parsed.examSummary?.examinerRemarks?.trim() ||
-          'Complete subjective evaluation anchored to the Quadra 12 marking scheme.',
+          parsedSummary?.examinerRemarks?.trim() ||
+          'Complete subjective evaluation anchored strictly to the Quadra 12 Marking Scheme PDF.',
       };
 
       res.json({

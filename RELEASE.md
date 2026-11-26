@@ -16,12 +16,13 @@
 * **Canvas Pre-Filter:** Blurry or blank photos in Sections B–E are caught on HTML5 Canvas and disqualified with the exact message: `"Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer."`
 * **Single Batch Request:** Valid images are compressed to 800px width and sent in ONE single JSON batch request per exam.
 
-### 3. 5-Key Gemini Pool & Peak Fallback
-* **Automatic Failover:** Random starting key with automatic silent retry across the 5-key pool on HTTP 429 rate limits.
-* **Self-Check Mode:** Unlimited free grading fallback when offline or during peak traffic.
+### 3. 5-Key Gemini Pool & Interactive Self-Check Fallback
+* **Automatic Failover:** Random starting key with automatic silent retry across the 5-key pool and active Gemini Vision models (`gemini-3.1-flash-lite`, `gemini-3.8-flash`, `gemini-4-hydrogen`).
+* **Interactive Self-Check Mode:** When offline or at peak limits, starts pending items at `0` marks (never awarding fake partial marks) and provides side-by-side **Full Marks (Green)**, **Partial Marks (Yellow)**, and **Incorrect (Red)** buttons.
 
-### 4. Strict Examiner System Prompt (`temperature: 0.0` + JSON)
-* **Zero Halucination / Strict Gatekeeper:** Enforces strict step-marking against the official Marking Scheme PDF data.
+### 4. Strict Examiner System Prompt & Gatekeeper (`temperature: 0.0` + JSON)
+* **Zero Hallucination / Pattern & Gibberish Gatekeeper:** Instantly disqualifies patterns, textures, cloth/bedsheets, invalid objects, hazy photos, and gibberish/nonsense text at `0 Marks (Red)`.
+* **Strict Step-Marking:** Enforces exact step-marking against the official Marking Scheme PDF data.
 
 ---
 
