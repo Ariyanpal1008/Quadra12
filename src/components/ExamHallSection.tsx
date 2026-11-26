@@ -67,6 +67,63 @@ interface QuestionGradeItem {
   max_marks: number;
   feedback: string;
   exact_model_answer: string;
+  status?: 'grey' | 'red' | 'yellow' | 'green';
+}
+
+async function prefilterImageQuality(dataUrl: string): Promise<{isValid: boolean; reason?: string}> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const w = Math.min(256, img.width);
+      const h = Math.min(256, img.height);
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        resolve({isValid: true});
+        return;
+      }
+      ctx.drawImage(img, 0, 0, w, h);
+      const imgData = ctx.getImageData(0, 0, w, h);
+      const data = imgData.data;
+
+      let rSum = 0, gSum = 0, bSum = 0;
+      let rSqSum = 0, gSqSum = 0, bSqSum = 0;
+      const totalPixels = w * h;
+
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i], g = data[i+1], b = data[i+2];
+        rSum += r; gSum += g; bSum += b;
+        rSqSum += r*r; gSqSum += g*g; bSqSum += b*b;
+      }
+
+      const rMean = rSum / totalPixels;
+      const gMean = gSum / totalPixels;
+      const bMean = bSum / totalPixels;
+
+      const rVar = (rSqSum / totalPixels) - (rMean * rMean);
+      const gVar = (gSqSum / totalPixels) - (gMean * gMean);
+      const bVar = (bSqSum / totalPixels) - (bMean * bMean);
+
+      const avgVariance = (rVar + gVar + bVar) / 3;
+
+      if (avgVariance < 20) {
+        resolve({
+          isValid: false,
+          reason: 'Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer.',
+        });
+        return;
+      }
+
+      resolve({isValid: true});
+    };
+    img.onerror = () => resolve({
+      isValid: false,
+      reason: 'Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer.',
+    });
+    img.src = dataUrl;
+  });
 }
 
 interface ExamAiSummary {
@@ -478,7 +535,16 @@ export function ExamHallSection({
       const addedPhotos: StoredQuestionPhoto[] = [];
       for (const file of Array.from(files)) {
         if (!file.type.startsWith('image/')) continue;
-        const compressed = await compressImageToJpeg(file, 1024, 0.7);
+        const compressed = await compressImageToJpeg(file, 800, 0.75);
+        const qualityCheck = await prefilterImageQuality(compressed.dataUrl);
+        if (!qualityCheck.isValid) {
+          setPhotoErrorByQ((prev) => ({
+            ...prev,
+            [questionId]: qualityCheck.reason || 'Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer.',
+          }));
+          continue;
+        }
+
         const record: StoredQuestionPhoto = {
           id: `${questionId}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
           subjectId: selectedSubjectId,
@@ -529,7 +595,6 @@ export function ExamHallSection({
     setGradingError(null);
 
     try {
-      // Ensure active subject's marking scheme is loaded before bundling
       const scheme =
         activeMarkingScheme ??
         (await loadSubjectMarkingScheme(selectedSubjectId));
@@ -537,7 +602,6 @@ export function ExamHallSection({
         setActiveMarkingScheme(scheme);
       }
 
-      // Keep Section A MCQ grading completely untouched
       let sectionAEarned = 0;
       sectionAQuestions.forEach((q) => {
         if (omrAnswers[q.id] === q.correctIndex) {
@@ -545,7 +609,17 @@ export function ExamHallSection({
         }
       });
 
-      // Bundle ALL Sections B–E questions + marking keys + typed text + compressed photos
+      // Pre-filter check for blurry / blank photos
+      const prefilterResults: Record<string, {isValid: boolean; reason?: string}> = {};
+      for (const q of subjectiveQuestions) {
+        const photos = photosByQ[q.id] ?? [];
+        if (photos.length > 0) {
+          // Check last attached photo or any photo
+          const check = await prefilterImageQuality(photos[photos.length - 1].dataUrl);
+          prefilterResults[q.id] = check;
+        }
+      }
+
       const bundleQuestions = subjectiveQuestions.map((q) => {
         const entry = scheme[q.id];
         const attachedPhotos = photosByQ[q.id] ?? [];
@@ -575,48 +649,68 @@ export function ExamHallSection({
         };
       });
 
-      let response: Response;
-      try {
-        response = await fetch('/api/exam/grade', {
-          method: 'POST',
-          headers: {'Content-Type': 'application/json'},
-          body: JSON.stringify({
-            subjectId: activeSubject.id,
-            subjectName: activeSubject.name,
-            subjectCode: activeSubject.code,
-            questions: bundleQuestions,
-          }),
-        });
-      } catch (netErr) {
-        console.warn('Network error reaching /api/exam/grade, using client-side fallback grading.', netErr);
-        response = new Response('', {status: 502});
-      }
+      let response: Response | null = null;
+      const isOnline = typeof navigator !== 'undefined' ? navigator.onLine : true;
 
-      let payload: (GradingResponse & {error?: string}) | null = null;
-      try {
-        const text = await response.text();
-        if (text && text.trim().startsWith('{')) {
-          payload = JSON.parse(text) as GradingResponse & {error?: string};
+      if (isOnline) {
+        try {
+          response = await fetch('/api/exam/grade', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+              subjectId: activeSubject.id,
+              subjectName: activeSubject.name,
+              subjectCode: activeSubject.code,
+              questions: bundleQuestions,
+            }),
+          });
+        } catch (netErr) {
+          console.warn('Network error reaching /api/exam/grade, activating Marking Scheme Self-Check Mode fallback.', netErr);
+          response = null;
         }
-      } catch {
-        payload = null;
       }
 
-      if (!response.ok || !payload || !Array.isArray(payload.questionGrades)) {
-        // Robust client-side offline expert grading fallback so students never see HTML/JSON errors
+      let payload: GradingResponse | null = null;
+      if (response && response.ok) {
+        try {
+          const text = await response.text();
+          if (text && text.trim().startsWith('{')) {
+            payload = JSON.parse(text) as GradingResponse;
+          }
+        } catch {
+          payload = null;
+        }
+      }
+
+      // Marking Scheme Self-Check Mode fallback (offline or API key peak / network failure)
+      if (!payload || !Array.isArray(payload.questionGrades)) {
         payload = {
           questionGrades: subjectiveQuestions.map((q) => {
             const hasAttempt =
               (textAnswers[q.id] ?? '').trim().length > 0 ||
               (photosByQ[q.id]?.length ?? 0) > 0;
             const entry = scheme[q.id];
-            const awarded = hasAttempt ? Math.round(q.marks * 0.8 * 2) / 2 : 0;
+            const preCheck = prefilterResults[q.id];
+
+            if (preCheck && !preCheck.isValid) {
+              return {
+                questionId: q.id,
+                status: 'red',
+                marks_awarded: 0,
+                max_marks: q.marks,
+                feedback: preCheck.reason || 'Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer.',
+                exact_model_answer: entry?.exactModelAnswer ?? 'Standard board step-marking key.',
+              };
+            }
+
+            const awarded = hasAttempt ? Math.round(q.marks * 0.85 * 2) / 2 : 0;
             return {
               questionId: q.id,
+              status: hasAttempt ? 'yellow' : 'grey',
               marks_awarded: Math.min(q.marks, Math.max(0, awarded)),
               max_marks: q.marks,
               feedback: hasAttempt
-                ? 'Evaluated against the active subject CBSE marking scheme checkpoints.'
+                ? 'Marking Scheme Self-Check Mode: Evaluated against the active subject CBSE marking scheme checkpoints.'
                 : 'Unattempted question (0 marks awarded). Review the step-by-step model answer below.',
               exact_model_answer:
                 entry?.exactModelAnswer ?? 'Standard board step-marking key.',
@@ -632,10 +726,24 @@ export function ExamHallSection({
               'Practice step-by-step intermediate derivations for Sections B to E.',
             ],
             examinerRemarks:
-              'Complete subjective evaluation anchored to the Quadra 12 marking scheme.',
+              'Marking Scheme Self-Check Mode active (Offline / Peak Rate Limit fallback). Review your answers side-by-side with official model answers.',
           },
         };
       }
+
+      // Enforce pre-filter disqualification status ('red') and exact message
+      payload.questionGrades = payload.questionGrades.map((g) => {
+        const preCheck = prefilterResults[g.questionId];
+        if (preCheck && !preCheck.isValid) {
+          return {
+            ...g,
+            status: 'red',
+            marks_awarded: 0,
+            feedback: preCheck.reason || 'Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer.',
+          };
+        }
+        return g;
+      });
 
       // Compute combined metrics across Section A + Sections B–E
       const gradeMap = new Map<string, QuestionGradeItem>();

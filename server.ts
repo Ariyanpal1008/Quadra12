@@ -62,11 +62,20 @@ async function createServer() {
 
   app.post('/api/exam/grade', async (req, res) => {
     try {
-      const apiKey = process.env.GEMINI_API_KEY;
-      if (!apiKey) {
+      const apiKeysStr =
+        process.env.VITE_GEMINI_API_KEYS ||
+        process.env.GEMINI_API_KEYS ||
+        process.env.GEMINI_API_KEY ||
+        '';
+      const apiKeys = apiKeysStr
+        .split(',')
+        .map((k) => k.trim())
+        .filter(Boolean);
+
+      if (apiKeys.length === 0) {
         res.status(503).json({
           error:
-            'GEMINI_API_KEY is not configured on the server. Configure it in the Secrets panel to run AI subjective grading.',
+            'GEMINI_API_KEYS or GEMINI_API_KEY is not configured. Configure it in the Secrets panel or .env file to run AI subjective grading.',
         });
         return;
       }
@@ -82,26 +91,20 @@ async function createServer() {
         return;
       }
 
-      const ai = new GoogleGenAI({
-        apiKey,
-        httpOptions: {
-          headers: {
-            'User-Agent': 'aistudio-build',
-          },
-        },
-      });
+      const systemInstruction = `
+You are a strict, uncompromising Class 12 PCMB Examiner inside the Quadra 12 Examination Hall evaluating a batch of subjective answers across Sections B, C, D, and E (for 33-question PCB or 38-question Mathematics sample papers). For every submitted question, you are given the Question Number, Question Text, Max Marks, the Official Marking Scheme extracted from Quadra 12's Marking Scheme PDF, and the student's answer photo.
 
-      const systemInstruction = [
-        `You are a strict Class 12 CBSE Board Examiner for ${body.subjectName} (Code ${body.subjectCode}).`,
-        getSubjectRubric(body.subjectId),
-        'CRITICAL ANCHORING RULES:',
-        '1. Anchor ALL grading, formulas, numerical values, and final answers strictly to the markingKey supplied with each question. Do not invent different numbers.',
-        '2. Grade EVERY question in the questions array.',
-        '3. If a question has neither studentText nor attached handwritten/diagram photos (completely blank/unattempted), award marks_awarded = 0 and write clear feedback noting it was unattempted.',
-        '4. When handwritten/diagram photos are attached for a question, inspect every image carefully for formula steps, equations, circuits, graphs, or labels before assigning marks.',
-        '5. Award fractional half-marks (e.g., 0.5, 1, 1.5, 2.5) where appropriate matching the stepMarks breakdown, clamped strictly between 0 and max_marks.',
-        '6. Return exact_model_answer grounded directly in the supplied markingKey.',
-      ].join('\n');
+RULE 1: STRICT IMAGE GATEKEEPER ("red" / 0 MARKS) — ZERO GUESSING
+- Invalid Objects: If a photo shows a phone screen, hand, face, wall, desk, or anything other than a handwritten/typed PCMB answer, immediately set that question's status to "red" and marks_awarded to 0.
+- Hazy / Unreadable Handwriting: If a photo is blurry, hazy, dark, cut off, or the equations/text cannot be read with 100% certainty, DO NOT guess or hallucinate what the student meant. Treat hazy text as unreadable, set status to "red", and award 0 marks.
+- Wrong Core Concept: If the student's formula, step-by-step proof, chemical equation, or biological concept contradicts the provided Marking Scheme PDF, set status to "red" and award 0 marks—even if they wrote paragraphs or copied the question.
+
+RULE 2: STRICT STEP-MARKING AGAINST THE MARKING SCHEME PDF ("yellow" vs "green")
+- "yellow" (Partial Marks): Award partial step marks ONLY when the photo is 100% legible AND the student has accurately completed at least one explicit value point / step shown in the provided Marking Scheme PDF (e.g., exact formula + substitution, valid integration/differentiation step, balanced equation, or labeled diagram) while missing later steps or the final answer. Never give "yellow" for random keywords or vague guesses.
+- "green" (Full Marks): Award full marks ONLY when the photo is 100% legible AND every step, value point, final numerical/conceptual answer, and SI unit (where applicable) matches the provided Marking Scheme PDF completely.
+
+Return ONLY valid JSON containing an array of graded results matching Quadra 12's grading schema, setting each question's palette color strictly to "grey", "red", "yellow", or "green".
+`.trim();
 
       const parts: Array<
         | {text: string}
@@ -130,7 +133,6 @@ async function createServer() {
           JSON.stringify(structuredManifest, null, 2),
       });
 
-      // Append each student photo clearly tagged by questionId & page number
       for (const q of body.questions) {
         if (!Array.isArray(q.photos) || q.photos.length === 0) continue;
         q.photos.forEach((photo, idx) => {
@@ -149,71 +151,88 @@ async function createServer() {
       }
 
       const candidateModels = [
-        'gemini-3.8-flash',
         'gemini-2.5-flash',
+        'gemini-3.8-flash',
         'gemini-2.5-pro',
         'gemini-1.5-flash',
       ];
+
+      const startIndex = Math.floor(Math.random() * apiKeys.length);
       let response: any = null;
       let lastError: any = null;
 
-      for (const modelName of candidateModels) {
-        try {
-          response = await ai.models.generateContent({
-            model: modelName,
-            contents: {parts},
-            config: {
-              systemInstruction,
-              responseMimeType: 'application/json',
-              responseSchema: {
-                type: Type.OBJECT,
-                properties: {
-                  questionGrades: {
-                    type: Type.ARRAY,
-                    items: {
+      for (let i = 0; i < apiKeys.length; i++) {
+        const keyIdx = (startIndex + i) % apiKeys.length;
+        const currentKey = apiKeys[keyIdx];
+        const ai = new GoogleGenAI({
+          apiKey: currentKey,
+          httpOptions: {headers: {'User-Agent': 'aistudio-build'}},
+        });
+
+        for (const modelName of candidateModels) {
+          try {
+            response = await ai.models.generateContent({
+              model: modelName,
+              contents: {parts},
+              config: {
+                temperature: 0.0,
+                systemInstruction,
+                responseMimeType: 'application/json',
+                responseSchema: {
+                  type: Type.OBJECT,
+                  properties: {
+                    questionGrades: {
+                      type: Type.ARRAY,
+                      items: {
+                        type: Type.OBJECT,
+                        properties: {
+                          questionId: {type: Type.STRING},
+                          status: {type: Type.STRING},
+                          marks_awarded: {type: Type.NUMBER},
+                          max_marks: {type: Type.NUMBER},
+                          feedback: {type: Type.STRING},
+                          exact_model_answer: {type: Type.STRING},
+                        },
+                        required: [
+                          'questionId',
+                          'status',
+                          'marks_awarded',
+                          'max_marks',
+                          'feedback',
+                          'exact_model_answer',
+                        ],
+                      },
+                    },
+                    examSummary: {
                       type: Type.OBJECT,
                       properties: {
-                        questionId: {type: Type.STRING},
-                        marks_awarded: {type: Type.NUMBER},
-                        max_marks: {type: Type.NUMBER},
-                        feedback: {type: Type.STRING},
-                        exact_model_answer: {type: Type.STRING},
+                        weakTopics: {
+                          type: Type.ARRAY,
+                          items: {type: Type.STRING},
+                        },
+                        improvementTips: {
+                          type: Type.ARRAY,
+                          items: {type: Type.STRING},
+                        },
+                        examinerRemarks: {type: Type.STRING},
                       },
-                      required: [
-                        'questionId',
-                        'marks_awarded',
-                        'max_marks',
-                        'feedback',
-                        'exact_model_answer',
-                      ],
+                      required: ['weakTopics', 'improvementTips', 'examinerRemarks'],
                     },
                   },
-                  examSummary: {
-                    type: Type.OBJECT,
-                    properties: {
-                      weakTopics: {
-                        type: Type.ARRAY,
-                        items: {type: Type.STRING},
-                      },
-                      improvementTips: {
-                        type: Type.ARRAY,
-                        items: {type: Type.STRING},
-                      },
-                      examinerRemarks: {type: Type.STRING},
-                    },
-                    required: ['weakTopics', 'improvementTips', 'examinerRemarks'],
-                  },
+                  required: ['questionGrades', 'examSummary'],
                 },
-                required: ['questionGrades', 'examSummary'],
               },
-            },
-          });
-          if (response && response.text) {
-            break;
+            });
+            if (response && response.text) {
+              break;
+            }
+          } catch (err: any) {
+            lastError = err;
+            console.warn(`Key idx ${keyIdx} on model ${modelName} failed:`, err?.message || err);
           }
-        } catch (err) {
-          lastError = err;
-          console.warn(`Model ${modelName} encountered error or high demand (503), trying next fallback...`);
+        }
+        if (response && response.text) {
+          break;
         }
       }
 

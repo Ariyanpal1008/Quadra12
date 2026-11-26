@@ -14,8 +14,8 @@ const capConfig = JSON.parse(fs.readFileSync(path.join(rootDir, 'capacitor.confi
 
 const appId = capConfig.appId || 'io.github.ariyanpal1008.quadra12';
 const appName = capConfig.appName || 'Quadra 12';
-const rawVersionName = process.env.QUADRA_VERSION_NAME || pkgJson.version || '2.6.1';
-const versionName = rawVersionName.replace(/^v/i, '').trim() || '2.6.1';
+const rawVersionName = process.env.QUADRA_VERSION_NAME || pkgJson.version || '2.6.2';
+const versionName = rawVersionName.replace(/^v/i, '').trim() || '2.6.2';
 const runNumber = parseInt(process.env.GITHUB_RUN_NUMBER || '1', 10) || 1;
 const explicitCode = parseInt(process.env.QUADRA_VERSION_CODE || '', 10);
 const versionCode = Number.isFinite(explicitCode) && explicitCode > 0 ? explicitCode : 1000 + runNumber;

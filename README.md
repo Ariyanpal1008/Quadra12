@@ -1,16 +1,16 @@
-# Quadra 12 (v2.6.1)
+# Quadra 12 (v2.6.2)
 
-[![Release](https://img.shields.io/badge/Release-v2.6.1-crimson.svg?style=flat-square)](https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.6.1)
+[![Release](https://img.shields.io/badge/Release-v2.6.2-crimson.svg?style=flat-square)](https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.6.2)
 [![Platforms](https://img.shields.io/badge/Platforms-Web%20%7C%20Offline%20PWA%20%7C%20Android%20APK%20(Free)-A64B33.svg?style=flat-square)](#10-installable-offline-pwa--free-standalone-android-apk-app-0)
 [![License](https://img.shields.io/badge/License-Independent%20Student%20Workspace-blue.svg?style=flat-square)](#disclaimers-terms--conditions-copyright-privacy--ai-fair-use)
 [![Framework](https://img.shields.io/badge/Stack-React%2019%20%7C%20Vite%20%7C%20Tailwind%20v4-emerald.svg?style=flat-square)](#tech-stack)
-[![AI Engine](https://img.shields.io/badge/AI%20Examiner-Gemini%203.8%20Flash-indigo.svg?style=flat-square)](https://aistudio.google.com/)
+[![AI Engine](https://img.shields.io/badge/AI%20Examiner-Gemini%20Flash%20(5--Key%20Pool)-indigo.svg?style=flat-square)](https://aistudio.google.com/)
 
-> **Quadra 12 v2.6.1 Active Release:** Features clean header polish with installation relocated exclusively to **Settings → About**, zero-flicker static Overview hydration, full AI crawler &amp; Schema.org JSON-LD SEO with direct hash deep linking, network-first Service Worker updates, a floating Apple frosted-glass mobile menu, syllabus-aligned Chemistry SVG plate, 100% independently authored PCMB mock papers, 47 vector SVG diagrams, 15-minute Reading Timer, synced A4 PDFs, `gemini-3.8-flash` AI step-marking, **Installable Offline PWA App**, and a **Free Standalone Android `.apk` App (`Quadra12-v2.6.1-Android.apk`)**.
+> **Quadra 12 v2.6.2 Active Release:** Features the advanced Examination Hall grading engine upgrade across all CBSE Class 12 PCMB Sample Papers (33-question PCB & 38-question Maths), featuring 5-key Gemini API pooling (`VITE_GEMINI_API_KEYS`), 1-call batch grading, canvas blank/blurry image pre-filtering with strict rejection feedback, offline PWA/APK self-check fallback, `temperature: 0.0` strict step-marking against official Marking Scheme PDFs, **Installable Offline PWA App**, and a **Free Standalone Android `.apk` App (`Quadra12-v2.6.2-Android.apk`)**.
 
-- **Current Version:** `v2.6.1` (Active Release)
-- **Live Web & PWA App:** [https://ariyanpal1008.github.io/Quadra12/](https://ariyanpal1008.github.io/Quadra12/) *(Installable offline on Android, iOS/iPadOS, Windows &amp; macOS)*  
-- **Free Android `.apk` Download:** [GitHub Releases (`Quadra12-v2.6.1-Android.apk`)](https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.6.1) *(100% Free — `$0`, no Play Store fees)*  
+- **Current Version:** `v2.6.2` (Active Release)
+- **Live Web & PWA App:** [https://ariyanpal1008.github.io/Quadra12/](https://ariyanpal1008.github.io/Quadra12/) *(Installable offline on Android, iOS/iPadOS, Windows & macOS)*  
+- **Free Android `.apk` Download:** [GitHub Releases (`Quadra12-v2.6.2-Android.apk`)](https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.6.2) *(100% Free — `$0`, no Play Store fees)*  
 - **GitHub Repository:** [https://github.com/Ariyanpal1008/Quadra12](https://github.com/Ariyanpal1008/Quadra12)  
 - **AI Summary (llms.txt):** [https://ariyanpal1008.github.io/Quadra12/llms.txt](https://ariyanpal1008.github.io/Quadra12/llms.txt)  
 - **Full AI Knowledge Base (llms-full.txt):** [https://ariyanpal1008.github.io/Quadra12/llms-full.txt](https://ariyanpal1008.github.io/Quadra12/llms-full.txt)  
