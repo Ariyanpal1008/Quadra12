@@ -133,7 +133,13 @@ jobs:
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
         run: |
-          echo "$ANDROID_KEYSTORE_BASE64" | tr -d '\r\n \t' | base64 -d > android/app/quadra12-release.jks
+          if echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/quadra12-release.jks 2>/dev/null; then
+            true
+          elif echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > android/app/quadra12-release.jks 2>/dev/null; then
+            true
+          else
+            python3 -c "import base64, os; open('android/app/quadra12-release.jks', 'wb').write(base64.b64decode(os.environ['ANDROID_KEYSTORE_BASE64']))"
+          fi
           if [ ! -s android/app/quadra12-release.jks ]; then
             echo "::error::Decoded keystore android/app/quadra12-release.jks is empty."
             exit 1
