@@ -1,6 +1,6 @@
 {
-  "name": "Alder Architecture",
-  "description": "Architectural design, mass-timber engineering, and residential pavilions in Zurich, Copenhagen, and Portland.",
+  "name": "Quadra 12",
+  "description": "CBSE Class 12 PCMB Syllabus Tracker, 2026-27 Sample Papers, 3-Hour Exam Hall, 12th Hackers & Offline PWA/Android App.",
   "requestFramePermissions": ["camera"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

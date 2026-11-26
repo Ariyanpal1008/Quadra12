@@ -88,7 +88,7 @@ export function PWAInstallButton({
     </div>
   ) : null;
 
-  // Hide navbar/menu install button when already installed as standalone app
+  // Hide install button when already running in installed app mode
   if (isInstalled) {
     if (variant === 'card') {
       return (
@@ -101,65 +101,9 @@ export function PWAInstallButton({
     return null;
   }
 
-  if (variant === 'menu') {
-    if (!isInstallable && !isIOS) return null;
-    return (
-      <>
-        <button
-          type="button"
-          onClick={() => {
-            if (isInstallable) {
-              void handleInstallClick();
-            } else {
-              setShowIOSGuide(true);
-            }
-          }}
-          className="w-full text-left px-3 py-2.5 text-sm font-semibold rounded-lg bg-[#E8F0EA] dark:bg-[#1C2E22] text-[#23422F] dark:text-[#B6DFC3] border border-[#3D6B4F]/35 hover:opacity-90 flex items-center gap-2"
-        >
-          <Download className="w-4 h-4 shrink-0" aria-hidden="true" />
-          <span>Install Quadra 12 App (Free)</span>
-        </button>
-        {iosGuideModal}
-      </>
-    );
-  }
-
-  if (variant === 'card') {
-    if (isInstallable) {
-      return (
-        <button
-          type="button"
-          onClick={() => void handleInstallClick()}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#3D6B4F] hover:bg-[#315940] text-white text-xs font-semibold shadow-xs transition-colors"
-        >
-          <Download className="w-4 h-4 shrink-0" />
-          <span>Install Quadra 12 App (PWA)</span>
-        </button>
-      );
-    }
-    if (isIOS) {
-      return (
-        <>
-          <button
-            type="button"
-            onClick={() => setShowIOSGuide(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#3D6B4F] hover:bg-[#315940] text-white text-xs font-semibold shadow-xs transition-colors"
-          >
-            <Smartphone className="w-4 h-4 shrink-0" />
-            <span>Install on iPhone / iPad</span>
-          </button>
-          {iosGuideModal}
-        </>
-      );
-    }
-    return (
-      <span className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] text-[11px] font-medium text-[#575048] dark:text-[#CBC3B6]">
-        <Smartphone className="w-3.5 h-3.5 text-[#3D6B4F] dark:text-[#7AB88F] shrink-0" />
-        <span>
-          Open live site in Chrome/Edge → tap <strong>Install App</strong> in address bar
-        </span>
-      </span>
-    );
+  // Standalone header & menu variants are permanently suppressed in v2.6.1; installation is exclusively inside Settings
+  if (variant === 'navbar' || variant === 'menu') {
+    return null;
   }
 
   const browserGuideModal = showBrowserGuide ? (
@@ -207,11 +151,12 @@ export function PWAInstallButton({
             <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">⋮ → Open in Chrome</strong> (or Edge).
           </li>
           <li>
-            Tap <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Install App</strong> or{' '}
-            <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Add to Home screen</strong> in your browser menu.
+            Tap <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Install app</strong> or{' '}
+            <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Add to Home screen</strong> in Chrome&apos;s three-dot menu.
           </li>
           <li>
-            Or open <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Menu → Settings → About</strong> to download the standalone Android APK (v2.6).
+            Or download the free standalone signed Android APK (v2.6.1) right below in{' '}
+            <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Settings → About</strong>.
           </li>
         </ol>
 
@@ -226,18 +171,16 @@ export function PWAInstallButton({
     </div>
   ) : null;
 
-  // Default: compact navbar trigger (always intact across mobile/in-app browsers unless already installed)
+  // Settings variant (default)
   if (isInstallable) {
     return (
       <button
         type="button"
         onClick={() => void handleInstallClick()}
-        title="Install Quadra 12 App (Free Offline PWA)"
-        aria-label="Install Quadra 12 App"
-        className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-2 text-xs font-semibold rounded-lg border border-transparent bg-[#3D6B4F] hover:bg-[#315940] text-white shadow-xs transition-colors whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3D6B4F]"
+        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#3D6B4F] hover:bg-[#315940] text-white text-xs font-semibold shadow-xs transition-colors"
       >
-        <Download className="w-4 h-4 sm:w-3.5 sm:h-3.5 shrink-0" aria-hidden="true" />
-        <span className="hidden sm:inline">Install App</span>
+        <Download className="w-4 h-4 shrink-0" />
+        <span>Install Quadra 12 App (PWA)</span>
       </button>
     );
   }
@@ -248,12 +191,10 @@ export function PWAInstallButton({
         <button
           type="button"
           onClick={() => setShowIOSGuide(true)}
-          title="Install Quadra 12 on iPhone or iPad"
-          aria-label="Install Quadra 12 on iPhone or iPad"
-          className="inline-flex items-center gap-1.5 px-2.5 py-2 text-xs font-semibold rounded-lg border border-[#3D6B4F]/40 bg-[#E8F0EA] dark:bg-[#1C2E22] text-[#23422F] dark:text-[#B6DFC3] hover:opacity-90 transition-opacity whitespace-nowrap shrink-0"
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#3D6B4F] hover:bg-[#315940] text-white text-xs font-semibold shadow-xs transition-colors"
         >
-          <Download className="w-4 h-4 sm:w-3.5 sm:h-3.5 shrink-0" aria-hidden="true" />
-          <span className="hidden sm:inline">Install</span>
+          <Smartphone className="w-4 h-4 shrink-0" />
+          <span>Install on iPhone / iPad</span>
         </button>
         {iosGuideModal}
       </>
@@ -265,12 +206,10 @@ export function PWAInstallButton({
       <button
         type="button"
         onClick={() => setShowBrowserGuide(true)}
-        title="Install Quadra 12 App (Free Offline PWA)"
-        aria-label="Install Quadra 12 App"
-        className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-2 text-xs font-semibold rounded-lg border border-transparent bg-[#3D6B4F] hover:bg-[#315940] text-white shadow-xs transition-colors whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3D6B4F]"
+        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[#3D6B4F]/40 bg-[#E8F0EA] dark:bg-[#1C2E22] text-[#23422F] dark:text-[#B6DFC3] hover:opacity-90 text-xs font-semibold shadow-xs transition-opacity"
       >
-        <Download className="w-4 h-4 sm:w-3.5 sm:h-3.5 shrink-0" aria-hidden="true" />
-        <span className="hidden sm:inline">Install App</span>
+        <Download className="w-4 h-4 shrink-0" />
+        <span>Install App Instructions</span>
       </button>
       {browserGuideModal}
     </>

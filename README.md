@@ -1,16 +1,16 @@
-# Quadra 12 (v2.6)
+# Quadra 12 (v2.6.1)
 
-[![Release](https://img.shields.io/badge/Release-v2.6-crimson.svg?style=flat-square)](https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.6)
+[![Release](https://img.shields.io/badge/Release-v2.6.1-crimson.svg?style=flat-square)](https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.6.1)
 [![Platforms](https://img.shields.io/badge/Platforms-Web%20%7C%20Offline%20PWA%20%7C%20Android%20APK%20(Free)-A64B33.svg?style=flat-square)](#10-installable-offline-pwa--free-standalone-android-apk-app-0)
 [![License](https://img.shields.io/badge/License-Independent%20Student%20Workspace-blue.svg?style=flat-square)](#disclaimers-terms--conditions-copyright-privacy--ai-fair-use)
 [![Framework](https://img.shields.io/badge/Stack-React%2019%20%7C%20Vite%20%7C%20Tailwind%20v4-emerald.svg?style=flat-square)](#tech-stack)
 [![AI Engine](https://img.shields.io/badge/AI%20Examiner-Gemini%203.8%20Flash-indigo.svg?style=flat-square)](https://aistudio.google.com/)
 
-> **Quadra 12 v2.6 Active Release:** Features zero-flicker static Overview hydration, full AI crawler &amp; Schema.org JSON-LD SEO with direct hash deep linking, network-first Service Worker updates, a floating Apple frosted-glass mobile menu with hazy backdrop, syllabus-aligned Chemistry SVG plate, 100% independently authored PCMB mock papers, 47 vector SVG diagrams, 15-minute Reading Timer, synced A4 PDFs, `gemini-3.8-flash` AI step-marking, **Installable Offline PWA App**, and a **Free Standalone Android `.apk` App (`Quadra12-v2.6-Android.apk`)**.
+> **Quadra 12 v2.6.1 Active Release:** Features clean header polish with installation relocated exclusively to **Settings → About**, zero-flicker static Overview hydration, full AI crawler &amp; Schema.org JSON-LD SEO with direct hash deep linking, network-first Service Worker updates, a floating Apple frosted-glass mobile menu, syllabus-aligned Chemistry SVG plate, 100% independently authored PCMB mock papers, 47 vector SVG diagrams, 15-minute Reading Timer, synced A4 PDFs, `gemini-3.8-flash` AI step-marking, **Installable Offline PWA App**, and a **Free Standalone Android `.apk` App (`Quadra12-v2.6.1-Android.apk`)**.
 
-- **Current Version:** `v2.6` (Active Release)
+- **Current Version:** `v2.6.1` (Active Release)
 - **Live Web & PWA App:** [https://ariyanpal1008.github.io/Quadra12/](https://ariyanpal1008.github.io/Quadra12/) *(Installable offline on Android, iOS/iPadOS, Windows &amp; macOS)*  
-- **Free Android `.apk` Download:** [GitHub Releases (`Quadra12-v2.6-Android.apk`)](https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.6) *(100% Free — `$0`, no Play Store fees)*  
+- **Free Android `.apk` Download:** [GitHub Releases (`Quadra12-v2.6.1-Android.apk`)](https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.6.1) *(100% Free — `$0`, no Play Store fees)*  
 - **GitHub Repository:** [https://github.com/Ariyanpal1008/Quadra12](https://github.com/Ariyanpal1008/Quadra12)  
 - **AI Summary (llms.txt):** [https://ariyanpal1008.github.io/Quadra12/llms.txt](https://ariyanpal1008.github.io/Quadra12/llms.txt)  
 - **Full AI Knowledge Base (llms-full.txt):** [https://ariyanpal1008.github.io/Quadra12/llms-full.txt](https://ariyanpal1008.github.io/Quadra12/llms-full.txt)  
@@ -46,7 +46,7 @@ Quadra 12 is a calm, distraction-free Class 12 CBSE PCMB (Physics 042, Chemistry
 6. **Help Desk & Interactive Tour:** Access the **Help Desk** to explore the interactive visual tour sandbox, read syllabus notes, submit suggestions or bug reports via Google Sign-In, or access the Creator Inbox.
 7. **Terms & Conditions:** Tap the dull blue **Terms & Conditions · 2026** link in the footer to review personal educational self-assessment rules, zero-server browser storage privacy, Copyright, Fair Use, and Takedown Policy.
 8. **GitHub Repository:** Click the official bold **GitHub** link in the footer to inspect source code, contribute, or star the repository.
-9. **Install Offline PWA / Free Android APK:** Tap **Install App** in the top navigation bar, `☰` mobile menu, or **Settings → About** to install Quadra 12 offline on Android, iPhone/iPad (*Add to Home Screen*), Windows, or macOS — or download `Quadra12-v2.6-Android.apk` from [GitHub Releases](https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.6) (saves A4 PDFs straight into `Downloads/Quadra12/`).
+9. **Install Offline PWA / Free Android APK:** Open **Settings → About** (or your browser's three-dot menu) to install Quadra 12 offline on Android, iPhone/iPad (*Add to Home Screen*), Windows, or macOS — or download `Quadra12-v2.6.1-Android.apk` from [GitHub Releases](https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.6.1) (saves A4 PDFs straight into `Downloads/Quadra12/`).
 
 </details>
 

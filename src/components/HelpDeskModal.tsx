@@ -602,7 +602,7 @@ export function HelpDeskModal({
                         How Quadra 12 Works
                       </h3>
                       <p className="mt-1 text-xs text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
-                        Every tab in the top navigation covers one part of your Class 12 CBSE PCMB preparation. All study checkboxes, exam best scores, and theme settings save automatically in your browser. You can also install Quadra 12 as a free <strong>Offline PWA App</strong> (<strong>Install App</strong> / <code className="font-mono">☰</code> Menu) or get the free <strong>Android .apk</strong> in <strong>Settings → About</strong>.
+                        Every tab in the top navigation covers one part of your Class 12 CBSE PCMB preparation. All study checkboxes, exam best scores, and theme settings save automatically in your browser. You can also install Quadra 12 as a free <strong>Offline PWA App</strong> or download the free <strong>Android .apk</strong> in <strong>Settings → About</strong>.
                       </p>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 shrink-0">

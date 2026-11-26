@@ -69,7 +69,7 @@ import {
 import {TermsModal} from './components/TermsModal';
 import {SettingsModal, SettingsTab} from './components/SettingsModal';
 import {ThreeLabModal, ThreeSceneId} from './components/ThreeLabModal';
-import {OfflineIndicator, PWAInstallButton} from './components/PWAInstallButton';
+import {OfflineIndicator} from './components/PWAInstallButton';
 import {
   ReleaseUpdateInfo,
   checkLatestGitHubRelease,
@@ -1240,8 +1240,6 @@ export default function App() {
                 <Settings className="w-4 h-4 text-[#575048] dark:text-[#CBC3B6]" aria-hidden="true" />
               </motion.button>
 
-              <PWAInstallButton variant="navbar" />
-
               <motion.button
                 type="button"
                 whileHover={{y: -1}}
@@ -1301,10 +1299,6 @@ export default function App() {
                   </button>
                 ))}
                 <div className="pt-2 mt-1.5 border-t border-[#1E1B18]/10 dark:border-white/10 space-y-1">
-                  <PWAInstallButton
-                    variant="menu"
-                    onInstallSuccess={() => setMobileMenuOpen(false)}
-                  />
                   <button
                     type="button"
                     onClick={() => openSettings('sync')}
