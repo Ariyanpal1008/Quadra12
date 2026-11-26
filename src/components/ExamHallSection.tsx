@@ -767,7 +767,6 @@ export function ExamHallSection({
       } else if (isOnline) {
         const proxyBase = (import.meta.env.VITE_PROXY_URL || '').trim().replace(/\/$/, '');
         const apiUrl = proxyBase ? `${proxyBase}/api/exam/grade` : '/api/exam/grade';
-        let proxyMissingOnStaticHost = false;
 
         try {
           const response = await fetch(apiUrl, {
@@ -787,10 +786,22 @@ export function ExamHallSection({
               payload = parsed;
             }
           } else if (response.status === 429 || response.status === 503) {
+            if (contentType.includes('application/json')) {
+              const parsed = (await response.json().catch(() => null)) as
+                | GradingResponse
+                | null;
+              if (
+                parsed &&
+                parsed.isSelfCheckMode &&
+                Array.isArray(parsed.questionGrades)
+              ) {
+                payload = parsed;
+              }
+            }
             allowSelfCheckFallback = true;
           } else if (response.status === 404 || !contentType.includes('application/json')) {
-            // Running on static host (GitHub Pages PWA or Capacitor APK) without backend server
-            proxyMissingOnStaticHost = true;
+            // Backend proxy not reachable on static host -> fall back cleanly to Self-Check Mode
+            allowSelfCheckFallback = true;
           } else {
             const errJson = contentType.includes('application/json')
               ? ((await response.json().catch(() => ({}))) as {error?: string})
@@ -801,117 +812,9 @@ export function ExamHallSection({
           }
         } catch (err) {
           if (err instanceof TypeError || /network|failed to fetch|abort/i.test(String(err))) {
-            proxyMissingOnStaticHost = true;
-          } else if (!proxyMissingOnStaticHost && !allowSelfCheckFallback) {
-            throw err;
-          }
-        }
-
-        // Static PWA / Android APK 5-key pool direct Gemini fallback when no Express backend is present
-        if (!payload && proxyMissingOnStaticHost) {
-          const rawKeys = (import.meta.env.VITE_GEMINI_API_KEYS || '')
-            .split(',')
-            .map((k: string) => k.trim())
-            .filter(Boolean);
-
-          if (rawKeys.length === 0) {
             allowSelfCheckFallback = true;
-          } else {
-            const systemInstruction = `
-You are a strict, uncompromising Class 12 PCMB Examiner inside the Quadra 12 Examination Hall evaluating a batch of subjective answers across Sections B, C, D, and E (for 33-question PCB or 38-question Mathematics sample papers). For every submitted question, you are given the Question Number, Question Text, Max Marks, the Official Marking Scheme extracted from Quadra 12's Marking Scheme PDF, and the student's answer photo and/or typed response.
-
-RULE 1: STRICT IMAGE & TEXT GATEKEEPER ("red" / 0 MARKS) — ZERO GUESSING
-- Invalid Objects: Carefully inspect every image. If a photo shows decorative patterns, textures, wallpaper, cloth prints, fabric, bedsheet, clothes, floor, wall, desk, phone screen, hand, face, random object, or anything other than a handwritten/typed PCMB answer, IMMEDIATELY set status to "red", marks_awarded to 0, and feedback to: "Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer."
-- Hazy / Unreadable Handwriting: If a photo is blurry, hazy, dark, cut off, or equations/text cannot be read with 100% certainty, DO NOT guess. Set status to "red", marks_awarded to 0, and feedback to: "Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer."
-- Gibberish / Nonsense Text: If typed text is random keystrokes, nonsense, or irrelevant filler, set status to "red", marks_awarded to 0, and feedback to: "Submission Disqualified (0 Marks): Response was gibberish, irrelevant, or did not show a valid written answer."
-- Wrong Core Concept: If formula/proof/concept contradicts the Marking Scheme PDF, set status to "red" and award 0 marks.
-
-RULE 2: STRICT STEP-MARKING AGAINST THE MARKING SCHEME PDF ("yellow" vs "green")
-- "yellow" (Partial Marks): Only when legible AND at least one explicit value point in the Marking Scheme PDF is accurately completed.
-- "green" (Full Marks): Only when legible AND every step, value point, final answer, and SI unit matches completely.
-
-Return ONLY valid JSON matching { questionGrades: [{ questionId, status, marks_awarded, max_marks, feedback, exact_model_answer }], examSummary: { weakTopics, improvementTips, examinerRemarks } }.
-`.trim();
-
-            const manifest = bundleQuestions.map((q) => ({
-              questionId: q.questionId,
-              questionNumber: q.questionNumber,
-              section: q.section,
-              max_marks: q.marks,
-              prompt: q.prompt,
-              internalChoiceOR: q.orPrompt ?? null,
-              caseContext: q.caseContext ?? null,
-              studentTypedAnswer: q.studentText.trim() || null,
-              markingKey: q.markingKey,
-            }));
-
-            const restParts: Array<
-              {text: string} | {inlineData: {mimeType: string; data: string}}
-            > = [
-              {
-                text: `Grade Sections B to E for ${activeSubject.name} (${activeSubject.code}).\n${JSON.stringify(manifest, null, 2)}`,
-              },
-            ];
-            for (const q of bundleQuestions) {
-              q.photos.forEach((p, idx) => {
-                restParts.push({
-                  text: `Attached Photo ${idx + 1} for questionId="${q.questionId}" (Q${q.questionNumber}):`,
-                });
-                restParts.push({
-                  inlineData: {mimeType: p.mimeType, data: p.base64Data},
-                });
-              });
-            }
-
-            const startIdx = Math.floor(Math.random() * rawKeys.length);
-            const models = ['gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-4-hydrogen'];
-            let sawRateLimitOrBusy = false;
-            outer: for (const modelName of models) {
-              for (let i = 0; i < rawKeys.length; i++) {
-                const key = rawKeys[(startIdx + i) % rawKeys.length];
-                try {
-                  const genConfig: Record<string, unknown> = {
-                    responseMimeType: 'application/json',
-                  };
-                  if (modelName !== 'gemini-4-hydrogen') {
-                    genConfig.temperature = 0.0;
-                  }
-                  const res = await fetch(
-                    `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(key)}`,
-                    {
-                      method: 'POST',
-                      headers: {'Content-Type': 'application/json'},
-                      body: JSON.stringify({
-                        systemInstruction: {parts: [{text: systemInstruction}]},
-                        contents: [{parts: restParts}],
-                        generationConfig: genConfig,
-                      }),
-                    },
-                  );
-                  if (res.status === 429 || res.status === 503) {
-                    sawRateLimitOrBusy = true;
-                    continue;
-                  }
-                  if (!res.ok) continue;
-                  const json = (await res.json()) as {
-                    candidates?: Array<{content?: {parts?: Array<{text?: string}>}}>;
-                  };
-                  const rawText = json.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
-                  if (rawText) {
-                    const parsed = JSON.parse(rawText) as GradingResponse;
-                    if (parsed && Array.isArray(parsed.questionGrades)) {
-                      payload = parsed;
-                      break outer;
-                    }
-                  }
-                } catch {
-                  sawRateLimitOrBusy = true;
-                }
-              }
-            }
-            if (!payload && sawRateLimitOrBusy) {
-              allowSelfCheckFallback = true;
-            }
+          } else if (!allowSelfCheckFallback) {
+            throw err;
           }
         }
       }
@@ -922,14 +825,14 @@ Return ONLY valid JSON matching { questionGrades: [{ questionId, status, marks_a
         );
       }
 
-      // Interactive Marking Scheme Self-Check Mode fallback (strictly when offline OR all 5 keys hit rate limit/503)
+      // Interactive Marking Scheme Self-Check Mode fallback (strictly when offline OR Gemini projects are unavailable/exhausted)
       if (!payload || !Array.isArray(payload.questionGrades)) {
         payload = {
           isSelfCheckMode: true,
           questionGrades: subjectiveQuestions.map((q) => {
-            const typed = textAnswers[q.id] ?? '';
+            const typed = (textAnswers[q.id] ?? '').trim();
             const photos = photosByQ[q.id] ?? [];
-            const hasAttempt = typed.trim().length > 0 || photos.length > 0;
+            const hasAttempt = typed.length > 0 || photos.length > 0;
             const entry = scheme[q.id];
             const preCheck = prefilterResults[q.id];
 
@@ -947,16 +850,59 @@ Return ONLY valid JSON matching { questionGrades: [{ questionId, status, marks_a
               };
             }
 
+            if (!hasAttempt) {
+              return {
+                questionId: q.id,
+                status: 'grey',
+                marks_awarded: 0,
+                max_marks: q.marks,
+                feedback:
+                  'Unattempted question (0 marks awarded). Gemini AI evaluation is unavailable; review the step-by-step model answer below.',
+                exact_model_answer: entry?.exactModelAnswer ?? 'Standard board step-marking key.',
+              };
+            }
+
+            const lowerTyped = typed.toLowerCase();
+            const checksCompleted: string[] = [
+              'Non-empty & gibberish/blur local validation passed',
+            ];
+            if (typed.length > 0 && entry?.finalAnswerValue) {
+              const target = entry.finalAnswerValue.trim().toLowerCase();
+              const matched = target.length > 0 && lowerTyped.includes(target);
+              checksCompleted.push(
+                matched
+                  ? `Final answer match found ("${entry.finalAnswerValue}")`
+                  : `Final answer "${entry.finalAnswerValue}" not found verbatim in typed text`,
+              );
+            }
+            if (typed.length > 0 && entry?.stepMarks?.length) {
+              const matchedSteps = entry.stepMarks.filter((s) => {
+                const terms = s.label
+                  .toLowerCase()
+                  .split(/[^a-z0-9.=+\-*/^]+/)
+                  .filter((t) => t.length >= 4);
+                return terms.length > 0 && terms.some((t) => lowerTyped.includes(t));
+              }).length;
+              checksCompleted.push(
+                `Marking-rule keyword comparison matched ${matchedSteps}/${entry.stepMarks.length} step checkpoints`,
+              );
+            }
+            if (photos.length > 0) {
+              checksCompleted.push(
+                `Photo upload check passed (${photos.length} image(s); handwritten grading unavailable without Gemini AI)`,
+              );
+            }
+
             return {
               questionId: q.id,
               status: 'grey',
               marks_awarded: 0,
               max_marks: q.marks,
-              feedback: hasAttempt
-                ? !isOnline
-                  ? 'Offline Self-Check Mode: No internet connection detected. Compare your response side-by-side with the Marking Scheme below and select Green, Yellow, or Red.'
-                  : 'Peak Rate-Limit Self-Check Mode: All 5 Gemini API keys reached temporary quota limits. Compare your response side-by-side with the Marking Scheme below and select Green, Yellow, or Red.'
-                : 'Unattempted question (0 marks awarded). Review the step-by-step model answer below.',
+              feedback: `${
+                !isOnline
+                  ? 'Offline Self-Check Mode (Gemini AI Evaluation Unavailable):'
+                  : 'Self-Check Mode Active (Gemini AI Evaluation Unavailable):'
+              } No AI evaluation was performed. Completed checks: ${checksCompleted.join('; ')}. Compare your response against the Marking Scheme below and choose Green, Yellow, or Red.`,
               exact_model_answer:
                 entry?.exactModelAnswer ?? 'Standard board step-marking key.',
             };
@@ -966,12 +912,13 @@ Return ONLY valid JSON matching { questionGrades: [{ questionId, status, marks_a
               'Self-check your attempted subjective answers against the CBSE Marking Scheme PDF below',
             ],
             improvementTips: [
-              'Use Full Marks (Green), Partial Marks (Yellow), and Incorrect (Red) buttons on each attempted question to compute your score.',
+              'Gemini AI evaluation is currently unavailable, so no AI grading was performed.',
+              'Deterministic input validation and marking-scheme keyword comparisons ran locally; use Full Marks (Green), Partial Marks (Yellow), and Incorrect (Red) to finalize scores.',
               'Always state core formulas, balanced equations, and SI units clearly.',
             ],
             examinerRemarks: !isOnline
-              ? 'Offline Mode active: Review your answers side-by-side with the Marking Scheme PDF and tap Green / Yellow / Red.'
-              : 'Peak Rate-Limit Fallback active: All 5 Gemini keys reached quota limits. Review your answers side-by-side with the Marking Scheme PDF and tap Green / Yellow / Red.',
+              ? 'Offline Self-Check Mode active (Gemini AI evaluation unavailable): Local validation and marking-scheme comparison completed. Use Green / Yellow / Red below.'
+              : 'Self-Check Mode active (Gemini AI evaluation unavailable): Local validation and marking-scheme comparison completed. Use Green / Yellow / Red below.',
           },
         };
       } else {
@@ -1019,12 +966,19 @@ Return ONLY valid JSON matching { questionGrades: [{ questionId, status, marks_a
             aiGrade && Number.isFinite(aiGrade.marks_awarded) ? aiGrade.marks_awarded : 0;
           const clampedAwarded =
             Math.round(Math.max(0, Math.min(q.marks, rawAwarded)) * 2) / 2;
-          const status: 'green' | 'yellow' | 'red' =
-            clampedAwarded >= q.marks ? 'green' : clampedAwarded > 0 ? 'yellow' : 'red';
+          const isSelfCheckPending = Boolean(payload?.isSelfCheckMode) && !aiGrade?.disqualified;
+          const status: 'green' | 'yellow' | 'red' | 'grey' = isSelfCheckPending
+            ? 'grey'
+            : clampedAwarded >= q.marks
+              ? 'green'
+              : clampedAwarded > 0
+                ? 'yellow'
+                : 'red';
 
           return {
             questionId: q.id,
             status,
+            disqualified: aiGrade?.disqualified,
             marks_awarded: clampedAwarded,
             max_marks: q.marks,
             feedback:
@@ -2204,7 +2158,9 @@ Return ONLY valid JSON matching { questionGrades: [{ questionId, status, marks_a
             <div className="flex items-center gap-3 text-xs font-medium tracking-[0.12em] text-[#A64B33] dark:text-[#D4785E]">
               <span className="w-5 h-px bg-[#A64B33] dark:bg-[#D4785E] shrink-0" aria-hidden="true" />
               <span>
-                Checked by Board AI Examiner · {activeSubject.name} ({activeSubject.code})
+                {gradingResult?.isSelfCheckMode
+                  ? `Self-Check Mode (Gemini AI Evaluation Unavailable) · ${activeSubject.name} (${activeSubject.code})`
+                  : `Checked by Board AI Examiner · ${activeSubject.name} (${activeSubject.code})`}
               </span>
             </div>
             <h1
@@ -2691,7 +2647,9 @@ Return ONLY valid JSON matching { questionGrades: [{ questionId, status, marks_a
                   {/* 2. AI Examiner Feedback */}
                   <div className="p-4 rounded-lg bg-[#EEF2FF]/70 dark:bg-[#23263E]/60 border border-[#C7D2FE] dark:border-[#3B3F68] space-y-2.5">
                     <p className="text-xs font-semibold text-[#312E81] dark:text-[#E0E7FF]">
-                      AI Board Examiner Feedback
+                      {gradingResult?.isSelfCheckMode
+                        ? 'Self-Check Validation & Marking Scheme (Gemini AI Unavailable)'
+                        : 'AI Board Examiner Feedback'}
                     </p>
                     <p className="text-sm text-[#1E1B4B] dark:text-[#E0E7FF] leading-relaxed">
                       {grade?.feedback ??

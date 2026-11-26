@@ -4,6 +4,12 @@ import express from 'express';
 import path from 'path';
 import {fileURLToPath} from 'url';
 import {GoogleGenAI, Type} from '@google/genai';
+import {
+  SequentialGeminiFailover,
+  buildDeterministicSelfCheckResponse,
+  isGibberishSubmissionText,
+  parseServerGeminiKeys,
+} from './server/geminiFailover';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -105,29 +111,21 @@ async function createServer() {
     next();
   });
 
+  const geminiFailover = new SequentialGeminiFailover();
+
   app.get('/api/health', (_req, res) => {
-    res.json({ok: true, service: 'quadra12-grading-proxy'});
+    const apiKeys = parseServerGeminiKeys();
+    const failoverStatus = geminiFailover.getPublicStatus(apiKeys.length);
+    res.json({
+      ok: true,
+      service: 'quadra12-grading-proxy',
+      ...failoverStatus,
+    });
   });
 
   app.post('/api/exam/grade', async (req, res) => {
     try {
-      const apiKeysStr =
-        process.env.VITE_GEMINI_API_KEYS ||
-        process.env.GEMINI_API_KEYS ||
-        process.env.GEMINI_API_KEY ||
-        '';
-      const apiKeys = apiKeysStr
-        .split(',')
-        .map((k) => k.trim())
-        .filter(Boolean);
-
-      if (apiKeys.length === 0) {
-        res.status(503).json({
-          error:
-            'GEMINI_API_KEYS or GEMINI_API_KEY is not configured. Configure it in the Secrets panel or .env file to run AI subjective grading.',
-        });
-        return;
-      }
+      const apiKeys = parseServerGeminiKeys();
 
       const body = req.body as GradeRequestBody | undefined;
       if (
@@ -137,6 +135,22 @@ async function createServer() {
         body.questions.length === 0
       ) {
         res.status(400).json({error: 'Invalid exam grading request payload.'});
+        return;
+      }
+
+      if (apiKeys.length === 0) {
+        const selfCheck = buildDeterministicSelfCheckResponse({
+          questions: body.questions,
+          unavailableReason:
+            'No server-side GEMINI_API_KEYS are configured on the backend.',
+          quotaExhausted: false,
+          retryAfterSeconds: 0,
+        });
+        res.status(503).json({
+          rateLimited: false,
+          error: selfCheck.unavailableReason,
+          ...selfCheck,
+        });
         return;
       }
 
@@ -156,74 +170,12 @@ RULE 2: STRICT STEP-MARKING AGAINST THE MARKING SCHEME PDF ("yellow" vs "green")
 Return ONLY valid JSON containing an array of graded results matching Quadra 12's grading schema, setting each question's palette color strictly to "grey", "red", "yellow", or "green".
 `.trim();
 
-      function isGibberishText(text: string): boolean {
-        const trimmed = text.trim();
-        if (!trimmed) return false;
-
-        // Catch symbol/punctuation spam like +_**(*&"&&"& or ??? or ***
-        if (/[_*&"$#@!~`\\|]{3,}|[+*_(&"]{4,}|([!@#$%^&*_+=~`|\\?])\1{2,}/.test(trimmed)) {
-          return true;
-        }
-
-        // Split on spaces & punctuation to inspect letter tokens regardless of attached symbols
-        const tokens = trimmed
-          .split(/[\s,=+*/()[\]{}_&^%$#@!~`"';:<>|\\?-]+/)
-          .filter(Boolean);
-
-        const lower = trimmed.toLowerCase();
-        const trivialFillers = new Set([
-          'hi', 'hello', 'hey', 'ok', 'okay', 'idk', 'na', 'nil', 'none', 'nothing',
-          'null', 'test', 'testing', 'abc', 'xyz', 'asdf', 'qwer', 'qwerty', 'zxcv',
-          'pass', 'skip', 'lol', 'bro', 'sir', 'mam', 'please', 'sorry', 'check',
-        ]);
-        if (
-          tokens.length === 1 &&
-          (trivialFillers.has(lower) ||
-            (/^[a-zA-Z]+$/.test(trimmed) &&
-              trimmed.length <= 4 &&
-              !/^(yes|no|dna|rna|atp|adp|emf|ohm|amp|mol|ph|cft|vbt|sn1|sn2|hiv|pcr)$/i.test(
-                trimmed,
-              )))
-        ) {
-          return true;
-        }
-        if (/^(.)\1{2,}$/i.test(lower)) return true;
-
-        // Check individual alpha tokens for vowel-less keyboard mash (e.g. Hhybxgz, kfkfjf)
-        const alphaTokens = tokens.filter((t) => /^[a-zA-Z]+$/.test(t));
-        let weirdWords = 0;
-        let shortConsonantFragments = 0;
-        for (const w of alphaTokens) {
-          if (w.length >= 5 && !/[aeiou]/i.test(w)) {
-            weirdWords++;
-          } else if (/[bcdfghjklmnpqrstvwxz]{5,}/i.test(w)) {
-            weirdWords++;
-          } else if (w.length >= 4 && /^(asdf|qwer|zxcv|hjkl|uiop|hhyb|kfkf)/i.test(w)) {
-            weirdWords++;
-          } else if (w.length <= 2 && !/[aeiou]/i.test(w)) {
-            shortConsonantFragments++;
-          }
-        }
-        if (weirdWords > 0 && weirdWords >= Math.ceil(alphaTokens.length / 2)) {
-          return true;
-        }
-        // Catch strings like "Fx,f,f,fk,kfkfjf..." where most fragments are meaningless consonant clusters
-        if (
-          alphaTokens.length >= 3 &&
-          shortConsonantFragments + weirdWords >= Math.ceil(alphaTokens.length * 0.7) &&
-          !/=/.test(trimmed)
-        ) {
-          return true;
-        }
-        return false;
-      }
-
       // Dynamically collect ONLY valid attempted questions for 1-call batch grading
       const attemptedQuestions = body.questions.filter((q) => {
         const hasText = q.studentText.trim().length > 0;
         const hasPhotos = Array.isArray(q.photos) && q.photos.length > 0;
         if (!hasText && !hasPhotos) return false;
-        if (!hasPhotos && isGibberishText(q.studentText)) return false;
+        if (!hasPhotos && isGibberishSubmissionText(q.studentText)) return false;
         return true;
       });
 
@@ -290,117 +242,107 @@ Return ONLY valid JSON containing an array of graded results matching Quadra 12'
           });
         }
 
-        const candidateModels = [
-          'gemini-3.1-flash-lite',
-          'gemini-3.8-flash',
-          'gemini-4-hydrogen',
-        ];
-
-        const startIndex = Math.floor(Math.random() * apiKeys.length);
-        let response: any = null;
-        let lastError: any = null;
-
-        for (const modelName of candidateModels) {
-          for (let i = 0; i < apiKeys.length; i++) {
-            const keyIdx = (startIndex + i) % apiKeys.length;
-            const currentKey = apiKeys[keyIdx];
+        const outcome = await geminiFailover.executeSequential(
+          apiKeys,
+          async ({apiKey, modelName}) => {
             const ai = new GoogleGenAI({
-              apiKey: currentKey,
+              apiKey,
               httpOptions: {headers: {'User-Agent': 'aistudio-build'}},
             });
 
-            try {
-              const configObj: any = {
-                systemInstruction,
-                responseMimeType: 'application/json',
-                responseSchema: {
-                  type: Type.OBJECT,
-                  properties: {
-                    questionGrades: {
-                      type: Type.ARRAY,
-                      items: {
-                        type: Type.OBJECT,
-                        properties: {
-                          questionId: {type: Type.STRING},
-                          status: {type: Type.STRING},
-                          marks_awarded: {type: Type.NUMBER},
-                          max_marks: {type: Type.NUMBER},
-                          feedback: {type: Type.STRING},
-                          exact_model_answer: {type: Type.STRING},
-                        },
-                        required: [
-                          'questionId',
-                          'status',
-                          'marks_awarded',
-                          'max_marks',
-                          'feedback',
-                          'exact_model_answer',
-                        ],
-                      },
-                    },
-                    examSummary: {
+            const configObj: any = {
+              systemInstruction,
+              responseMimeType: 'application/json',
+              responseSchema: {
+                type: Type.OBJECT,
+                properties: {
+                  questionGrades: {
+                    type: Type.ARRAY,
+                    items: {
                       type: Type.OBJECT,
                       properties: {
-                        weakTopics: {
-                          type: Type.ARRAY,
-                          items: {type: Type.STRING},
-                        },
-                        improvementTips: {
-                          type: Type.ARRAY,
-                          items: {type: Type.STRING},
-                        },
-                        examinerRemarks: {type: Type.STRING},
+                        questionId: {type: Type.STRING},
+                        status: {type: Type.STRING},
+                        marks_awarded: {type: Type.NUMBER},
+                        max_marks: {type: Type.NUMBER},
+                        feedback: {type: Type.STRING},
+                        exact_model_answer: {type: Type.STRING},
                       },
-                      required: ['weakTopics', 'improvementTips', 'examinerRemarks'],
+                      required: [
+                        'questionId',
+                        'status',
+                        'marks_awarded',
+                        'max_marks',
+                        'feedback',
+                        'exact_model_answer',
+                      ],
                     },
                   },
-                  required: ['questionGrades', 'examSummary'],
+                  examSummary: {
+                    type: Type.OBJECT,
+                    properties: {
+                      weakTopics: {
+                        type: Type.ARRAY,
+                        items: {type: Type.STRING},
+                      },
+                      improvementTips: {
+                        type: Type.ARRAY,
+                        items: {type: Type.STRING},
+                      },
+                      examinerRemarks: {type: Type.STRING},
+                    },
+                    required: ['weakTopics', 'improvementTips', 'examinerRemarks'],
+                  },
                 },
-              };
+                required: ['questionGrades', 'examSummary'],
+              },
+            };
 
-              if (modelName !== 'gemini-4-hydrogen') {
-                configObj.temperature = 0.0;
-              }
-
-              response = await Promise.race([
-                ai.models.generateContent({
-                  model: modelName,
-                  contents: {parts},
-                  config: configObj,
-                }),
-                new Promise((_, reject) =>
-                  setTimeout(() => reject(new Error('Gemini request timed out')), 10000),
-                ),
-              ]);
-              if (response && response.text) {
-                break;
-              }
-            } catch (err: any) {
-              lastError = err;
-              console.warn(`Model ${modelName} / key idx ${keyIdx} failed:`, err?.message || err);
+            if (modelName !== 'gemini-4-hydrogen') {
+              configObj.temperature = 0.0;
             }
-          }
-          if (response && response.text) {
-            break;
-          }
-        }
 
-        if (!response || !response.text) {
-          const errMsg = lastError instanceof Error ? lastError.message : 'High demand on Gemini AI examiners';
+            const result: any = await Promise.race([
+              ai.models.generateContent({
+                model: modelName,
+                contents: {parts},
+                config: configObj,
+              }),
+              new Promise((_, reject) =>
+                setTimeout(() => reject(new Error('Gemini request timed out')), 10000),
+              ),
+            ]);
+
+            if (!result || !result.text || !String(result.text).trim()) {
+              throw new Error('Empty grading response received from Gemini examiner.');
+            }
+            return result;
+          },
+        );
+
+        if (outcome.ok === false) {
+          if (outcome.badRequest) {
+            res.status(400).json({error: outcome.reason});
+            return;
+          }
+          const selfCheck = buildDeterministicSelfCheckResponse({
+            questions: body.questions,
+            unavailableReason: outcome.reason,
+            quotaExhausted: outcome.quotaExhausted,
+            retryAfterSeconds: outcome.retryAfterSeconds,
+          });
+          if (outcome.retryAfterSeconds > 0) {
+            res.setHeader('Retry-After', String(outcome.retryAfterSeconds));
+          }
           res.status(503).json({
-            rateLimited: true,
-            error: `AI Examiner models are temporarily busy (${errMsg}).`,
+            rateLimited: outcome.quotaExhausted,
+            error: outcome.reason,
+            ...selfCheck,
           });
           return;
         }
 
-        const rawText = (response.text ?? '').trim();
-        if (!rawText) {
-          res.status(502).json({
-            error: 'Empty grading response received from Gemini examiner.',
-          });
-          return;
-        }
+        const rawText = String(outcome.data.text ?? '').trim();
 
         const parsed = JSON.parse(rawText) as {
           questionGrades?: Array<{
@@ -443,7 +385,7 @@ Return ONLY valid JSON containing an array of graded results matching Quadra 12'
           };
         }
 
-        if (!hasPhotos && isGibberishText(q.studentText)) {
+        if (!hasPhotos && isGibberishSubmissionText(q.studentText)) {
           return {
             questionId: q.questionId,
             status: 'red',
