@@ -313,10 +313,33 @@ Return ONLY valid JSON containing an array of graded results matching Quadra 12'
               ),
             ]);
 
-            if (!result || !result.text || !String(result.text).trim()) {
+            const rawText = String(result?.text ?? '')
+              .trim()
+              .replace(/^```(?:json)?\s*/i, '')
+              .replace(/\s*```$/i, '')
+              .trim();
+            if (!rawText) {
               throw new Error('Empty grading response received from Gemini examiner.');
             }
-            return result;
+            const parsedJson = JSON.parse(rawText) as {
+              questionGrades?: Array<{
+                questionId: string;
+                status?: string;
+                marks_awarded: number;
+                max_marks: number;
+                feedback: string;
+                exact_model_answer: string;
+              }>;
+              examSummary?: {
+                weakTopics?: string[];
+                improvementTips?: string[];
+                examinerRemarks?: string;
+              };
+            };
+            if (!parsedJson || !Array.isArray(parsedJson.questionGrades)) {
+              throw new Error('Malformed grading JSON received from Gemini examiner.');
+            }
+            return parsedJson;
           },
         );
 
@@ -342,23 +365,7 @@ Return ONLY valid JSON containing an array of graded results matching Quadra 12'
           return;
         }
 
-        const rawText = String(outcome.data.text ?? '').trim();
-
-        const parsed = JSON.parse(rawText) as {
-          questionGrades?: Array<{
-            questionId: string;
-            status?: string;
-            marks_awarded: number;
-            max_marks: number;
-            feedback: string;
-            exact_model_answer: string;
-          }>;
-          examSummary?: {
-            weakTopics?: string[];
-            improvementTips?: string[];
-            examinerRemarks?: string;
-          };
-        };
+        const parsed = outcome.data;
 
         for (const item of parsed.questionGrades ?? []) {
           if (item?.questionId) {

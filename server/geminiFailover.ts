@@ -70,11 +70,16 @@ export function parseServerGeminiKeys(
   env: Record<string, string | undefined> = process.env,
 ): string[] {
   const raw = env.GEMINI_API_KEYS || env.GEMINI_API_KEY || '';
-  return raw
-    .split(',')
-    .map((k) => k.trim())
-    .filter(Boolean)
-    .slice(0, MAX_PROJECTS);
+  const seen = new Set<string>();
+  const uniqueKeys: string[] = [];
+  for (const part of raw.split(',')) {
+    const trimmed = part.trim();
+    if (!trimmed || seen.has(trimmed)) continue;
+    seen.add(trimmed);
+    uniqueKeys.push(trimmed);
+    if (uniqueKeys.length >= MAX_PROJECTS) break;
+  }
+  return uniqueKeys;
 }
 
 export function isFreeTierGeminiModel(modelName: string): modelName is FreeTierGeminiModel {
