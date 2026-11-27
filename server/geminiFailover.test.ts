@@ -206,10 +206,91 @@ test('buildDeterministicSelfCheckResponse performs deterministic validation and 
   assert.equal(result.isSelfCheckMode, true);
   assert.equal(result.geminiUnavailable, true);
   assert.equal(result.questionGrades[0].status, 'grey');
+  assert.equal(result.questionGrades[0].marks_awarded, 0);
   assert.equal(result.questionGrades[1].status, 'red');
   assert.equal(result.questionGrades[1].disqualified, true);
+  assert.equal(result.questionGrades[1].marks_awarded, 0);
   assert.equal(result.questionGrades[2].status, 'grey');
+  assert.equal(result.questionGrades[2].marks_awarded, 0);
   assert.ok(result.questionGrades[2].feedback.includes('No AI evaluation was performed'));
   assert.ok(result.questionGrades[2].feedback.includes('5 ohm'));
   assert.ok(result.examSummary.examinerRemarks.includes('Gemini AI Evaluation Unavailable'));
+});
+
+test('auth_error (401/403 API_KEY_INVALID) is never retried repeatedly and advances cleanly to Project 2', async () => {
+  let clock = 10_000_000;
+  const failover = new SequentialGeminiFailover(() => clock);
+  const keys = ['invalid_p1', 'valid_p2', 'valid_p3', 'valid_p4', 'valid_p5'];
+
+  const firstOrder: number[] = [];
+  const res1 = await failover.executeSequential(keys, async ({projectNumber}) => {
+    firstOrder.push(projectNumber);
+    if (projectNumber === 1) {
+      const err = new Error('403 PERMISSION_DENIED API_KEY_INVALID') as Error & {
+        status?: number;
+      };
+      err.status = 403;
+      throw err;
+    }
+    return {projectNumber};
+  });
+  assert.equal(res1.ok, true);
+  assert.deepEqual(firstOrder, [1, 2]);
+
+  // Even days later, permanently invalid Project 1 credential is not retried
+  clock += 86_400_000;
+  const secondOrder: number[] = [];
+  const res2 = await failover.executeSequential(keys, async ({projectNumber}) => {
+    secondOrder.push(projectNumber);
+    return {projectNumber};
+  });
+  assert.equal(res2.ok, true);
+  assert.deepEqual(secondOrder, [2]);
+
+  const status = failover.getPublicStatus(5);
+  assert.equal(status.projects[0].status, 'auth_error');
+  assert.equal(status.projects[0].available, false);
+  assert.equal(status.projects[0].retryAfterSeconds, 0);
+});
+
+test('Gibberish, keyboard-mash, and symbol-spam inputs are disqualified at 0 marks in Self-Check Mode', () => {
+  const result = buildDeterministicSelfCheckResponse({
+    questions: [
+      {
+        questionId: 'spam-1',
+        questionNumber: 21,
+        marks: 3,
+        chapterTag: 'Electrostatics',
+        studentText: 'Fx,f,f,fk,kfkfjf+_**(*&"&&"&',
+        photos: [],
+        markingKey: {
+          exactModelAnswer: 'Sample answer',
+          stepMarks: [],
+          examinerCheckpoints: [],
+        },
+      },
+      {
+        questionId: 'spam-2',
+        questionNumber: 22,
+        marks: 2,
+        chapterTag: 'Optics',
+        studentText: '+_**(*&"&&"&',
+        photos: [],
+        markingKey: {
+          exactModelAnswer: 'Sample answer 2',
+          stepMarks: [],
+          examinerCheckpoints: [],
+        },
+      },
+    ],
+    unavailableReason: 'All projects down',
+    quotaExhausted: false,
+    retryAfterSeconds: 30,
+  });
+
+  for (const grade of result.questionGrades) {
+    assert.equal(grade.status, 'red');
+    assert.equal(grade.disqualified, true);
+    assert.equal(grade.marks_awarded, 0);
+  }
 });

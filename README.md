@@ -4,9 +4,9 @@
 [![Platforms](https://img.shields.io/badge/Platforms-Web%20%7C%20Offline%20PWA%20%7C%20Android%20APK%20(Free)-A64B33.svg?style=flat-square)](#10-installable-offline-pwa--free-standalone-android-apk-app-0)
 [![License](https://img.shields.io/badge/License-Independent%20Student%20Workspace-blue.svg?style=flat-square)](#disclaimers-terms--conditions-copyright-privacy--ai-fair-use)
 [![Framework](https://img.shields.io/badge/Stack-React%2019%20%7C%20Vite%20%7C%20Tailwind%20v4-emerald.svg?style=flat-square)](#tech-stack)
-[![AI Engine](https://img.shields.io/badge/AI%20Examiner-Gemini%20Flash%20(5--Key%20Pool)-indigo.svg?style=flat-square)](https://aistudio.google.com/)
+[![AI Engine](https://img.shields.io/badge/AI%20Examiner-Gemini%20Free%20Tier%20(5--Project%20Backend%20Failover)-indigo.svg?style=flat-square)](https://aistudio.google.com/)
 
-> **Quadra 12 v2.6.2 Active Release:** Features the advanced Examination Hall grading engine upgrade across all CBSE Class 12 PCMB Sample Papers (33-question PCB & 38-question Maths), featuring 5-key Gemini API pooling (`VITE_GEMINI_API_KEYS`), 1-call batch grading, canvas blank/blurry image pre-filtering with strict rejection feedback, offline PWA/APK self-check fallback, `temperature: 0.0` strict step-marking against official Marking Scheme PDFs, **Installable Offline PWA App**, and a **Free Standalone Android `.apk` App (`Quadra12-v2.6.2-Android.apk`)**.
+> **Quadra 12 v2.6.2 Active Release:** Features the Examination Hall grading engine across all CBSE Class 12 PCMB Sample Papers (33-question PCB & 38-question Maths), powered by a shared server-side Node/Express backend (`server.ts`) using 5 separate free-tier Google Cloud Gemini projects (`GEMINI_API_KEYS`), sequential failover with strict Google `429` quota compliance, 1-call batch grading, canvas blank/blurry image pre-filtering, strict gibberish/pattern gatekeepers, `VITE_PROXY_URL`-only frontend builds (Website, PWA, and Android APK), deterministic offline/unavailable **Self-Check Mode**, and a **Free Signed Android `.apk` (`Quadra12-v2.6.2-Android.apk`)**.
 
 - **Current Version:** `v2.6.2` (Active Release)
 - **Live Web & PWA App:** [https://ariyanpal1008.github.io/Quadra12/](https://ariyanpal1008.github.io/Quadra12/) *(Installable offline on Android, iOS/iPadOS, Windows & macOS)*  
@@ -33,7 +33,7 @@ Quadra 12 is a calm, distraction-free Class 12 CBSE PCMB (Physics 042, Chemistry
 | Examination Hall: Original Papers, PDFs & AI Examiner | 12th Hackers & Help Desk Interactive Tour |
 | :---: | :---: |
 | [![Quadra 12 Examination Hall v2.6 Original Mock Papers, Synced PDFs, SVG Diagrams and AI Examiner Preview](public/assets/showcase/exam-hall-v25.svg)](https://ariyanpal1008.github.io/Quadra12/) | [![Quadra 12 12th Hackers Playlist and Help Desk Suggestion Box Preview](public/assets/showcase/hackers-playlist-v25.svg)](https://ariyanpal1008.github.io/Quadra12/) |
-| **Independently Authored PCMB Papers**, **15-Min Reading Timer**, **Synced A4 PDF Downloads**, **Vector SVG Diagrams**, **Smart Camera/Upload Inputs**, and **Gemini 3.8 AI Step-Marking**. | **50 One-Shot Lectures** synced to `Lecture done`, 3 player embed modes, **Interactive Tour**, & Cloud Suggestion Box. |
+| **Independently Authored PCMB Papers**, **15-Min Reading Timer**, **Synced A4 PDF Downloads**, **Vector SVG Diagrams**, **Smart Camera/Upload Inputs**, and **Server-Side Gemini AI Step-Marking**. | **50 One-Shot Lectures** synced to `Lecture done`, 3 player embed modes, **Interactive Tour**, & Cloud Suggestion Box. |
 
 <details>
 <summary><strong>Step-by-Step Interactive Guide — How to Use Quadra 12</strong></summary>
@@ -41,12 +41,12 @@ Quadra 12 is a calm, distraction-free Class 12 CBSE PCMB (Physics 042, Chemistry
 1. **Live Board Exam Countdown Clock (`Overview`):** Counts every second down to **16 Feb at 10:30 AM IST**. Features rolling flip-clock digits, pacing urgency badges, and an **Auto: Feb 16 / Custom Date** picker. It automatically rolls over to the next year's exam once the current date passes.
 2. **My Achievements (`Overview`):** Click the compact **My Achievements** card to inspect all **9 Milestone Seals**, including **First Step**, **Quick Learner** (`3–5` chapters in one day), **Syllabus Sprinter** (`5` chapters in a single calendar day), **Four-Stage Purist**, **Subject Champion**, **Hall Debut**, **Exam Ready** (`>90%` score on a mock paper), **One-Shot Scholar**, and **Quadra 12 Grandmaster** (`50/50` chapters). Live unlock banners notify you from any view.
 3. **Subject Tracker:** Expand Physics (`14`), Chemistry (`10`), Biology (`13`), or Mathematics (`13`) chapters. Check off **Lecture**, **Practice**, **NCERT**, and **PYQ** checkpoints, view subject-level progress percentages, or inspect each chapter's custom interactive SVG illustration.
-4. **Examination Hall:** Select Physics (`042`), Chemistry (`043`), Biology (`044`), or Mathematics (`041`) to launch a 3-hour timed mock paper (starting with a **15-minute Reading Time** cool-off timer with an instant skip option) or export the **100% synced Question Paper PDF** and **Marking Scheme PDF** directly from each subject card. Includes real SVG diagrams & graphs, syllabus concept trend tags, Section A OMR bubble auto-grading, Sections B–E smart camera/photo uploads (`IndexedDB`) + typed drafts (`localStorage`), and `gemini-3.8-flash` AI step-by-step evaluation against 4 modular marking schemes. Download your Graded Report PDF before refreshing or closing results.
+4. **Examination Hall:** Select Physics (`042`), Chemistry (`043`), Biology (`044`), or Mathematics (`041`) to launch a 3-hour timed mock paper (starting with a **15-minute Reading Time** cool-off timer with an instant skip option) or export the **100% synced Question Paper PDF** and **Marking Scheme PDF** directly from each subject card. Includes real SVG diagrams & graphs, syllabus concept trend tags, Section A OMR bubble auto-grading, Sections B–E smart camera/photo uploads (`IndexedDB`) + typed drafts (`localStorage`), and server-proxied Gemini AI step-by-step evaluation (`gemini-3.1-flash-lite` / `gemini-4-hydrogen`) against 4 modular marking schemes. Download your Graded Report PDF before refreshing or closing results.
 5. **12th Hackers:** Stream unit-curated one-shot video lectures with key formulas, summaries, and timestamps. Checking off a lecture automatically updates `Lecture done` in the Subject Tracker.
 6. **Help Desk & Interactive Tour:** Access the **Help Desk** to explore the interactive visual tour sandbox, read syllabus notes, submit suggestions or bug reports via Google Sign-In, or access the Creator Inbox.
 7. **Terms & Conditions:** Tap the dull blue **Terms & Conditions · 2026** link in the footer to review personal educational self-assessment rules, zero-server browser storage privacy, Copyright, Fair Use, and Takedown Policy.
 8. **GitHub Repository:** Click the official bold **GitHub** link in the footer to inspect source code, contribute, or star the repository.
-9. **Install Offline PWA / Free Android APK:** Open **Settings → About** (or your browser's three-dot menu) to install Quadra 12 offline on Android, iPhone/iPad (*Add to Home Screen*), Windows, or macOS — or download `Quadra12-v2.6.1-Android.apk` from [GitHub Releases](https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.6.1) (saves A4 PDFs straight into `Downloads/Quadra12/`).
+9. **Install Offline PWA / Free Android APK:** Open **Settings → About** (or your browser's three-dot menu) to install Quadra 12 offline on Android, iPhone/iPad (*Add to Home Screen*), Windows, or macOS — or download `Quadra12-v2.6.2-Android.apk` from [GitHub Releases](https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.6.2) (saves A4 PDFs straight into `Downloads/Quadra12/`).
 
 </details>
 
@@ -95,8 +95,8 @@ I am **AriYan Pal (Keśava Dāsa)** (`ariyanpal090@gmail.com`), a Class 12 stude
 - **15-Minute CBSE Reading Time Timer:** Every 3-hour paper opens in authentic cool-off Reading Mode (all answer inputs safely locked) with a one-click **"Skip Reading Time & Start Writing"** button.
 - **100% Synced Question Paper PDF & Marking Scheme PDF:** Each subject card exposes downloadable A4 **Question Paper PDF** and **Marking Scheme PDF** previews generated directly from the exact live question & marking scheme datasets (with the Marking Scheme securely locked during active exams until submission).
 - **Syllabus Concept & Board Trend Tags:** Every question displays a transparent concept importance & board trend tag (e.g., `High-Yield Concept • Electric Charges and Fields (Board Trend: 2016–2025)`).
-- **Sections B–E Smart Inputs & Dual Storage:** Direct device camera capture (`Take Photo`) and gallery upload (`Upload Image`) compressed client-side into browser `IndexedDB` (`SectionBE_PhotoStorage`), plus typed drafts in `localStorage` (`sectionBE_text_draft`) for accidental refresh recovery and **automatic permanent zero-trace wipe** the moment AI grading finishes (zero server storage).
-- **AI Board Examiner (`gemini-3.8-flash`):** Step-by-step grading anchored strictly to 4 modular subject marking schemes, returning color-coded palette feedback (Green / Yellow / Red / Grey), model answers, reference SVG diagrams, and a one-click **Graded Results PDF** export.
+- **Sections B–E Smart Inputs & Dual Storage:** Direct device camera capture (`Take Photo`) and gallery upload (`Upload Image`) compressed client-side into browser `IndexedDB` (`SectionBE_PhotoStorage`), plus typed drafts in `localStorage` (`sectionBE_text_draft`) for accidental refresh recovery and **automatic permanent zero-trace wipe** the moment evaluation finishes (zero server storage).
+- **Server-Proxied AI Board Examiner (`gemini-3.1-flash-lite` / `gemini-4-hydrogen`):** Frontend builds (Website, PWA, and Android APK) call only the shared backend proxy (`VITE_PROXY_URL/api/exam/grade` or `/api/exam/grade`) with zero API keys in the client. Step-by-step grading is anchored strictly to 4 modular subject marking schemes, returning color-coded palette feedback (Green / Yellow / Red / Grey), model answers, reference SVG diagrams, and a one-click **Graded Results PDF** export.
 
 ### 5. 12th Hackers One-Shot Video Workspace
 - Curated queue of 50 comprehensive one-shot YouTube lectures aligned with the latest syllabus.
@@ -137,7 +137,7 @@ I am **AriYan Pal (Keśava Dāsa)** (`ariyanpal090@gmail.com`), a Class 12 stude
 ### 10. Installable Offline PWA & Free Standalone Android `.apk` App (`$0`)
 - **Offline Progressive Web App (PWA):** Powered by `vite-plugin-pwa` (`injectManifest` via `src/sw.js`) enforcing Network-First HTML/JS/CSS updates with offline precaching for chapter tracking, countdown timer, SVG plates, and Google Fonts, plus custom `#1D1C17` brand icons (`192×192`, `512×512`, maskable safe-zone icon, and `180×180` Apple Touch Icon).
 - **1-Tap In-App Install & Offline Banner:** Built-in **Install App** trigger in the desktop navbar, `☰` mobile menu, and `Settings → About` (plus an automatic iOS Safari *Share → Add to Home Screen* modal guide and a live **Offline Mode** indicator when disconnected).
-- **Free Standalone Android `.apk` (`Quadra12-v2.6.0-Android.apk`):** Automatically built, permanently signed with Quadra 12's release keystore, and verified via `apksigner` in `.github/workflows/android-release.yml` on `main` pushes and `v*` releases. Includes native Android `CAMERA`, `READ_MEDIA_IMAGES`, `REQUEST_INSTALL_PACKAGES`, and storage permissions, `<queries>` camera/PDF/installer intents, plus a `QuadraAndroid` bridge (`MainActivity.java`) for `Downloads/Quadra12/` A4 PDF saving and in-app GitHub Releases APK update downloads.
+- **Free Standalone Android `.apk` (`Quadra12-v2.6.2-Android.apk`):** Automatically built, permanently signed with Quadra 12's release keystore, and verified via `apksigner` in `.github/workflows/android-release.yml` on `main` pushes and `v*` releases. Includes native Android `CAMERA`, `READ_MEDIA_IMAGES`, `REQUEST_INSTALL_PACKAGES`, and storage permissions, `<queries>` camera/PDF/installer intents, plus a `QuadraAndroid` bridge (`MainActivity.java`) for `Downloads/Quadra12/` A4 PDF saving and in-app GitHub Releases APK update downloads.
 
 ---
 
@@ -204,11 +204,15 @@ Quadra12/
 │   ├── firebase.ts                        # Firebase Auth (Google Sign-In) & Firestore integration
 │   ├── index.css                          # Tailwind CSS v4 & A4 @media print rules
 │   └── main.tsx                           # React entry point with ErrorBoundary
+├── server/
+│   ├── geminiFailover.ts                # Sequential 5-project failover, quota/auth cooldown & Self-Check engine
+│   └── geminiFailover.test.ts           # Unit tests for failover, 429 quota compliance & Self-Check Mode
+├── server.ts                            # Express API server (/api/health, /api/exam/grade, origin-allowlist CORS)
 ├── firebase-applet-config.json            # Public Firebase client config
 ├── firebase-blueprint.json                # Cloud Firestore database schema
 ├── firestore.rules                        # Secure Firestore security rules
 ├── index.html                             # SEO meta tags, OpenGraph, Twitter Cards & JSON-LD
-├── package.json                           # NPM dependencies and scripts
+├── package.json                           # Dependencies (tsx in dependencies) and npm scripts
 └── vite.config.ts                         # Vite configuration with relative base: './'
 ```
 
@@ -270,16 +274,22 @@ All personal study records, timestamps, and exam scores are preserved locally in
 
 ---
 
-## Release v2.6.2 Highlights
+## Release v2.6.2 Highlights & Backend Security Architecture
 
-- **Examination Hall PCMB Grading Engine (`v2.6.2`):** Upgraded 1-call batch grading for both 33-question PCB and 38-question Mathematics papers using a 5-key Gemini API pool (`VITE_GEMINI_API_KEYS` in git-ignored `.env`) with automatic 10s failover across active Gemini Vision models (`gemini-3.1-flash-lite`, `gemini-3.8-flash`, `gemini-4-hydrogen`).
-- **Pattern, Texture & Symbol-Spam Gatekeeper (`v2.6.2`):** Local HTML5 Canvas blank/blur pre-filter + strict AI Examiner gatekeeper (`temperature: 0.0`) immediately disqualifies decorative patterns, textures, cloth/bedsheets, invalid objects, hazy photos, and symbol-spam/gibberish text at `0 Marks (Red)`.
-- **Offline & Peak Rate-Limit Self-Check Mode (`v2.6.2`):** Interactive **Full Marks (Green)**, **Partial Marks (Yellow)**, and **Incorrect (Red)** self-check buttons activate strictly when offline or when all 5 keys hit rate limits (starting valid pending answers at `0`, never fake partial credit).
-- **Zero-Flicker Static Overview Shell, AI SEO & Frosted Glass Menu (`v2.6`–`v2.6.1`):** Clean header polish with installation relocated to **Settings → About**, `robots.txt` AI crawler permissions, Schema.org `@graph` JSON-LD, hash deep linking, network-first PWA Service Worker (`src/sw.js`), and free standalone Android APK (`Quadra12-v2.6.2-Android.apk`). (See `RELEASE_NOTES_v2.6.2.md` and `RELEASE.md` for full release notes.)
+- **Strict Client/Server Key Separation (`VITE_PROXY_URL` Only on Frontend):**
+  - **Website, Offline PWA & Android APK:** Compiled with only `VITE_PROXY_URL` and contain **zero** Gemini API keys in frontend source, Vite build variables, browser storage, or APK/PWA assets. All three clients share the same backend endpoint (`POST /api/exam/grade`).
+  - **Backend Server (`server.ts` & `server/geminiFailover.ts`):** Reads API keys exclusively from server-side environment variables (`GEMINI_API_KEYS` or `GEMINI_API_KEY`—never `VITE_*`), configures five separate free-tier Google Cloud projects in order (`Project 1` → `Project 5`), never logs or returns key values, and restricts cross-origin access via an explicit origin allowlist (`https://localhost`, `capacitor://localhost`, `https://ariyanpal1008.github.io`, `APP_URL`, and `ALLOWED_ORIGINS`).
+- **Sequential Five-Project Failover & Strict Google Quota Compliance:**
+  - **Temporary Service Failures (`500`, `502`, `503`, `504`, timeout):** Fails over sequentially (`Project 1` → `Project 5`) using free-tier models only (`gemini-3.1-flash-lite`, `gemini-4-hydrogen`), places failed slots in exponential backoff cooldown, and recovers back to `Project 1` once cooldown windows expire.
+  - **Quota / Rate Limits (`429 RESOURCE_EXHAUSTED`):** Honors Google's `retryDelay` / `Retry-After` instruction and stops without rotating across remaining projects to circumvent quota restrictions, switching immediately to Self-Check Mode until the quota window resets.
+  - **Invalid Credentials (`401` / `403` `API_KEY_INVALID` / `PERMISSION_DENIED`):** Distinguishes credential rejections from transient outages, permanently disables only that invalid slot for the server process lifetime (never repeatedly retrying permanently invalid keys or exposing credentials), and advances sequentially if a subsequent valid project exists.
+- **Pattern, Texture & Symbol-Spam Gatekeeper (`v2.6.2`):** Local HTML5 Canvas blank/blur pre-filter, deterministic gibberish/symbol-spam detector, and strict examiner prompt (`temperature: 0.0` where supported) immediately disqualify decorative patterns, textures, cloth/bedsheets, invalid objects, hazy photos, and random keystrokes/symbol spam at `0 Marks (Red)` (locked out of Self-Check credit).
+- **Strict Offline / Unavailable Self-Check Mode (`v2.6.2`):** Activates **only** when the device is offline or Gemini evaluation cannot proceed under the quota/service-failure rules. Runs deterministic validation and marking-scheme comparison locally, starts valid pending answers at `0` marks (never automatic partial credit), provides manual **Full Marks (Green)**, **Partial Marks (Yellow)**, and **Incorrect (Red)** buttons, and explicitly discloses that Gemini AI evaluation was unavailable.
+- **Zero-Flicker Static Overview Shell, AI SEO & Frosted Glass Menu (`v2.6`–`v2.6.2`):** Clean header polish with installation relocated to **Settings → About**, `robots.txt` AI crawler permissions, Schema.org `@graph` JSON-LD, hash deep linking, network-first PWA Service Worker (`src/sw.js`), and signed Android APK (`Quadra12-v2.6.2-Android.apk`). (See `RELEASE_NOTES_v2.6.2.md` and `RELEASE.md` for full release notes.)
 
 ---
 
-## Local Development & Build
+## Backend Deployment & GitHub Configuration (Web, PWA & APK)
 
 ```bash
 # 1. Clone repository
@@ -289,15 +299,24 @@ cd Quadra12
 # 2. Install dependencies
 npm install --legacy-peer-deps
 
-# 3. Start local development server
-npm run dev
-
-# 4. Type check with TypeScript compiler
+# 3. Run unit tests, type checks & build
+npm test
 npm run lint
-
-# 5. Build for production (outputs to dist/)
 npm run build
+
+# 4. Start backend + app (tsx is included in production dependencies)
+npm start
 ```
+
+### Production Hosting (Shared Backend for Website, PWA & Android APK)
+1. **Deploy the backend (`server.ts`)** on a Node host (e.g., Render Web Service):
+   - **Build Command:** `npm install --legacy-peer-deps && npm run build`
+   - **Start Command:** `npm start` (`tsx server.ts`)
+   - **Server Environment Variables:** `NODE_ENV=production` and `GEMINI_API_KEYS=key1,key2,key3,key4,key5` (or single `GEMINI_API_KEY`). Keep all keys strictly in server environment variables; never commit `.env`.
+   - **Health Check:** Verify `GET /api/health` returns `{"ok":true,"service":"quadra12-grading-proxy",...}` (zero key values exposed).
+2. **Connect GitHub Pages & Signed Android APK to your backend:**
+   - In your GitHub repository, go to **Settings → Secrets and variables → Actions** and set **`VITE_PROXY_URL`** to your deployed backend URL (without a trailing `/`).
+   - Do **not** add Gemini API keys to GitHub Actions frontend build variables. Both `.github/workflows/deploy.yml` and `.github/workflows/android-release.yml` bake only `VITE_PROXY_URL` into the Web/PWA and Android APK builds.
 
 ---
 
@@ -305,8 +324,8 @@ npm run build
 
 - **Independent Student Initiative:** Quadra 12 is an independent, non-commercial educational study workspace. All Class 12 PCMB mock papers, step-by-step marking schemes, and AI evaluations are provided strictly for personal educational self-assessment. Always verify official circulars and syllabus announcements on [cbse.gov.in](https://cbse.gov.in).
 - **Independently Authored Material & Intellectual Property:** All Class 12 PCMB mock papers, questions, case scenarios, numericals, embedded SVG diagrams/graphs, and step marking schemes on Quadra 12 are independently authored copyright-safe content. 12th Hackers YouTube lecture playlists belong to their respective educators and creators.
-- **Privacy, Browser Storage & Save Reminder (Zero Server Storage):** Typed drafts (`localStorage`) and attached photos (`IndexedDB`) stay solely inside the student's own browser during the exam for refresh protection, and are automatically and permanently wiped the moment AI grading finishes (zero server storage). Download your Graded Report / Marking Scheme PDF before refreshing or closing the results screen.
-- **AI Board Examiner Disclaimer:** Sections B to E subjective evaluation is performed by Gemini AI Vision (`gemini-3.1-flash-lite` / `gemini-3.8-flash` / `gemini-4-hydrogen`) as an automated practice examiner strictly for personal study guidance and self-assessment.
+- **Privacy, Browser Storage & Save Reminder (Zero Server Storage):** Typed drafts (`localStorage`) and attached photos (`IndexedDB`) stay solely inside the student's own browser during the exam for refresh protection, and are automatically and permanently wiped the moment grading finishes (zero server storage). Download your Graded Report / Marking Scheme PDF before refreshing or closing the results screen.
+- **AI Board Examiner Disclaimer:** Sections B to E subjective evaluation uses free-tier Gemini models (`gemini-3.1-flash-lite` / `gemini-4-hydrogen`) via the private backend proxy as an automated practice examiner strictly for personal study guidance and self-assessment; when offline or unavailable under quota/service rules, Quadra 12 transparently switches to manual Self-Check Mode.
 - **Copyright Claims & Takedown Policy:** If you are a copyright owner or authorized agent and believe any content on Quadra 12 infringes your copyright, please contact `ariyanpal090@gmail.com` for prompt resolution.
 
 ---

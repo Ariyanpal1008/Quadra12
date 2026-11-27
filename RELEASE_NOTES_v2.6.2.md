@@ -1,28 +1,31 @@
-# Quadra 12 v2.6.2 — Examination Hall PCMB Grading Engine Upgrade
+# Quadra 12 v2.6.2 — Release Notes
 
 **Tag:** `v2.6.2`  
-**Release Title:** `Quadra 12 v2.6.2 — Advanced CBSE PCMB Grading Engine, 5-Key Gemini Pool & 1-Call Batch Grading`
+**Release Title:** `Quadra 12 v2.6.2 — Server-Side Five-Project Failover, Strict Quota Compliance & Gatekeeper Hardening`
 
 ---
 
 ## What's New in v2.6.2
 
-### 1. Website + PWA + APK Compatibility & Key Protection
-* **Secure Environment Variables:** Stored 5 Gemini API keys in `.env` as `VITE_GEMINI_API_KEYS`, ensuring `.env` and `.env.local` are listed in `.gitignore` so GitHub never exposes private keys publicly.
-* **Offline PWA & APK Fallback:** Service Worker caches Question PDFs and Marking Scheme PDFs for fast offline access. If an exam is submitted offline, it automatically opens "Marking Scheme Self-Check Mode" without throwing network errors.
+### 1. Shared Backend Proxy Serving Website, PWA & Android APK
+* **Frontend Configuration (`VITE_PROXY_URL` Only):** Web, PWA (`src/sw.js`), and Android APK builds use only `VITE_PROXY_URL` and carry no Gemini API keys in source code, Vite build variables, browser storage, or compiled assets.
+* **Server-Side Secret Boundary (`GEMINI_API_KEYS`):** Five separate Google Cloud project keys (`Project 1` → `Project 5`, or fallback `GEMINI_API_KEY`) are stored exclusively in server-side environment variables, never logged or returned in API payloads, and accessed via origin-allowlisted CORS on `server.ts`.
+* **Production Runtime:** `package.json` configures `"start": "tsx server.ts"` with `tsx` in production `dependencies`, paired with `GET /api/health` and `POST /api/exam/grade`.
 
-### 2. 1-Call Batch Grading (33-Question PCB & 38-Question Maths)
-* **Local Section A MCQs:** Graded instantly in JavaScript (0 API calls).
-* **HTML5 Canvas Pre-Filter:** Automatically detects blank or extremely blurry subjective photos in Sections B–E and flags them as "red" (0 marks) with exact rejection feedback: `"Submission Disqualified (0 Marks): Photo was hazy/unreadable or did not show a valid written answer."`
-* **Single Batch Request:** Valid photos are compressed (max 800px width, 0.75 JPEG quality) and sent together in ONE single structured JSON batch request mapping each image to its question number and official marking scheme steps.
+### 2. Sequential Five-Project Failover & Strict Google Quota Compliance
+* **Free-Tier Models Only:** Evaluates subjective papers using free-tier models (`gemini-3.1-flash-lite`, `gemini-4-hydrogen`) with no paid models or paid billing fallback.
+* **Temporary Outage Failover (`500` / `502` / `503` / `504` / timeout):** Attempts `Project 1` → `Project 2` → `Project 3` → `Project 4` → `Project 5` sequentially when a temporary upstream outage occurs, applies exponential cooldowns, and recovers back to `Project 1` after reset.
+* **HTTP `429 RESOURCE_EXHAUSTED` Compliance:** Respects Google's `retryDelay` / `Retry-After` guidance and stops without switching projects to evade exhausted quotas, activating Self-Check Mode until the quota resets.
+* **Authentication Error Isolation (`401` / `403`):** Permanently invalid credentials are disabled for the server process lifetime rather than repeatedly retried, and key details are never exposed.
 
-### 3. 5-Key Gemini Pool & Interactive Self-Check Fallback
-* **Round-Robin Key & Model Rotation:** Picks a starting key at random per submission and automatically fails over (10s timeout) across the 5-key pool using active Gemini Vision models (`gemini-3.1-flash-lite`, `gemini-3.8-flash`, `gemini-4-hydrogen`).
-* **Strict Offline / Rate-Limit Self-Check Mode:** Activates **only** when offline or when all 5 API keys reach `429`/`503` rate limits—never during normal online AI grading. Starts valid pending answers at `0` marks with side-by-side **Full Marks (Green)**, **Partial Marks (Yellow)**, and **Incorrect (Red)** buttons.
+### 3. 1-Call Batch Grading, Gatekeepers & Deterministic Self-Check Mode
+* **Local Section A MCQs:** Graded 100% locally in JavaScript (0 API calls).
+* **Gatekeepers:** Canvas blank/blurry photo pre-filtering, deterministic gibberish/symbol-spam disqualification, and strict examiner checks (`temperature: 0.0` where supported) lock invalid inputs—including patterns, textures, fabric, and keyboard mash—at `0 Marks (Red)` with no Self-Check credit.
+* **Strict Self-Check Mode Fallback:** Activates only when offline or when Gemini evaluation cannot proceed under quota/service rules. Valid pending answers start at `0` marks (no artificial partial credit), deterministic keyword/final-value checks run locally, manual **Full Marks (Green)**, **Partial Marks (Yellow)**, and **Incorrect (Red)** buttons appear where eligible, and the UI clearly states Gemini AI evaluation was unavailable.
 
-### 4. Strict Examiner System Prompt & Gatekeeper (`temperature: 0.0` + JSON)
-* **Pattern, Texture & Symbol-Spam Gatekeeper:** Instantly disqualifies decorative patterns, textures, cloth/bedsheets, invalid objects, hazy/unreadable handwriting, and symbol-spam/gibberish text at `0 Marks (Red)` (locked out of Self-Check credit).
-* **Precise Step-Marking:** Enforces strict partial marking ("yellow") only when steps match the official Marking Scheme PDF steps 100% legibly.
+### 4. Backend Deployment & GitHub Workflows
+* Host `server.ts` on Render with Build Command `npm install --legacy-peer-deps && npm run build`, Start Command `npm start`, `NODE_ENV=production`, and `GEMINI_API_KEYS` set in server environment variables.
+* Configure `VITE_PROXY_URL` (no trailing `/`) in GitHub **Settings → Secrets and variables → Actions**; `.github/workflows/deploy.yml` and `.github/workflows/android-release.yml` preserve all signing and release steps while reading only `VITE_PROXY_URL`.
 
 ---
 

@@ -64,7 +64,6 @@ const BASE_SERVICE_COOLDOWN_MS = 30_000;
 const MAX_SERVICE_COOLDOWN_MS = 300_000;
 const DEFAULT_QUOTA_COOLDOWN_MS = 60_000;
 const DAILY_QUOTA_COOLDOWN_MS = 900_000;
-const AUTH_ERROR_COOLDOWN_MS = 600_000;
 
 export function parseServerGeminiKeys(
   env: Record<string, string | undefined> = process.env,
@@ -156,8 +155,8 @@ export function classifyGeminiError(err: unknown): FailoverClassification {
   ) {
     return {
       kind: 'auth_error',
-      retryAfterMs: AUTH_ERROR_COOLDOWN_MS,
-      summary: `Project credential unavailable (${safeMessage})`,
+      retryAfterMs: Number.POSITIVE_INFINITY,
+      summary: 'Project credential invalid or permission denied',
     };
   }
 
@@ -237,10 +236,16 @@ export class SequentialGeminiFailover {
       const state = this.ensureState(projectNumber);
       this.refreshRecoveredState(state, now);
 
-      const inCooldown = state.cooldownUntil > now;
-      const waitSec = inCooldown ? Math.ceil((state.cooldownUntil - now) / 1000) : 0;
+      const isPermanentAuthError = state.cooldownReason === 'auth_error';
+      const inCooldown = isPermanentAuthError || state.cooldownUntil > now;
+      const waitSec =
+        isPermanentAuthError || !inCooldown
+          ? 0
+          : Math.ceil((state.cooldownUntil - now) / 1000);
       if (inCooldown) {
-        minWaitSec = Math.min(minWaitSec, waitSec);
+        if (!isPermanentAuthError && waitSec > 0) {
+          minWaitSec = Math.min(minWaitSec, waitSec);
+        }
         if (state.cooldownReason === 'quota_exhausted') {
           quotaCooldownActive = true;
           maxQuotaWaitSec = Math.max(maxQuotaWaitSec, waitSec);
@@ -328,6 +333,10 @@ export class SequentialGeminiFailover {
       const state = this.ensureState(projectNumber);
       this.refreshRecoveredState(state, now);
 
+      if (state.cooldownReason === 'auth_error') {
+        continue;
+      }
+
       if (state.cooldownUntil > now) {
         const waitSec = Math.max(1, Math.ceil((state.cooldownUntil - now) / 1000));
         minWaitSeconds = Math.min(minWaitSeconds, waitSec);
@@ -401,13 +410,11 @@ export class SequentialGeminiFailover {
             state.consecutiveFailures += 1;
             state.lastFailureAt = failureTime;
             state.cooldownReason = 'auth_error';
-            state.cooldownUntil = failureTime + classified.retryAfterMs;
-            const waitSec = Math.ceil(classified.retryAfterMs / 1000);
-            state.lastRetryAfterSeconds = waitSec;
-            minWaitSeconds = Math.min(minWaitSeconds, waitSec);
-            lastReason = `Project ${projectNumber} credential rejected.`;
+            state.cooldownUntil = Number.POSITIVE_INFINITY;
+            state.lastRetryAfterSeconds = null;
+            lastReason = `Project ${projectNumber} credential invalid or permission denied.`;
             console.warn(
-              `[GeminiFailover] Project ${projectNumber} credential rejected; advancing sequentially.`,
+              `[GeminiFailover] Project ${projectNumber} credential rejected; disabling for process lifetime and advancing sequentially.`,
             );
             projectServiceFailed = true;
             break;
