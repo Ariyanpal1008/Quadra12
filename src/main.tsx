@@ -19,10 +19,19 @@ if (isNativeCapacitor) {
       .then((regs) => Promise.all(regs.map((r) => r.unregister())))
       .catch(() => {});
   }
-} else {
-  // Silent offline caching without forced controllerchange page reloads
-  registerSW({
-    immediate: false,
+} else if (import.meta.env.PROD) {
+  const updateSW = registerSW({
+    immediate: true,
+    onNeedRefresh() {
+      window.dispatchEvent(
+        new CustomEvent('quadra12-sw-update', {
+          detail: {applyUpdate: () => updateSW(true)},
+        }),
+      );
+    },
+    onOfflineReady() {
+      window.dispatchEvent(new CustomEvent('quadra12-sw-offline-ready'));
+    },
   });
 }
 

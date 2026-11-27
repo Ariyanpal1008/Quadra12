@@ -1,233 +1,51 @@
-# Quadra 12 — Exhaustive Technical & Syllabus Reference for AI Systems
+# Quadra 12 (v3.0.0) — Exhaustive Technical & Syllabus Reference
 
-> This document provides an exhaustive, structured knowledge base for Large Language Models (LLMs), AI assistants, automated search crawlers, and evaluators analyzing the Quadra 12 Class 12 CBSE PCMB Academic Workspace.
+> Structured technical reference for search engines and crawlers analyzing Quadra 12 Class 12 CBSE PCMB Academic Workspace (`v3.0.0`).
 
 - **Canonical URL:** https://ariyanpal1008.github.io/Quadra12/
 - **Repository:** https://github.com/Ariyanpal1008/Quadra12
-- **Android APK Releases:** https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.6.1
+- **Android APK Releases:** https://github.com/Ariyanpal1008/Quadra12/releases/tag/v3.0.0
 - **Summary Document:** https://ariyanpal1008.github.io/Quadra12/llms.txt
-- **Author:** Ariyan Pal (Keśava Dāsa) (`ariyanpal090@gmail.com`)
-- **Copyright:** © 2026 Quadra 12 · Creator: Ariyan Pal (Keśava Dāsa)
-- **Version:** `v2.6.1`
-- **Distribution Platforms:** Web Application + Installable Offline PWA (`vite-plugin-pwa`) + Free Standalone Android `.apk` (`Quadra12-v2.6.1-Android.apk` via Capacitor 8 + Gradle)
-- **Framework & Runtime:** React 19, TypeScript 5, Vite 8, `vite-plugin-pwa` (Workbox), Capacitor 8 (Android APK), Tailwind CSS v4, Motion (`motion/react`), Three.js (WebGL), `jsPDF` + `html2canvas-pro` (A4 PDF export), QRCode, jsQR, Native Web Audio API, Firebase Firestore & Authentication.
+- **Author:** AriYan Pal (Keśava Dāsa) (`ariyanpal090@gmail.com`)
+- **Copyright:** © 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)
+- **Version:** `v3.0.0`
+- **Distribution Platforms:** Web Application + Installable Offline PWA (`vite-plugin-pwa`) + Signed Standalone Android `.apk` (`Quadra12-v3.0.0-Android.apk` via Capacitor 8 + Gradle)
+- **Framework & Runtime:** React 19, TypeScript 5, Vite 8, `vite-plugin-pwa` (Workbox `injectManifest`), Capacitor 8 (Android APK), Tailwind CSS v4, Motion (`motion/react`), Three.js (WebGL), `jsPDF` + `html2canvas-pro` (local A4 PDF export), Native Web Audio API, Firebase Cloud Sync (optional 6-digit sync).
 
 ---
 
-## 1. Complete Syllabus Taxonomy (All 50 Chapters)
+## 1. Syllabus & Study Libraries (All 50 NCERT Chapters)
 
-### Subject 1: Physics (CBSE Code 042) — 14 Chapters, 70 Marks Theory
-1. `phy-1`: **Electric Charges and Fields** (Electrostatics I: Coulomb's law, electric field lines, Gauss's law and applications)
-2. `phy-2`: **Electrostatic Potential and Capacitance** (Potential difference, equipotential surfaces, dielectrics, parallel plate capacitors)
-3. `phy-3`: **Current Electricity** (Ohm's law, drift velocity, Kirchhoff's rules, Wheatstone bridge, internal resistance)
-4. `phy-4`: **Moving Charges and Magnetism** (Biot-Savart law, Ampere's circuital law, solenoid, Lorentz force, cyclotron)
-5. `phy-5`: **Magnetism and Matter** (Bar magnet, magnetic dipole, Gauss's law in magnetism, magnetic properties of materials)
-6. `phy-6`: **Electromagnetic Induction** (Faraday's laws, Lenz's law, eddy currents, self & mutual inductance)
-7. `phy-7`: **Alternating Current** (AC voltage across LCR series circuits, resonance, power factor, transformers)
-8. `phy-8`: **Electromagnetic Waves** (Displacement current, electromagnetic spectrum, wavelengths and frequencies)
-9. `phy-9`: **Ray Optics and Optical Instruments** (Refraction, total internal reflection, lens maker's formula, compound microscope, telescope)
-10. `phy-10`: **Wave Optics** (Huygens principle, wavefronts, Young's double slit interference, single slit diffraction)
-11. `phy-11`: **Dual Nature of Radiation and Matter** (Photoelectric effect, Einstein's photoelectric equation, de Broglie relation)
-12. `phy-12`: **Atoms** (Rutherford alpha scattering, Bohr model of hydrogen atom, energy level diagrams, spectral lines)
-13. `phy-13`: **Nuclei** (Nuclear composition, mass defect, binding energy per nucleon, nuclear fission and fusion)
-14. `phy-14`: **Semiconductor Electronics: Materials, Devices and Simple Circuits** (Energy bands, p-n junction diode, rectifier circuits)
-
-### Subject 2: Chemistry (CBSE Code 043) — 10 Chapters, 70 Marks Theory
-1. `chem-1`: **Solutions** (Types of solutions, Raoult's law, colligative properties, van 't Hoff factor)
-2. `chem-2`: **Electrochemistry** (Galvanic cells, Nernst equation, conductance, Kohlrausch's law, fuel cells & batteries)
-3. `chem-3`: **Chemical Kinetics** (Rate of reaction, rate law, integrated rate equations, pseudo first-order, Arrhenius equation)
-4. `chem-4`: **d- and f-Block Elements** (Transition elements, lanthanoids, actinoids, catalytic properties, preparation of KMnO4 and K2Cr2O7)
-5. `chem-5`: **Coordination Compounds** (Werner's theory, IUPAC nomenclature, isomerism, Valence Bond Theory, Crystal Field Theory)
-6. `chem-6`: **Haloalkanes and Haloarenes** (Nomenclature, SN1 and SN2 reaction mechanisms, optical isomerism, polyhalogen compounds)
-7. `chem-7`: **Alcohols, Phenols and Ethers** (Hydroboration-oxidation, Reimer-Tiemann reaction, Kolbe's reaction, Williamson ether synthesis)
-8. `chem-8`: **Aldehydes, Ketones and Carboxylic Acids** (Nucleophilic addition, Aldol condensation, Cannizzaro reaction, acidic nature)
-9. `chem-9`: **Amines** (Gabriel phthalimide synthesis, Hoffmann bromamide degradation, carbylamine test, diazonium salts)
-10. `chem-10`: **Biomolecules** (Carbohydrates, glucose, proteins, amino acids, nucleic acids DNA & RNA, vitamins)
-
-### Subject 3: Biology (CBSE Code 044) — 13 Chapters, 70 Marks Theory
-1. `bio-1`: **Sexual Reproduction in Flowering Plants** (Microsporogenesis, megasporogenesis, pollination mechanisms, double fertilization)
-2. `bio-2`: **Human Reproduction** (Male and female reproductive systems, gametogenesis, menstrual cycle, fertilization and implantation)
-3. `bio-3`: **Reproductive Health** (Contraceptive methods, sexually transmitted infections, In Vitro Fertilization / ART techniques)
-4. `bio-4`: **Principles of Inheritance and Variation** (Mendelian genetics, incomplete dominance, linkage and recombination, sex determination)
-5. `bio-5`: **Molecular Basis of Inheritance** (DNA double helix structure, semiconservative replication, transcription, genetic code, operon concept)
-6. `bio-6`: **Evolution** (Origin of life, Darwinian evolution, adaptive radiation, Hardy-Weinberg equilibrium, human ancestry)
-7. `bio-7`: **Human Health and Disease** (Pathogens, malaria, immunity, vaccines, cancer biology, HIV/AIDS structure and transmission)
-8. `bio-8`: **Microbes in Human Welfare** (Household food processing, industrial fermenters, sewage treatment plants, biogas production, biocontrol)
-9. `bio-9`: **Biotechnology: Principles and Processes** (Restriction endonucleases, gel electrophoresis, plasmids, PCR amplification, bioreactors)
-10. `bio-10`: **Biotechnology and Its Applications** (Bt cotton, RNA interference, recombinant insulin, gene therapy, transgenic animals)
-11. `bio-11`: **Organisms and Populations** (Abiotic factors, adaptations, population growth curves, mutualism, parasitism, competition)
-12. `bio-12`: **Ecosystem** (Productivity, decomposition, energy flow 10% law, ecological pyramids)
-13. `bio-13`: **Biodiversity and Conservation** (Species-area relationship, latitudinal gradients, causes of biodiversity loss, in-situ & ex-situ conservation)
-
-### Subject 4: Mathematics (CBSE Code 041) — 13 Chapters, 80 Marks Theory
-1. `math-1`: **Relations and Functions** (Reflexive, symmetric, transitive relations, equivalence classes, one-to-one and onto functions)
-2. `math-2`: **Inverse Trigonometric Functions** (Definition, principal value branches, graphs of inverse trigonometric functions)
-3. `math-3`: **Matrices** (Matrix operations, symmetric and skew-symmetric matrices, elementary row transformations)
-4. `math-4`: **Determinants** (Properties of determinants, minors and cofactors, adjoint and inverse, solving systems of linear equations)
-5. `math-5`: **Continuity and Differentiability** (Chain rule, implicit differentiation, logarithmic differentiation, second order derivatives)
-6. `math-6`: **Application of Derivatives** (Rate of change of quantities, increasing and decreasing functions, maxima and minima problems)
-7. `math-7`: **Integrals** (Integration by substitution, partial fractions, integration by parts, fundamental theorem of calculus, properties of definite integrals)
-8. `math-8`: **Application of Integrals** (Area bounded by curves, parabolas, circles, and straight lines)
-9. `math-9`: **Differential Equations** (Order and degree, variable separable method, homogeneous differential equations, first order linear differential equations)
-10. `math-10`: **Vector Algebra** (Vectors and scalars, direction cosines, dot product, cross product, projection of vectors)
-11. `math-11`: **Three Dimensional Geometry** (Direction ratios, Cartesian and vector equations of lines, angle between lines, shortest distance between skew lines)
-12. `math-12`: **Linear Programming** (Objective function, constraints, graphical feasible region method, corner point method)
-13. `math-13`: **Probability** (Conditional probability, multiplication rule, Bayes' theorem, random variables and probability distributions)
+Every chapter across **Physics (042 — 14 chapters)**, **Chemistry (043 — 10 chapters)**, **Biology (044 — 13 chapters)**, and **Mathematics (041 — 13 chapters)** maintains 4 stage checkpoints (`lecture`, `practice`, `ncert`, `pyq`), explicit per-student `ChapterStudyStatus` (`Not Started | In Progress | Reviewed | Completed`), Study Library drawers (`physicsStudyLibrary.ts`, `chemistryStudyLibrary.ts`, `biologyStudyLibrary.ts`, `mathsStudyLibrary.ts`), SVG visual diagrams, and chapter practice links.
 
 ---
 
-## 2. Four-Stage Mastery Model
+## 2. Examination Hall v3.0.0 Architecture
 
-Every chapter tracks four distinct academic phases:
-1. **Lecture Done (`lecture`):** The student has watched a foundational concept lecture (e.g. 12th Hackers one-shot).
-2. **Practice Done (`practice`):** The student has solved practice problem sets and numerical exercises.
-3. **NCERT Done (`ncert`):** The student has read NCERT theory and answered in-text/back-exercise questions.
-4. **PYQ Done (`pyq`):** The student has solved CBSE Previous Years' Questions (10-year question bank).
+### Governance & Publication Gatekeeper (`canPublishExamPaper`)
+- Admits Main Exam Sheets strictly when `status` is `'Approved'` or `'Published'` AND paired with an `'Approved'` or `'Published'` `VerifiedMarkingScheme` covering every question in the sheet.
+- Blocks `Draft`, `Under Human Review`, `Archived`, or scheme-incomplete papers via explicit rejection reasons (`AuthorReviewPanel.tsx`).
+- During live timed exams, `stripAnswerKeysForActiveExam` strips `correctIndex` and solution keys from active question payloads.
 
-When all 4 stages are satisfied, the chapter is automatically logged as complete (`completedChapters[chapterId] = true`), triggering daily velocity updates and milestone evaluations. If any stage is unchecked, the chapter automatically relocks.
+### Deterministic OMR Evaluator & Immutable Snapshots (`examEvaluator.ts`)
+- 8 published Main Sheets (2 per subject: Competitive Paper I `+4/−1`, Board Sprint Paper II `+1/0`).
+- Supports 720 Verified Questions (`180/subject`) across `PracticeModeView.tsx` and exam assembly.
+- Unconditional post-submission access: even at `0` score or blank attempts, Results expose Question Breakdown, Marking Scheme, immutable `PracticeSheetSnapshot`, Study Library deep-links, Diagrams, and both local A4 PDFs (`Practice Sheet PDF` & `Marking Scheme PDF`).
 
----
-
-## 3. Examination Hall Architecture (v2.6)
-
-### Independently Authored Papers, Embedded SVG Diagrams & Concept Trend Tags
-- **Original Mock Papers:** 137 questions across Physics 042 (33 Qs, 70 Marks), Chemistry 043 (33 Qs, 70 Marks), Biology 044 (33 Qs, 70 Marks), and Mathematics 041 (38 Qs, 80 Marks), independently authored with recalculated numerical values and fresh case scenarios strictly for personal educational self-assessment.
-- **47 Embedded Vector SVG Diagrams:** 27 crisp question SVG diagrams/graphs (`diagramSvgsPart1.ts`) and 20 labeled reference solution SVG diagrams (`diagramSvgsPart2.ts`) rendered cleanly on screen and inside exported A4 PDFs.
-- **Syllabus Concept & Board Trend Tags:** Every question includes a transparent concept tag (e.g., `High-Yield Concept • Electric Charges and Fields (Board Trend: 2016–2025)`).
-- **15-Minute Reading Timer & 100% Synced A4 PDFs:** Exams begin with a 15-minute CBSE Reading Time cool-off timer (answer inputs locked, with a Skip button), and each subject card offers downloadable **Question Paper PDF** and **Marking Scheme PDF** modals powered by block-aware A4 PDF export (`pdfExporter.ts`) + `@media print`.
-
-### Sections B–E Smart Inputs & Zero-Server Browser Storage
-- **Direct Camera Capture:** `<input type="file" accept="image/*" capture="environment" />` opens device camera directly.
-- **Gallery File Picker:** `<input type="file" accept="image/*" />` for uploading handwritten derivations, circuits, ray diagrams, and mathematical proofs.
-- **In-Browser Image Compression:** Compresses all captured photos (max width 1024px, JPEG quality 0.7) before storage.
-- **Dual Browser Storage (Zero Server Storage):**
-  - `localStorage` (`sectionBE_text_draft`): Strictly holds student typed notes/equations inside the browser.
-  - `IndexedDB` (`SectionBE_PhotoStorage`): Dedicated browser database storing compressed image blobs (zero images inside `localStorage`).
-- **Accidental Refresh Recovery & Auto-Wipe:** Reloading restores saved work during the exam, and both storage areas are automatically and permanently wiped the exact moment AI grading finishes and the Final Results Dashboard renders. Students are reminded to download their Graded Report / Marking Scheme PDF before refreshing or closing results.
-
-### Modular Marking Schemes & Gemini 3.8 Flash AI Board Examiner
-- **Four Isolated Marking Scheme Files:** `physicsMarkingScheme.ts`, `chemistryMarkingScheme.ts`, `biologyMarkingScheme.ts`, and `mathsMarkingScheme.ts` mapping question IDs to granular step allocations (Formula, Derivation/Steps, Diagram/Labels, Final Answer with SI Units) and reference SVG diagrams.
-- **AI Examiner Pipeline:** Server-side route (`POST /api/exam/grade`) using `gemini-3.8-flash` (with automated multi-tier resilience fallback). Evaluates handwritten photos and typed responses strictly against the active subject's marking scheme.
-- **Post-Grading Palette Color System:**
-  - 🟢 **Green** = Full Marks
-  - 🟡 **Yellow** = Partial Marks
-  - 🔴 **Red** = Zero Marks
-  - ⚪ **Grey** = Unattempted
-- **Comprehensive Results Dashboard:** Total score & percentage, Overall and Sectional Accuracy %, Attempt breakdown, AI-diagnosed weak areas, improvement tips, examiner remarks, reference SVG diagrams, step-by-step model answers, and one-click Graded Results PDF download.
+### 2026–27 SQP Archive (`ArchiveExamView.tsx`)
+- Preserves historical v2.6.2 Class 12 CBSE sample papers strictly in read-only Archive view without overwriting Main Sheets or Active Exams.
 
 ---
 
-## 4. Native Web Audio API Synthesizer Specifications
+## 3. Multi-Student Isolation & Migration (`v3Storage.ts`)
 
-The sound engine is written entirely with the native browser Web Audio API (`src/utils/soundEffects.ts`) without external asset downloads:
-- **AudioContext Lifecycle:** Instantiated lazily on first user gesture to comply with browser autoplay policies.
-- **Master Gain:** Capped strictly between `0.08` and `0.15` to deliver Apple-style subtle tactile feedback.
-- **Sound Mapping:**
-  - `playCheckSound(true)`: Sine wave at 520 Hz dropping rapidly to 260 Hz over 60 ms.
-  - `playCheckSound(false)`: Softer reverse frequency tick (320 Hz → 420 Hz, 40 ms).
-  - `playThemeSwitchSound()`: Mechanical noise impulse burst (~35 ms) simulating physical toggle switch.
-  - `playOmrBubbleSound()`: Soft damped sine wave (380 Hz with steep exponential decay).
-  - `playAchievementChime()`: Two-note harmonic chime (C5 [523.25 Hz] → G5 [783.99 Hz], 280 ms decay).
-  - `playMasteryChime()`: Three-note chord (C5 → E5 → G5) signifying 100% subject syllabus mastery.
-  - `playExamCompletionChime()`: Resonant bell frequency (440 Hz + 880 Hz overtone) on timer expiration.
-- **Mute Control:** Integrated in sticky top navigation header; state persisted in `localStorage.pcmb_desk_sound_muted_v1`.
+- `ensureV2ToV3SafeMigration()` initializes v3 student profiles and attempt/status dictionaries without mutating or deleting any of the 17 legacy v2.6.2 `localStorage` keys.
+- Attempts, saved OMR drafts, `PracticeSheetSnapshot`s, and `ChapterStudyStatus` records are isolated per student profile (`profileId`).
 
 ---
 
-## 5. Milestone Achievements Engine
+## 4. Multi-Platform Distribution ($0 Free)
 
-9 distinct badges evaluated dynamically with reversible lock/unlock mechanics:
-1. `first-step`: **First Milestone** — Mark 1 chapter stage complete.
-2. `four-stages`: **Four-Stage Purist** — Complete all 4 stages of any 1 chapter.
-3. `quick-learner`: **Quick Learner** — Complete 3 or more chapters within a single calendar day.
-4. `syllabus-sprinter`: **Syllabus Sprinter** — Complete 5 or more chapters within a single calendar day.
-5. `physics-specialist`: **Physics Specialist** — Complete 100% of the Class 12 Physics syllabus.
-6. `chemistry-maestro`: **Chemistry Maestro** — Complete 100% of the Class 12 Chemistry syllabus.
-7. `exam-ready`: **Exam Ready** — Score 90% or higher on any CBSE SQP in Examination Hall mode.
-8. `subject-champion`: **Subject Champion** — Master 2 full subjects to 100% completion.
-9. `quadra-grandmaster`: **Quadra 12 Grandmaster** — Achieve 100% completion across all 50 chapters (200 checkpoints).
-
----
-
-## 6. Upcoming 2027 Additions
-
-- **Focus:** Quadra 12 is dedicated to core PCMB for 2026–27 board examinations.
-- **Post-Exams Release:** Optional 5th and 6th subjects will be added:
-  - English Core (Code 301)
-  - Physical Education (Code 048)
-  - Computer Science (Python / SQL, Code 083)
-  - Fine Arts / Applied Arts (Code 049)
-
----
-
-## 7. Storage & Privacy Architecture
-
-All core academic data is saved exclusively in the client's local browser `localStorage`:
-- `pcmb_desk_theme_v1`
-- `pcmb_desk_sound_muted_v1`
-- `pcmb_desk_chapters_v1`
-- `pcmb_desk_chapter_tasks_v1`
-- `pcmb_desk_watched_v1`
-- `pcmb_desk_achievements_v1`
-- `pcmb_desk_daily_velocity_v1`
-- `pcmb_desk_exam_best_scores_v1`
-- `pcmb_desk_custom_board_date_v1`
-- `pcmb_desk_urgency_days_v1`
-- `pcmb_desk_show_pace_v1`
-- `pcmb_desk_embed_mode_v1`
-- `pcmb_desk_auto_advance_v1`
-- `pcmb_desk_sync_code_v1`
-- `pcmb_desk_auto_sync_v1`
-- `pcmb_desk_last_synced_v1`
-
-### Official Settings (`SettingsModal.tsx` — v2.6.1) & Floating Apple Frosted-Glass `☰` Menu
-Follows clean progressive disclosure: tapping the `☰` mobile menu opens a floating Apple frosted-glass overlay with a soft hazy backdrop (no downward page push), listing `Overview`, `Subject Tracker`, `Examination Hall`, `12th Hackers`, `Settings`, `About the Creator`, and `Help Desk`. Once `Settings` is tapped, it opens a two-pane Settings hub organized into 7 sections:
-1. **Cloud Sync:** Account-less 6-digit numeric Sync Code + scannable QR code (`?sync=XXXXXX`), an optional compact Camera icon beside the 6-digit input box (requests standard browser camera permission only when clicked, decodes QR via `jsQR`, auto-stops camera immediately, and falls back smoothly to manual 6-digit entry on cameraless PCs or if declined), Auto-Sync toggle, Push/Pull controls, and offline `.json` export/restore.
-2. **Audio & Tactile:** Native Web Audio API mute/unmute, 6 interactive micro-sound testers, and Light/Dark appearance switch.
-3. **3D Studio:** Interactive Three.js WebGL study models (Physics Galvanometer, Chemistry `[ML6]` Complex, Biology DNA Helix, Maths Cross-Product & Double Cone, and Grandmaster Trophy).
-4. **Exam & Urgency:** Custom board exam target date, Official Feb 16 rollover reset, urgency alert threshold (`15 / 30 / 60 / 90` days), and daily chapter pace hint toggle.
-5. **Player & Video:** Persistent default YouTube embed engine (`standard`, `pure`, `nocookie`) and auto-advance queue preference.
-6. **Privacy & Reset:** Live browser localStorage quota meter (`KB` / `MB` out of `5 MB`), isolated single-subject resets (Physics, Chemistry, Biology, Math), and Master Reset `(Danger Zone)` protected by a 2-step double-confirmation pop-up dialog.
-7. **About & Links:** `Version 2.6.1` stamp, creator credit (`Ariyan Pal / Keśava Dāsa`), and quick launch buttons for **Terms & Conditions · 2026** and the **Official GitHub Repository**.
-
-### Cloud Sync & Firestore Collections
-- **`syncSessions/{syncCode}`**: Account-less device pairing using a strict 6-digit numeric code (`^[0-9]{6}$`) and QR code URL (`?sync=XXXXXX`). Stores synced `completedChapters`, `chapterTasks`, `watchedLectures`, `bestScores`, `dailyChapterLog`, `achievements`, and `customBoardDate`. Collection listing (`allow list: if false`) is strictly blocked in `firestore.rules` to prevent scraping.
-- **`changeRequests`**: Optional community feedback and creator moderation updates.
-
-### Interactive Three.js 3D Study Studio (`ThreeLabModal.tsx`)
-Provides studio-lit procedural WebGL 3D study models with `RoomEnvironment`, `OrbitControls`, preset camera angles, and an Explode Model slider:
-1. `physics`: Moving-Coil Galvanometer (horseshoe magnet, soft-iron core, copper coil, pointer scale).
-2. `chemistry`: `[ML6]` Octahedral Coordination Complex (metal center, 6 ligands, d-orbital lobes).
-3. `biology`: Double-Helix DNA (sugar-phosphate backbones, complementary base-pair rungs).
-4. `maths`: Vector Cross Product (`a × b`) & Double Cone conic sections.
-5. `trophy`: Quadra 12 Grandmaster Medallion 3D trophy.
-
----
-
-## 8. Verified Creator Attribution
-
-- **Name:** Ariyan Pal (Keśava Dāsa)
-- **Role:** Independent Class 12 Student Developer
-- **Email:** `ariyanpal090@gmail.com`
-- **Copyright Statement:** `© 2026 Quadra 12 · Creator: Ariyan Pal (Keśava Dāsa)`
-- **Terms & Conditions:** Accessible in-app via the dedicated dull blue footer link.
-
----
-
-## 9. Multi-Platform App Distribution — Web, Offline PWA & Free Android APK ($0)
-
-Quadra 12 is engineered to run seamlessly across desktop browsers, installable mobile/desktop PWAs, and a free native Android `.apk` package—all at **$0 cost** with zero Google Play or App Store paywalls:
-
-### 1. Progressive Web App (`vite-plugin-pwa`)
-- **Manifest & Icons:** Configured in `vite.config.ts` (`base: './'`, `id: './'`, `start_url: './'`, `scope: './'`, `display: 'standalone'`, `theme_color: '#1E1B18'`, `background_color: '#F5F2EB'`). Uses crisp brand PNG icons generated in `public/`:
-  - `pwa-192x192.png` (192×192, `purpose: 'any'`)
-  - `pwa-512x512.png` (512×512, `purpose: 'any'`)
-  - `pwa-maskable-512x512.png` (420×420 centered safe-zone artwork on `#1D1C17` full-bleed canvas, `purpose: 'maskable'`)
-  - `apple-touch-icon.png` (180×180 iOS Safari Home Screen icon)
-- **Offline Caching & Service Worker:** `registerSW({ immediate: true })` in `src/main.tsx` activates Workbox precaching (up to 6 MiB per asset, excluding `/api/*` from navigation fallback, with `CacheFirst` Google Fonts caching) so the countdown timer, 50-chapter tracker, SVG plates, and local papers remain accessible offline.
-- **In-App Install UI & Offline Status:** `src/hooks/usePWAInstall.ts` + `src/components/PWAInstallButton.tsx` provide native `beforeinstallprompt` installation buttons inside `Settings → About` (`card`), plus a guided iOS Safari *Share → Add to Home Screen* instruction modal, browser 3-dot menu compatibility, and a live `OfflineIndicator` banner.
-
-### 2. Free Permanently Signed Android `.apk` (`Quadra12-v2.6.1-Android.apk`)
-- **Automated Signed CI & Release Pipeline:** `.github/workflows/android-release.yml` compiles `npm run build`, sets up Capacitor 8 (`@capacitor/core`, `@capacitor/cli`, `@capacitor/android`) via `scripts/configure-android.mjs` (`appId: "io.github.ariyanpal1008.quadra12"`, `server.androidScheme: "https"`), decodes `quadra12-release.jks` from GitHub Actions secrets, builds and verifies the permanently signed release APK via Gradle + `apksigner`, uploads the `Quadra12-v*-Android-APK` Actions artifact, and automatically publishes the `.apk` binary to GitHub Releases on `v*` tag pushes.
-- **Native Android Permissions & Camera/File/Installer Intents:** Injects `CAMERA`, `READ_MEDIA_IMAGES`, `READ_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE`, `REQUEST_INSTALL_PACKAGES`, `<uses-feature android:name="android.hardware.camera" />`, `<external-path>` in `res/xml/file_paths.xml`, and `<queries>` intents (`IMAGE_CAPTURE`, `GET_CONTENT`, `OPEN_DOCUMENT`, `VIEW` `application/pdf`, `VIEW` `application/vnd.android.package-archive`, `INSTALL_PACKAGE`) into `AndroidManifest.xml`, alongside Quadra 12 mipmap launcher icons.
-- **Native `QuadraAndroid` Bridge (`MainActivity.java`):** Extends Capacitor's `BridgeActivity` to request runtime permissions, route PDFs (`pdfExporter.ts`, `ExamPdfModal.tsx`, `ExamHallSection.tsx`) and JSON backups (`SettingsModal.tsx`) into `Downloads/Quadra12/` via `MediaStore.Downloads`, inspect installed `versionName`/`versionCode`, download signed GitHub Release APK updates via Android `DownloadManager` with live progress, and launch the system installer confirmation prompt.
+- **Web & Offline PWA:** `src/sw.js` (`CACHE_NAME = quadra12-v3.0.0-*`) + `src/main.tsx` (`quadra12-sw-update` prompt banner in `App.tsx`) + Workbox offline caching.
+- **Android Signed APK:** Built via `.github/workflows/android-release.yml` + `scripts/configure-android.mjs` (`versionCode = 3000 + GITHUB_RUN_NUMBER`) preserving permanent keystore secrets (`ANDROID_KEYSTORE_BASE64`, `ANDROID_KEY_ALIAS`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_PASSWORD`) and `apksigner` SHA-256 verification.
+- **Health Endpoint (`server.ts`):** Express serves `GET /api/health` returning `{ ok: true, service: 'quadra12-web', version: '3.0.0', mode: 'deterministic-local-exam-engine', timestamp }`.

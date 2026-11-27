@@ -117,7 +117,7 @@ const GUIDE_SECTIONS: {
       'Shows your combined progress across all 50 chapters (200 total checkpoints across Lecture, Practice, NCERT, and PYQ), plus quick cards for each subject.',
     howToUse: [
       'Check the Overall Syllabus Mastery bar to see how much of Class 12 PCMB is complete.',
-      'Click any of the 4 boxes inside Physics, Chemistry, Biology, or Maths cards to review subject-level progress.',
+      'Click any of the 4 boxes inside Physics, Chemistry, Biology, or Mathematics cards to review subject-level progress.',
       'Use quick links to jump straight into a Subject, Exam Hall paper, or 12th Hackers playlist.',
     ],
     icon: Compass,
@@ -125,27 +125,27 @@ const GUIDE_SECTIONS: {
   {
     id: 'subjects',
     title: 'Subject Tracker',
-    tagline: '50 Chapters × 4 Completion Checkboxes + Diagrams',
+    tagline: '50 Chapters × 4 Checkpoints + 4 Study Libraries',
     description:
-      'Contains every NCERT Class 12 chapter across Physics (14), Chemistry (10), Biology (13), and Mathematics (13), paired with 50 bespoke vector diagrams.',
+      'Contains every NCERT Class 12 chapter across Physics (14), Chemistry (10), Biology (13), and Mathematics (13), paired with Study Libraries, curated resources, SVG diagrams, and chapter practice questions.',
     howToUse: [
-      'Each chapter has 4 checkboxes: Lecture done, Practice done, NCERT done, and PYQ done.',
+      'Each chapter has 4 checkpoints (Lecture, Practice, NCERT, PYQ) plus an explicit per-student study status (Not Started, In Progress, Reviewed, Completed).',
       'Use the 4 Subject Banner toggles at the top of a subject to mark an entire stage across all chapters in one click.',
-      'Click any chapter title or diagram plate to open its large SVG study diagram and toggle its 4 checkboxes directly.',
+      'Open any chapter Study Library & Diagrams drawer right inside the tracker to study notes, formulas, SVG diagrams, and verified practice questions.',
     ],
     icon: BookOpen,
   },
   {
     id: 'exam',
     title: 'Examination Hall',
-    tagline: 'Original PCMB Papers, Synced A4 PDFs & AI Examiner',
+    tagline: 'Verified OMR Papers, 720-Q Practice Mode, 2026–27 Archive & Local A4 PDFs',
     description:
-      'Practice full Class 12 PCMB mock papers with a 15-minute Reading Time timer, real visual SVG diagrams & graphs, downloadable Question Paper & Marking Scheme A4 PDFs, smart camera/photo inputs, and Gemini 3.8 Flash AI step-marking.',
+      'Attempt 8 published OMR Mock Papers (180+ verified questions per subject in Practice Mode), review 2026–27 SQP Archive papers, enforce human-approved paper governance, and download Practice Sheet & Marking Scheme A4 PDFs locally.',
     howToUse: [
-      'Launch a 3-hour timed paper or open the 100% synced Question Paper PDF / Marking Scheme PDF buttons right from any subject card (Marking Scheme locks during an active test until submitted).',
-      'Use the 15-minute cool-off Reading Time timer (with Skip Reading Time option) before writing begins, then solve Section A MCQs with OMR audio taps.',
-      'For Sections B–E, type equations/notes or use Take Photo / Upload Image (stored locally in IndexedDB) for multi-page handwritten answers and diagrams.',
-      'Submit Test for gemini-3.8-flash AI step-marking against the modular marking scheme, review reference SVG diagrams, and download your Graded Report or Marking Scheme PDF before refreshing.',
+      'Launch a published Competitive (+4/−1) or Board Sprint (+1/0) OMR paper, or switch to Practice Mode (720 verified questions across PCMB) for instant explanations and chapter study-sheet links.',
+      'Your answers autosave per Student Profile in localStorage without affecting another profile or legacy v2.6.2 progress.',
+      'Even on 0-mark or unanswered attempts, submitting unlocks the full Question Breakdown, Marking Scheme, Practice Sheet snapshot, Study Library deep-links, Diagrams, and both local A4 PDFs.',
+      'Inspect Paper Governance & Review Rules inside Exam Hall or switch to the 2026–27 SQP Archive tab for read-only historical CBSE reference papers.',
     ],
     icon: ClipboardCheck,
   },
@@ -322,7 +322,7 @@ export function HelpDeskModal({
     if (!user || !user.emailVerified) {
       setSubmitMessage({
         type: 'error',
-        text: 'Please sign in with Google first (or use the Email Creator button below) so your suggestion is saved for Ariyan Pal (Keśava Dāsa).',
+        text: 'Please sign in with Google first (or use the Email Creator button below) so your suggestion is saved for AriYan Pal (Keśava Dāsa).',
       });
       return;
     }
@@ -366,7 +366,7 @@ export function HelpDeskModal({
       setDetails('');
       setSubmitMessage({
         type: 'success',
-        text: 'Suggestion saved! Ariyan Pal (Keśava Dāsa) can now review your addition or change request in the Creator Inbox.',
+        text: 'Suggestion saved! AriYan Pal (Keśava Dāsa) can now review your addition or change request in the Creator Inbox.',
       });
     } catch (error) {
       setSubmitMessage({
@@ -444,7 +444,7 @@ export function HelpDeskModal({
             <div className="px-5 sm:px-7 py-4 border-b border-[#DDD6C7] dark:border-[#332E28] flex flex-wrap items-center justify-between gap-4 shrink-0">
               <div>
                 <p className="text-xs font-medium tracking-[0.1em] text-[#A64B33] dark:text-[#D4785E]">
-                  Quadra 12 Support · Creator: Ariyan Pal (Keśava Dāsa)
+                  Quadra 12 Support · Creator: AriYan Pal (Keśava Dāsa)
                 </p>
                 <h2
                   id="helpdesk-modal-title"
@@ -707,7 +707,7 @@ export function HelpDeskModal({
                         Propose an Addition or Change
                       </h3>
                       <p className="mt-1 text-xs text-[#575048] dark:text-[#CBC3B6]">
-                        Anyone visiting Quadra 12 can submit ideas, corrections, or feature requests directly to Ariyan Pal (Keśava Dāsa).
+                        Anyone visiting Quadra 12 can submit ideas, corrections, or feature requests directly to AriYan Pal (Keśava Dāsa).
                       </p>
                     </div>
 
@@ -871,7 +871,7 @@ export function HelpDeskModal({
 
                     {!user ? (
                       <div className="p-5 rounded-xl border border-dashed border-[#DDD6C7] dark:border-[#332E28] text-xs text-[#787066] dark:text-[#9C9387] leading-relaxed">
-                        Sign in with Google on the left to submit cloud-synced requests and see status updates (<span className="font-medium">Submitted</span>, <span className="font-medium">Planned</span>, <span className="font-medium">Added</span>) from Ariyan Pal (Keśava Dāsa).
+                        Sign in with Google on the left to submit cloud-synced requests and see status updates (<span className="font-medium">Submitted</span>, <span className="font-medium">Planned</span>, <span className="font-medium">Added</span>) from AriYan Pal (Keśava Dāsa).
                       </div>
                     ) : myRequests.length === 0 ? (
                       <div className="p-5 rounded-xl border border-dashed border-[#DDD6C7] dark:border-[#332E28] text-xs text-[#787066] dark:text-[#9C9387]">
@@ -1052,7 +1052,7 @@ export function HelpDeskModal({
                             About the Creator
                           </h3>
                           <p className="text-xs text-[#787066] dark:text-[#9C9387]">
-                            Ariyan Pal (Keśava Dāsa) · Invented November 2026
+                            AriYan Pal (Keśava Dāsa) · Invented November 2026
                           </p>
                         </div>
                       </div>
@@ -1133,13 +1133,13 @@ export function HelpDeskModal({
                       <li className="flex items-start gap-2.5">
                         <span className="text-[#A64B33] dark:text-[#D4785E] font-semibold" aria-hidden="true">–</span>
                         <span>
-                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Privacy, Browser Storage &amp; Results PDF Reminder:</strong> Typed answers (<code className="font-mono">localStorage</code>) and attached photos (<code className="font-mono">IndexedDB</code>) remain solely inside your own browser during an active exam for refresh protection, and are automatically and permanently wiped the moment AI grading finishes (zero server storage). Always download your Graded Report or Marking Scheme PDF before refreshing or closing the results screen.
+                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Privacy, Offline Storage &amp; Local A4 PDFs:</strong> All OMR attempts, immutable Practice Sheet snapshots, student profiles, and study statuses stay locally on your device (<code className="font-mono">localStorage</code>) unless you explicitly enable optional 6-digit Cloud Sync. Every Practice Sheet PDF and Marking Scheme PDF is generated offline on your device via <code className="font-mono">jsPDF</code> with zero third-party AI calls.
                         </span>
                       </li>
                       <li className="flex items-start gap-2.5">
                         <span className="text-[#A64B33] dark:text-[#D4785E] font-semibold" aria-hidden="true">–</span>
                         <span>
-                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">AI Board Examiner Disclaimer:</strong> Sections B to E subjective evaluation is performed by <code className="font-mono">gemini-3.8-flash</code> as an automated practice examiner strictly for personal study guidance and self-assessment.
+                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Deterministic OMR &amp; Governance Disclaimer:</strong> Quadra 12 uses deterministic client-side marking schemes authored and human-reviewed before publication. Submitted results never restrict access to Practice Sheets, Marking Schemes, Study Libraries, or PDFs regardless of score.
                         </span>
                       </li>
                     </ul>

@@ -1,6 +1,7 @@
 import {useEffect} from 'react';
 import {AnimatePresence, motion} from 'motion/react';
 import {ShieldCheck, X} from 'lucide-react';
+import {APP_VERSION} from '../constants/version';
 import {APPLE_SPRING} from './FluidPrimitives';
 
 interface TermsModalProps {
@@ -55,10 +56,10 @@ export function TermsModal({isOpen, onClose}: TermsModalProps) {
                     className="text-base sm:text-lg font-bold text-[#1E1B18] dark:text-[#F5F2EB]"
                     style={{fontFamily: 'var(--font-display)'}}
                   >
-                    Terms &amp; Conditions (Copyright, Privacy &amp; AI Fair Use)
+                    Terms &amp; Conditions (Copyright, Privacy &amp; Self-Assessment)
                   </h2>
                   <p className="text-xs text-[#787066] dark:text-[#9C9387]">
-                    Quadra 12 · Class 12 CBSE PCMB Study Workspace
+                    Quadra 12 v{APP_VERSION} · Class 12 CBSE PCMB Study Workspace
                   </p>
                 </div>
               </div>
@@ -76,45 +77,45 @@ export function TermsModal({isOpen, onClose}: TermsModalProps) {
             <div className="p-6 sm:p-8 overflow-y-auto space-y-6 text-xs sm:text-sm text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
               <div className="p-4 sm:p-5 rounded-xl border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB]/60 dark:bg-[#24201C]/60 space-y-2">
                 <p className="font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
-                  Official Terms of Use, Privacy Policy &amp; Copyright Notice
+                  Official Terms of Use, Local Privacy Policy &amp; Copyright Notice
                 </p>
                 <p>
-                  Please review our terms of use, fair use guidelines, dual-storage privacy practices, and AI grading disclaimers governing Quadra 12.
+                  Please review our terms of use, fair use guidelines, offline-first browser storage architecture, and deterministic examination disclaimers governing Quadra 12 v{APP_VERSION}.
                 </p>
               </div>
 
               <ol className="space-y-4 list-decimal pl-5">
                 <li>
-                  <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Personal Educational Self-Assessment &amp; Non-Commercial Use:</strong> Quadra 12 is a free, non-commercial educational study workspace designed for Class 12 CBSE PCMB students. All Class 12 PCMB mock papers, visual vector diagrams and graphs, step-by-step marking schemes, synced A4 Question Paper &amp; Marking Scheme PDFs, and AI evaluations are provided strictly for personal educational self-assessment and not for commercial resale, scraping, or redistribution.
+                  <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Personal Educational Self-Assessment &amp; Non-Commercial Use:</strong> Quadra 12 is a 100% free ($0), non-commercial educational study workspace designed for Class 12 CBSE PCMB students. All 720 verified OMR questions, four NCERT Subject Study Libraries, visual SVG diagrams and graphs, human-approved marking schemes, downloadable A4 Practice Sheet &amp; Marking Scheme PDFs, and local OMR grading are provided strictly for personal educational self-assessment and not for commercial resale, scraping, or redistribution.
                 </li>
                 <li>
-                  <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Independently Authored Original Papers &amp; Intellectual Property:</strong> All Examination Hall mock papers, questions, case-study scenarios, recalculated numerical values, embedded SVG diagrams and graphs, and 4 modular subject marking schemes are independently authored, copyright-safe educational material created for Quadra 12. Embedded 12th Hackers YouTube lecture playlists belong to their respective educators and creators; Quadra 12 organizes them strictly for student revision convenience.
+                  <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Human-Approved Papers &amp; Intellectual Property:</strong> All active Examination Hall Main Sheets, marking schemes, chapter study sheets, and embedded vector SVG diagrams are independently authored, copyright-safe educational material created for Quadra 12. Embedded 12th Hackers YouTube lecture playlists belong to their respective educators and creators; Quadra 12 organizes them strictly for student revision convenience.
                 </li>
                 <li>
-                  <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Privacy &amp; Browser Storage (Zero Server Storage):</strong> To protect your privacy during 3-hour practice exams:
+                  <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Offline-First Local Storage &amp; Student Profile Isolation:</strong> To protect privacy and work 100% offline:
                   <ul className="mt-1.5 list-disc pl-5 space-y-1 text-xs">
-                    <li>Typed answers (<code className="font-mono">localStorage</code> under <code className="font-mono">sectionBE_text_draft</code>) and attached handwritten/diagram photos (<code className="font-mono">IndexedDB</code> under <code className="font-mono">SectionBE_PhotoStorage</code>, compressed client-side up to 1024px JPEG) stay solely inside your own browser during the exam for accidental refresh protection.</li>
-                    <li>Both local typed drafts and attached photos are automatically and permanently wiped from your browser storage the exact moment AI grading finishes and the Final Results Dashboard renders (zero server storage).</li>
-                    <li><strong>Important Save Reminder:</strong> Once results appear, please download your Graded Report PDF (or Marking Scheme PDF) before refreshing or closing the results screen, as temporary attempt buffers have already been wiped.</li>
+                    <li>Your chapter progress, countdown preferences, multi-student profiles, OMR attempt history, immutable Practice Sheet snapshots, and Practice Mode accuracy stay locally inside your browser&apos;s <code className="font-mono">localStorage</code> (no exam answers are sent to any external grading server).</li>
+                    <li>If you export a <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Practice Sheet PDF</strong> or <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Marking Scheme PDF</strong>, generation runs entirely locally on your device (saving directly to <code className="font-mono">Downloads/Quadra12/</code> on Android).</li>
+                    <li>Optional account-less Cloud Sync (<code className="font-mono">syncSessions</code>) transfers study progress only when you explicitly pair via your 6-digit sync code or QR code.</li>
                   </ul>
                 </li>
                 <li>
-                  <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">AI Board Examiner Disclaimer:</strong> Sections B to E subjective evaluation is performed by <code className="font-mono">gemini-3.8-flash</code> acting as an automated practice examiner. AI feedback, step-by-step scoring, and model answers are provided strictly for personal educational self-assessment and do not constitute official CBSE board marks or certified evaluation.
+                  <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Deterministic OMR Scoring &amp; Unconditional Resource Access:</strong> Examination Hall evaluations run 100% deterministically inside your browser against pre-approved, human-verified Marking Schemes (+4/-1 or +1/0 rules). Even if an attempt scores 0 marks (or negative net marks), your immutable Practice Sheet, Marking Scheme, Study Sheets, Diagrams, and A4 PDF downloads remain completely unlocked.
                 </li>
                 <li>
                   <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Copyright Claims &amp; Takedown Procedure:</strong> We respect intellectual property rights. If you believe any content or link on Quadra 12 infringes your copyright or if you wish to request a correction, please email <span className="font-mono text-[#1E1B18] dark:text-[#F5F2EB]">ariyanpal090@gmail.com</span> with: (a) identification of the copyrighted work, (b) the exact section on Quadra 12, and (c) your contact details. Valid inquiries are addressed promptly.
                 </li>
                 <li>
-                  <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Disclaimer of Warranties &amp; Limitation of Liability:</strong> Study schedules, countdown timers, AI-graded subjective scores, and OMR answer keys are provided &ldquo;as is&rdquo; without warranty of uninterrupted uptime or absolute error-free accuracy. Students should always verify official circulars and examination schedules on <span className="font-mono">cbse.gov.in</span>.
+                  <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Disclaimer of Warranties &amp; Limitation of Liability:</strong> Study schedules, countdown timers, practice OMR scores, and answer keys are provided &ldquo;as is&rdquo; strictly for personal self-assessment and do not constitute official CBSE board marks. Students should always verify official circulars and examination schedules on <span className="font-mono">cbse.gov.in</span>.
                 </li>
               </ol>
 
               <div className="pt-5 border-t border-[#DDD6C7] dark:border-[#332E28] flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
                 <span className="font-medium text-[#1E1B18] dark:text-[#F5F2EB]">
-                  Terms &amp; Conditions · Privacy &amp; AI Fair Use Policy
+                  Terms &amp; Conditions · Privacy &amp; Academic Self-Assessment Policy
                 </span>
                 <span className="font-mono text-[#575048] dark:text-[#CBC3B6]">
-                  © 2026 Quadra 12 · <span className="font-semibold text-[#A64B33] dark:text-[#D4785E]">Creator: Ariyan Pal (Keśava Dāsa)</span>
+                  © 2026 Quadra 12 · <span className="font-semibold text-[#A64B33] dark:text-[#D4785E]">Creator: AriYan Pal (Keśava Dāsa)</span>
                 </span>
               </div>
             </div>

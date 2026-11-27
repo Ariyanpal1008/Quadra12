@@ -1,0 +1,1784 @@
+QUADRA12 v3.0.0 — FINAL COMPLETE MASTER DEVELOPMENT PROMPT
+
+FULL GITHUB REPOSITORY UPGRADE • WEBSITE • PWA • ANDROID APK • EXAMINATION SYSTEM • HUMAN-VERIFIED MARKING • SUBJECT TRACKER • STUDY LIBRARIES • PDF GENERATION • VERSION 3.0.0 RELEASE
+
+You are the lead software architect, senior full-stack developer, Android build engineer, PWA engineer, educational content specialist, examination-system designer and quality-assurance engineer responsible for upgrading the existing Quadra12 application.
+
+GitHub repository:
+https://github.com/Ariyanpal1008/Quadra12
+
+Your task is to inspect the entire existing repository, understand its architecture, implement the complete upgrade, preserve existing functionality and user data, update every relevant application surface, build and test all deliverables, and publish a separate verified release named:
+
+QUADRA12 v3.0.0
+
+This is an implementation task, not a planning task.
+
+Do not merely provide instructions or code suggestions. Work directly in the connected GitHub repository and implement the actual changes.
+
+Do not stop after editing one file or one component.
+
+Complete the integrated upgrade across:
+
+1. GitHub source repository.
+2. Website.
+3. PWA.
+4. Android application.
+5. Android APK.
+6. Examination Hall.
+7. Subject Tracker.
+8. Practice Mode.
+9. Result system.
+10. PDF generation.
+11. Documentation.
+12. Release configuration.
+
+Do not claim anything is completed until it has actually been implemented and verified.
+
+---
+
+PART 1 — VERSION 3.0.0 EVERYWHERE
+
+The new release version is:
+
+3.0.0
+
+The previous v2.6.2 release must remain available and unchanged.
+
+Update every relevant version reference throughout the project.
+
+Inspect and update where applicable:
+
+- package.json.
+- Application version constants.
+- package metadata.
+- Android versionName.
+- Android versionCode.
+- Capacitor configuration.
+- Android Gradle configuration.
+- PWA manifest.
+- PWA application metadata.
+- Service worker version and cache identifiers.
+- Website version display.
+- Application About section.
+- Footer version information.
+- Release metadata.
+- README.md.
+- RELEASE.md.
+- Release notes.
+- GitHub Actions workflows.
+- Build configuration.
+- APK metadata.
+- Any other existing version references.
+
+Requirements:
+
+1. Website must identify itself as Quadra12 v3.0.0.
+2. PWA must identify itself as Quadra12 v3.0.0.
+3. Android application must identify itself as Quadra12 v3.0.0.
+4. Android APK must have versionName 3.0.0.
+5. Android versionCode must be greater than the previously published versionCode.
+6. GitHub source and release documentation must identify v3.0.0 accurately.
+7. Do not leave misleading v2.6.2 version labels in the new application.
+8. Preserve historical v2.6.2 release information.
+9. Do not overwrite the old release.
+10. Create a separate v3.0.0 release.
+
+Avoid updating unrelated historical references where retaining the old version is necessary for release history.
+
+PWA cache migration
+
+Update the PWA service worker and cache identifiers appropriately.
+
+Ensure existing users receive the new application version rather than remaining stuck on an old cached version.
+
+Implement safe cache migration:
+
+- Activate the new cache.
+- Remove obsolete application caches only when safe.
+- Preserve necessary user data.
+- Avoid deleting IndexedDB or localStorage records.
+- Avoid breaking offline resources.
+- Handle service worker updates correctly.
+- Ensure the new website and PWA display v3.0.0 after an update.
+
+Test installation and update behaviour.
+
+---
+
+PART 2 — INSPECT THE COMPLETE EXISTING REPOSITORY
+
+Before implementation, inspect:
+
+- Repository structure.
+- package.json.
+- Bun lockfile and dependencies.
+- Frontend architecture.
+- Backend architecture.
+- Existing routes and navigation.
+- Examination Hall.
+- Subject Tracker.
+- Result page.
+- Practice Mode.
+- Existing question banks.
+- Existing archived examination papers.
+- Existing marking schemes.
+- Existing PDF generation.
+- localStorage.
+- IndexedDB.
+- Database records.
+- Uploaded resources.
+- PWA manifest.
+- Service worker.
+- Android project.
+- Capacitor configuration, if present.
+- Android Gradle files.
+- GitHub Actions workflows.
+- Android signing configuration.
+- Gemini/API integrations.
+- Existing documentation.
+- Existing release configuration.
+
+Understand dependencies before modifying code.
+
+Do not unnecessarily rewrite existing components.
+
+Preserve the current Quadra12 visual identity, responsive design, navigation and useful functionality.
+
+---
+
+PART 3 — REMOVE GEMINI/API DEPENDENCY FROM EXAMINATION GRADING
+
+The v3.0.0 examination system must not require Gemini or another external AI API for:
+
+- Answer checking.
+- Correct/incorrect classification.
+- Score calculation.
+- Negative marking.
+- Result generation.
+- Practice Sheet generation.
+- Marking Scheme display or PDF generation.
+
+Remove obsolete Gemini grading components after auditing their dependencies:
+
+- Gemini grading requests.
+- Gemini grading endpoints.
+- Five-project API rotation.
+- GEMINI_API_KEYS.
+- GEMINI_API_KEY.
+- VITE_GEMINI_API_KEYS.
+- VITE_PROXY_URL if used exclusively by the old Gemini proxy.
+- Obsolete grading backend functions.
+- API quota and failover logic.
+- Old API-key setup instructions.
+
+Do not delete backend functionality used by unrelated application features.
+
+Implement deterministic local TypeScript/JavaScript answer checking.
+
+Do not introduce a paid API, AI subscription or mandatory external AI key.
+
+Do not falsely claim the entire application is offline if other features require internet access.
+
+Important distinction: The official examination content and marking scheme are human-authoritative. Automatic answer comparison is deterministic software checking, not AI grading.
+
+---
+
+PART 4 — HUMAN-CREATED EXAMINATION PAPERS
+
+This is a mandatory educational and examination rule.
+
+The Examination Hall Main Sheet must be prepared or approved by a human.
+
+Published examination content must not be automatically invented by an AI model and presented as an officially verified examination.
+
+A human must prepare or review and approve:
+
+- Questions.
+- Four answer options.
+- Correct answers.
+- Numerical calculations.
+- Scientific explanations.
+- Difficulty classification.
+- Original board-style mark category.
+- Diagrams.
+- Graphs.
+- Chemical structures.
+- Mathematical figures.
+- Answer keys.
+- Official marking schemes.
+
+The application may provide tools to organise, format, validate and export human-created material.
+
+It must not treat an unreviewed AI-generated question or answer key as an official verified examination.
+
+Publication approval
+
+Every examination paper must have a publication status:
+
+- Draft.
+- Under Human Review.
+- Approved.
+- Published.
+- Archived.
+
+Only approved papers with approved corresponding marking schemes can be published for students to attempt.
+
+If a marking scheme is missing or not approved, do not silently invent one.
+
+Clearly identify the paper as not ready for examination publication.
+
+---
+
+PART 5 — HUMAN-CREATED AND HUMAN-VERIFIED MARKING SCHEMES
+
+Every examination paper must have its own corresponding human-prepared and human-approved official marking scheme.
+
+The marking scheme must contain, where relevant:
+
+- Question ID.
+- Question number.
+- Correct answer.
+- Correct MCQ option.
+- Accepted answer or calculation.
+- Detailed explanation.
+- Complete subjective-style solution.
+- Applicable formulas.
+- Step-by-step calculations.
+- Derivations.
+- Diagrams.
+- Graphs.
+- Chemical equations.
+- Biological explanations.
+- Mathematical working.
+- Original board-style mark category.
+- Marking guidance.
+
+A human must review and approve the official marking scheme before publication.
+
+AI must not create, approve, modify or replace the official answer key or marking scheme.
+
+The application may automatically compare student selections with the approved answer key.
+
+That automatic comparison must never be represented as AI grading.
+
+---
+
+PART 6 — EXAM HALL MAIN SHEET BECOMES THE STUDENT'S PRACTICE SHEET
+
+This is a critical workflow.
+
+The original human-created examination paper in the Examination Hall is called the:
+
+Exam Hall Main Sheet
+
+The student attempts that exact paper.
+
+After submission, the same paper becomes available to the student as their:
+
+Practice Sheet
+
+Do not generate a different set of questions and call it the student's Practice Sheet.
+
+The Practice Sheet must preserve:
+
+- Original questions.
+- Original question numbering.
+- Four options.
+- Original diagrams.
+- Original graphs.
+- Tables.
+- Chemical structures.
+- Mathematical figures.
+- Original paper identity.
+- Paper version.
+- Student's selected answers.
+- Unanswered questions.
+- Attempt information.
+
+The student's submitted attempt must be associated with that exact paper.
+
+The Practice Sheet is the same human-created Exam Hall Main Sheet, made available for the student's later practice and review.
+
+Generate a downloadable Practice Sheet PDF from the exact original paper.
+
+The student's attempt must not modify the original paper.
+
+---
+
+PART 7 — HUMAN-VERIFIED MARKING SCHEME CHECKING
+
+After the student submits an examination:
+
+1. Retrieve the corresponding approved marking scheme.
+2. Compare each selected answer with its human-verified correct option.
+3. Identify correct answers.
+4. Identify incorrect answers.
+5. Identify unanswered questions.
+6. Apply the examination's configured positive and negative marking.
+7. Calculate the result.
+8. Generate question-by-question review.
+
+Use deterministic local software.
+
+Never use Gemini or another AI model to determine whether the answer is correct.
+
+Never allow automatic AI grading to change the official answer key.
+
+Never invent an official marking scheme if one does not exist.
+
+The human-approved marking scheme is the authority for correctness.
+
+Multiple-student data preservation
+
+Maintain separate records for:
+
+- Original examination paper.
+- Official marking scheme.
+- Individual student attempts.
+- Individual selected answers.
+- Individual Practice Sheets.
+- Individual results.
+- Historical attempts.
+
+One student's answers must never overwrite another student's attempt.
+
+An authorised human editor must approve changes to official papers and marking schemes.
+
+Preserve historical paper versions and previous attempts.
+
+---
+
+PART 8 — PRACTICE SHEET AND MARKING SCHEME AVAILABILITY
+
+After submission, the result page must provide both:
+
+1. The exact attempted Exam Hall Main Sheet as the student's Practice Sheet.
+2. The corresponding human-verified Marking Scheme.
+
+Both must remain accessible after the examination.
+
+The student must be able to:
+
+- Reopen the questions.
+- Review selected answers.
+- Identify unanswered questions.
+- Compare their answers with the marking scheme.
+- Read complete explanations.
+- Review diagrams and graphs.
+- Download the Practice Sheet PDF.
+- Download the Marking Scheme PDF.
+
+Both must remain available regardless of marks, including zero marks.
+
+Do not make these resources conditional on examination performance.
+
+---
+
+PART 9 — SUBJECT TRACKER INTEGRATION
+
+Reuse the existing Subject Tracker.
+
+Do not create another tracker or another unnecessary main-navigation tab.
+
+Required hierarchy:
+
+Subject Tracker
+→ Subject
+→ Chapter
+→ Study Resources
+→ Practice Sheets
+→ Marking Schemes
+
+The same approved human-created examination papers and corresponding marking schemes must be accessible inside the existing Subject Tracker.
+
+Organise resources by their actual subject and chapter.
+
+For example, Current Electricity must provide access to:
+
+- Formula Sheets.
+- Derivation Sheets.
+- Relevant diagrams.
+- Relevant graphs.
+- Human-created practice papers.
+- Corresponding verified marking schemes.
+- Previously submitted Practice Sheets where available.
+- Related questions.
+- Complete explanations.
+
+Apply equivalent organisation to Chemistry, Biology and Mathematics.
+
+Resource accessibility
+
+Resources must be available even without taking an examination.
+
+Do not require the student to complete an examination before opening study resources.
+
+Opening a resource must not automatically mark a chapter complete.
+
+Preserve existing tracker progress.
+
+Support:
+
+- Not Started.
+- In Progress.
+- Reviewed.
+- Completed.
+
+Do not duplicate examination papers or marking schemes unnecessarily.
+
+Use references to the original paper and marking-scheme records.
+
+---
+
+PART 10 — PHYSICS STUDY LIBRARY
+
+Create two separate Physics sections:
+
+1. Physics Formula Sheets.
+2. Physics Derivation Sheets.
+
+A. Physics Formula Sheets
+
+Organise formulas chapter-wise according to the current applicable CBSE Class 12 syllabus.
+
+For every formula include:
+
+- Correct mathematical notation.
+- Meaning of every symbol.
+- SI units.
+- Conditions of applicability.
+- Short explanation.
+- Related formulas.
+- Short example where useful.
+- Common calculation mistakes.
+
+Cover applicable chapters:
+
+- Electric Charges and Fields.
+- Electrostatic Potential and Capacitance.
+- Current Electricity.
+- Moving Charges and Magnetism.
+- Magnetism and Matter.
+- Electromagnetic Induction.
+- Alternating Current.
+- Electromagnetic Waves.
+- Ray Optics and Optical Instruments.
+- Wave Optics.
+- Dual Nature of Radiation and Matter.
+- Atoms.
+- Nuclei.
+- Semiconductor Electronics.
+
+Include prerequisite formulas from earlier Physics topics where needed.
+
+Do not present deleted syllabus content as examinable. Clearly label supplementary material.
+
+B. Physics Derivation Sheets
+
+Create a chapter-wise derivation library.
+
+Every derivation must contain:
+
+1. Derivation title.
+2. Chapter and topic.
+3. Importance category.
+4. Initial principle or law.
+5. Diagram where necessary.
+6. Assumptions and conditions.
+7. Step-by-step derivation.
+8. Explanation of mathematical transformations.
+9. Highlighted final equation.
+10. Symbol meanings and units.
+11. Common mistakes.
+12. Related numerical application.
+13. Short board-examination revision version.
+
+Do not simply list final equations and call them derivations.
+
+Do not invent unnecessary derivations.
+
+C. Physics diagrams and graphs
+
+Include accurate:
+
+- Electric field diagrams.
+- Electric field lines.
+- Equipotential surfaces.
+- Circuit diagrams.
+- Electrical networks.
+- Free-body diagrams.
+- Force and motion diagrams.
+- Magnetic field diagrams.
+- Ray diagrams.
+- Lens and mirror diagrams.
+- Optical instrument diagrams.
+- Wave diagrams.
+- Interference and diffraction diagrams.
+- Electromagnetic induction diagrams.
+- AC circuit diagrams.
+- Semiconductor circuit diagrams.
+- Experimental setups.
+
+Include relevant graphs:
+
+- Current-voltage.
+- Potential and electric field relationships.
+- Resistance and resistivity.
+- Magnetic field.
+- AC waveforms.
+- Photoelectric effect.
+- Radioactive decay.
+- Optics.
+- Other syllabus-relevant graphical relationships.
+
+Graphs must have correct axes, units, scales, labels and interpretations.
+
+---
+
+PART 11 — CHEMISTRY STUDY LIBRARY
+
+Create three separate sections.
+
+A. Physical Chemistry Formula Sheets
+
+Include applicable formulas and numerical methods for:
+
+- Solutions.
+- Electrochemistry.
+- Chemical Kinetics.
+- Other applicable syllabus topics.
+
+For each formula provide:
+
+- Correct expression.
+- Symbol meanings.
+- Units.
+- Conditions.
+- Short numerical example.
+- Common calculation mistakes.
+
+Include prerequisite formulas where necessary.
+
+B. Organic Chemistry Reaction Sheets
+
+Include:
+
+- Important reactions.
+- Reactants and products.
+- Reagents.
+- Conditions.
+- Organic conversions.
+- Named reactions in the applicable syllabus.
+- Mechanistic steps.
+- Important intermediates.
+- Exceptions.
+- Product prediction methods.
+
+C. Inorganic Chemistry Quick Reference
+
+Include:
+
+- Important compounds.
+- Properties.
+- Reactions.
+- Periodic trends.
+- Coordination chemistry.
+- Structures.
+- Isomerism.
+- Exceptions.
+- Important NCERT facts.
+
+D. Chemistry diagrams and graphs
+
+Include:
+
+- Chemical structures.
+- Molecular structures.
+- Structural formulas.
+- Reaction schemes.
+- Reaction mechanisms.
+- Electron movement diagrams.
+- Galvanic cells.
+- Electrolytic cells.
+- Electrodes and salt bridges.
+- Experimental apparatus.
+- Coordination compound structures.
+- Crystal-field splitting.
+- Molecular orbital diagrams where applicable.
+- Important graphs and numerical relationships.
+
+All chemical structures, bonds and reactions must be accurate.
+
+Do not artificially force every Chemistry topic into a Physics-style derivation system.
+
+---
+
+PART 12 — BIOLOGY QUICK REFERENCE LIBRARY
+
+Biology requires its own visual, process-focused and quantitative resource architecture.
+
+A. Diagram Sheets
+
+Include:
+
+- Cell structures.
+- Human anatomy and physiology.
+- Reproductive systems.
+- Developmental diagrams.
+- DNA and RNA structures.
+- Replication.
+- Transcription.
+- Translation.
+- Genetic crosses.
+- Pedigree charts.
+- Biotechnology processes.
+- Ecological pyramids.
+- Food chains and food webs.
+- Population pyramids.
+- Biological cycles.
+- Metabolic pathways.
+- Important NCERT diagrams.
+
+Use accurate labels and explanations.
+
+B. Process Sheets
+
+Include:
+
+- Biological processes.
+- Step-by-step mechanisms.
+- Important cycles.
+- Metabolic pathways.
+- Human physiology.
+- Reproductive processes.
+- Molecular biology.
+- Biotechnology.
+- Ecological processes.
+
+C. Genetics Sheets
+
+Include:
+
+- Monohybrid crosses.
+- Dihybrid crosses.
+- Genotypic and phenotypic ratios.
+- Dominance.
+- Incomplete dominance.
+- Codominance.
+- Test crosses.
+- Back crosses.
+- Probability.
+- Pedigree analysis.
+- Sex-linked inheritance.
+- Multiple alleles.
+- Gene interactions.
+- Hardy-Weinberg principle.
+- Allele frequency.
+- Population genetics.
+- Linkage.
+- Recombination calculations where applicable.
+
+Use Punnett squares and worked examples.
+
+D. Quantitative Biology
+
+Do not restrict mathematical Biology to Genetics.
+
+Include applicable syllabus topics such as:
+
+- Genetic ratios and probability.
+- Allele frequencies.
+- Recombination calculations.
+- Population density and size.
+- Natality and mortality.
+- Immigration and emigration.
+- Exponential population growth.
+- Logistic population growth.
+- Carrying capacity.
+- Growth curves.
+- Age distribution.
+- Population pyramids.
+- Species abundance.
+- Primary productivity.
+- Secondary productivity.
+- Energy transfer.
+- Ecological efficiency.
+- Ten-percent law.
+- Food-chain energy calculations.
+- Ecological pyramids.
+- Biomass relationships.
+- DNA/RNA length calculations.
+- Base-pair calculations.
+- Molecular genetics calculations.
+- Biotechnology numerical interpretation.
+- Experimental data.
+- Graph and table interpretation.
+- Ratios and percentages in biological experiments.
+
+Inspect the current syllabus and include all genuinely mathematical topics.
+
+Do not invent artificial derivations for descriptive Biology.
+
+E. NCERT High-Yield Sheets
+
+Include:
+
+- Terminology.
+- Scientific names where relevant.
+- Classification.
+- Differences and comparisons.
+- Important examples.
+- Frequently confused concepts.
+- Important NCERT statements.
+- Chapter-wise revision notes.
+
+---
+
+PART 13 — MATHEMATICS STUDY LIBRARY
+
+Create three sections:
+
+1. Mathematics Formula Sheets.
+2. Mathematics Method Sheets.
+3. Important Proofs and Derivations where applicable.
+
+Cover the applicable Class 12 syllabus:
+
+- Relations and Functions.
+- Inverse Trigonometric Functions.
+- Matrices.
+- Determinants.
+- Continuity and Differentiability.
+- Applications of Derivatives.
+- Integrals.
+- Applications of Integrals.
+- Differential Equations.
+- Vector Algebra.
+- Three-Dimensional Geometry.
+- Linear Programming.
+- Probability.
+
+A. Formula Sheets
+
+For each chapter provide:
+
+- Important formulas.
+- Symbol meanings.
+- Conditions.
+- Identities.
+- Relationships.
+- Common mistakes.
+- Short worked examples.
+
+B. Method Sheets
+
+For every important question type show:
+
+1. How to recognise the question.
+2. Which formula or theorem to choose.
+3. Why it applies.
+4. Correct solving method.
+5. Every important calculation step.
+6. How to reach the final answer.
+7. Common mistakes.
+8. Fully worked example.
+9. Alternative method where useful.
+
+C. Proofs and Derivations
+
+Include important proofs, identities and derivations where appropriate.
+
+Do not force every chapter into an artificial derivation structure.
+
+D. Geometry and Graphs
+
+Include:
+
+- Geometry diagrams.
+- Coordinate geometry.
+- Function graphs.
+- Trigonometric graphs.
+- Differentiation graphs.
+- Integration illustrations.
+- Area-under-curve diagrams.
+- Differential equation curves.
+- Vector diagrams.
+- 3D geometry.
+- Lines and planes.
+- Angles.
+- Distances.
+- Projections.
+- Probability diagrams.
+- Linear programming feasible regions.
+- Geometric interpretations of theorems.
+
+All important figures must be mathematically consistent and clearly labelled.
+
+---
+
+PART 14 — SUBJECTIVE-TO-MCQ CHALLENGE
+
+Create a dedicated question category named exactly:
+
+Subjective-to-MCQ Challenge
+
+This category converts traditional CBSE subjective questions into four-option MCQs without reducing their academic depth.
+
+Support:
+
+- 3-mark-style questions.
+- 4-mark-style questions.
+- 5-mark-style questions.
+- Multi-step numericals.
+- Derivation-based questions.
+- Case-based questions.
+- Diagram-based questions.
+- Graph-based questions.
+- Multi-concept questions.
+- Assertion–Reason.
+- Multiple-statement questions.
+
+Each question must contain:
+
+- Detailed question statement.
+- Four options A, B, C and D.
+- Exactly one verified correct answer.
+- Original board-style mark category.
+- Estimated solution complexity.
+- Required concepts.
+- Required formulas or derivation.
+- Expected number of solution steps.
+- Complete subjective-style solution.
+
+Do not simplify a five-mark question into a basic factual MCQ.
+
+The student must solve it using proper mathematical or scientific steps before selecting the option.
+
+Numerical solution format
+
+Where appropriate, show:
+
+1. Given.
+2. Required.
+3. Concept.
+4. Formula.
+5. Symbol meanings.
+6. Substitution.
+7. Step-by-step calculations.
+8. Intermediate results.
+9. Final answer with units.
+10. Correct option.
+11. Important distractor explanations.
+
+For derivations, show every important mathematical step.
+
+For conceptual questions, provide logical explanations instead of unnecessary calculations.
+
+The original board-style mark category is metadata and must not silently change the MCQ's configured actual marks.
+
+---
+
+PART 15 — QUESTION BANK: 180 QUESTIONS PER SUBJECT
+
+Create a verified, original question bank:
+
+- Physics: 180.
+- Chemistry: 180.
+- Biology: 180.
+- Mathematics: 180 if enabled.
+
+These are per-subject counts.
+
+Every question requires:
+
+1. Unique ID.
+2. Subject.
+3. Chapter.
+4. Topic.
+5. Four options.
+6. Exactly one human-verified correct answer.
+7. Human-reviewed explanation.
+8. Difficulty.
+9. Positive marking.
+10. Negative marking.
+11. Category.
+12. Syllabus tags.
+13. Original board-style mark category where relevant.
+14. Diagrams, graphs or tables where necessary.
+15. Human approval status.
+
+No placeholders, filler, duplicate questions, ambiguous answers, wrong keys or unverified official content.
+
+Questions may be drafted with development assistance, but no question becomes part of the official published examination bank until a human has reviewed and approved it.
+
+Question types
+
+- CBSE Board High-Yield.
+- NEET-style.
+- Numerical.
+- Assertion–Reason.
+- Multiple Statement.
+- Case-Based.
+- Diagram-Based.
+- Graph-Based.
+- Match-the-Following in four-option format.
+- Data Interpretation.
+- Multi-Concept.
+- Subjective-to-MCQ Challenge.
+
+Difficulty
+
+- Easy.
+- Medium.
+- Difficult.
+- Very Difficult.
+
+High-Yield means important and syllabus-aligned, not a guarantee of future appearance.
+
+If 180 approved questions are not available, report the actual approved count.
+
+Never claim that unapproved or incomplete questions are verified.
+
+---
+
+PART 16 — EXAMINATION HALL OMR SYSTEM
+
+Implement the new timed OMR examination system inside the existing Examination Hall.
+
+The new system must use the human-approved Exam Hall Main Sheet and its corresponding approved marking scheme.
+
+Workflow
+
+1. Select subject.
+2. Select an approved examination paper.
+3. Start examination.
+4. Display question and four options.
+5. Select A, B, C or D.
+6. Change answers.
+7. Mark questions for review.
+8. Navigate between questions.
+9. Use question palette.
+10. See answered/unanswered/review states.
+11. See remaining time.
+12. Review the attempt.
+13. Confirm submission.
+14. Submit and lock the attempt.
+15. Check against the approved marking scheme.
+16. Display results.
+
+OMR interface
+
+Include:
+
+- Four selectable bubbles.
+- Selected-answer indication.
+- Question navigation.
+- Answered count.
+- Unanswered count.
+- Review count.
+- Timer.
+- Submission confirmation.
+
+Make all controls responsive on Android phones.
+
+During the examination
+
+Never reveal:
+
+- Correct answers.
+- Marking scheme.
+- Explanations.
+- Hints.
+- Correct-option highlighting.
+
+The student must solve independently.
+
+Scoring
+
+Use deterministic local checking against the approved human marking scheme.
+
+Support:
+
+- Positive marks.
+- Negative marks.
+- Unattempted questions.
+- Maximum marks.
+- Accuracy.
+- Correct count.
+- Incorrect count.
+- Total score.
+
+Do not assume every examination has the same marking scheme.
+
+---
+
+PART 17 — EXISTING EXAM HALL ARCHIVE
+
+Preserve every existing saved paper and marking scheme exactly.
+
+The existing archive becomes view-only.
+
+Students may:
+
+- Open papers.
+- Read questions.
+- View answer keys.
+- View marking schemes.
+- Read explanations.
+
+They must not:
+
+- Select answers in the archive.
+- Start new attempts from the archive.
+- Submit archived papers.
+- Generate scores from archived papers.
+
+The new OMR system must be separate.
+
+Before migrations:
+
+1. Back up existing records.
+2. Preserve IDs.
+3. Preserve relationships.
+4. Use non-destructive migrations.
+5. Maintain backward compatibility.
+6. Verify original records remain intact.
+
+Never delete or reset archived papers, marking schemes, progress, settings or uploaded resources.
+
+---
+
+PART 18 — PRACTICE MODE
+
+Create a separate Practice Mode.
+
+It must not be confused with the archived examination system or timed OMR examinations.
+
+Allow selection of:
+
+- Subject.
+- Chapter.
+- Topic.
+- Difficulty.
+- CBSE High-Yield.
+- NEET-style.
+- Subjective-to-MCQ Challenge.
+
+Support:
+
+- Chapter practice.
+- Topic practice.
+- Mixed practice.
+- Answer selection.
+- Answer changes.
+- Answer checking.
+- Detailed solutions.
+- Incorrect-question revision.
+- Previous-attempt review.
+- Progress tracking.
+
+Keep answers hidden until the student attempts the question or explicitly selects Show Solution.
+
+Use the same human-approved answer key where the question belongs to an official examination paper.
+
+---
+
+PART 19 — FULL SUBJECTIVE-STYLE SOLUTIONS
+
+Although questions are MCQs, the post-submission explanation must be comparable to a traditional written answer.
+
+1-mark-style
+
+Concise but complete.
+
+2-mark-style
+
+Sufficient reasoning, calculations or required points.
+
+3-mark-style
+
+Structured written explanation with formulas and important steps.
+
+4-mark-style
+
+Complete multi-step reasoning or calculations.
+
+5-mark-style
+
+A genuinely complete five-mark-level subjective solution.
+
+Do not provide only a correct option or a one-line explanation.
+
+Physics solutions must show formulas, substitutions, calculations, units and derivations where relevant.
+
+Chemistry solutions must show equations, reagents, conditions, structures, mechanisms and calculations where relevant.
+
+Biology solutions must show scientific reasoning, terminology, labelled diagrams, processes, genetic crosses and quantitative calculations where relevant.
+
+Mathematics solutions must show the complete method, theorem, formula, calculations, diagrams and graphs where relevant.
+
+Use the correct subject-specific structure.
+
+All official explanations must be human-reviewed and approved.
+
+---
+
+PART 20 — RESULT PAGE
+
+After submission, show:
+
+- Score.
+- Maximum marks.
+- Correct answers.
+- Incorrect answers.
+- Unanswered questions.
+- Accuracy.
+- Time taken.
+- Subject performance.
+- Chapter performance.
+- Topic performance.
+- Difficulty performance.
+
+Provide question-by-question review.
+
+Mandatory resources
+
+Regardless of score, provide:
+
+1. Exact attempted Exam Hall Main Sheet as Practice Sheet.
+2. Corresponding human-verified Marking Scheme.
+3. Practice Sheet PDF.
+4. Marking Scheme PDF.
+5. Relevant subject study sheets.
+6. Relevant diagrams and graphs.
+7. Complete written explanations.
+8. Direct Subject Tracker links.
+
+A student scoring zero must still receive every applicable resource.
+
+Do not restrict educational resources based on marks.
+
+---
+
+PART 21 — PDF GENERATION
+
+Generate PDFs locally.
+
+No Gemini API or external AI grading is permitted.
+
+A. Practice Sheet PDF
+
+Reproduce the exact human-created Exam Hall Main Sheet.
+
+Include:
+
+- Original questions.
+- Four options.
+- Original numbering.
+- Diagrams.
+- Graphs.
+- Tables.
+- Chemical structures.
+- Biological figures.
+- Geometry figures.
+
+For an individual submitted attempt, preserve the association with the student's selected answers in the relevant review representation without altering the original paper.
+
+B. Marking Scheme PDF
+
+Use the corresponding human-approved marking scheme.
+
+Include:
+
+- Questions.
+- Correct options.
+- Correct answers.
+- Detailed explanations.
+- Complete subjective solutions.
+- Formulas.
+- Calculations.
+- Derivations.
+- Diagrams.
+- Graphs.
+- Chemical equations.
+- Biological explanations.
+- Mathematical working.
+
+Do not automatically invent official marking-scheme content.
+
+PDF quality
+
+- Multi-page support.
+- Correct page numbering.
+- Readable typography.
+- Mathematical symbols.
+- Chemical notation.
+- Clear diagrams.
+- No cropped graphs.
+- No missing figures.
+- Proper tables.
+- Good page breaks.
+- Mobile-friendly viewing.
+- Download support.
+
+Both PDFs must match the actual paper and its approved marking scheme.
+
+Both must remain accessible after submission, including zero-mark results.
+
+---
+
+PART 22 — COMMON STUDY RESOURCE DESIGN
+
+All four study libraries must support:
+
+- Chapter-wise navigation.
+- Search.
+- High-Yield filters.
+- Important-topic filters.
+- Additional-content filters.
+- Board-Oriented filters.
+- Competitive-Exam-Oriented filters.
+- Mobile-friendly reading.
+- Proper mathematical notation.
+- Diagrams and graphs.
+- Easy revision.
+- Related practice questions.
+- Related Subjective-to-MCQ Challenge questions.
+
+Use labels:
+
+- High-Yield.
+- Important.
+- Additional.
+- Board-Oriented.
+- Competitive-Exam-Oriented.
+
+Link questions to their relevant study sheets and study sheets to their relevant questions.
+
+Do not create duplicate main-navigation tabs.
+
+---
+
+PART 23 — DATA MODEL AND SECURITY
+
+Extend the existing data model as necessary to support:
+
+- Subjects.
+- Chapters.
+- Topics.
+- Examination papers.
+- Paper versions.
+- Human approval status.
+- Marking schemes.
+- Marking-scheme versions.
+- Questions.
+- Options.
+- Correct answers.
+- Explanations.
+- Difficulty.
+- Original mark categories.
+- Required concepts.
+- Required formulas.
+- Expected solution steps.
+- Syllabus tags.
+- Diagrams.
+- Graphs.
+- Study resources.
+- Examination attempts.
+- Selected answers.
+- Review states.
+- Results.
+- Practice Sheets.
+- Generated PDFs.
+- Practice history.
+- Tracker progress.
+
+Use stable unique IDs.
+
+Preserve backward compatibility.
+
+Do not allow one student's attempt to overwrite another student's records.
+
+Protect answer-key data during active timed examinations.
+
+For any public or shared examination, ensure the student-facing client does not receive correct-answer information before submission through visible application data.
+
+Use appropriate server-side protection where the existing architecture supports it.
+
+---
+
+PART 24 — WEBSITE, PWA AND ANDROID APK INTEGRATION
+
+The website, PWA and Android APK must all use the same integrated v3.0.0 feature set.
+
+Do not update only the website while leaving the APK or PWA on the old version.
+
+Website
+
+Verify:
+
+- New version display.
+- Updated navigation.
+- Examination Hall.
+- Subject Tracker.
+- Practice Mode.
+- Result page.
+- Study sheets.
+- PDFs.
+- Responsive layout.
+
+PWA
+
+Verify:
+
+- Updated manifest.
+- Version metadata.
+- Updated service worker.
+- Cache migration.
+- Installation.
+- Application icons and metadata.
+- New features.
+- Offline behaviour where supported.
+- No stale v2.6.2 application shell.
+
+Android APK
+
+Verify:
+
+- Correct package identity.
+- versionName 3.0.0.
+- Incremented versionCode.
+- Updated features.
+- Android-compatible layout.
+- Correct navigation.
+- PDF viewing and download.
+- Existing signing identity.
+- Successful installation and launch.
+
+If the application uses shared source code for website, PWA and Android, ensure all three build targets include the same integrated application changes.
+
+Do not create three inconsistent versions.
+
+---
+
+PART 25 — ANDROID SIGNING AND GITHUB ACTIONS
+
+Preserve the existing Android signing identity.
+
+Existing alias:
+
+quadra12
+
+Existing GitHub secrets:
+
+1. ANDROID_KEYSTORE_BASE64
+2. ANDROID_KEY_ALIAS
+3. ANDROID_KEYSTORE_PASSWORD
+4. ANDROID_KEY_PASSWORD
+
+Never ask for secret values.
+
+Never generate a new keystore.
+
+Never change signing identity.
+
+Never commit keystore files, Base64 keystores, passwords or private signing material.
+
+Preserve:
+
+- .github/workflows/android-release.yml
+- .github/workflows/deploy.yml
+
+Modify workflows only for verified technical requirements.
+
+The project uses a Bun lockfile. Respect the existing package manager and lockfile.
+
+Do not introduce an npm-cache workflow that fails because package-lock.json does not exist.
+
+Use the appropriate Bun setup and frozen-lockfile installation strategy.
+
+Build and sign the APK using the existing secrets.
+
+Verify the APK signature.
+
+Never disable signature verification.
+
+---
+
+PART 26 — DOCUMENTATION AND RELEASE FILES
+
+Update README.md.
+
+Update RELEASE.md.
+
+Create RELEASE_NOTES_v3.0.0.md.
+
+Ensure documentation describes the actual v3.0.0 product.
+
+Include:
+
+- Current version.
+- Website.
+- PWA.
+- Android APK.
+- Examination Hall.
+- Human-created examination papers.
+- Human-verified marking schemes.
+- Local deterministic answer checking.
+- Practice Sheets.
+- Subject Tracker.
+- Four subject study libraries.
+- Subjective-to-MCQ Challenge.
+- Diagrams and graphs.
+- Complete written solutions.
+- Local PDF generation.
+- Installation.
+- Build instructions.
+- Limitations.
+
+Update relevant version metadata throughout the repository.
+
+Preserve historical v2.6.2 information where required.
+
+---
+
+PART 27 — UI/UX
+
+Preserve the current Quadra12 visual identity.
+
+Requirements:
+
+- Smooth interactions.
+- Responsive mobile design.
+- Readable typography.
+- Consistent spacing.
+- Clear subject navigation.
+- Clear chapter navigation.
+- Searchable study sheets.
+- Readable diagrams and graphs.
+- Accessible OMR controls.
+- Responsive PDF viewing.
+- Clear result page.
+- Proper loading and error states.
+- Useful empty states.
+- No broken navigation.
+- No duplicate tabs.
+- No unnecessary clutter.
+
+Do not remove useful existing features.
+
+Ensure the entire application works properly on Android phones.
+
+---
+
+PART 28 — TESTING AND VERIFICATION
+
+Do not declare completion based only on editing code.
+
+Run actual tests.
+
+A. Version tests
+
+Verify:
+
+- Repository version.
+- Website version.
+- PWA version.
+- Service worker/cache version.
+- Android versionName.
+- Android versionCode.
+- Release version.
+- APK metadata.
+
+All new application targets must identify as v3.0.0.
+
+B. Human approval tests
+
+Verify:
+
+- Papers have human approval status.
+- Marking schemes have human approval status.
+- Unapproved papers cannot be published.
+- Missing marking schemes cannot be silently invented.
+- Approved answer keys remain unchanged by automated grading.
+
+C. Examination tests
+
+Verify:
+
+- OMR selection.
+- Answer changes.
+- Navigation.
+- Review marking.
+- Timer.
+- Submission.
+- Submission lock.
+- Positive marking.
+- Negative marking.
+- Unattempted answers.
+- Local checking against the official marking scheme.
+- Correct results.
+
+D. Practice Sheet tests
+
+Verify:
+
+- Exact original paper is preserved.
+- Student attempt is linked correctly.
+- Practice Sheet is available after submission.
+- PDF reproduces the exact paper.
+- No new unrelated question set is generated.
+
+E. Subject Tracker tests
+
+Verify:
+
+- Practice Sheets appear under correct subjects and chapters.
+- Marking schemes appear under correct subjects and chapters.
+- Formula sheets and derivations are accessible.
+- Chemistry reactions and mechanisms are accessible.
+- Biology diagrams and processes are accessible.
+- Mathematics methods and geometry are accessible.
+- Resources are available without taking an examination.
+
+F. Data preservation tests
+
+Verify:
+
+- Archived papers remain intact.
+- Marking schemes remain intact.
+- Existing progress remains intact.
+- Existing user data survives migration.
+- Student attempts remain separate.
+- One student's attempt cannot alter another's.
+
+G. Content tests
+
+Verify:
+
+- Actual approved question counts.
+- Unique IDs.
+- Four options.
+- Exactly one correct answer.
+- Correct explanations.
+- Correct mark categories.
+- Accurate calculations.
+- Correct diagrams and graphs.
+- No duplicates.
+- No ambiguous answers.
+
+H. PDF tests
+
+Verify:
+
+- Practice Sheet generation.
+- Marking Scheme generation.
+- Exact paper matching.
+- Human-approved answer key.
+- Full subjective-style explanations.
+- Diagrams and graphs.
+- Mathematical notation.
+- Zero-mark availability.
+
+I. PWA tests
+
+Verify:
+
+- Manifest.
+- Service worker.
+- Cache update.
+- Installation.
+- New version activation.
+- No stale application shell.
+- Existing user data preserved.
+
+J. Android tests
+
+Verify:
+
+- Build.
+- Package identity.
+- versionName.
+- versionCode.
+- Signing.
+- Signature verification.
+- Installation.
+- Launch.
+- Main navigation.
+- Examination.
+- Subject Tracker.
+- PDFs.
+
+K. Build tests
+
+Run:
+
+- TypeScript checks.
+- Linting where configured.
+- Existing test suite.
+- Production web build.
+- Android build.
+- Dependency validation.
+- Lockfile validation.
+
+If a test cannot be run, clearly report it as not tested.
+
+Never fabricate successful test results.
+
+---
+
+PART 29 — UPDATE AND PUBLISH EVERYTHING ON GITHUB
+
+After implementation:
+
+1. Save every required change in the connected GitHub repository.
+2. Update the complete source code.
+3. Update website source and build configuration.
+4. Update PWA files.
+5. Update Android source and configuration.
+6. Update version metadata.
+7. Update README.md.
+8. Update RELEASE.md.
+9. Create RELEASE_NOTES_v3.0.0.md.
+10. Update GitHub Actions where necessary.
+11. Commit the completed changes.
+12. Push the changes to GitHub.
+13. Build the website.
+14. Build the Android APK.
+15. Verify the PWA.
+16. Verify the signed APK.
+17. Create a separate v3.0.0 GitHub release when verified.
+18. Attach the signed APK if the release workflow supports it.
+19. Verify the release and APK asset.
+
+Preserve the previous v2.6.2 release.
+
+Do not claim a GitHub push, deployment, APK build or release succeeded unless it actually succeeded.
+
+If any operation requires permissions or user approval unavailable in the environment, report exactly what remains.
+
+---
+
+PART 30 — FINAL COMPLETION REPORT
+
+Provide one complete report with:
+
+1. Version 2.6.2 → 3.0.0.
+2. Website version.
+3. PWA version.
+4. Android versionName.
+5. Android versionCode.
+6. Exact files created.
+7. Exact files modified.
+8. Exact files removed.
+9. Gemini dependency removal status.
+10. Human-created examination paper workflow.
+11. Human-approved marking scheme workflow.
+12. Deterministic local answer checking.
+13. Practice Sheet workflow.
+14. Marking Scheme workflow.
+15. Subject Tracker integration.
+16. Verified Physics question count.
+17. Verified Chemistry question count.
+18. Verified Biology question count.
+19. Verified Mathematics question count.
+20. Actual 3-, 4- and 5-mark-style challenge counts.
+21. Difficult and Very Difficult counts.
+22. Physics formula coverage.
+23. Physics derivation coverage.
+24. Chemistry formula and reaction coverage.
+25. Biology diagram, process and quantitative coverage.
+26. Mathematics formula, method, proof and geometry coverage.
+27. Diagram and graph implementation.
+28. Full subjective-style explanation status.
+29. Existing Exam Hall archive preservation.
+30. Existing marking scheme preservation.
+31. New OMR examination status.
+32. Separate Practice Mode status.
+33. Result page status.
+34. Local PDF generation status.
+35. Zero-mark resource availability.
+36. PWA installation and update status.
+37. Website build and deployment status.
+38. Android APK build and signature status.
+39. Data migration and preservation status.
+40. README.md and release-documentation status.
+41. GitHub commit and push status.
+42. v3.0.0 release status.
+43. Incomplete work.
+44. Failed or unavailable tests.
+
+Report only actual verified results.
+
+---
+
+FINAL NON-NEGOTIABLE PRODUCT VISION
+
+EXAMINATION HALL
+
+Human-created and human-approved examination papers.
+
+Human-prepared and human-approved marking schemes.
+
+A timed OMR examination.
+
+The student attempts the exact Exam Hall Main Sheet.
+
+AFTER SUBMISSION
+
+The attempted Main Sheet becomes the student's Practice Sheet.
+
+The official human-verified marking scheme checks the answers through deterministic local software.
+
+The student receives:
+
+- Result.
+- Correct and incorrect answers.
+- Complete subjective-style explanations.
+- Practice Sheet.
+- Marking Scheme.
+- Practice Sheet PDF.
+- Marking Scheme PDF.
+- All relevant study resources.
+
+SUBJECT TRACKER
+
+The same papers and marking schemes remain available under the correct subject and chapter.
+
+All four subjects have their own complete learning architecture.
+
+VISUAL LEARNING
+
+Physics diagrams and graphs.
+
+Chemistry structures, reactions, mechanisms and graphs.
+
+Biology labelled diagrams, flowcharts and quantitative graphs.
+
+Mathematics geometry, 3D figures and graphs.
+
+VERSION AND DELIVERY
+
+Everything must be updated consistently across:
+
+- GitHub.
+- Website.
+- PWA.
+- Android source.
+- Android APK.
+- Documentation.
+- Release metadata.
+
+The new release must be Quadra12 v3.0.0.
+
+The old v2.6.2 release must remain intact.
+
+FINAL EDUCATIONAL PRINCIPLE
+
+The examination measures performance; the result page teaches the student how to improve.
+
+The student should solve an MCQ with the same intellectual seriousness as a traditional subjective board question.
+
+The official marking scheme must be human-verified. Software may check answers automatically, but AI must never decide official examination correctness.
+
+FINAL INSTRUCTION: Inspect the repository first. Implement the entire integrated Quadra12 v3.0.0 upgrade. Update all relevant GitHub, website, PWA and Android files. Preserve all existing user data, archived examinations and signing identity. Run actual tests. Build the website and Android APK. Verify the PWA update. Commit and push the changes. Publish a separate verified v3.0.0 release. Report actual completion and any remaining work honestly. Do not stop at planning. Do the work.

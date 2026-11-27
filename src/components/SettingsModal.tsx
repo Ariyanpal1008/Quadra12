@@ -67,6 +67,7 @@ import {saveBlobToDevice} from '../utils/pdfExporter';
 import {ThreeSceneId} from './ThreeLabModal';
 import {PWAInstallButton} from './PWAInstallButton';
 import {EmbedPlayerMode} from './YouTubeSyncPlayer';
+import {AuthorReviewPanel} from './exam/AuthorReviewPanel';
 import {
   APP_VERSION,
   GITHUB_RELEASES_PAGE_URL,
@@ -869,7 +870,7 @@ export function SettingsModal({
     {id: 'sync', label: 'Cloud Sync', icon: Cloud},
     {id: 'audio', label: 'Audio & Tactile', icon: Volume2},
     {id: 'studio3d', label: '3D Studio', icon: Box},
-    {id: 'exam', label: 'Exam & Urgency', icon: Calendar},
+    {id: 'exam', label: 'Exam & Paper Audit', icon: Calendar},
     {id: 'player', label: 'Player & Video', icon: PlayCircle},
     {id: 'privacy', label: 'Privacy & Reset', icon: ShieldAlert},
     {id: 'about', label: 'About & Links', icon: Info},
@@ -1586,6 +1587,8 @@ export function SettingsModal({
                         </button>
                       </div>
                     </div>
+
+                    <AuthorReviewPanel />
                   </div>
                 )}
 
@@ -1814,7 +1817,7 @@ export function SettingsModal({
                           <p className="mt-1 text-xs text-[#575048] dark:text-[#CBC3B6] leading-relaxed">
                             © 2026 Quadra 12 · Creator:{' '}
                             <strong className="text-[#A64B33] dark:text-[#D4785E]">
-                              Ariyan Pal (Keśava Dāsa)
+                              AriYan Pal (Keśava Dāsa)
                             </strong>{' '}
                             · <span className="font-mono">ariyanpal090@gmail.com</span>
                           </p>

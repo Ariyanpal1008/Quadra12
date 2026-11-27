@@ -115,7 +115,7 @@ export const SUBJECTS: SubjectConfig[] = [
     practicalMarks: 30,
     totalSqpQuestions: 33,
     sectionACount: 16,
-    samplePaperPdfUrl: `${import.meta.env.BASE_URL}assets/aistudio/Physics-SQP_ab406f5a.pdf`,
+    samplePaperPdfUrl: `${import.meta.env?.BASE_URL ?? './'}assets/aistudio/Physics-SQP_ab406f5a.pdf`,
     playlistUrl:
       'https://www.youtube.com/playlist?list=PLDFtjdbvBWcYSFSWAmmApY25zg5A1Q7Df',
     playlistId: 'PLDFtjdbvBWcYSFSWAmmApY25zg5A1Q7Df',
@@ -135,7 +135,7 @@ export const SUBJECTS: SubjectConfig[] = [
       {order: 13, videoId: 'uf2UvFqUoXE', chapterId: 'phy-12', title: 'Atoms'},
       {order: 14, videoId: 'kHz5ZoBeSVs', chapterId: 'phy-13', title: 'Nuclei'},
     ],
-    imageUrl: `${import.meta.env.BASE_URL}src/assets/images/pcmb_physics_wave_1795262271605.jpg`,
+    imageUrl: `${import.meta.env?.BASE_URL ?? './'}src/assets/images/pcmb_physics_wave_1795262271605.jpg`,
     imageAlt:
       'Scientific illustration of optical prism dispersion and electromagnetic wave propagation',
     accentHex: '#1D4ED8',
@@ -165,7 +165,7 @@ export const SUBJECTS: SubjectConfig[] = [
     practicalMarks: 30,
     totalSqpQuestions: 33,
     sectionACount: 16,
-    samplePaperPdfUrl: `${import.meta.env.BASE_URL}assets/aistudio/Chemistry-SQP_fb94ce8e.pdf`,
+    samplePaperPdfUrl: `${import.meta.env?.BASE_URL ?? './'}assets/aistudio/Chemistry-SQP_fb94ce8e.pdf`,
     playlistUrl:
       'https://youtube.com/playlist?list=PLDFtjdbvBWcZRN2GOwVFow4tMdeytVHjs',
     playlistId: 'PLDFtjdbvBWcZRN2GOwVFow4tMdeytVHjs',
@@ -181,7 +181,7 @@ export const SUBJECTS: SubjectConfig[] = [
       {order: 9, videoId: 'OBqFtHYhSYM', chapterId: 'chem-9', title: 'Amines'},
       {order: 10, videoId: 'ZzSHpxjH6Kg', chapterId: 'chem-10', title: 'Biomolecules'},
     ],
-    imageUrl: `${import.meta.env.BASE_URL}chemistry-plate.svg`,
+    imageUrl: `${import.meta.env?.BASE_URL ?? './'}chemistry-plate.svg`,
     imageAlt:
       'Scientific diagram plate showing an Electrochemical Daniell Galvanic Cell, Chemical Kinetics reaction coordinate energy profile, and Octahedral [ML6] coordination complex',
     accentHex: '#0284C7',
@@ -207,7 +207,7 @@ export const SUBJECTS: SubjectConfig[] = [
     practicalMarks: 30,
     totalSqpQuestions: 33,
     sectionACount: 16,
-    samplePaperPdfUrl: `${import.meta.env.BASE_URL}assets/aistudio/Biology-SQP_fdc06173.pdf`,
+    samplePaperPdfUrl: `${import.meta.env?.BASE_URL ?? './'}assets/aistudio/Biology-SQP_fdc06173.pdf`,
     playlistUrl:
       'https://youtube.com/playlist?list=PLDFtjdbvBWcbJbcIzsKAcT3CzImf90qHK',
     playlistId: 'PLDFtjdbvBWcbJbcIzsKAcT3CzImf90qHK',
@@ -226,7 +226,7 @@ export const SUBJECTS: SubjectConfig[] = [
       {order: 12, videoId: 'DaNhRwRui3Q', chapterId: 'bio-6', title: 'Evolution'},
       {order: 13, videoId: 'uvzFdsyZ_xo', chapterId: 'bio-13', title: 'Biodiversity & Conservation'},
     ],
-    imageUrl: `${import.meta.env.BASE_URL}src/assets/images/pcmb_biology_helix_1795262275401.jpg`,
+    imageUrl: `${import.meta.env?.BASE_URL ?? './'}src/assets/images/pcmb_biology_helix_1795262275401.jpg`,
     imageAlt:
       'Plant vascular cross-section and DNA double helix scientific diagram',
     accentHex: '#059669',
@@ -255,7 +255,7 @@ export const SUBJECTS: SubjectConfig[] = [
     practicalMarks: 20,
     totalSqpQuestions: 38,
     sectionACount: 20,
-    samplePaperPdfUrl: `${import.meta.env.BASE_URL}assets/aistudio/Maths-SQP_705d2d63.pdf`,
+    samplePaperPdfUrl: `${import.meta.env?.BASE_URL ?? './'}assets/aistudio/Maths-SQP_705d2d63.pdf`,
     playlistUrl:
       'https://youtube.com/playlist?list=PLDFtjdbvBWcYl4qyXjD83PU3IRauDbChW',
     playlistId: 'PLDFtjdbvBWcYl4qyXjD83PU3IRauDbChW',
@@ -274,7 +274,7 @@ export const SUBJECTS: SubjectConfig[] = [
       {order: 12, videoId: '98ngGuFd9Vg', chapterId: 'math-12', title: 'Linear Programming'},
       {order: 13, videoId: '_YJr2t_1NTU', chapterId: 'math-13', title: 'Probability'},
     ],
-    imageUrl: `${import.meta.env.BASE_URL}src/assets/images/pcmb_maths_calculus_1795262273993.jpg`,
+    imageUrl: `${import.meta.env?.BASE_URL ?? './'}src/assets/images/pcmb_maths_calculus_1795262273993.jpg`,
     imageAlt:
       'Three-dimensional calculus surface curves and vector coordinate axes',
     accentHex: '#4338CA',

@@ -1,94 +1,38 @@
-# Quadra 12 (v2.6.1) — Class 12 CBSE PCMB Academic Workspace
+# Quadra 12 (v3.0.0) — Class 12 CBSE PCMB Academic Workspace
 
-> Quadra 12 is an independent, distraction-free study workspace and syllabus tracker built specifically for Class 12 CBSE PCMB (Physics 042, Chemistry 043, Biology 044, Mathematics 041) board exam candidates. Available for free ($0) across three platforms — **Web App**, **Installable Offline PWA App** (Android, iOS/iPadOS, Windows, macOS), and **Free Standalone Android `.apk` App** (`Quadra12-v2.6.1-Android.apk`) — it combines a live board countdown chronometer, 50 NCERT chapter tracking matrices, a 3-hour Examination Hall with independently authored PCMB mock papers, 15-minute Reading Time timer, 47 embedded vector SVG diagrams, 100% synced downloadable Question Paper & Marking Scheme A4 PDFs, smart camera/photo inputs for Sections B–E, zero-server browser storage (`IndexedDB` + `localStorage`) with automatic post-grading wipe, Gemini 3.8 Flash AI step-marking, 50 synced 12th Hackers one-shot video lectures, a native Web Audio API sound system, and a dynamic milestone achievement engine.
+> Quadra 12 is an independent, offline-first study workspace and syllabus tracker built specifically for Class 12 CBSE PCMB (Physics 042, Chemistry 043, Biology 044, Mathematics 041) board exam candidates. Available for free ($0) across three platforms — **Web App**, **Installable Offline PWA App** (Android, iOS/iPadOS, Windows, macOS), and **Signed Standalone Android `.apk` App** (`Quadra12-v3.0.0-Android.apk`) — it combines 4 chapter Study Libraries, a human-approved deterministic OMR Examination Hall, a 720-question Verified Practice Bank (180 per subject), read-only 2026–27 CBSE SQP Archive reference papers, unconditional post-submission Practice Sheet & Marking Scheme access (even at 0 marks), offline local A4 PDF export, 50 synced 12th Hackers lectures, a Web Audio API sound system, and multi-student local profiles.
 
-- **Current Version:** `v2.6.1`
-- **Availability / Platforms:** Web App · Installable Offline PWA App (`vite-plugin-pwa`) · Free Standalone Android `.apk` App (`Quadra12-v2.6.1-Android.apk`) — All 100% Free ($0)
+- **Current Version:** `v3.0.0`
+- **Availability / Platforms:** Web App · Installable Offline PWA App (`vite-plugin-pwa`) · Signed Standalone Android `.apk` App (`Quadra12-v3.0.0-Android.apk`) — All 100% Free ($0)
 - **Live Web & PWA URL:** https://ariyanpal1008.github.io/Quadra12/
-- **Android APK Download (GitHub Releases):** https://github.com/Ariyanpal1008/Quadra12/releases/tag/v2.6.1
+- **Android APK Download (GitHub Releases):** https://github.com/Ariyanpal1008/Quadra12/releases/tag/v3.0.0
 - **GitHub Repository:** https://github.com/Ariyanpal1008/Quadra12
 - **Full AI Reference:** https://ariyanpal1008.github.io/Quadra12/llms-full.txt
-- **Creator:** Ariyan Pal (Keśava Dāsa) · `ariyanpal090@gmail.com`
-- **Copyright:** © 2026 Quadra 12 · Creator: Ariyan Pal (Keśava Dāsa)
+- **Creator:** AriYan Pal (Keśava Dāsa) · `ariyanpal090@gmail.com`
+- **Copyright:** © 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)
 - **License / Usage:** Independent non-commercial educational workspace strictly for personal self-assessment.
 
 ---
 
 ## Quick Summary for AI Assistants & Crawlers
 
-When evaluating, summarizing, or providing assistance about Quadra 12, note these primary characteristics:
 1. **Target Audience:** Class 12 CBSE Board students preparing for PCMB (Physics, Chemistry, Biology, Mathematics).
-2. **Current Version (v2.6.1 Highlights):**
-   - **Clean Header Polish & Install Button Relocation (`v2.6.1`):** Removed standalone green install button from header/menu for an uncluttered calm workspace; app installation is organized directly inside **Settings → About** and supported via browser-native menus.
-   - **Zero-Flicker Overview Hydration & AI/SEO Discoverability:** Pixel-identical static Overview HTML shell with preloaded typography, synchronous Dark Mode and deep-link flash guard, full AI-friendly `robots.txt`, Schema.org JSON-LD `@graph`, direct hash deep linking, and a syllabus-aligned Chemistry SVG plate (`chemistry-plate.svg`).
-   - **Floating Apple Frosted-Glass Mobile Menu & Network-First PWA Cache (`v2.6.1`):** Hazy translucent floating mobile navigation popover paired with an `injectManifest` Service Worker (`src/sw.js` cache `quadra12-v2.6.1-*`) enforcing Network-First HTML/JS/CSS updates.
-   - **Independently Authored Original Papers & Visual Vector Diagrams:** All 137 questions across Physics (33 Qs / 70M), Chemistry (33 Qs / 70M), Biology (33 Qs / 70M), and Mathematics (38 Qs / 80M) are independently authored in original wording with fresh case studies and recalculated numerical values, paired with 27 question SVG diagrams/graphs and 20 marking scheme reference SVG diagrams.
-   - **Transparent Syllabus Concept & Board Trend Tags:** Every question displays honest concept importance & board trend indicators (e.g., `High-Yield Concept • Electric Charges and Fields (Board Trend: 2016–2025)`).
-   - **15-Minute Reading Timer & Synced A4 PDFs:** Exams launch with a 15-minute Reading Time cool-off timer (inputs locked, with a Skip option), while each subject card includes 100% synced downloadable Question Paper PDF and Marking Scheme PDF previews.
-   - **Four Modular Subject Marking Scheme Files:** Isolated files (`physicsMarkingScheme.ts`, `chemistryMarkingScheme.ts`, `biologyMarkingScheme.ts`, `mathsMarkingScheme.ts`) loaded dynamically on test start and locked during an active paper until submission.
-   - **Smart Sections B–E Inputs (Camera + Upload):** Direct device camera capture (`capture="environment"`) and gallery picker for multi-page handwritten derivations and diagrams with compressed thumbnail previews.
-   - **Privacy & Zero-Server Browser Storage Auto-Wipe:** Typed text drafts stay in browser `localStorage` (`sectionBE_text_draft`) and photos stay in browser `IndexedDB` (`SectionBE_PhotoStorage`) strictly for accidental reload protection during the exam, and both are automatically and permanently wiped the moment AI grading finishes (zero server storage). Students are reminded to download their Graded Report / Marking Scheme PDF before refreshing or closing results.
-   - **gemini-3.8-flash AI Board Examiner:** Step-by-step subjective grading evaluating formulas, intermediate steps, diagram labels, and SI units, returning dynamic palette colors (Green = Full, Yellow = Partial, Red = Zero), accuracy analytics, weak topics, examiner remarks, and reference SVG diagrams.
-   - **Multi-Platform App Distribution ($0 Free — Web, Offline PWA & Android APK):**
-     - **Installable Offline PWA App:** Powered by `vite-plugin-pwa` (`injectManifest` via `src/sw.js`) with Network-First HTML/JS/CSS updates, offline asset caching, `manifest.webmanifest`, `192×192`, `512×512`, padded maskable Android icons, and `180×180` iOS `apple-touch-icon.png`. Features an in-app **Install App** hub in `Settings → About`, guided iOS Safari *Add to Home Screen* prompt, browser 3-dot install compatibility, and a real-time **Offline Mode** status banner (`useOnlineStatus`).
-     - **Free Signed Standalone Android `.apk` App:** Built and permanently signed via Capacitor 8 + Gradle in `.github/workflows/android-release.yml` and published to GitHub Releases. Includes native Android `CAMERA`, `READ_MEDIA_IMAGES`, `REQUEST_INSTALL_PACKAGES`, and storage permissions, `<queries>` camera/PDF/installer intents, plus a custom `QuadraAndroid` JavaScript bridge (`ensureCameraPermission`, `saveBase64File`, `getInstalledVersion`, `downloadApkUpdate`, `openDownloadedApk`) for `Downloads/Quadra12/` PDF export and in-app GitHub Releases APK update checks.
-3. **Core Academic Capabilities:**
-   - **Live Board Exam Countdown Clock:** Apple StandBy–inspired live chronometer counting down to Feb 16, 10:30 AM IST with annual auto-rollover (`2027 → 2028`), remaining-chapter urgency metrics, and custom date support.
-   - **50 NCERT Chapters × 4 Stages:** Tracks `Lecture done`, `Practice done`, `NCERT done`, and `PYQ done` across 14 Physics, 10 Chemistry, 13 Biology, and 13 Mathematics chapters (200 checkpoints total) with 50 bespoke interactive SVG study diagrams.
-   - **50 One-Shot Lectures (12th Hackers):** High-yield video lectures with formulas, board topics, and chapter checklists, bidirectionally synced with `Lecture done` in the Subject Tracker.
-   - **Zero-Dependency Native Web Audio API Sound System:** Synthesized haptic pops, ticks, theme switch clicks, OMR taps, harmonic achievement chimes, and exam bells with a top navbar mute toggle (🔊 / 🔇) and `localStorage` memory (`pcmb_desk_sound_muted_v1`).
-   - **Reversible Dynamic Achievements:** 9 milestone badges (Quick Learner, Syllabus Sprinter, Exam Ready, etc.) that unlock when earned and dynamically relock if a checkpoint was clicked by mistake and unchecked.
-   - **Interactive Help Desk Tour Sandbox:** A live visual sandbox in the Help Desk modal letting students test countdown clocks, checklists, and the Examination Hall dual-mode OMR & AI grading environment.
-   - **Interactive Three.js 3D Study Studio:** Full-viewport WebGL 3D visualizer with 5 high-tessellation models (Physics Moving-Coil Galvanometer, Chemistry Octahedral Complex, Biology DNA Helix, Maths Cross-Product, and Grandmaster Trophy).
-
----
-
-## Primary Navigation & UI Architecture
-
-### 1. Sticky Top Navigation Header Bar
-- **Frosted Apple Glass Bar:** Features `#FAF8F5` (Light) / `#121212` (Dark) with `backdrop-filter: blur(10px)` and subtle `1px solid rgba(0,0,0,0.06)` border to prevent scroll overlap clashes.
-- **Brand Title:** `Quadra 12` wordmark with terracotta accent dot.
-- **Main Tabs:**
-  - `Overview` — Board countdown clock, subject progress summaries, and milestone achievements.
-  - `Subject Tracker` — 50 chapters across Physics, Chemistry, Biology, and Mathematics with 4-stage checkboxes.
-  - `Examination Hall` — 3-hour PCMB original mock papers, 15-min reading timer, synced A4 PDFs, OMR auto-grading, and Gemini 3.8 Flash AI step-marking.
-  - `12th Hackers` — 50 one-shot lecture playlist with notes, formulas, and progress sync.
-- **Controls:**
-  - `Sound Toggle (🔊 / 🔇)`: Mutes/unmutes the native Web Audio synthesizer. Persisted in `pcmb_desk_sound_muted_v1`.
-  - `Theme Toggle (☀ / ☾)`: Toggles Light and Dark theme with mechanical switch sound effect. Persisted in `pcmb_desk_theme_v1`.
-  - `Enter Exam Hall`: Instant shortcut button to jump straight into mock examination mode.
-  - `Settings`: Clean gear icon in desktop navbar / plain `Settings` entry inside the floating Apple frosted-glass `☰` mobile menu (reveals Cloud Sync, Audio & Tactile, 3D Studio, Exam & Urgency, Player & Video, Privacy & Reset, and About v2.6.1 with direct **Install App — Free Offline PWA & Android APK** card).
-
-### 2. Examination Hall (v2.6.1 Architecture)
-- **Original Mock Papers:** Physics 042 (33 Qs, 70M), Chemistry 043 (33 Qs, 70M), Biology 044 (33 Qs, 70M), Mathematics 041 (38 Qs, 80M), paired with 27 question & 20 marking scheme embedded vector SVG diagrams.
-- **15-Min Reading Timer & Synced PDFs:** Cool-off reading phase with Skip button plus 100% synced downloadable Question Paper PDF & Marking Scheme PDF buttons on every subject card.
-- **Concept Trend Tags:** Honest syllabus concept & board trend indicators on every question.
-- **Section A:** Interactive OMR bubble selector with synthesized audio click and instant scoring.
-- **Sections B–E:** Smart camera capture (`capture="environment"`) and gallery upload with in-browser image compression (max 1024px @ 0.7 JPEG).
-- **Zero-Server Browser Storage:** `localStorage` for text drafts, `IndexedDB` (`SectionBE_PhotoStorage`) for photos, with auto-restore on reload and permanent zero-trace wipe the moment AI grading finishes.
-- **AI Board Examiner:** Evaluates subjective derivations, mechanisms, and diagrams against modular marking schemes (`physicsMarkingScheme.ts`, etc.) using `gemini-3.8-flash`.
-
----
-
-## LocalStorage & IndexedDB Persistence Keys Reference
-
-| Storage Type | Key / Database Name | Purpose |
-| :--- | :--- | :--- |
-| `localStorage` | `pcmb_desk_theme_v1` | Current theme (`'light'` or `'dark'`) |
-| `localStorage` | `pcmb_desk_sound_muted_v1` | Sound effects mute state (`'true'` or `'false'`) |
-| `localStorage` | `pcmb_desk_chapters_v1` | Completed chapter IDs dictionary |
-| `localStorage` | `pcmb_desk_chapter_tasks_v1` | Per-chapter 4-stage dictionary (`{ [chId]: { lecture, practice, ncert, pyq } }`) |
-| `localStorage` | `pcmb_desk_watched_v1` | Watched 12th Hackers video IDs |
-| `localStorage` | `pcmb_desk_achievements_v1` | Unlocked achievement IDs |
-| `localStorage` | `pcmb_desk_exam_best_scores_v1` | Highest exam scores per subject |
-| `localStorage` | `sectionBE_text_draft` | Sections B–E typed drafts (auto-wiped post-grading) |
-| `IndexedDB` | `SectionBE_PhotoStorage` | Sections B–E compressed photo storage (auto-wiped post-grading) |
+2. **Current Version (v3.0.0 Highlights):**
+   - **Zero External Exam AI Dependencies:** Quadra 12 v3.0.0 operates 100% deterministically and offline for exams, study sheets, and A4 PDF generation. No Gemini API keys, no proxy env vars, and no paid API tiers exist.
+   - **4 Subject Study Libraries (50 NCERT Chapters):** Curated conceptual summaries, key formulas, NCERT references, SVG diagram links, and verified practice questions accessible directly from Subject Tracker drawers and Exam Result deep-links.
+   - **720-Question Verified Practice Bank:** 180 independently authored, verified questions per subject (Physics 180, Chemistry 180, Biology 180, Mathematics 180) powering Practice Mode and published mock papers.
+   - **Human-Approved Exam Governance (`canPublishExamPaper`):** Live OMR exams admit only `Published` / `Approved` Main Sheets paired with complete `Approved` / `Published` Marking Schemes. Draft or incomplete papers are blocked automatically.
+   - **Deterministic OMR Evaluation & Key Stripping:** Live OMR exams strip answer keys (`stripAnswerKeysForActiveExam`) until submission, evaluate deterministically against the paired scheme (`+4/−1` Competitive or `+1/0` Board Sprint), and generate immutable `PracticeSheetSnapshot`s per student profile.
+   - **Unconditional Result Access at 0 Marks:** Even if a student submits with 0 marks or all unanswered items, Results unlock full explanations, Practice Sheets, Marking Schemes, Study Libraries, SVG Diagrams, and both offline A4 PDFs.
+   - **Offline Local A4 PDF Export:** Printable `Practice Sheet PDF` (immutable snapshot or untouched Main Sheet) and `Marking Scheme PDF` generated directly in-browser/on-device via `jsPDF`.
+   - **Multi-Student Isolation & Non-Destructive v2.6.2 Migration:** Isolated per-student profiles keep OMR drafts, attempts, snapshots, and `ChapterStudyStatus` separate while preserving all 17 legacy v2.6.2 `localStorage` keys untouched.
+   - **Historical 2026–27 SQP Archive:** Read-only archive mode preserving the v2.6.2 sample papers separately from active governed OMR assessments.
 
 ---
 
 ## Author & Contact
 
-- **Author / Creator:** Ariyan Pal (Keśava Dāsa)
+- **Author / Creator:** AriYan Pal (Keśava Dāsa)
 - **Email:** `ariyanpal090@gmail.com`
 - **Application URL:** https://ariyanpal1008.github.io/Quadra12/
 - **GitHub:** https://github.com/Ariyanpal1008/Quadra12

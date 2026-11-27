@@ -29,7 +29,7 @@ export default defineConfig(() => {
           name: 'Quadra 12 — Class 12 CBSE PCMB',
           short_name: 'Quadra 12',
           description:
-            'Class 12 CBSE PCMB syllabus tracker, 3-hour Examination Hall with vector SVG diagrams, synced A4 PDFs, AI step-marking, and 12th Hackers lectures.',
+            'Class 12 CBSE PCMB syllabus tracker, 4 Study Libraries, 720-question verified practice bank, human-approved OMR Examination Hall with local A4 PDFs, and 12th Hackers lectures.',
           theme_color: '#1E1B18',
           background_color: '#F5F2EB',
           display: 'standalone',
@@ -59,7 +59,7 @@ export default defineConfig(() => {
           ],
         },
         injectManifest: {
-          maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
+          maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2,jpg}'],
         },
         devOptions: {

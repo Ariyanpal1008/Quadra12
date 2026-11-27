@@ -76,6 +76,7 @@ import {
   dismissUpdateBannerForSession,
   isUpdateBannerDismissed,
 } from './utils/appUpdater';
+import {ensureV2ToV3SafeMigration} from './utils/v3Storage';
 import {ResilientImage} from './components/ResilientImage';
 import {BoardCountdownClock} from './components/BoardCountdownClock';
 import {
@@ -257,6 +258,7 @@ export default function App() {
       ? resolveHashRoute(window.location.hash).trackerSubject
       : 'physics',
   );
+  const [trackerDeepLinkChapterId, setTrackerDeepLinkChapterId] = useState<string | null>(null);
   const [examTargetSubject, setExamTargetSubject] = useState<SubjectId>('physics');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
@@ -271,9 +273,11 @@ export default function App() {
   const [syncNoticeToast, setSyncNoticeToast] = useState<string | null>(null);
   const [availableUpdate, setAvailableUpdate] = useState<ReleaseUpdateInfo | null>(null);
   const [showUpdateNotification, setShowUpdateNotification] = useState(false);
+  const [swWaitingReg, setSwWaitingReg] = useState<ServiceWorkerRegistration | null>(null);
   const [isMuted, setIsMuted] = useState(isSoundMuted);
 
   useEffect(() => {
+    ensureV2ToV3SafeMigration();
     const raf = window.requestAnimationFrame(() => {
       document.documentElement.classList.remove('is-deep-link');
     });
@@ -284,10 +288,18 @@ export default function App() {
         setTrackerSubject(next.trackerSubject);
       }
     };
+    const onSwUpdate = (e: Event) => {
+      const custom = e as CustomEvent<ServiceWorkerRegistration>;
+      if (custom.detail) {
+        setSwWaitingReg(custom.detail);
+      }
+    };
     window.addEventListener('hashchange', onHashChange);
+    window.addEventListener('quadra12-sw-update', onSwUpdate as EventListener);
     return () => {
       window.cancelAnimationFrame(raf);
       window.removeEventListener('hashchange', onHashChange);
+      window.removeEventListener('quadra12-sw-update', onSwUpdate as EventListener);
     };
   }, []);
 
@@ -639,9 +651,19 @@ export default function App() {
     if (subjectId) {
       setTrackerSubject(subjectId);
     }
+    setTrackerDeepLinkChapterId(null);
     setActiveView(view);
     setMobileMenuOpen(false);
     syncHashUrl(view, resolvedSubject);
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  };
+
+  const handleOpenChapterInTracker = (subjectId: SubjectId, chapterId: string) => {
+    setTrackerSubject(subjectId);
+    setTrackerDeepLinkChapterId(chapterId);
+    setActiveView('tracker');
+    setMobileMenuOpen(false);
+    syncHashUrl('tracker', subjectId);
     window.scrollTo({top: 0, behavior: 'smooth'});
   };
 
@@ -1381,7 +1403,7 @@ export default function App() {
                             className="w-6 h-px mt-[0.55em] bg-[#A64B33] dark:bg-[#D4785E] shrink-0"
                             aria-hidden="true"
                           />
-                          <span>Quadra 12 · CBSE Class 12 PCMB · Created by Ariyan Pal (Keśava Dāsa)</span>
+                          <span>Quadra 12 · CBSE Class 12 PCMB · Created by AriYan Pal (Keśava Dāsa)</span>
                         </div>
 
                         <h1
@@ -1401,9 +1423,9 @@ export default function App() {
                         <div className="mt-4 pt-4 sm:mt-6 sm:pt-6 border-t border-[#DDD6C7] dark:border-[#332E28]">
                           <p className="text-[15px] sm:text-base leading-relaxed text-[#575048] dark:text-[#CBC3B6] max-w-[58ch]">
                             Track every NCERT chapter across Physics, Chemistry, Biology,
-                            and Mathematics, write official CBSE 2026–27 sample papers
-                            inside the 3-hour Examination Hall, and revise with the 12th
-                            Hackers one-shot series.
+                            and Mathematics with 4 Study Libraries, attempt human-approved
+                            OMR papers &amp; 720 practice questions inside the Examination
+                            Hall, and revise with the 12th Hackers one-shot series.
                           </p>
                         </div>
                       </div>
@@ -1468,12 +1490,12 @@ export default function App() {
                     </div>
 
                     <div>
-                      <p className="text-xs text-[#787066] dark:text-[#9C9387]">CBSE Sample Papers</p>
+                      <p className="text-xs text-[#787066] dark:text-[#9C9387]">Exam Hall Papers</p>
                       <p className="mt-1 text-2xl sm:text-3xl font-semibold text-[#1E1B18] dark:text-[#F5F2EB] font-mono tabular-nums">
                         <AnimatedNumber value={papersAttempted} /> / 4
                       </p>
                       <p className="mt-0.5 text-xs text-[#787066] dark:text-[#9C9387]">
-                        Full 3-hour CBSE PDFs
+                        Published OMR &amp; A4 PDFs
                       </p>
                     </div>
 
@@ -1668,12 +1690,16 @@ export default function App() {
                             </div>
                           </div>
 
-                          <div className="px-6 py-4 border-t border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB]/60 dark:bg-[#24201C]/70 flex flex-wrap items-center justify-between gap-3">
-                            <span className="text-xs text-[#787066] dark:text-[#9C9387] font-mono tabular-nums">
-                              {best
-                                ? `Sample Paper Best: ${best.score}/${best.totalMarks}`
-                                : 'Sample paper not attempted'}
-                            </span>
+                          <div
+                            className={`px-6 py-4 border-t border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB]/60 dark:bg-[#24201C]/70 flex flex-wrap items-center ${
+                              best ? 'justify-between' : 'justify-end'
+                            } gap-3`}
+                          >
+                            {best && (
+                              <span className="text-xs text-[#787066] dark:text-[#9C9387] font-mono tabular-nums">
+                                OMR Best: {best.score}/{best.totalMarks}
+                              </span>
+                            )}
 
                             <div className="flex items-center gap-2">
                               <motion.button
@@ -1690,7 +1716,7 @@ export default function App() {
                                 onClick={() => handleEnterExamForSubject(subject.id)}
                                 className="px-3 py-1.5 text-xs font-medium text-[#F5F2EB] dark:text-[#1E1B18] bg-[#1E1B18] hover:bg-[#332E28] dark:bg-[#F5F2EB] dark:hover:bg-[#E8E2D5] rounded-lg whitespace-nowrap"
                               >
-                                Sample Paper
+                                Exam Hall
                               </motion.button>
                             </div>
                           </div>
@@ -1720,7 +1746,7 @@ export default function App() {
                           <span className="live-beacon-ring absolute inline-flex h-full w-full rounded-full bg-[#D4785E]" />
                           <span className="relative inline-flex rounded-full h-2 w-2 bg-[#D4785E]" />
                         </span>
-                        <span>Official CBSE 2026–27 SQPs · 03:00:00 Timer</span>
+                        <span>Verified PCMB OMR · 720-Q Practice &amp; SQP Archive</span>
                       </div>
 
                       <h2
@@ -1729,16 +1755,16 @@ export default function App() {
                       >
                         Inside the{' '}
                         <em className="italic font-medium text-[#D4785E]">
-                          examination hall.
+                          Examination Hall.
                         </em>
                       </h2>
 
                       <div className="mt-6 pt-6 border-t border-[#332E28]">
                         <p className="text-sm sm:text-base text-[#CBC3B6] leading-relaxed">
-                          Write the complete, unmodified 3-hour CBSE 2026–27 Sample Question
-                          Papers across Physics, Chemistry, Biology, and Mathematics. The
-                          original CBSE PDF stays embedded beside an interactive 33/38
-                          question OMR &amp; written checklist and instant Section A grading.
+                          Attempt human-approved Competitive (+4/−1) and Board Sprint (+1/0) OMR Main
+                          Sheets, drill 720 verified PCMB questions in Practice Mode, or browse
+                          the read-only 2026–27 CBSE SQP Archive — with Practice Sheets, Study
+                          Libraries, SVG Diagrams, and local A4 PDFs unlocked at any score.
                         </p>
                       </div>
 
@@ -1826,8 +1852,10 @@ export default function App() {
               >
                 <SubjectTrackerSection
                   selectedSubjectId={trackerSubject}
+                  initialChapterId={trackerDeepLinkChapterId}
                   onSelectSubject={(subId) => {
                     setTrackerSubject(subId);
+                    setTrackerDeepLinkChapterId(null);
                     syncHashUrl('tracker', subId);
                   }}
                   completedChapters={completedChapters}
@@ -1855,6 +1883,7 @@ export default function App() {
                   initialSubjectId={examTargetSubject}
                   bestScores={bestScores}
                   onSaveAttempt={handleSaveExamAttempt}
+                  onOpenChapterInTracker={handleOpenChapterInTracker}
                 />
               </motion.div>
             )}
@@ -1962,7 +1991,7 @@ export default function App() {
 
             <div className="pt-4 border-t border-[#DDD6C7]/70 dark:border-[#332E28] space-y-1.5 text-[11px] text-[#787066] dark:text-[#9C9387]">
               <p className="font-medium text-[#1E1B18] dark:text-[#F5F2EB]">
-                © 2026 Quadra 12 · <span className="font-semibold text-[#A64B33] dark:text-[#D4785E]">Creator: Ariyan Pal (Keśava Dāsa)</span>
+                © 2026 Quadra 12 · <span className="font-semibold text-[#A64B33] dark:text-[#D4785E]">Creator: AriYan Pal (Keśava Dāsa)</span>
               </p>
               <div className="flex flex-wrap items-center gap-4">
                 <button
@@ -2181,6 +2210,62 @@ export default function App() {
                     setShowUpdateNotification(false);
                   }}
                   aria-label="Dismiss update notification"
+                  className="text-[#787066] dark:text-[#9C9387] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB] p-1 rounded-md shrink-0"
+                >
+                  <X className="w-4 h-4" aria-hidden="true" />
+                </button>
+              </div>
+            </motion.aside>
+          )}
+        </AnimatePresence>
+        {/* Service Worker Offline Update Ready Banner */}
+        <AnimatePresence>
+          {swWaitingReg && (
+            <motion.aside
+              role="status"
+              aria-live="polite"
+              initial={{opacity: 0, y: 20, scale: 0.96}}
+              animate={{opacity: 1, y: 0, scale: 1}}
+              exit={{opacity: 0, y: 14, scale: 0.96}}
+              transition={APPLE_SPRING}
+              className="fixed bottom-4 left-4 z-50 w-[min(360px,calc(100vw-2rem))] rounded-xl border border-[#A64B33] dark:border-[#D4785E] bg-[#FAF8F3] dark:bg-[#1E1B18] p-4 shadow-xl"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] font-mono text-[#A64B33] dark:text-[#D4785E] font-semibold">
+                    Offline App Update Ready
+                  </p>
+                  <p className="mt-0.5 text-sm font-semibold text-[#1E1B18] dark:text-[#F5F2EB]">
+                    New Quadra 12 assets cached
+                  </p>
+                  <p className="mt-0.5 text-xs text-[#575048] dark:text-[#CBC3B6]">
+                    Reload now to switch to the updated offline build without losing progress.
+                  </p>
+                  <div className="mt-2.5 flex items-center gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        swWaitingReg.waiting?.postMessage({type: 'SKIP_WAITING'});
+                        setSwWaitingReg(null);
+                        window.location.reload();
+                      }}
+                      className="px-3 py-1.5 rounded-lg bg-[#1E1B18] dark:bg-[#F5F2EB] text-[#F5F2EB] dark:text-[#1E1B18] text-xs font-semibold hover:opacity-90"
+                    >
+                      Reload App
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSwWaitingReg(null)}
+                      className="text-xs text-[#787066] dark:text-[#9C9387] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB]"
+                    >
+                      Later
+                    </button>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSwWaitingReg(null)}
+                  aria-label="Dismiss offline update prompt"
                   className="text-[#787066] dark:text-[#9C9387] hover:text-[#1E1B18] dark:hover:text-[#F5F2EB] p-1 rounded-md shrink-0"
                 >
                   <X className="w-4 h-4" aria-hidden="true" />

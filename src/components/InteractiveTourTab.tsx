@@ -4,18 +4,16 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
-  Camera,
+  BookOpen,
   Check,
   CheckCircle2,
   Clock,
   FileCheck2,
+  FileText,
   Flame,
-  ImagePlus,
   Play,
   RotateCcw,
-  Sparkles,
   Trophy,
-  X,
   Zap,
 } from 'lucide-react';
 import {playCheckSound, playOmrBubbleSound} from '../utils/soundEffects';
@@ -97,7 +95,7 @@ const TOUR_STEPS: {
     label: 'Subject Tracker',
     title: '50 NCERT Chapters × 4 Study Checkpoints',
     summary:
-      'Every chapter across Physics (14), Chemistry (10), Biology (13), and Maths (13) includes 4 checkpoints plus a custom SVG diagram plate.',
+      'Every chapter across Physics (14), Chemistry (10), Biology (13), and Mathematics (13) includes 4 checkpoints plus a custom SVG diagram plate.',
     targetSection: 'subjects',
     ctaLabel: 'Open Subject Tracker',
     hotspots: [
@@ -110,8 +108,8 @@ const TOUR_STEPS: {
         detail: 'Toggle an entire study stage across all chapters of a subject in one click with audio confirmation.',
       },
       {
-        label: '50 Interactive SVG Plates',
-        detail: 'Click any chapter card or plate to inspect high-yield visual vector diagrams for quick memory recall.',
+        label: '50 Chapter Study Libraries & SVG Diagrams',
+        detail: 'Open curated chapter study summaries, formulas, SVG diagrams, and verified practice questions right inside the tracker.',
       },
     ],
   },
@@ -119,27 +117,27 @@ const TOUR_STEPS: {
     id: 'exam',
     stepNum: '04',
     label: 'Exam Hall',
-    title: 'Original PCMB Papers, Synced PDFs & AI Examiner (v2.6)',
+    title: 'Verified PCMB OMR, 720-Q Practice Mode & Local PDFs',
     summary:
-      '100% independently authored papers with visual SVG diagrams, a 15-minute Reading Timer, downloadable Question Paper & Marking Scheme PDFs, smart camera/photo inputs, and Gemini 3.8 Flash step-grading.',
+      'Write human-approved OMR papers with deterministic scoring, drill 720 verified questions (180 per subject) in Practice Mode, browse the 2026–27 SQP Archive, and download Practice Sheet & Marking Scheme A4 PDFs at any score.',
     targetSection: 'exam',
     ctaLabel: 'Enter Examination Hall',
     hotspots: [
       {
-        label: '15-Min Reading Timer & Synced PDFs',
-        detail: 'Starts with a cool-off Reading Time timer (with Skip option) and includes 100% synced Question Paper & Marking Scheme A4 PDF downloads.',
+        label: 'Human-Approved Governance & OMR Engine',
+        detail: 'Only Published papers with complete Marking Schemes admit live OMR tests; answer keys stay stripped until submission.',
       },
       {
-        label: 'Concept Trend Tags & Vector SVG Diagrams',
-        detail: 'Questions display syllabus concept & board trend tags (e.g., High-Yield Concept · Board Trend: 2016–2025) alongside crisp vector diagrams.',
+        label: 'Practice Mode (720 Verified Questions)',
+        detail: 'Switch cleanly to untimed chapter MCQ drills with immediate step-by-step explanations and diagram inspection.',
       },
       {
-        label: 'Smart Camera & Photo Upload',
-        detail: 'Direct device camera capture (Take Photo) and gallery picker (Upload Image) for multi-page handwritten answers.',
+        label: 'Unconditional Access at 0 Marks',
+        detail: 'Even on an empty 0-mark attempt, Results unlock your Practice Sheet, Marking Scheme, Study Libraries, and Diagrams.',
       },
       {
-        label: 'gemini-3.8-flash Step-Marking & Auto-Wipe',
-        detail: 'Evaluates steps against modular marking schemes (Green/Yellow/Red palette), then auto-wipes localStorage & IndexedDB drafts once results render.',
+        label: 'Offline Practice Sheet & Marking Scheme PDFs',
+        detail: 'Generate clean printable A4 PDFs locally with jsPDF and immutable Practice Sheet snapshots per student profile.',
       },
     ],
   },
@@ -184,9 +182,8 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
     pyq: false,
   });
   const [simOmrPick, setSimOmrPick] = useState<'A' | 'B' | 'C' | 'D' | null>('B');
-  const [simExamTab, setSimExamTab] = useState<'secA' | 'secBE'>('secA');
-  const [simPhotoAttached, setSimPhotoAttached] = useState(false);
-  const [simAiGraded, setSimAiGraded] = useState(false);
+  const [simExamTab, setSimExamTab] = useState<'omr' | 'practice'>('omr');
+  const [simShowExplanation, setSimShowExplanation] = useState(true);
   const [simEmbedMode, setSimEmbedMode] = useState<'Standard' | 'Pure Embed' | 'No-Cookie'>('Standard');
   const [simLectureDone, setSimLectureDone] = useState(false);
 
@@ -208,7 +205,7 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
         <div>
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-[#A64B33]/10 text-[#A64B33] dark:text-[#D4785E] border border-[#A64B33]/20">
-              Interactive Tour v2.6
+              Interactive Tour
             </span>
             <span className="text-xs text-[#787066] dark:text-[#9C9387]">Safe Sandbox Mode</span>
           </div>
@@ -466,7 +463,7 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
               </div>
             )}
 
-            {/* STEP 4: EXAMINATION HALL (v2.6) */}
+            {/* STEP 4: EXAMINATION HALL v3.0.0 */}
             {currentStep.id === 'exam' && (
               <div className="rounded-xl border border-[#332E28] bg-[#1E1B18] text-[#F5F2EB] p-4 sm:p-5 space-y-3.5">
                 {/* Header with paper title, timer, and tab selector */}
@@ -474,51 +471,50 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
                   <div className="flex items-center gap-2 min-w-0">
                     <FileCheck2 className="w-4 h-4 text-[#D4785E] shrink-0" aria-hidden="true" />
                     <span className="text-xs font-semibold truncate">
-                      Physics Blueprint Paper (Code 042)
+                      Physics Competitive Paper I (Code 042)
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
                     <span className="font-mono text-xs text-[#CBC3B6] tabular-nums bg-[#24201C] px-2 py-0.5 rounded border border-[#332E28]">
-                      ⏱ 02:45:18
+                      ⏱ 00:44:12
                     </span>
                     <div className="inline-flex rounded-md p-0.5 bg-[#24201C] border border-[#332E28] text-[11px]">
                       <button
                         type="button"
-                        onClick={() => setSimExamTab('secA')}
+                        onClick={() => setSimExamTab('omr')}
                         className={`px-2.5 py-0.5 rounded transition-colors ${
-                          simExamTab === 'secA'
+                          simExamTab === 'omr'
                             ? 'bg-[#3D6B4F] text-[#F5F2EB] font-semibold'
                             : 'text-[#CBC3B6] hover:text-white'
                         }`}
                       >
-                        Sec A (OMR)
+                        OMR Exam
                       </button>
                       <button
                         type="button"
-                        onClick={() => setSimExamTab('secBE')}
+                        onClick={() => setSimExamTab('practice')}
                         className={`px-2.5 py-0.5 rounded transition-colors ${
-                          simExamTab === 'secBE'
-                            ? 'bg-[#4F46E5] text-[#F5F2EB] font-semibold'
+                          simExamTab === 'practice'
+                            ? 'bg-[#A64B33] text-[#F5F2EB] font-semibold'
                             : 'text-[#CBC3B6] hover:text-white'
                         }`}
                       >
-                        Sec B–E (AI Check)
+                        Practice + PDF
                       </button>
                     </div>
                   </div>
                 </div>
 
-                {simExamTab === 'secA' ? (
-                  /* Section A: OMR Bubble Sheet */
+                {simExamTab === 'omr' ? (
                   <div className="rounded-lg border border-[#332E28] bg-[#24201C] p-3.5 space-y-3">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                       <span className="text-xs font-mono text-[#D4785E] font-semibold shrink-0">
-                        Q01 · Section A (MCQ · 1 Mark)
+                        Q01 · Verified Question (+4 / −1)
                       </span>
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-[#3A1E18] border border-[#7A3528] text-[#F09986] self-start sm:self-auto leading-snug">
                         <Flame className="w-2.5 h-2.5 shrink-0" />
-                        <span>High-Yield Concept (Board Trend: 2016–2025)</span>
+                        <span>Published · Electrostatics · Key Stripped Live</span>
                       </span>
                     </div>
 
@@ -526,7 +522,6 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
                       Two point charges +2q and +2q are placed at distance 2a. Determine the net electric potential at their midpoint:
                     </p>
 
-                    {/* OMR Options Row */}
                     <div className="space-y-2 pt-1">
                       <div className="flex items-center gap-2">
                         {(['A', 'B', 'C', 'D'] as const).map((opt) => {
@@ -553,94 +548,51 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
                         })}
                       </div>
 
-                      {/* Clean Feedback Badge on its own line (Zero Overlap) */}
                       <div className="p-2 rounded bg-[#1E1B18] border border-[#332E28] flex items-center justify-between text-xs font-mono">
                         <span className="text-[#9C9387]">
-                          Selected: <strong className="text-white">{simOmrPick ?? 'None'}</strong>
+                          Marked: <strong className="text-white">{simOmrPick ?? 'None'}</strong>
                         </span>
                         <span className={simOmrPick === 'B' ? 'text-[#7AB88F] font-semibold' : 'text-[#D4785E]'}>
-                          {simOmrPick === 'B' ? '✓ Correct (+1 Mark · Key: B)' : 'Model Key is B'}
+                          {simOmrPick === 'B' ? '✓ Deterministic Key Match (+4 Marks)' : 'Marking Scheme Key: B'}
                         </span>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  /* Section B–E: Smart Camera Upload & AI Step-Marking */
                   <div className="rounded-lg border border-[#332E28] bg-[#24201C] p-3.5 space-y-3">
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-                      <span className="text-xs font-mono text-[#A5B4FC] font-semibold shrink-0">
-                        Q22 · Section C (Derivation · 3 Marks)
+                      <span className="text-xs font-mono text-[#7AB88F] font-semibold shrink-0">
+                        Result · Practice Sheet + Marking Scheme Unlocked
                       </span>
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-[#3A1E18] border border-[#7A3528] text-[#F09986] self-start sm:self-auto leading-snug">
-                        <Flame className="w-2.5 h-2.5 shrink-0" />
-                        <span>High-Yield Concept · Moving Charges</span>
+                      <span className="text-[10px] font-mono text-[#CBC3B6]">
+                        Available even at 0 marks
                       </span>
                     </div>
 
-                    <p className="text-xs text-[#CBC3B6] leading-relaxed">
-                      Derive expression for magnetic field B on the axis of a circular current loop using Biot-Savart Law.
-                    </p>
-
-                    {/* Camera & Upload Action Buttons */}
                     <div className="flex flex-wrap items-center gap-2 pt-1 border-t border-[#332E28]">
                       <button
                         type="button"
-                        onClick={() => setSimPhotoAttached((prev) => !prev)}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-medium transition-all ${
-                          simPhotoAttached
-                            ? 'bg-[#3D6B4F] border-[#7AB88F] text-white'
-                            : 'bg-[#312E81] border-[#4338CA] text-[#C7D2FE] hover:bg-[#3730A3]'
-                        }`}
+                        onClick={() => setSimShowExplanation((prev) => !prev)}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#3D6B4F] bg-[#1C2E22] text-[#B6DFC3] text-xs font-medium"
                       >
-                        <Camera className="w-3.5 h-3.5 shrink-0" />
-                        <span>{simPhotoAttached ? '✓ Photo 1 (IndexedDB)' : '📸 Simulate Take Photo'}</span>
+                        <BookOpen className="w-3.5 h-3.5 shrink-0" />
+                        <span>{simShowExplanation ? 'Hide Marking Rule' : 'Inspect Marking Scheme'}</span>
                       </button>
 
-                      <button
-                        type="button"
-                        onClick={() => setSimAiGraded((prev) => !prev)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#A64B33] bg-[#2F1D19] text-[#D4785E] hover:bg-[#3D231E] text-xs font-medium transition-colors"
-                      >
-                        <Sparkles className="w-3.5 h-3.5 shrink-0" />
-                        <span>{simAiGraded ? 'Hide AI Grade' : '✨ Check with AI Examiner'}</span>
-                      </button>
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#4A423A] bg-[#1E1B18] text-[#F5F2EB] text-xs font-mono">
+                        <FileText className="w-3.5 h-3.5 text-[#D4785E]" />
+                        <span>Practice Sheet PDF · Marking Scheme PDF</span>
+                      </span>
                     </div>
 
-                    {/* Attached Photo Preview Mockup */}
-                    {simPhotoAttached && (
-                      <div className="p-2 rounded bg-[#1E1B18] border border-[#332E28] flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-2 text-[#CBC3B6] font-mono text-[11px] truncate">
-                          <ImagePlus className="w-3.5 h-3.5 text-[#7AB88F] shrink-0" />
-                          <span className="truncate">Page_1_Derivation.jpg (1024px compressed)</span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setSimPhotoAttached(false)}
-                          className="text-[#9C9387] hover:text-[#D4785E] p-0.5"
-                          title="Remove photo"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    )}
-
-                    {/* AI Examiner Step-Marking Evaluation Card */}
-                    {simAiGraded && (
-                      <div className="p-3 rounded-lg bg-[#161412] border border-[#7AB88F]/50 space-y-2 text-xs">
-                        <div className="flex items-center justify-between">
-                          <span className="font-semibold text-[#F59E0B] font-mono text-xs">
-                            Awarded: +2.5 / 3.0 Marks (Partial)
-                          </span>
-                          <span className="text-[10px] text-[#A5B4FC] font-mono bg-[#1E1B18] px-1.5 py-0.5 rounded border border-[#332E28]">
-                            gemini-3.8-flash
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-[#CBC3B6] leading-relaxed">
-                          ✓ Correct Biot-Savart equation &amp; diagram (+1.5m). Accurate loop integration (+1.0m). Omitted final SI unit (Tesla) in conclusion (-0.5m).
+                    {simShowExplanation && (
+                      <div className="p-3 rounded-lg bg-[#161412] border border-[#7AB88F]/40 space-y-1.5 text-xs">
+                        <p className="font-mono text-[#7AB88F] font-semibold">
+                          Deterministic Solution · Ch 1 Electrostatic Potential
                         </p>
-                        <div className="pt-1 border-t border-[#332E28] text-[11px] font-mono text-[#D4785E]">
-                          Model Answer: B = (μ₀ I R²) / [2(R² + x²)^(3/2)] T
-                        </div>
+                        <p className="text-[11px] text-[#CBC3B6] leading-relaxed">
+                          Potential is scalar: V = V₁ + V₂ = k(2q)/a + k(2q)/a = 4kq/a = q / (πε₀a). Linked directly to Physics Study Library + Diagram viewer.
+                        </p>
                       </div>
                     )}
                   </div>
@@ -791,9 +743,8 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
                 setSimOmrPick('B');
                 setSimEmbedMode('Standard');
                 setSimLectureDone(false);
-                setSimExamTab('secA');
-                setSimPhotoAttached(false);
-                setSimAiGraded(false);
+                setSimExamTab('omr');
+                setSimShowExplanation(true);
               }}
               className="inline-flex items-center gap-1 text-[#A64B33] dark:text-[#D4785E] hover:underline whitespace-nowrap shrink-0 font-medium"
             >

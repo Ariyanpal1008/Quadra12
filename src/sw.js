@@ -18,8 +18,14 @@ function computeManifestHash(entries) {
   return (hash >>> 0).toString(36);
 }
 
-const CACHE_NAME = `quadra12-v2.6.2-${computeManifestHash(WB_MANIFEST)}`;
+const CACHE_NAME = `quadra12-v3.0.0-${computeManifestHash(WB_MANIFEST)}`;
 const CORE_FALLBACK_URLS = ['./', './index.html', './chemistry-plate.svg'];
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();

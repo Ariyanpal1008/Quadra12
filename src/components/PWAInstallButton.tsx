@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import {CheckCircle2, Download, Share, Smartphone, WifiOff, X} from 'lucide-react';
+import {APP_VERSION} from '../constants/version';
 import {useOnlineStatus, usePWAInstall} from '../hooks/usePWAInstall';
 
 interface PWAInstallButtonProps {
@@ -101,7 +102,7 @@ export function PWAInstallButton({
     return null;
   }
 
-  // Standalone header & menu variants are permanently suppressed in v2.6.1; installation is exclusively inside Settings
+  // Standalone header & menu variants are suppressed; installation is accessible inside Settings
   if (variant === 'navbar' || variant === 'menu') {
     return null;
   }
@@ -155,7 +156,7 @@ export function PWAInstallButton({
             <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Add to Home screen</strong> in Chrome&apos;s three-dot menu.
           </li>
           <li>
-            Or download the free standalone signed Android APK (v2.6.1) right below in{' '}
+            Or download the free standalone signed Android APK (v{APP_VERSION}) right below in{' '}
             <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Settings → About</strong>.
           </li>
         </ol>
