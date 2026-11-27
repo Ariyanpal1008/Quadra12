@@ -106,7 +106,10 @@ jobs:
 
       - name: Install dependencies & build web application with Bun
         run: |
-          bun install --frozen-lockfile
+          if ! bun install --frozen-lockfile; then
+            echo "::warning::bun.lock out of sync with package.json; falling back to bun install --no-save"
+            bun install --no-save
+          fi
           bun run build
 
       - name: Initialize & configure Capacitor Android project

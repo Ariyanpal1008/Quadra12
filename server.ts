@@ -1,4 +1,5 @@
 import express, {type Request, type Response, type NextFunction} from 'express';
+import http from 'node:http';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 
@@ -88,11 +89,17 @@ export function createApp() {
 
 async function startServer() {
   const app = createApp();
+  const httpServer = http.createServer(app);
 
   if (!isProduction) {
     const {createServer: createViteServer} = await import('vite');
     const vite = await createViteServer({
-      server: {middlewareMode: true},
+      server: {
+        middlewareMode: true,
+        hmr: false,
+        ws: {server: httpServer},
+        allowedHosts: true,
+      },
       appType: 'spa',
     });
     app.use(vite.middlewares);
@@ -104,7 +111,7 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, '0.0.0.0', () => {
+  httpServer.listen(PORT, '0.0.0.0', () => {
     console.log(
       `[quadra12-web] v3.0.0 running on http://0.0.0.0:${PORT} (${isProduction ? 'production' : 'development'})`,
     );
