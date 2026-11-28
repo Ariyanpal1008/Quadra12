@@ -303,12 +303,12 @@ export function ExamPdfModal({
         {isV3Mode ? (
           effectiveMode === 'question_paper' ? (
             /* ========================================================
-               V3.0.0 PRACTICE SHEET PDF (Immutable Attempt or Main Sheet)
+               V3.1 PRACTICE SHEET PDF (Immutable Attempt or Main Sheet)
             ======================================================== */
             <div className="space-y-6">
               <div data-pdf-block className="text-center space-y-1 py-2 border-b-2 border-black pb-3">
                 <p className="text-[11px] font-sans uppercase tracking-widest text-gray-600">
-                  Quadra 12 v3.0.0 · Verified OMR Practice Sheet
+                  Quadra 12 v3.1 · Verified OMR Practice Sheet
                 </p>
                 <h1 className="text-lg sm:text-xl font-bold tracking-wide uppercase font-serif">
                   {v3Attempt ? v3Attempt.paperTitle : activeV3Paper?.title}
@@ -391,12 +391,12 @@ export function ExamPdfModal({
             </div>
           ) : (
             /* ========================================================
-               V3.0.0 MARKING SCHEME PDF (Step Solutions & Key Check)
+               V3.1 MARKING SCHEME PDF (Step Solutions & Key Check)
             ======================================================== */
             <div className="space-y-6">
               <div data-pdf-block className="text-center space-y-1 py-2 border-b-2 border-black pb-3">
                 <p className="text-[11px] font-sans uppercase tracking-widest text-gray-600">
-                  Quadra 12 v3.0.0 · Human-Verified Official Marking Scheme
+                  Quadra 12 v3.1 · Human-Verified Official Marking Scheme
                 </p>
                 <h1 className="text-lg sm:text-xl font-bold tracking-wide uppercase font-serif">
                   {activeV3Scheme?.title ?? `${activeV3Paper?.title ?? subject.name} — Marking Scheme`}

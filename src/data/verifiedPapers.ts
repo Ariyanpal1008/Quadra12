@@ -26,7 +26,7 @@ const HUMAN_APPROVAL_V3: ApprovalRecord = {
   reviewedAt: '2026-11-26',
   verificationNotes:
     'Verified against NCERT Class 12 curriculum, SI units, option uniqueness, step-wise marking breakdown, and zero duplicate keys.',
-  version: '3.0.0',
+  version: '3.1',
 };
 
 /**
@@ -116,7 +116,7 @@ function makeMainPaper(params: {
     subjectId: params.subjectId,
     title: params.title,
     subtitle: params.subtitle,
-    paperVersion: '3.0.0',
+    paperVersion: '3.1',
     isMainSheet: true,
     publicationStatus: 'Published',
     approval: HUMAN_APPROVAL_V3,

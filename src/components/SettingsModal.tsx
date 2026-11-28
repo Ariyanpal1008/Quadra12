@@ -1506,8 +1506,8 @@ export function SettingsModal({
                         </h3>
                       </div>
                       <p className="text-xs text-[#575048] dark:text-[#CBC3B6]">
-                        Set a custom pre-board or CBSE exam target date, or restore Official
-                        CBSE Feb 16 (10:30 AM IST with annual auto-rollover).
+                        Set a custom pre-board or exam target date, or restore the Official CBSE
+                        2027 Date Sheet (auto-advancing 16 Feb – 9 Apr 2027 in IST).
                       </p>
                       <div className="flex flex-wrap items-center gap-2.5">
                         <input
@@ -1531,7 +1531,7 @@ export function SettingsModal({
                           }}
                           className="px-3 py-2 rounded-lg border border-[#DDD6C7] dark:border-[#332E28] bg-[#F5F2EB] dark:bg-[#24201C] text-xs font-medium hover:border-[#A64B33]"
                         >
-                          Reset to Official Feb 16
+                          Reset to 2027 Date Sheet
                         </button>
                       </div>
                     </div>

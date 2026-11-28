@@ -17,6 +17,7 @@ import {
   Zap,
 } from 'lucide-react';
 import {playCheckSound, playOmrBubbleSound} from '../utils/soundEffects';
+import {RollingClockTile} from './BoardCountdownClock';
 
 export type TourTargetSection = 'overview' | 'subjects' | 'exam' | 'hackers';
 
@@ -45,19 +46,19 @@ const TOUR_STEPS: {
     id: 'clock',
     stepNum: '01',
     label: 'Board Clock',
-    title: 'Live Apple-Style Board Countdown Clock',
+    title: 'Live Official CBSE 2027 Date Sheet Clock',
     summary:
-      'Counts every second down to CBSE Class 12 Boards (16 Feb, 10:30 AM IST) and resets automatically to next year once exam day starts.',
+      'Syncs live in IST across all 8 CBSE 2027 Board Exam dates, auto-advances after each paper ends, marks completed exams, and auto-hides cleanly once boards conclude.',
     targetSection: 'overview',
     ctaLabel: 'Open Board Clock on Overview',
     hotspots: [
       {
-        label: 'Auto Rollover (Feb 16)',
-        detail: 'Switches seamlessly from 2027 → 2028 on Feb 16 at 10:30 AM IST without resetting student study logs.',
+        label: 'Official 2027 Date Sheet Modal',
+        detail: 'Tap View 2027 Date Sheet on Overview to track X Days Left, Exam Today highlights, and green ✓ Completed checkmarks in IST.',
       },
       {
-        label: 'Custom Date Toggle',
-        detail: 'Tap Auto: Feb 16 to set a custom board schedule if your specific stream starts on a different date.',
+        label: 'Auto-Advance & Auto-Expiry',
+        detail: 'Advances automatically to the next subject after exam end time and hides cleanly once Web Application concludes on 9 Apr 2027.',
       },
       {
         label: 'Pace Alert Tiers',
@@ -158,6 +159,10 @@ const TOUR_STEPS: {
       {
         label: '3 Player Embed Modes',
         detail: 'Switch between Standard, Pure Embed, and No-Cookie (youtube-nocookie.com) if school networks restrict YouTube.',
+      },
+      {
+        label: 'Landscape Full-Screen Lock',
+        detail: 'Tap the custom Full Screen button to force landscape orientation cleanly on mobile devices, then auto-unlock when exiting.',
       },
       {
         label: 'Mark Done & Next Shortcut',
@@ -292,26 +297,19 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
                     {val: '32', lbl: 'MINS'},
                     {val: '09', lbl: 'SECS'},
                   ].map((tile) => (
-                    <div key={tile.lbl} className="text-center">
-                      <div
-                        className={`py-3 rounded-lg border font-mono text-lg sm:text-2xl font-bold tabular-nums text-[#F5F2EB] transition-colors ${
-                          simClockUrgent
-                            ? 'bg-[#2C1815] border-[#7A3528]'
-                            : 'bg-[#1E1B18] border-[#332E28]'
-                        }`}
-                      >
-                        {tile.val}
-                      </div>
-                      <span className="mt-1 block text-[10px] font-mono font-medium text-[#787066] dark:text-[#9C9387]">
-                        {tile.lbl}
-                      </span>
-                    </div>
+                    <RollingClockTile
+                      key={tile.lbl}
+                      value={tile.val}
+                      label={tile.lbl}
+                      urgent={simClockUrgent}
+                      compact
+                    />
                   ))}
                 </div>
 
                 <div className="pt-2 border-t border-[#DDD6C7]/60 dark:border-[#332E28]/60 flex items-center gap-2 text-xs text-[#575048] dark:text-[#CBC3B6]">
                   <Clock className="w-3.5 h-3.5 text-[#A64B33] dark:text-[#D4785E] shrink-0" aria-hidden="true" />
-                  <span>Annual Rollover: Resets automatically to 16 Feb 2028 when 2027 exams begin.</span>
+                  <span>CBSE 2027 IST Sync: Auto-advances across all 8 dates &amp; expires cleanly after 9 Apr 2027.</span>
                 </div>
               </div>
             )}
@@ -463,7 +461,7 @@ export function InteractiveTourTab({onJumpToSection}: InteractiveTourTabProps) {
               </div>
             )}
 
-            {/* STEP 4: EXAMINATION HALL v3.0.0 */}
+            {/* STEP 4: EXAMINATION HALL v3.1 */}
             {currentStep.id === 'exam' && (
               <div className="rounded-xl border border-[#332E28] bg-[#1E1B18] text-[#F5F2EB] p-4 sm:p-5 space-y-3.5">
                 {/* Header with paper title, timer, and tab selector */}

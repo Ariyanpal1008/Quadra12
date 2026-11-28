@@ -1,15 +1,15 @@
-# Quadra 12 (v3.0.0) — Exhaustive Technical & Syllabus Reference
+# Quadra 12 (v3.1) — Exhaustive Technical & Syllabus Reference
 
-> Structured technical reference for search engines and crawlers analyzing Quadra 12 Class 12 CBSE PCMB Academic Workspace (`v3.0.0`).
+> Structured technical reference for search engines and crawlers analyzing Quadra 12 Class 12 CBSE PCMB Academic Workspace (`v3.1`).
 
 - **Canonical URL:** https://ariyanpal1008.github.io/Quadra12/
 - **Repository:** https://github.com/Ariyanpal1008/Quadra12
-- **Android APK Releases:** https://github.com/Ariyanpal1008/Quadra12/releases/tag/v3.0.0
+- **Android APK Releases:** https://github.com/Ariyanpal1008/Quadra12/releases/tag/v3.1
 - **Summary Document:** https://ariyanpal1008.github.io/Quadra12/llms.txt
 - **Author:** AriYan Pal (Keśava Dāsa) (`ariyanpal090@gmail.com`)
 - **Copyright:** © 2026 Quadra 12 · Creator: AriYan Pal (Keśava Dāsa)
-- **Version:** `v3.0.0`
-- **Distribution Platforms:** Web Application + Installable Offline PWA (`vite-plugin-pwa`) + Signed Standalone Android `.apk` (`Quadra12-v3.0.0-Android.apk` via Capacitor 8 + Gradle)
+- **Version:** `v3.1`
+- **Distribution Platforms:** Web Application + Installable Offline PWA (`vite-plugin-pwa`) + Signed Standalone Android `.apk` (`Quadra12-v3.1-Android.apk` via Capacitor 8 + Gradle)
 - **Framework & Runtime:** React 19, TypeScript 5, Vite 8, `vite-plugin-pwa` (Workbox `injectManifest`), Capacitor 8 (Android APK), Tailwind CSS v4, Motion (`motion/react`), Three.js (WebGL), `jsPDF` + `html2canvas-pro` (local A4 PDF export), Native Web Audio API, Firebase Cloud Sync (optional 6-digit sync).
 
 ---
@@ -20,11 +20,18 @@ Every chapter across **Physics (042 — 14 chapters)**, **Chemistry (043 — 10 
 
 ---
 
-## 2. Examination Hall v3.0.0 Architecture
+## 2. Overview CBSE 2027 Date Sheet Countdown & 12th Hackers Player (v3.1)
+
+- **Official CBSE 2027 Date Sheet (`src/data/cbseDateSheet2027.ts` & `BoardCountdownClock.tsx`):** Syncs Overview countdown in IST (`UTC+05:30`) across all 8 official 2027 board exams (Physics `042` on 16 Feb 2027 to Web Application `803` on 9 Apr 2027). Automatically marks ended exams with `✓ Completed` + strikethrough, highlights exam day with `Exam Today`, advances the countdown to the next subject, and hides cleanly (`display: none`) after 9 Apr 2027 at 01:30 PM IST.
+- **Forced Landscape Full-Screen in 12th Hackers (`YouTubeSyncPlayer.tsx`):** Appends `fs=0` to every YouTube embed inside 12th Hackers, provides a custom `#231f1e`/`#f8f5f0` bottom-right Full Screen button hidden during full-screen, invokes `requestFullscreen()` + `screen.orientation.lock('landscape')` safely inside `try...catch`, and unlocks orientation on `fullscreenchange`.
+
+---
+
+## 3. Examination Hall v3.1 Architecture
 
 ### Governance & Publication Gatekeeper (`canPublishExamPaper`)
 - Admits Main Exam Sheets strictly when `status` is `'Approved'` or `'Published'` AND paired with an `'Approved'` or `'Published'` `VerifiedMarkingScheme` covering every question in the sheet.
-- Blocks `Draft`, `Under Human Review`, `Archived`, or scheme-incomplete papers via explicit rejection reasons (`AuthorReviewPanel.tsx`).
+- Blocks `Draft`, `Under Human Review`, `Archived`, or scheme-incomplete papers via explicit rejection reasons (`AuthorReviewPanel.tsx` in Settings).
 - During live timed exams, `stripAnswerKeysForActiveExam` strips `correctIndex` and solution keys from active question payloads.
 
 ### Deterministic OMR Evaluator & Immutable Snapshots (`examEvaluator.ts`)
@@ -37,15 +44,15 @@ Every chapter across **Physics (042 — 14 chapters)**, **Chemistry (043 — 10 
 
 ---
 
-## 3. Multi-Student Isolation & Migration (`v3Storage.ts`)
+## 4. Multi-Student Isolation & Migration (`v3Storage.ts`)
 
 - `ensureV2ToV3SafeMigration()` initializes v3 student profiles and attempt/status dictionaries without mutating or deleting any of the 17 legacy v2.6.2 `localStorage` keys.
 - Attempts, saved OMR drafts, `PracticeSheetSnapshot`s, and `ChapterStudyStatus` records are isolated per student profile (`profileId`).
 
 ---
 
-## 4. Multi-Platform Distribution ($0 Free)
+## 5. Multi-Platform Distribution ($0 Free)
 
-- **Web & Offline PWA:** `src/sw.js` (`CACHE_NAME = quadra12-v3.0.0-*`) + `src/main.tsx` (`quadra12-sw-update` prompt banner in `App.tsx`) + Workbox offline caching.
-- **Android Signed APK:** Built via `.github/workflows/android-release.yml` + `scripts/configure-android.mjs` (`versionCode = 3000 + GITHUB_RUN_NUMBER`) preserving permanent keystore secrets (`ANDROID_KEYSTORE_BASE64`, `ANDROID_KEY_ALIAS`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_PASSWORD`) and `apksigner` SHA-256 verification.
-- **Health Endpoint (`server.ts`):** Express serves `GET /api/health` returning `{ ok: true, service: 'quadra12-web', version: '3.0.0', mode: 'deterministic-local-exam-engine', timestamp }`.
+- **Web & Offline PWA:** `src/sw.js` (`CACHE_NAME = quadra12-v3.1-*`) + `src/main.tsx` (`quadra12-sw-update` prompt banner in `App.tsx`) + Workbox offline caching.
+- **Android Signed APK:** Built via `.github/workflows/android-release.yml` + `scripts/configure-android.mjs` (`versionCode = 3100 + GITHUB_RUN_NUMBER`) preserving permanent keystore secrets (`ANDROID_KEYSTORE_BASE64`, `ANDROID_KEY_ALIAS`, `ANDROID_KEYSTORE_PASSWORD`, `ANDROID_KEY_PASSWORD`) and `apksigner` SHA-256 verification.
+- **Health Endpoint (`server.ts`):** Express serves `GET /api/health` returning `{ ok: true, service: 'quadra12-web', version: '3.1', mode: 'deterministic-local-exam-engine', timestamp }`.

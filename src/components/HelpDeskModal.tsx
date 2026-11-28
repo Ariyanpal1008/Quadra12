@@ -43,6 +43,7 @@ import {
 } from '../firebase';
 import {APPLE_SPRING} from './FluidPrimitives';
 import {InteractiveTourTab} from './InteractiveTourTab';
+import {APP_VERSION} from '../constants/version';
 
 export type HelpDeskTab = 'guide' | 'tour' | 'about' | 'suggest' | 'inbox';
 export type NavSection = 'overview' | 'subjects' | 'exam' | 'hackers';
@@ -158,6 +159,7 @@ const GUIDE_SECTIONS: {
     howToUse: [
       'Click Watch Playlist on any subject card to open the full 10–14 lecture playlist queue beside the player.',
       'Or click Watch & Notes on any unit card to inspect High-Yield Board Topics, formulas, and switch chapter videos.',
+      'Tap the Full Screen button at the bottom-right corner of any lecture player to automatically lock mobile full-screen into Landscape view.',
       'If embedded video stalls in your browser, cycle Player: Standard / Pure Embed / No-Cookie, open Quadra 12 in a full tab, or click Open on YouTube and tap Mark Done & Next when you return.',
     ],
     icon: PlaySquare,
@@ -444,7 +446,7 @@ export function HelpDeskModal({
             <div className="px-5 sm:px-7 py-4 border-b border-[#DDD6C7] dark:border-[#332E28] flex flex-wrap items-center justify-between gap-4 shrink-0">
               <div>
                 <p className="text-xs font-medium tracking-[0.1em] text-[#A64B33] dark:text-[#D4785E]">
-                  Quadra 12 Support · Creator: AriYan Pal (Keśava Dāsa)
+                  Quadra 12 v{APP_VERSION} Support · Creator: AriYan Pal (Keśava Dāsa)
                 </p>
                 <h2
                   id="helpdesk-modal-title"
@@ -1057,7 +1059,7 @@ export function HelpDeskModal({
                         </div>
                       </div>
                       <span className="text-xs font-mono text-[#787066] dark:text-[#9C9387]">
-                        © 2026 Quadra 12
+                        © 2026 Quadra 12 · v{APP_VERSION}
                       </span>
                     </div>
 
@@ -1121,7 +1123,7 @@ export function HelpDeskModal({
                       <li className="flex items-start gap-2.5">
                         <span className="text-[#A64B33] dark:text-[#D4785E] font-semibold" aria-hidden="true">–</span>
                         <span>
-                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Independent Student Initiative:</strong> Quadra 12 is an educational study tracker and self-practice tool. Always verify official CBSE circulars, exam schedules, and syllabus updates on <span className="font-mono">cbse.gov.in</span>.
+                          <strong className="text-[#1E1B18] dark:text-[#F5F2EB]">Independent Student Initiative:</strong> Quadra 12 v{APP_VERSION} is an educational study tracker and self-practice tool. Always verify official CBSE circulars, exam schedules, and syllabus updates on <span className="font-mono">cbse.gov.in</span>.
                         </span>
                       </li>
                       <li className="flex items-start gap-2.5">

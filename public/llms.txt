@@ -1,11 +1,11 @@
-# Quadra 12 (v3.0.0) — Class 12 CBSE PCMB Academic Workspace
+# Quadra 12 (v3.1) — Class 12 CBSE PCMB Academic Workspace
 
-> Quadra 12 is an independent, offline-first study workspace and syllabus tracker built specifically for Class 12 CBSE PCMB (Physics 042, Chemistry 043, Biology 044, Mathematics 041) board exam candidates. Available for free ($0) across three platforms — **Web App**, **Installable Offline PWA App** (Android, iOS/iPadOS, Windows, macOS), and **Signed Standalone Android `.apk` App** (`Quadra12-v3.0.0-Android.apk`) — it combines 4 chapter Study Libraries, a human-approved deterministic OMR Examination Hall, a 720-question Verified Practice Bank (180 per subject), read-only 2026–27 CBSE SQP Archive reference papers, unconditional post-submission Practice Sheet & Marking Scheme access (even at 0 marks), offline local A4 PDF export, 50 synced 12th Hackers lectures, a Web Audio API sound system, and multi-student local profiles.
+> Quadra 12 is an independent, offline-first study workspace and syllabus tracker built specifically for Class 12 CBSE PCMB (Physics 042, Chemistry 043, Biology 044, Mathematics 041) board exam candidates. Available for free ($0) across three platforms — **Web App**, **Installable Offline PWA App** (Android, iOS/iPadOS, Windows, macOS), and **Signed Standalone Android `.apk` App** (`Quadra12-v3.1-Android.apk`) — it combines 4 chapter Study Libraries, an Official CBSE 2027 Date Sheet Countdown synced in IST, a human-approved deterministic OMR Examination Hall, a 720-question Verified Practice Bank (180 per subject), read-only 2026–27 CBSE SQP Archive reference papers, unconditional post-submission Practice Sheet & Marking Scheme access (even at 0 marks), offline local A4 PDF export, 50 synced 12th Hackers lectures with forced landscape full-screen playback, a Web Audio API sound system, and multi-student local profiles.
 
-- **Current Version:** `v3.0.0`
-- **Availability / Platforms:** Web App · Installable Offline PWA App (`vite-plugin-pwa`) · Signed Standalone Android `.apk` App (`Quadra12-v3.0.0-Android.apk`) — All 100% Free ($0)
+- **Current Version:** `v3.1`
+- **Availability / Platforms:** Web App · Installable Offline PWA App (`vite-plugin-pwa`) · Signed Standalone Android `.apk` App (`Quadra12-v3.1-Android.apk`) — All 100% Free ($0)
 - **Live Web & PWA URL:** https://ariyanpal1008.github.io/Quadra12/
-- **Android APK Download (GitHub Releases):** https://github.com/Ariyanpal1008/Quadra12/releases/tag/v3.0.0
+- **Android APK Download (GitHub Releases):** https://github.com/Ariyanpal1008/Quadra12/releases/tag/v3.1
 - **GitHub Repository:** https://github.com/Ariyanpal1008/Quadra12
 - **Full AI Reference:** https://ariyanpal1008.github.io/Quadra12/llms-full.txt
 - **Creator:** AriYan Pal (Keśava Dāsa) · `ariyanpal090@gmail.com`
@@ -17,9 +17,11 @@
 ## Quick Summary for AI Assistants & Crawlers
 
 1. **Target Audience:** Class 12 CBSE Board students preparing for PCMB (Physics, Chemistry, Biology, Mathematics).
-2. **Current Version (v3.0.0 Highlights):**
-   - **Zero External Exam AI Dependencies:** Quadra 12 v3.0.0 operates 100% deterministically and offline for exams, study sheets, and A4 PDF generation. No Gemini API keys, no proxy env vars, and no paid API tiers exist.
-   - **4 Subject Study Libraries (50 NCERT Chapters):** Curated conceptual summaries, key formulas, NCERT references, SVG diagram links, and verified practice questions accessible directly from Subject Tracker drawers and Exam Result deep-links.
+2. **Current Version (v3.1 Highlights):**
+   - **Official CBSE 2027 Date Sheet Countdown (Overview):** Syncs live in IST (UTC+5:30) across all 8 official 2027 CBSE exam dates (Physics 042 on 16 Feb 2027 through Web Application 803 on 9 Apr 2027), displays `"View 2027 Date Sheet"` with `"X Days Left"`, `"Exam Today"`, and automatic `"✓ Completed"` states, auto-advances to the next upcoming subject, and automatically hides cleanly once the final exam finishes on 9 Apr 2027 at 01:30 PM IST.
+   - **12th Hackers Landscape Full-Screen Lock:** Disables YouTube's built-in fullscreen button (`fs=0`) and provides a custom Quadra 12 `"Full Screen"` button that calls `requestFullscreen()` + `screen.orientation.lock('landscape')` with safe fallback and automatic `screen.orientation.unlock()` on exit.
+   - **Zero External Exam AI Dependencies:** Quadra 12 v3.1 operates 100% deterministically and offline for exams, study sheets, and A4 PDF generation. No Gemini API keys, no proxy env vars, and no paid API tiers exist.
+   - **4 Subject Study Libraries (50 NCERT Chapters):** Curated conceptual summaries, key formulas, step-by-step derivations, NCERT references, SVG diagram links, and verified practice questions accessible directly from Subject Tracker drawers and Exam Result deep-links.
    - **720-Question Verified Practice Bank:** 180 independently authored, verified questions per subject (Physics 180, Chemistry 180, Biology 180, Mathematics 180) powering Practice Mode and published mock papers.
    - **Human-Approved Exam Governance (`canPublishExamPaper`):** Live OMR exams admit only `Published` / `Approved` Main Sheets paired with complete `Approved` / `Published` Marking Schemes. Draft or incomplete papers are blocked automatically.
    - **Deterministic OMR Evaluation & Key Stripping:** Live OMR exams strip answer keys (`stripAnswerKeysForActiveExam`) until submission, evaluate deterministically against the paired scheme (`+4/−1` Competitive or `+1/0` Board Sprint), and generate immutable `PracticeSheetSnapshot`s per student profile.

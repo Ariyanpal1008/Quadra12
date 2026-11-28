@@ -95,7 +95,7 @@ export async function checkLatestGitHubRelease(): Promise<UpdateCheckOutcome> {
       return {
         status: 'error',
         message:
-          'No published GitHub Release was found yet. Publish a tagged release (e.g. v3.0.0) on GitHub to enable in-app APK updates.',
+          'No published GitHub Release was found yet. Publish a tagged release (e.g. v3.1) on GitHub to enable in-app APK updates.',
       };
     }
 

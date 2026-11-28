@@ -28,7 +28,7 @@ jobs:
         uses: actions/configure-pages@v5
       - name: Install dependencies
         run: npm install --legacy-peer-deps
-      - name: Build Quadra 12 v3.0.0
+      - name: Build Quadra 12 v3.1
         run: npm run build
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

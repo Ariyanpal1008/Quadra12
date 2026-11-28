@@ -76,7 +76,7 @@ export function ArchiveExamView({initialSubjectId = 'physics'}: ArchiveExamViewP
             <p className="mt-1 text-xs text-[#575048] dark:text-[#CBC3B6]">
               Historical reference from Quadra 12 v2.6.2. Read the complete Section A–E questions,
               diagrams, and verified step-marking scheme below or export the printable PDFs. Live
-              interactive testing runs exclusively on v3.0.0 OMR &amp; Practice modes.
+              interactive testing runs exclusively on v3.1 OMR &amp; Practice modes.
             </p>
           </div>
 

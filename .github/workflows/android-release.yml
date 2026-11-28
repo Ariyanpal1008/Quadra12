@@ -14,7 +14,7 @@ on:
         type: boolean
         default: false
       release_tag:
-        description: 'Tag name for GitHub Release (e.g. v3.0.0). Leave blank to use v<package.json version>.'
+        description: 'Tag name for GitHub Release (e.g. v3.1). Leave blank to use v<package.json version>.'
         required: false
         type: string
         default: ''
@@ -74,7 +74,7 @@ jobs:
             VERSION_NAME="$PKG_VERSION"
           fi
           RELEASE_TAG="v${VERSION_NAME}"
-          VERSION_CODE=$((3000 + GITHUB_RUN_NUMBER))
+          VERSION_CODE=$((3100 + GITHUB_RUN_NUMBER))
           APK_FILENAME="Quadra12-v${VERSION_NAME}-Android.apk"
 
           echo "VERSION_NAME=${VERSION_NAME}" >> "$GITHUB_ENV"

@@ -1272,12 +1272,10 @@ export function HackersPlaylistSection({
                         onVideoCompleted={handleEpisodeVideoCompleted}
                       />
                     ) : (
-                      <iframe
-                        src={`https://www.youtube.com/embed/videoseries?list=${activeLecture.playlistId}`}
+                      <YouTubeSyncPlayer
+                        playlistId={activeLecture.playlistId}
                         title={activeLecture.title}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                        className="w-full h-full border-0"
+                        embedMode={embedMode}
                       />
                     )}
                   </div>

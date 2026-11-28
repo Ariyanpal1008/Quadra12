@@ -71,7 +71,7 @@ export function createApp() {
     res.json({
       ok: true,
       service: 'quadra12-web',
-      version: '3.0.0',
+      version: '3.1',
       mode: 'deterministic-local-exam-engine',
       timestamp: new Date().toISOString(),
     });
@@ -80,7 +80,7 @@ export function createApp() {
   // Reject any unknown /api/* route cleanly as JSON
   app.use('/api', (_req: Request, res: Response) => {
     res.status(404).json({
-      error: 'API route not found. Quadra 12 v3.0.0 runs deterministic exam grading locally.',
+      error: 'API route not found. Quadra 12 v3.1 runs deterministic exam grading locally.',
     });
   });
 
@@ -113,7 +113,7 @@ async function startServer() {
 
   httpServer.listen(PORT, '0.0.0.0', () => {
     console.log(
-      `[quadra12-web] v3.0.0 running on http://0.0.0.0:${PORT} (${isProduction ? 'production' : 'development'})`,
+      `[quadra12-web] v3.1 running on http://0.0.0.0:${PORT} (${isProduction ? 'production' : 'development'})`,
     );
   });
 }

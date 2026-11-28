@@ -14,11 +14,11 @@ const capConfig = JSON.parse(fs.readFileSync(path.join(rootDir, 'capacitor.confi
 
 const appId = capConfig.appId || 'io.github.ariyanpal1008.quadra12';
 const appName = capConfig.appName || 'Quadra 12';
-const rawVersionName = process.env.QUADRA_VERSION_NAME || pkgJson.version || '3.0.0';
-const versionName = rawVersionName.replace(/^v/i, '').trim() || '3.0.0';
+const rawVersionName = process.env.QUADRA_VERSION_NAME || pkgJson.version || '3.1';
+const versionName = rawVersionName.replace(/^v/i, '').trim() || '3.1';
 const runNumber = parseInt(process.env.GITHUB_RUN_NUMBER || '1', 10) || 1;
 const explicitCode = parseInt(process.env.QUADRA_VERSION_CODE || '', 10);
-const versionCode = Number.isFinite(explicitCode) && explicitCode > 0 ? explicitCode : 3000 + runNumber;
+const versionCode = Number.isFinite(explicitCode) && explicitCode > 0 ? explicitCode : 3100 + runNumber;
 const enableReleaseSigning = process.env.QUADRA_ENABLE_RELEASE_SIGNING === 'true';
 
 // 1. Configure android/app/build.gradle (applicationId, versionCode, versionName, release signingConfig)

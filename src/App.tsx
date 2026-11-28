@@ -77,6 +77,7 @@ import {
   isUpdateBannerDismissed,
 } from './utils/appUpdater';
 import {ensureV2ToV3SafeMigration} from './utils/v3Storage';
+import {APP_VERSION} from './constants/version';
 import {ResilientImage} from './components/ResilientImage';
 import {BoardCountdownClock} from './components/BoardCountdownClock';
 import {
@@ -1154,6 +1155,9 @@ export default function App() {
                 className="w-8 h-8 rounded-lg object-cover border border-[#DDD6C7] dark:border-[#332E28] shrink-0 shadow-xs"
               />
               <span>Quadra 12</span>
+              <span className="hidden sm:inline-block text-[11px] font-mono font-normal text-[#787066] dark:text-[#9C9387]">
+                v{APP_VERSION}
+              </span>
             </motion.button>
 
             {/* Zone 2: 4 concise single-line nav links with gliding spring indicator */}
@@ -1923,7 +1927,7 @@ export default function App() {
                       className="text-sm font-semibold text-[#1E1B18] dark:text-[#F5F2EB]"
                       style={{fontFamily: 'var(--font-display)'}}
                     >
-                      Quadra 12
+                      Quadra 12 · <span className="font-mono text-xs font-medium text-[#787066] dark:text-[#9C9387]">v{APP_VERSION}</span>
                     </p>
                   </div>
                   <p className="mt-1.5 text-xs text-[#787066] dark:text-[#9C9387]">
@@ -1991,7 +1995,7 @@ export default function App() {
 
             <div className="pt-4 border-t border-[#DDD6C7]/70 dark:border-[#332E28] space-y-1.5 text-[11px] text-[#787066] dark:text-[#9C9387]">
               <p className="font-medium text-[#1E1B18] dark:text-[#F5F2EB]">
-                © 2026 Quadra 12 · <span className="font-semibold text-[#A64B33] dark:text-[#D4785E]">Creator: AriYan Pal (Keśava Dāsa)</span>
+                © 2026 Quadra 12 v{APP_VERSION} · <span className="font-semibold text-[#A64B33] dark:text-[#D4785E]">Creator: AriYan Pal (Keśava Dāsa)</span>
               </p>
               <div className="flex flex-wrap items-center gap-4">
                 <button

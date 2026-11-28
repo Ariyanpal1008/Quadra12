@@ -37,6 +37,14 @@ import {
   loadExamAttemptsForStudent,
   setChapterStudyStatus,
 } from '../src/utils/v3Storage';
+import {
+  CBSE_2027_DATE_SHEET,
+  evaluateCbse2027Schedule,
+} from '../src/data/cbseDateSheet2027';
+import {
+  buildHackersPlaylistEmbedUrl,
+  buildHackersYouTubeEmbedUrl,
+} from '../src/components/YouTubeSyncPlayer';
 import {createApp} from '../server';
 
 function createMemoryStorage(initial: Record<string, string> = {}): StorageLike & {
@@ -59,20 +67,20 @@ function createMemoryStorage(initial: Record<string, string> = {}): StorageLike 
   };
 }
 
-describe('Quadra 12 v3.0.0 — Release Hygiene & Zero Gemini Dependencies', () => {
-  it('sets version 3.0.0 consistently across package.json, version.ts, sw.js, and Android config', () => {
+describe('Quadra 12 v3.1 — Release Hygiene & Zero Gemini Dependencies', () => {
+  it('sets version 3.1 consistently across package.json, version.ts, sw.js, and Android config', () => {
     const root = process.cwd();
     const pkg = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
-    assert.equal(pkg.version, '3.0.0');
-    assert.equal(APP_VERSION, '3.0.0');
+    assert.equal(pkg.version, '3.1');
+    assert.equal(APP_VERSION, '3.1');
     assert.equal(pkg.dependencies['@google/genai'], undefined);
 
     const swSource = fs.readFileSync(path.join(root, 'src/sw.js'), 'utf8');
-    assert.match(swSource, /quadra12-v3\.0\.0/);
+    assert.match(swSource, /quadra12-v3\.1/);
 
     const androidCfg = fs.readFileSync(path.join(root, 'scripts/configure-android.mjs'), 'utf8');
-    assert.match(androidCfg, /'3\.0\.0'/);
-    assert.match(androidCfg, /3000 \+ runNumber/);
+    assert.match(androidCfg, /'3\.1'/);
+    assert.match(androidCfg, /3100 \+ runNumber/);
   });
 
   it('contains zero Gemini/proxy env leaks in server, env template, and workflows, and preserves historical v2.6.2 notes', () => {
@@ -80,7 +88,8 @@ describe('Quadra 12 v3.0.0 — Release Hygiene & Zero Gemini Dependencies', () =
     assert.equal(fs.existsSync(path.join(root, 'server/geminiFailover.ts')), false);
     assert.equal(fs.existsSync(path.join(root, 'server/geminiFailover.test.ts')), false);
     assert.equal(fs.existsSync(path.join(root, 'RELEASE_NOTES_v2.6.2.md')), true);
-    assert.equal(fs.existsSync(path.join(root, 'RELEASE_NOTES_v3.0.0.md')), true);
+    assert.equal(fs.existsSync(path.join(root, 'RELEASE_NOTES_v3.1.md')), true);
+    assert.equal(fs.existsSync(path.join(root, 'RELEASE_NOTES_v3.0.0.md')), false);
 
     const serverSrc = fs.readFileSync(path.join(root, 'server.ts'), 'utf8');
     assert.doesNotMatch(serverSrc, /GEMINI_API_KEY|@google\/genai|\/api\/exam\/grade/i);
@@ -96,7 +105,7 @@ describe('Quadra 12 v3.0.0 — Release Hygiene & Zero Gemini Dependencies', () =
     assert.match(androidYml, /ANDROID_KEYSTORE_BASE64/);
   });
 
-  it('serves GET /api/health v3.0.0 deterministic-local-exam-engine and JSON 404 for unknown /api routes', async () => {
+  it('serves GET /api/health v3.1 deterministic-local-exam-engine and JSON 404 for unknown /api routes', async () => {
     const app = createApp();
     const server = http.createServer(app);
     await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', () => resolve()));
@@ -113,7 +122,7 @@ describe('Quadra 12 v3.0.0 — Release Hygiene & Zero Gemini Dependencies', () =
       assert.equal(healthRes.headers.get('access-control-allow-origin'), 'https://ariyanpal1008.github.io');
       const healthBody = (await healthRes.json()) as Record<string, unknown>;
       assert.equal(healthBody.ok, true);
-      assert.equal(healthBody.version, '3.0.0');
+      assert.equal(healthBody.version, '3.1');
       assert.equal(healthBody.mode, 'deterministic-local-exam-engine');
 
       const missingRes = await fetch(`${base}/api/exam/grade`, {method: 'POST'});
@@ -126,7 +135,59 @@ describe('Quadra 12 v3.0.0 — Release Hygiene & Zero Gemini Dependencies', () =
   });
 });
 
-describe('Quadra 12 v3.0.0 — 50 Chapter Study Libraries & 720-Question Verified Bank', () => {
+describe('Quadra 12 v3.1 — Official CBSE 2027 Date Sheet & 12th Hackers Player Controls', () => {
+  it('tracks all 8 CBSE 2027 dates in IST, advances cleanly after end time, and auto-expires after 9 Apr 2027 1:30 PM IST', () => {
+    assert.equal(CBSE_2027_DATE_SHEET.length, 8);
+
+    // Before first exam (1 Feb 2027 09:00 IST)
+    const beforeBoards = evaluateCbse2027Schedule(Date.parse('2027-02-01T09:00:00+05:30'));
+    assert.equal(beforeBoards.completedCount, 0);
+    assert.equal(beforeBoards.isExpired, false);
+    assert.equal(beforeBoards.activeExam?.subject, 'Physics');
+    assert.equal(beforeBoards.activeExam?.status, 'upcoming');
+    assert.equal(beforeBoards.activeExam?.daysLeft, 15);
+
+    // Physics exam morning (16 Feb 2027 09:00 IST) -> Exam Today
+    const phyMorning = evaluateCbse2027Schedule(Date.parse('2027-02-16T09:00:00+05:30'));
+    assert.equal(phyMorning.activeExam?.subject, 'Physics');
+    assert.equal(phyMorning.activeExam?.status, 'today');
+    assert.equal(phyMorning.activeExam?.isInProgress, false);
+
+    // Fine Arts in progress (24 Feb 2027 11:30 IST, ends at 12:30 IST)
+    const fineArtsLive = evaluateCbse2027Schedule(Date.parse('2027-02-24T11:30:00+05:30'));
+    assert.equal(fineArtsLive.completedCount, 2); // Physics & PE completed
+    assert.equal(fineArtsLive.exams[0].status, 'completed');
+    assert.equal(fineArtsLive.exams[1].status, 'completed');
+    assert.equal(fineArtsLive.activeExam?.code, '049 / 050 / 051 / 052');
+    assert.equal(fineArtsLive.activeExam?.status, 'today');
+    assert.equal(fineArtsLive.activeExam?.isInProgress, true);
+
+    // Fine Arts just ended (24 Feb 2027 12:30 IST) -> advances to Chemistry (043)
+    const afterFineArts = evaluateCbse2027Schedule(Date.parse('2027-02-24T12:30:00+05:30'));
+    assert.equal(afterFineArts.completedCount, 3);
+    assert.equal(afterFineArts.exams[2].status, 'completed');
+    assert.equal(afterFineArts.activeExam?.subject, 'Chemistry');
+    assert.equal(afterFineArts.isExpired, false);
+
+    // Final exam (Web Application 803) ends (9 Apr 2027 13:30 IST) -> expires cleanly
+    const afterAllBoards = evaluateCbse2027Schedule(Date.parse('2027-04-09T13:30:00+05:30'));
+    assert.equal(afterAllBoards.completedCount, 8);
+    assert.equal(afterAllBoards.allCompleted, true);
+    assert.equal(afterAllBoards.isExpired, true);
+    assert.equal(afterAllBoards.activeExam, null);
+  });
+
+  it('appends fs=0 to every 12th Hackers YouTube embed URL across all modes', () => {
+    for (const mode of ['standard', 'pure', 'nocookie'] as const) {
+      const url = buildHackersYouTubeEmbedUrl('dQw4w9WgXcQ', mode);
+      assert.match(url, /[?&]fs=0(?:&|$)/);
+    }
+    const playlistUrl = buildHackersPlaylistEmbedUrl('PLDFtjdbvBWcYSFSWAmmApY25zg5A1Q7Df');
+    assert.match(playlistUrl, /[?&]fs=0(?:&|$)/);
+  });
+});
+
+describe('Quadra 12 v3.1 — 50 Chapter Study Libraries & 720-Question Verified Bank', () => {
   it('provides Study Library bundles for all 50 NCERT chapters with valid SVG diagram references and complete derivations', () => {
     const allChapterIds = SUBJECTS.flatMap((s) => s.chapters.map((c) => c.id));
     assert.equal(allChapterIds.length, 50);
@@ -244,7 +305,7 @@ describe('Quadra 12 v3.0.0 — 50 Chapter Study Libraries & 720-Question Verifie
   });
 });
 
-describe('Quadra 12 v3.0.0 — Exam Governance, Stripping & Deterministic OMR Evaluation', () => {
+describe('Quadra 12 v3.1 — Exam Governance, Stripping & Deterministic OMR Evaluation', () => {
   it('approves all 8 Published Main Sheets and blocks Draft, Under Review, Missing Scheme, and Incomplete Scheme papers', () => {
     assert.equal(VERIFIED_MAIN_PAPERS.length, 8);
     assert.equal(VERIFIED_MARKING_SCHEMES.length, 8);
@@ -332,7 +393,7 @@ describe('Quadra 12 v3.0.0 — Exam Governance, Stripping & Deterministic OMR Ev
   });
 });
 
-describe('Quadra 12 v3.0.0 — Multi-Student Isolation & Non-Destructive v2.6.2 Migration', () => {
+describe('Quadra 12 v3.1 — Multi-Student Isolation & Non-Destructive v2.6.2 Migration', () => {
   it('isolates student attempts, PracticeSheetSnapshots, and explicit ChapterStudyStatus per profile', () => {
     const storage = createMemoryStorage();
     const p1 = createStudentProfile('Student One', storage);

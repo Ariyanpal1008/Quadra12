@@ -1,4 +1,4 @@
-export const APP_VERSION = '3.0.0';
+export const APP_VERSION = '3.1';
 
 export const GITHUB_REPO_OWNER = 'Ariyanpal1008';
 export const GITHUB_REPO_NAME = 'Quadra12';
