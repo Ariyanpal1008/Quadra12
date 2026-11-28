@@ -28,13 +28,13 @@ Quadra 12 `v3.1` unifies the codebase cleanly on version `3.1`, synchronizes the
   7. Computer Science (`083`) — Wednesday, 31 Mar 2027 (`10:30 AM – 01:30 PM IST`)
   8. Web Application (`803`) — Friday, 9 Apr 2027 (`10:30 AM – 01:30 PM IST`)
 - Adds a **`View 2027 Date Sheet`** modal displaying live IST statuses (`X Days Left`, `Exam Today` highlight, and green `✓ Completed` with row dimming & strikethrough once an exam ends).
-- Automatically advances the Overview countdown to the next upcoming exam after each paper finishes, and hides the countdown card + Date Sheet button (`display: none`) after **9 April 2027 at 01:30 PM IST**.
+- Automatically advances the Overview countdown to the next upcoming exam after each paper finishes, renders time ticks via realistic 3D mechanical split-flap paper-turning tiles (`RollingClockTile` with whisper-thin center crease, fold shadows, and stacked deck depth), and hides the countdown card + Date Sheet button (`display: none`) after **9 April 2027 at 01:30 PM IST**.
 - Leaves **Examination Hall** completely untouched for internal Quadra 12 mock tests.
 
 ### 2. Forced Landscape Full-Screen Player in 12th Hackers (`YouTubeSyncPlayer.tsx` & `HackersPlaylistSection.tsx`)
 - Appends `fs=0` to every YouTube embed URL in 12th Hackers (`standard`, `pure`, `nocookie`, and playlist fallback).
-- Wraps every player iframe in a `position: relative` container with a custom Quadra 12-themed **`Full Screen`** button (`#231f1e` background, `#f8f5f0` text, rounded corners) hidden while full-screen is active.
-- Enters full-screen (`requestFullscreen()` / `webkitRequestFullscreen()`) and calls `await screen.orientation.lock('landscape')` safely inside `try...catch`, then automatically unlocks orientation via `screen.orientation.unlock()` on `fullscreenchange` / `webkitfullscreenchange`.
+- Wraps every player iframe in a `position: relative` container with a custom Quadra 12-themed **`Full Screen`** button (`#231f1e` background, `#f8f5f0` text, rounded corners) hidden while full-screen is active, plus an unobtrusive top-right **`Exit`** control during full-screen playback.
+- Enters full-screen (`requestFullscreen()` / `webkitRequestFullscreen()` or CSS full-viewport fallback), calls `await screen.orientation.lock('landscape')` safely inside `try...catch`, and **automatically rotates the player stage 90° horizontally edge-to-edge** whenever the viewport stays portrait (such as mobile Auto-Rotate OFF, preview iframes, or iOS), cleanly unlocking via `screen.orientation.unlock()` on exit.
 - Preserves playlist switching, chapter formula overlays, chapter timestamps, and `enablejsapi=1` completion tracking.
 
 ### 3. Unified Version `3.1` Hygiene & Core Platform

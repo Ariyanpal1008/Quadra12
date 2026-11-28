@@ -1,10 +1,11 @@
-import {useEffect, useId, useRef, useState} from 'react';
-import {Maximize2} from 'lucide-react';
+import {useCallback, useEffect, useId, useRef, useState} from 'react';
+import {Maximize2, Minimize2} from 'lucide-react';
 
 export type EmbedPlayerMode = 'standard' | 'pure' | 'nocookie';
 
 type FullscreenDocument = Document & {
   webkitFullscreenElement?: Element | null;
+  webkitExitFullscreen?: () => Promise<void> | void;
 };
 
 type FullscreenContainer = HTMLDivElement & {
@@ -54,7 +55,34 @@ export function YouTubeSyncPlayer({
   const currentVideoIdRef = useRef(videoId ?? '');
   const onCompletedRef = useRef(onVideoCompleted);
   const completedSetRef = useRef<Set<string>>(new Set());
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [nativeFullscreen, setNativeFullscreen] = useState(false);
+  const [fallbackFullscreen, setFallbackFullscreen] = useState(false);
+  const [stageBounds, setStageBounds] = useState<{width: number; height: number}>({
+    width: 0,
+    height: 0,
+  });
+
+  const isFullscreen = nativeFullscreen || fallbackFullscreen;
+
+  const unlockOrientation = useCallback(() => {
+    try {
+      const orientation = screen.orientation as LockableOrientation | undefined;
+      orientation?.unlock?.();
+    } catch {
+      // Ignore browsers without screen.orientation.unlock()
+    }
+  }, []);
+
+  const syncStageDimensions = useCallback(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const width = Math.round(rect.width || window.innerWidth);
+    const height = Math.round(rect.height || window.innerHeight);
+    setStageBounds((prev) =>
+      prev.width === width && prev.height === height ? prev : {width, height},
+    );
+  }, []);
 
   useEffect(() => {
     onCompletedRef.current = onVideoCompleted;
@@ -73,15 +101,13 @@ export function YouTubeSyncPlayer({
       const doc = document as FullscreenDocument;
       const fsEl = doc.fullscreenElement ?? doc.webkitFullscreenElement ?? null;
       const active = Boolean(fsEl && fsEl === wrapperRef.current);
-      setIsFullscreen(active);
+      setNativeFullscreen(active);
 
       if (!active) {
-        try {
-          const orientation = screen.orientation as LockableOrientation | undefined;
-          orientation?.unlock?.();
-        } catch {
-          // Ignore browsers without screen.orientation.unlock()
-        }
+        setFallbackFullscreen(false);
+        unlockOrientation();
+      } else {
+        window.requestAnimationFrame(syncStageDimensions);
       }
     };
 
@@ -91,14 +117,42 @@ export function YouTubeSyncPlayer({
     return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
       document.removeEventListener('webkitfullscreenchange', handleFullscreenChange);
-      try {
-        const orientation = screen.orientation as LockableOrientation | undefined;
-        orientation?.unlock?.();
-      } catch {
-        // Ignore cleanup orientation unlock errors
+      unlockOrientation();
+    };
+  }, [syncStageDimensions, unlockOrientation]);
+
+  useEffect(() => {
+    if (!isFullscreen) return;
+
+    syncStageDimensions();
+    const timer = window.setTimeout(syncStageDimensions, 120);
+
+    const handleViewportChange = () => syncStageDimensions();
+    window.addEventListener('resize', handleViewportChange);
+    window.addEventListener('orientationchange', handleViewportChange);
+
+    let observer: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined' && wrapperRef.current) {
+      observer = new ResizeObserver(syncStageDimensions);
+      observer.observe(wrapperRef.current);
+    }
+
+    const handleEscKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape' && fallbackFullscreen) {
+        setFallbackFullscreen(false);
+        unlockOrientation();
       }
     };
-  }, []);
+    window.addEventListener('keydown', handleEscKey);
+
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener('resize', handleViewportChange);
+      window.removeEventListener('orientationchange', handleViewportChange);
+      window.removeEventListener('keydown', handleEscKey);
+      observer?.disconnect();
+    };
+  }, [fallbackFullscreen, isFullscreen, syncStageDimensions, unlockOrientation]);
 
   useEffect(() => {
     if (!videoId || embedMode === 'pure') return;
@@ -193,14 +247,21 @@ export function YouTubeSyncPlayer({
     const container = wrapperRef.current as FullscreenContainer | null;
     if (!container) return;
 
+    let enteredNative = false;
     try {
       if (typeof container.requestFullscreen === 'function') {
         await container.requestFullscreen();
+        enteredNative = true;
       } else if (typeof container.webkitRequestFullscreen === 'function') {
         await container.webkitRequestFullscreen();
+        enteredNative = true;
       }
     } catch {
-      // Continue silently if fullscreen was declined
+      enteredNative = false;
+    }
+
+    if (!enteredNative) {
+      setFallbackFullscreen(true);
     }
 
     try {
@@ -209,26 +270,92 @@ export function YouTubeSyncPlayer({
         await orientation.lock('landscape');
       }
     } catch {
-      // Unsupported mobile browsers stay in clean full-screen without throwing
+      // If screen.orientation.lock is unsupported or blocked (e.g. Auto-Rotate OFF / iframe),
+      // CSS 90-degree landscape rotation below keeps the player horizontal edge-to-edge.
     }
+
+    window.requestAnimationFrame(syncStageDimensions);
+    window.setTimeout(syncStageDimensions, 150);
+  };
+
+  const handleExitFullscreen = async () => {
+    const doc = document as FullscreenDocument;
+    try {
+      if (doc.fullscreenElement && typeof doc.exitFullscreen === 'function') {
+        await doc.exitFullscreen();
+      } else if (
+        doc.webkitFullscreenElement &&
+        typeof doc.webkitExitFullscreen === 'function'
+      ) {
+        await doc.webkitExitFullscreen();
+      }
+    } catch {
+      // Ignore exit fullscreen failures
+    }
+    setNativeFullscreen(false);
+    setFallbackFullscreen(false);
+    unlockOrientation();
   };
 
   const src = videoId
     ? buildHackersYouTubeEmbedUrl(videoId, embedMode)
     : buildHackersPlaylistEmbedUrl(playlistId ?? '');
 
+  // When full-screen is active but the screen/device stayed in portrait (e.g. Auto-Rotate OFF,
+  // nested preview iframe, or iOS), physically rotate the player stage 90deg into true landscape.
+  const shouldRotateToLandscape =
+    isFullscreen && stageBounds.height > stageBounds.width && stageBounds.width > 0;
+
   return (
-    <div ref={wrapperRef} className="relative w-full h-full bg-[#161412]">
-      <iframe
-        ref={iframeRef}
-        key={`${embedMode}-${videoId ?? playlistId ?? 'playlist'}`}
-        src={src}
-        title={title}
-        onLoad={handleIframeLoad}
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        referrerPolicy="strict-origin-when-cross-origin"
-        className="w-full h-full border-0"
-      />
+    <div
+      ref={wrapperRef}
+      className={
+        fallbackFullscreen && !nativeFullscreen
+          ? 'fixed inset-0 z-[9999] bg-black overflow-hidden'
+          : isFullscreen
+            ? 'relative w-full h-full bg-black overflow-hidden'
+            : 'relative w-full h-full bg-[#161412]'
+      }
+    >
+      <div
+        className={shouldRotateToLandscape ? 'bg-black' : 'relative w-full h-full'}
+        style={
+          shouldRotateToLandscape
+            ? {
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                width: `${stageBounds.height}px`,
+                height: `${stageBounds.width}px`,
+                transform: 'translate(-50%, -50%) rotate(90deg)',
+                transformOrigin: 'center center',
+              }
+            : undefined
+        }
+      >
+        <iframe
+          ref={iframeRef}
+          key={`${embedMode}-${videoId ?? playlistId ?? 'playlist'}`}
+          src={src}
+          title={title}
+          onLoad={handleIframeLoad}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerPolicy="strict-origin-when-cross-origin"
+          className="w-full h-full border-0"
+        />
+
+        {isFullscreen && (
+          <button
+            type="button"
+            onClick={() => void handleExitFullscreen()}
+            aria-label="Exit Landscape Full Screen"
+            className="absolute top-3 right-3 z-30 inline-flex items-center gap-1.5 rounded-lg bg-[#231f1e]/85 text-[#f8f5f0] border border-[#f8f5f0]/20 px-2.5 py-1.5 text-xs font-medium shadow-md backdrop-blur-xs hover:bg-[#231f1e] active:scale-95 transition"
+          >
+            <Minimize2 className="w-3.5 h-3.5" aria-hidden="true" />
+            <span>Exit</span>
+          </button>
+        )}
+      </div>
 
       {!isFullscreen && (
         <button
@@ -244,3 +371,4 @@ export function YouTubeSyncPlayer({
     </div>
   );
 }
+

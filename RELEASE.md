@@ -7,13 +7,13 @@
 
 ## What's New in v3.1
 
-### 1. Official CBSE 2027 Date Sheet Countdown on Overview (IST Sync & Auto-Expiry)
-* **Live 8-Subject Board Exam Progression:** Synchronizes the Overview Board Countdown Clock in IST (`UTC+05:30`) across all 8 official 2027 CBSE dates — starting with **Physics (`042`) on 16 Feb 2027** through **Web Application (`803`) on 9 Apr 2027** — automatically advancing to the next upcoming subject once each exam ends.
+### 1. Official CBSE 2027 Date Sheet Countdown on Overview (IST Sync & 3D Split-Flap Motion)
+* **Live 8-Subject Board Exam Progression & Split-Flap Tiles:** Synchronizes the Overview Board Countdown Clock in IST (`UTC+05:30`) across all 8 official 2027 CBSE dates — starting with **Physics (`042`) on 16 Feb 2027** through **Web Application (`803`) on 9 Apr 2027** — rendered on 3D mechanical split-flap tiles with whisper-thin crease lines, cast shadows, and subtle stacked-sheet depth.
 * **Interactive 2027 Date Sheet Modal (`View 2027 Date Sheet`):** Displays all 8 official exams with live IST status badges: **`X Days Left`** (upcoming), **`Exam Today`** (highlighted on exam day), and **`✓ Completed`** (green checkmark with subtle row dimming & strikethrough after exam end time).
 * **Automatic Post-Board Clean-Up:** Automatically hides the Overview countdown card and 2027 Date Sheet button (`display: none`) once the final exam (**Web Application** on 9 April 2027 at 01:30 PM IST) finishes. (Examination Hall remains strictly untouched for internal Quadra 12 practice exams.)
 
 ### 2. Forced Landscape Full-Screen in "12th Hackers" Video Player
-* **Custom Full-Screen Landscape Lock:** Appends `fs=0` to every YouTube embed inside 12th Hackers (`Standard`, `Pure Embed`, `No-Cookie`, and fallback playlist embeds), hides YouTube's built-in fullscreen button, and renders a themed bottom-right **`Full Screen`** control (`#231f1e` / `#f8f5f0`) that locks mobile orientation to `'landscape'` inside a `try...catch` block and automatically unlocks orientation upon exit — even when system Auto-Rotate is turned off.
+* **Custom Full-Screen Landscape Lock & 90° Portrait-Lock Fallback:** Appends `fs=0` to every YouTube embed inside 12th Hackers (`Standard`, `Pure Embed`, `No-Cookie`, and fallback playlist embeds), hides YouTube's built-in fullscreen button, and renders a themed bottom-right **`Full Screen`** control (`#231f1e` / `#f8f5f0`) that enters full-screen (`requestFullscreen()` / CSS viewport fallback), calls `screen.orientation.lock('landscape')`, and automatically applies an edge-to-edge **90° CSS landscape rotation** whenever mobile Auto-Rotate is disabled or blocked by an iframe/OS—automatically restoring portrait mode (`screen.orientation.unlock()`) on exit.
 
 ### 3. Complete PCMB Study Libraries, 720-Q Exam Bank & Deterministic OMR Hall (`v3.1`)
 * **50 Chapter Study Libraries & 94 Diagrams:** Separated **Formula Sheet**, **Derivation Sheet**, **Diagrams & Graphs**, and **Practice Qs** tabs alongside full-subject printable sheets and **720 verified MCQs** (`180` per PCMB subject).

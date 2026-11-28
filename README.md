@@ -50,14 +50,14 @@ The **Overview** countdown clock (`BoardCountdownClock.tsx` backed by `src/data/
 
 ## What's New in Quadra 12 v3.1
 
-### 1. Synced CBSE 2027 Date Sheet Countdown & Auto-Expiry (Overview)
-- Real-time IST (`UTC+05:30`) countdown synced to all 8 CBSE Class 12 Board Exam dates above (`src/data/cbseDateSheet2027.ts` + `src/components/BoardCountdownClock.tsx`).
+### 1. Synced CBSE 2027 Date Sheet Countdown, Split-Flap Tiles & Auto-Expiry (Overview)
+- Real-time IST (`UTC+05:30`) countdown synced to all 8 CBSE Class 12 Board Exam dates above (`src/data/cbseDateSheet2027.ts` + `src/components/BoardCountdownClock.tsx`), animated with 3D mechanical split-flap paper-turning tiles (`RollingClockTile` with whisper-thin center crease and cast shadows).
 - **`View 2027 Date Sheet`** modal connected directly to the Overview countdown card showing live **`X Days Left`** badges, **`Exam Today`** row highlights, green **`✓ Completed`** badges with subtle dimming/strikethrough after exam end time, automatic rollover to the next subject, and automatic `display: none` removal once Web Application ends on **9 April 2027 at 01:30 PM IST**.
 
 ### 2. Forced Landscape Full-Screen in 12th Hackers Video Player
 - Every YouTube embed inside **12th Hackers** (`src/components/YouTubeSyncPlayer.tsx` & `src/components/HackersPlaylistSection.tsx`) automatically appends `fs=0` to disable YouTube's built-in fullscreen button.
-- A themed Quadra 12 **`Full Screen`** button (`#231f1e` background, `#f8f5f0` text, rounded corners) sits at the bottom-right corner of the `position: relative` video container and hides automatically once full-screen is active.
-- Tapping **`Full Screen`** requests container fullscreen (`requestFullscreen()` / `webkitRequestFullscreen()`) and calls `await screen.orientation.lock('landscape')` inside `try...catch`, automatically calling `screen.orientation.unlock()` on `fullscreenchange` / `webkitfullscreenchange` so mobile devices rotate into landscape and cleanly restore portrait mode on exit — even with system Auto-Rotate disabled.
+- A themed Quadra 12 **`Full Screen`** button (`#231f1e` background, `#f8f5f0` text, rounded corners) sits at the bottom-right corner of the `position: relative` video container and hides automatically once full-screen is active, revealing a crisp top-right **`Exit`** control.
+- Tapping **`Full Screen`** requests container fullscreen (`requestFullscreen()` / `webkitRequestFullscreen()` or CSS full-viewport fallback), calls `await screen.orientation.lock('landscape')` inside `try...catch`, and automatically applies an edge-to-edge **90° CSS landscape rotation** whenever the device stays in portrait (such as mobile Auto-Rotate OFF or preview iframes), restoring portrait cleanly via `screen.orientation.unlock()` on exit.
 - Playlist switching, unit chapter formula overlays, chapter timestamps, and automatic `Lecture done` completion tracking remain intact.
 
 ### 3. Examination Hall — Deterministic OMR, Audit Settings & Archive
